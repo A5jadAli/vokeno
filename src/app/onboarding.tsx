@@ -7,20 +7,21 @@ import { AppScreen, Eyebrow } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { completeOnboarding } from '@/features/onboarding/storage';
 import { useLanguageSelection } from '@/features/language/selection';
+import { languageDetails, languageTracks, trackColors } from '@/features/language/config';
 
 const slides = [
   {
     eyebrow: 'Real conversation',
     icon: 'account-voice' as const,
     title: 'Train your ear for how people really speak.',
-    copy: 'Practise natural English and German, interrupt the coach, slow things down, and keep live captions on when you need them.',
+    copy: 'Practise natural English, German or Spanish. Interrupt the coach, slow down and keep captions on when you need them.',
     accent: Palette.orange,
   },
   {
     eyebrow: 'A clear daily path',
     icon: 'calendar-check-outline' as const,
     title: 'Know exactly what to practise next.',
-    copy: 'New to German? Start with English-supported foundation lessons. Already know some English? Choose listening, writing or a guided speaking scenario.',
+    copy: 'Start with one useful exchange. Each short lesson adds listening, reading and a chance to speak. Your next step is always on Home.',
     accent: Palette.yellow,
   },
   {
@@ -78,7 +79,7 @@ export default function OnboardingScreen() {
             {index === 0
               ? 'Listen · interrupt · respond'
               : index === 1
-                ? '10 focused minutes'
+                ? '5 to 10 focused minutes'
                 : 'Your pace · your choice'}
           </Text>
         </View>
@@ -92,7 +93,7 @@ export default function OnboardingScreen() {
         {isLast ? (
           <View style={{ gap: 10, marginTop: 18 }}>
             <Eyebrow>What would you like to practise first?</Eyebrow>
-            {(['DE', 'EN'] as const).map((language) => (
+            {languageTracks.map((language) => (
               <Pressable
                 key={language}
                 accessibilityRole="radio"
@@ -103,14 +104,19 @@ export default function OnboardingScreen() {
                   styles.secondaryButton,
                   {
                     padding: 14,
-                    backgroundColor: track === language ? Palette.yellow : Palette.soft,
+                    backgroundColor:
+                      track === language ? trackColors[language].accent : Palette.soft,
                   },
                 ]}
               >
-                <Text style={styles.secondaryText}>
-                  {language === 'DE'
-                    ? 'German: start with the basics'
-                    : 'English: everyday practice'}
+                <Text
+                  style={[
+                    styles.secondaryText,
+                    track === language && { color: trackColors[language].onAccent },
+                  ]}
+                >
+                  {languageDetails[language].name}:{' '}
+                  {language === 'EN' ? 'everyday practice' : 'start with the basics'}
                 </Text>
               </Pressable>
             ))}
@@ -195,19 +201,16 @@ const styles = StyleSheet.create({
   },
   artCaption: {
     color: Palette.ink,
-    fontFamily: VokaFonts.monoMedium,
-    fontSize: 10,
-    letterSpacing: 1,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: 12,
     marginTop: 18,
-    textTransform: 'uppercase',
   },
   copyBlock: { marginTop: 25 },
   title: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 29,
-    letterSpacing: -0.8,
-    lineHeight: 33,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
+    lineHeight: 34,
     marginTop: 8,
   },
   copy: {
@@ -228,7 +231,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: 58,
   },
-  primaryText: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 17 },
+  primaryText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
   secondaryButton: {
     alignItems: 'center',
     borderColor: 'rgba(19,18,17,.16)',

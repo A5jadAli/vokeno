@@ -10,6 +10,8 @@ import { useAuthSession } from '@/features/auth/use-auth-session';
 import { type CoachTone, useCoachingStore } from '@/features/coaching/store';
 import { downloadAvailableUpdate, restartWithDownloadedUpdate } from '@/features/updates/ota';
 import appConfig from '../../app.json';
+import { ReminderPicker } from '@/components/reminder-picker';
+import { remindersSupported } from '@/features/habits/reminder-scheduler';
 
 const toneOptions: { description: string; label: string; value: CoachTone }[] = [
   {
@@ -104,6 +106,19 @@ export default function SettingsScreen() {
           })}
         </View>
 
+        {remindersSupported ? (
+          <>
+            <Eyebrow color={Palette.orange}>Daily reminder</Eyebrow>
+            <Text style={styles.description}>
+              One reminder at the time you choose, skipped on days you have already practised. If
+              you are away for a week, reminders pause until you come back.
+            </Text>
+            <View style={styles.card}>
+              <ReminderPicker variant="list" />
+            </View>
+          </>
+        ) : null}
+
         <Eyebrow color={Palette.orange}>Account &amp; app</Eyebrow>
         <View style={styles.card}>
           {isPermanent ? (
@@ -185,14 +200,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 18,
   },
-  headerTitle: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 20 },
+  headerTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
   headerSpacer: { width: 40 },
   body: { paddingBottom: 28, paddingHorizontal: 20 },
   title: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 30,
-    letterSpacing: -1,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
     lineHeight: 34,
     marginTop: 8,
   },
@@ -227,8 +241,8 @@ const styles = StyleSheet.create({
   optionDescription: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
-    fontSize: 11,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 17,
     marginTop: 3,
   },
   radio: {
@@ -259,7 +273,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 17,
   },
   rowLabel: { color: Palette.ink, flex: 1, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
-  rowValue: { color: Palette.muted, fontFamily: VokaFonts.mono, fontSize: 11 },
+  rowValue: { color: Palette.muted, fontFamily: VokaFonts.bodyMedium, fontSize: 12 },
   privacyNote: {
     backgroundColor: Palette.ink,
     borderRadius: 20,
@@ -271,8 +285,8 @@ const styles = StyleSheet.create({
     color: Palette.cream,
     flex: 1,
     fontFamily: VokaFonts.body,
-    fontSize: 11,
-    lineHeight: 17,
+    fontSize: 12,
+    lineHeight: 18,
   },
   pressed: { opacity: 0.7 },
 });

@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { type Href, useRouter } from 'expo-router';
+import { Redirect, type Href, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -10,6 +10,7 @@ import {
   lessonText,
   PrimaryButton,
   TextButton,
+  PrimaryAccent,
 } from '@/components/lesson-ui';
 import { AppScreen } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
@@ -20,10 +21,16 @@ import {
   type SpeakingCard,
   type SpeakingCardPart,
 } from '../../supabase/functions/_shared/speaking-cards';
+import { trackColors } from '@/features/language/config';
 
 export default function SpeakingMockScreen() {
   const [track] = useSelectedLanguage();
-  return <SpeakingMock key={track} track={track} />;
+  if (track === 'ES') return <Redirect href="/sprint?track=ES" />;
+  return (
+    <PrimaryAccent background={trackColors[track].accent} text={trackColors[track].onAccent}>
+      <SpeakingMock key={track} track={track} />
+    </PrimaryAccent>
+  );
 }
 
 function pick(cards: SpeakingCard[], avoid?: string) {
@@ -202,7 +209,7 @@ const styles = StyleSheet.create({
   cardKicker: { color: Palette.orange, fontFamily: VokaFonts.bodyBold, fontSize: 13 },
   cardTitle: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayBold,
+    fontFamily: VokaFonts.bodyBold,
     fontSize: 22,
     lineHeight: 28,
   },
@@ -234,7 +241,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   clockDone: { backgroundColor: '#E3F2E5' },
-  clockText: { color: Palette.ink, fontFamily: VokaFonts.monoMedium, fontSize: 32 },
+  clockText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 28 },
   notes: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,

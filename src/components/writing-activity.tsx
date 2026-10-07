@@ -18,6 +18,7 @@ import {
   PrimaryButton,
   SectionLabel,
   TextButton,
+  PrimaryAccent,
 } from '@/components/lesson-ui';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
 import { ReportContent } from '@/components/report-content';
@@ -33,6 +34,7 @@ import {
   type WritingTaskId,
 } from '@/features/writing/progress';
 import { countWritingWords } from '@/features/writing/validation';
+import { languageDetails, type LanguageTrack, trackColors } from '@/features/language/config';
 
 const ratingStyle = {
   strong: { bg: '#E3F2E5', ink: '#1F5A33' },
@@ -40,9 +42,22 @@ const ratingStyle = {
   'needs work': { bg: '#FFE9E1', ink: '#8E2D1B' },
 } as const;
 
+const keyboardTip = {
+  DE: 'Tip: add German to your phone’s keyboard languages. You get ä, ö, ü and ß, and English autocorrect stops changing German words (for example im → I’m).',
+  ES: 'Tip: add Spanish to your phone’s keyboard languages. You get á, é, ñ, ¿ and ¡, and English autocorrect stops changing Spanish words (for example que → queue).',
+} as const;
+
 export function WritingActivity() {
-  const router = useRouter();
   const [track] = useSelectedLanguage();
+  return (
+    <PrimaryAccent background={trackColors[track].accent} text={trackColors[track].onAccent}>
+      <WritingPractice key={track} track={track} />
+    </PrimaryAccent>
+  );
+}
+
+function WritingPractice({ track }: { track: LanguageTrack }) {
+  const router = useRouter();
   const { task: taskParam } = useLocalSearchParams<{ task?: string }>();
   const ids = tasksForTrack(track);
   const taskId = (ids as string[]).includes(taskParam ?? '')
@@ -68,7 +83,7 @@ export function WritingActivity() {
   const abort = useRef<AbortController | null>(null);
   const minimum = examMode && exam ? exam.minimum : task.minimum;
   const words = countWritingWords(answer);
-  const language = track === 'DE' ? 'German' : 'English';
+  const language = languageDetails[track].name;
 
   useEffect(() => {
     if (!deadline) return;
@@ -253,11 +268,8 @@ export function WritingActivity() {
             {words} / {minimum} words
           </Text>
         </View>
-        {track === 'DE' && !submitted ? (
-          <Text style={lessonText.small}>
-            Tip: add German to your phone’s keyboard languages. You get ä, ö, ü and ß, and English
-            autocorrect stops changing German words (for example im → I’m).
-          </Text>
+        {track !== 'EN' && !submitted ? (
+          <Text style={lessonText.small}>{keyboardTip[track]}</Text>
         ) : null}
         {message ? (
           <Text accessibilityLiveRegion="polite" style={styles.warning}>
@@ -322,7 +334,7 @@ export function WritingActivity() {
   );
 }
 
-function FeedbackView({ feedback, track }: { feedback: WritingFeedback; track: 'EN' | 'DE' }) {
+function FeedbackView({ feedback, track }: { feedback: WritingFeedback; track: LanguageTrack }) {
   const [showImproved, setShowImproved] = useState(false);
   return (
     <View style={{ gap: 12 }}>
@@ -481,7 +493,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   clockDone: { backgroundColor: '#FFE9E1' },
-  clockText: { color: Palette.ink, fontFamily: VokaFonts.monoMedium, fontSize: 14 },
+  clockText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   body: { gap: 14, paddingBottom: 32, paddingHorizontal: 20 },
   tabs: {
     backgroundColor: Palette.soft,
@@ -494,7 +506,7 @@ const styles = StyleSheet.create({
   tabActive: { backgroundColor: Palette.ink },
   tabText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   tabTextActive: { color: Palette.cream },
-  prompt: { color: Palette.ink, fontFamily: VokaFonts.bodyMedium, fontSize: 17, lineHeight: 26 },
+  prompt: { color: Palette.ink, fontFamily: VokaFonts.bodyMedium, fontSize: 16, lineHeight: 24 },
   examToggle: {
     alignItems: 'center',
     backgroundColor: Palette.white,
@@ -539,7 +551,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   counterFill: { backgroundColor: Palette.yellow, height: '100%' },
-  counterText: { color: Palette.secondary, fontFamily: VokaFonts.monoMedium, fontSize: 12 },
+  counterText: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   warning: {
     backgroundColor: '#FFE9E1',
     borderRadius: 14,
@@ -591,13 +603,13 @@ const styles = StyleSheet.create({
     textDecorationLine: 'line-through',
   },
   corrected: { color: '#1F5A33', fontFamily: VokaFonts.bodyBold, fontSize: 15 },
-  improved: { color: Palette.ink, fontFamily: VokaFonts.body, fontSize: 15, lineHeight: 24 },
+  improved: { color: Palette.ink, fontFamily: VokaFonts.body, fontSize: 15, lineHeight: 22 },
   chartCard: { backgroundColor: Palette.white, borderRadius: 20, gap: 12, padding: 16 },
   chart: { alignItems: 'flex-end', flexDirection: 'row', gap: 6, height: 130 },
   barColumn: { alignItems: 'center', flex: 1, justifyContent: 'flex-end' },
   bar: { backgroundColor: '#D9D6CF', borderRadius: 6, marginVertical: 4, width: '100%' },
   barPeak: { backgroundColor: Palette.orange },
-  barLabel: { color: Palette.muted, fontFamily: VokaFonts.monoMedium, fontSize: 10 },
+  barLabel: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   wordChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   wordChip: {
     backgroundColor: Palette.soft,

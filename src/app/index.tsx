@@ -10,9 +10,11 @@ import { listeningScenarios, type LanguageTrack } from '@/features/listening/sce
 import { hasCompletedOnboarding } from '@/features/onboarding/storage';
 import { useProgressStore } from '@/features/progress/store';
 import { useSelectedLanguage } from '@/features/language/selection';
+import { trackColors } from '@/features/language/config';
 import { getCurriculumUnits } from '@/features/curriculum/catalog';
 import { FoundationPath } from '@/components/foundation-path';
 import { LearningRecommendation } from '@/components/learning-recommendation';
+import { LanguageSwitch } from '@/components/language-switch';
 
 export default function HomeScreen() {
   const [track, setTrack] = useSelectedLanguage();
@@ -32,7 +34,7 @@ export default function HomeScreen() {
         <TrackSwitch track={track} onChange={setTrack} />
       </View>
       <LearningRecommendation track={track} />
-      {track === 'EN' ? <EnglishHome /> : <GermanHome />}
+      {track === 'EN' ? <EnglishHome /> : track === 'DE' ? <GermanHome /> : <SpanishHome />}
     </AppScreen>
   );
 }
@@ -45,32 +47,7 @@ function TrackSwitch({
   track: LanguageTrack;
 }) {
   return (
-    <View accessibilityLabel="Practice language" style={styles.trackSwitch}>
-      {(['EN', 'DE'] as const).map((item) => (
-        <Pressable
-          accessibilityLabel={item === 'EN' ? 'English' : 'German'}
-          accessibilityRole="button"
-          accessibilityState={{ selected: item === track }}
-          key={item}
-          onPress={() => onChange(item)}
-          style={[
-            styles.trackButton,
-            item === track && styles.trackButtonSelected,
-            item === 'DE' && item === track && styles.trackButtonGerman,
-          ]}
-        >
-          <Text
-            style={[
-              styles.trackText,
-              item === track && styles.trackTextSelected,
-              item === 'DE' && item === track && styles.trackTextGerman,
-            ]}
-          >
-            {item}
-          </Text>
-        </Pressable>
-      ))}
-    </View>
+    <LanguageSwitch groupLabel="Practice language" onChange={onChange} show="code" track={track} />
   );
 }
 
@@ -144,19 +121,9 @@ function EnglishHome() {
       </View>
 
       <View style={styles.streakStrip}>
-        <View style={styles.streakDots}>
-          {[0, 1, 2, 3, 4, 5, 6].map((day) => (
-            <View
-              key={day}
-              style={[
-                styles.streakDot,
-                day < Math.min(completedIds.length, 7) && styles.streakDotDone,
-              ]}
-            />
-          ))}
-        </View>
         <Text style={styles.streakText}>
-          {completedIds.length} {completedIds.length === 1 ? 'lesson' : 'lessons'} completed
+          {completedEnglish} of {englishScenarios.length} listening dialogues practised. Repeat any
+          one when you want.
         </Text>
       </View>
     </>
@@ -252,6 +219,44 @@ function GermanHome() {
   );
 }
 
+function SpanishHome() {
+  const router = useRouter();
+  const completedIds = useProgressStore((state) => state.completedScenarioIds);
+  const scenarios = listeningScenarios.filter((scenario) => scenario.track === 'ES');
+  const completed = scenarios.filter((scenario) => completedIds.includes(scenario.id)).length;
+  return (
+    <>
+      <View style={styles.spanishHero}>
+        <Text style={styles.spanishHeroTitle}>Español for real life</Text>
+        <Text style={styles.spanishHeroCopy}>
+          From your first greeting to talking about your weekend, booking appointments and sorting
+          out travel problems.
+        </Text>
+      </View>
+      <FoundationPath compact showHero={false} track="ES" />
+      <EyebrowBlock>Use what you have learned</EyebrowBlock>
+      <View style={styles.taskList}>
+        <TaskCard
+          accessibilityLabel="Open Spanish listening lessons"
+          color={trackColors.ES.accent}
+          icon="volume-high"
+          onPress={() => router.push('/listening?track=ES' as Href)}
+          subtitle={`${completed} of ${scenarios.length} dialogues practised · replay at your pace`}
+          title="Listen"
+        />
+        <TaskCard
+          accessibilityLabel="Open live Spanish conversation"
+          color={Palette.ink}
+          icon="microphone"
+          onPress={() => router.push('/conversation?track=ES' as Href)}
+          subtitle="Try a short, friendly conversation"
+          title="Speak"
+        />
+      </View>
+    </>
+  );
+}
+
 function EyebrowBlock({ children }: { children: string }) {
   return (
     <View style={styles.eyebrowBlock}>
@@ -337,28 +342,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     letterSpacing: -0.9,
   },
-  trackSwitch: {
-    backgroundColor: Palette.soft,
-    borderRadius: 99,
-    flexDirection: 'row',
-    padding: 3,
-  },
-  trackButton: { borderRadius: 99, paddingHorizontal: 16, paddingVertical: 7 },
-  trackButtonSelected: { backgroundColor: Palette.ink },
-  trackButtonGerman: { backgroundColor: Palette.yellow },
-  trackText: { color: Palette.muted, fontFamily: VokaFonts.monoMedium, fontSize: 12 },
-  trackTextSelected: { color: Palette.cream },
-  trackTextGerman: { color: Palette.ink },
-  pressed: { opacity: 0.72, transform: [{ scale: 0.985 }] },
-  deadlineCard: {
-    alignItems: 'center',
-    backgroundColor: Palette.ink,
-    borderRadius: 28,
-    flexDirection: 'row',
-    gap: 20,
-    marginHorizontal: 18,
-    padding: 24,
-  },
   deadlineRing: {
     alignItems: 'center',
     borderColor: Palette.orange,
@@ -371,15 +354,14 @@ const styles = StyleSheet.create({
     width: 92,
   },
   deadlineRingInner: { alignItems: 'center', transform: [{ rotate: '35deg' }] },
-  deadlineDays: { color: Palette.cream, fontFamily: VokaFonts.displayExtraBold, fontSize: 26 },
+  deadlineDays: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 28 },
   deadlineUnit: {
     color: 'rgba(241,237,227,.5)',
-    fontFamily: VokaFonts.monoMedium,
-    fontSize: 9,
-    letterSpacing: 0.8,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: 12,
   },
   deadlineCopy: { flex: 1 },
-  deadlineTitle: { color: Palette.cream, fontFamily: VokaFonts.displayBold, fontSize: 20 },
+  deadlineTitle: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
   deadlineMeta: {
     color: 'rgba(241,237,227,.6)',
     fontFamily: VokaFonts.bodyMedium,
@@ -407,7 +389,7 @@ const styles = StyleSheet.create({
     width: 52,
   },
   taskCopy: { flex: 1 },
-  taskTitle: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 19 },
+  taskTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
   taskSubtitle: {
     color: Palette.secondary,
     fontFamily: VokaFonts.bodyMedium,
@@ -426,16 +408,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 16,
   },
-  streakDots: { flexDirection: 'row', gap: 5 },
-  streakDot: { backgroundColor: 'rgba(19,18,17,.15)', borderRadius: 99, height: 13, width: 13 },
-  streakDotDone: { backgroundColor: Palette.orange },
   streakText: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   germanHero: { paddingHorizontal: 22, paddingTop: 1 },
+  spanishHero: {
+    backgroundColor: Palette.violet,
+    borderRadius: 22,
+    gap: 7,
+    marginHorizontal: 18,
+    padding: 20,
+  },
+  spanishHeroTitle: {
+    color: Palette.white,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 22,
+  },
+  spanishHeroCopy: {
+    color: Palette.white,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: 14,
+    lineHeight: 21,
+  },
   greeting: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 34,
-    letterSpacing: -1.1,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
   },
   levelPill: {
     alignItems: 'center',
@@ -485,9 +481,8 @@ const styles = StyleSheet.create({
   pathLabelActive: { color: Palette.ink, fontFamily: VokaFonts.bodyBold },
   pathCurrent: {
     color: Palette.yellow,
-    fontFamily: VokaFonts.monoMedium,
-    fontSize: 9,
-    letterSpacing: 1,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: 12,
   },
   germanToday: {
     alignItems: 'center',
@@ -510,7 +505,7 @@ const styles = StyleSheet.create({
   germanTodayCopy: { flex: 1 },
   germanTodayTitle: {
     color: Palette.cream,
-    fontFamily: VokaFonts.displayBold,
+    fontFamily: VokaFonts.bodyBold,
     fontSize: 18,
     marginTop: 5,
   },
@@ -527,4 +522,14 @@ const styles = StyleSheet.create({
     minHeight: 52,
   },
   liveGermanText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 12 },
+  pressed: { opacity: 0.72, transform: [{ scale: 0.985 }] },
+  deadlineCard: {
+    alignItems: 'center',
+    backgroundColor: Palette.ink,
+    borderRadius: 28,
+    flexDirection: 'row',
+    gap: 20,
+    marginHorizontal: 18,
+    padding: 24,
+  },
 });

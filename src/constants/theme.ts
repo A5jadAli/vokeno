@@ -6,6 +6,9 @@ export const Palette = {
   ink: '#131211',
   orange: '#FF4A17',
   yellow: '#F2B705',
+  violet: '#5B3DF5',
+  violetSoft: '#B9AAFF',
+  violetTint: '#ECE8FF',
   white: '#FFFFFF',
   muted: '#6A6663',
   secondary: '#5F5B58',
@@ -13,16 +16,13 @@ export const Palette = {
   soft: 'rgba(19, 18, 17, 0.08)',
 } as const;
 
+// Plus Jakarta Sans for everything; Bricolage Grotesque only for the VOKENO wordmark.
 export const VokaFonts = {
-  displayMedium: 'BricolageGrotesque_500Medium',
-  displayBold: 'BricolageGrotesque_700Bold',
   displayExtraBold: 'BricolageGrotesque_800ExtraBold',
   body: 'PlusJakartaSans_400Regular',
   bodyMedium: 'PlusJakartaSans_500Medium',
   bodySemiBold: 'PlusJakartaSans_600SemiBold',
   bodyBold: 'PlusJakartaSans_700Bold',
-  mono: 'DMMono_400Regular',
-  monoMedium: 'DMMono_500Medium',
 } as const;
 
 export const Spacing = { half: 2, one: 4, two: 8, three: 16, four: 24, five: 32, six: 64 } as const;
@@ -50,8 +50,8 @@ export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 export const Fonts = {
   sans: VokaFonts.body,
   serif: VokaFonts.body,
-  rounded: VokaFonts.displayBold,
-  mono: VokaFonts.mono,
+  rounded: VokaFonts.bodyBold,
+  mono: VokaFonts.bodyMedium,
 };
 
 export const BottomTabInset = 76;

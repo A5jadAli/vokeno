@@ -12,6 +12,7 @@ import type { CoachingSignal } from '@/features/coaching/store-types';
 import { supabase } from '@/features/auth/supabase';
 import { parseFoundationProgress } from '@/features/foundations/progress';
 import { parseWritingProgress } from '@/features/writing/progress';
+import { parsePracticeLog, serializePracticeLog } from '@/features/habits/practice-log';
 
 export type LearningCloudState = PersistedCoachingState & {
   assessments: AssessmentsByTrack;
@@ -28,6 +29,7 @@ type LearningStateRow = {
   preferences: unknown;
   signals: unknown;
   speaking_practice_dates: unknown;
+  practice_log?: unknown;
   test_date: unknown;
   writing_practice_dates: unknown;
 };
@@ -46,6 +48,7 @@ function parsePreferences(value: unknown): SpeakingPreferences | null {
   const candidate = value as Record<string, unknown>;
   const en = candidate.EN as Record<string, unknown> | undefined;
   const de = candidate.DE as Record<string, unknown> | undefined;
+  const es = candidate.ES as Record<string, unknown> | undefined;
   if (
     !en ||
     !de ||
@@ -57,6 +60,11 @@ function parsePreferences(value: unknown): SpeakingPreferences | null {
   return {
     DE: { goal: de.goal as SpeakingGoal, reference: 'de-DE', ...parseLearningChoices(de) },
     EN: { goal: en.goal as SpeakingGoal, reference: 'en-GB', ...parseLearningChoices(en) },
+    ES: {
+      goal: es && goals.includes(es.goal as SpeakingGoal) ? (es.goal as SpeakingGoal) : 'everyday',
+      reference: 'es-MX',
+      ...(es ? parseLearningChoices(es) : {}),
+    },
   };
 }
 
@@ -81,7 +89,7 @@ function parseSignals(value: unknown): CoachingSignal[] {
     )
     .flatMap((entry) => {
       if (
-        (entry.track !== 'EN' && entry.track !== 'DE') ||
+        (entry.track !== 'EN' && entry.track !== 'DE' && entry.track !== 'ES') ||
         typeof entry.count !== 'number' ||
         typeof entry.focus !== 'string' ||
         typeof entry.label !== 'string' ||
@@ -109,7 +117,8 @@ function parseAssessments(value: unknown): AssessmentsByTrack {
   const candidate = value as Record<string, unknown>;
   const EN = parseSpokenAssessment(candidate.EN);
   const DE = parseSpokenAssessment(candidate.DE);
-  return { ...(EN ? { EN } : {}), ...(DE ? { DE } : {}) };
+  const ES = parseSpokenAssessment(candidate.ES);
+  return { ...(EN ? { EN } : {}), ...(DE ? { DE } : {}), ...(ES ? { ES } : {}) };
 }
 
 export async function loadLearningCloudState(userId: string) {
@@ -117,7 +126,7 @@ export async function loadLearningCloudState(userId: string) {
   const { data, error } = await supabase
     .from('user_learning_state')
     .select(
-      'assessments, coach_tone, completed_scenario_ids, completed_unit_ids, preferences, signals, speaking_practice_dates, test_date, writing_practice_dates, foundations, writing',
+      'assessments, coach_tone, completed_scenario_ids, completed_unit_ids, preferences, signals, speaking_practice_dates, test_date, writing_practice_dates, foundations, writing, practice_log',
     )
     .eq('user_id', userId)
     .maybeSingle();
@@ -140,9 +149,11 @@ export async function loadLearningCloudState(userId: string) {
       ({
         DE: { goal: 'everyday', reference: 'de-DE' },
         EN: { goal: 'interviews', reference: 'en-GB' },
+        ES: { goal: 'everyday', reference: 'es-MX' },
       } satisfies SpeakingPreferences),
     signals: parseSignals(row.signals),
     speakingPracticeDates: stringArray(row.speaking_practice_dates, 30),
+    practiceLog: parsePracticeLog(row.practice_log),
     testDate:
       typeof row.test_date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(row.test_date)
         ? row.test_date
@@ -163,6 +174,7 @@ export async function saveLearningCloudState(userId: string, state: LearningClou
     preferences: state.preferences,
     signals: state.signals,
     speaking_practice_dates: state.speakingPracticeDates,
+    practice_log: serializePracticeLog(state.practiceLog),
     test_date: state.testDate,
     writing_practice_dates: state.writingPracticeDates,
     updated_at: new Date().toISOString(),

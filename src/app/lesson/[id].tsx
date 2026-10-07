@@ -6,9 +6,12 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { AnswerChoice } from '@/components/answer-choice';
 import { Palette, VokaFonts } from '@/constants/theme';
+import { optionOrder } from '@/features/foundations/catalog';
 import { getScenario, type SubtitleMode } from '@/features/listening/scenarios';
 import { useProgressStore } from '@/features/progress/store';
 import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
+import { trackColors } from '@/features/language/config';
+import { useCoachingStore } from '@/features/coaching/store';
 
 export default function ListeningLessonScreen() {
   const router = useRouter();
@@ -39,6 +42,7 @@ export default function ListeningLessonScreen() {
   };
 
   const activeLine = scenario.lines[lineIndex];
+  const colors = trackColors[scenario.track];
   const isCorrect = selectedAnswer === scenario.question.correctIndex;
   const subtitleLabel =
     subtitleMode === 'target'
@@ -53,7 +57,10 @@ export default function ListeningLessonScreen() {
       return;
     }
     setChecked(true);
-    if (isCorrect) completeScenario(scenario.id);
+    if (isCorrect) {
+      completeScenario(scenario.id);
+      useCoachingStore.getState().recordPractice('listening');
+    }
   };
 
   return (
@@ -61,7 +68,9 @@ export default function ListeningLessonScreen() {
       <View style={styles.header}>
         <HeaderBack dark />
         <View style={styles.headerTitle}>
-          <Eyebrow color={Palette.orange}>{scenario.level} · Real-life listening</Eyebrow>
+          <Eyebrow color={trackColors[scenario.track].onDark}>
+            {scenario.level} · Real-life listening
+          </Eyebrow>
           <Text numberOfLines={1} style={styles.title}>
             {scenario.title}
           </Text>
@@ -84,13 +93,17 @@ export default function ListeningLessonScreen() {
             accessibilityState={{ busy: speech.loading }}
             aria-busy={speech.loading}
             onPress={() => (speech.busy ? speech.stop() : void replay())}
-            style={({ pressed }) => [styles.playButton, pressed && styles.pressed]}
+            style={({ pressed }) => [
+              styles.playButton,
+              { backgroundColor: colors.accent },
+              pressed && styles.pressed,
+            ]}
           >
             {speech.loading ? (
-              <ActivityIndicator color={Palette.ink} />
+              <ActivityIndicator color={colors.onAccent} />
             ) : (
               <MaterialCommunityIcons
-                color={Palette.ink}
+                color={colors.onAccent}
                 name={isPlaying ? 'stop' : 'play'}
                 size={31}
               />
@@ -115,14 +128,14 @@ export default function ListeningLessonScreen() {
               setIsSlow(!isSlow);
               if (speech.busy) void replay(!isSlow);
             }}
-            style={[styles.control, isSlow && styles.controlActive]}
+            style={[styles.control, isSlow && { backgroundColor: colors.accent }]}
           >
             <MaterialCommunityIcons
               color={isSlow ? Palette.ink : Palette.cream}
               name="speedometer-slow"
               size={17}
             />
-            <Text style={[styles.controlText, isSlow && styles.controlTextActive]}>Slow</Text>
+            <Text style={[styles.controlText, isSlow && { color: colors.onAccent }]}>Slow</Text>
           </Pressable>
           <Pressable
             accessibilityRole="button"
@@ -149,7 +162,7 @@ export default function ListeningLessonScreen() {
             <Text style={styles.subtitleOff}>Subtitles are off. Listen for the situation.</Text>
           ) : (
             <>
-              <Text style={styles.speaker}>{activeLine.speaker}</Text>
+              <Text style={[styles.speaker, { color: colors.onDark }]}>{activeLine.speaker}</Text>
               <Text style={styles.subtitle}>
                 {subtitleMode === 'target' ? activeLine.text : activeLine.translation}
               </Text>
@@ -163,8 +176,8 @@ export default function ListeningLessonScreen() {
         <View style={styles.phraseList}>
           {scenario.phrases.slice(0, 3).map((phrase) => (
             <View key={phrase.heard} style={styles.phraseRow}>
-              <View style={styles.heardPill}>
-                <Text style={styles.heardText}>{phrase.heard}</Text>
+              <View style={[styles.heardPill, { backgroundColor: colors.accent }]}>
+                <Text style={[styles.heardText, { color: colors.onAccent }]}>{phrase.heard}</Text>
               </View>
               <View style={styles.phraseCopy}>
                 <Text style={styles.fullPhrase}>{phrase.full}</Text>
@@ -178,7 +191,8 @@ export default function ListeningLessonScreen() {
           <Eyebrow>Quick check</Eyebrow>
           <Text style={styles.question}>{scenario.question.prompt}</Text>
           <View style={styles.answers}>
-            {scenario.question.options.map((option, index) => {
+            {optionOrder(scenario.id, scenario.question.options.length).map((index) => {
+              const option = scenario.question.options[index];
               const selected = selectedAnswer === index;
               const showCorrect = checked && index === scenario.question.correctIndex;
               const showWrong = checked && selected && !showCorrect;
@@ -253,7 +267,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: { flex: 1 },
   headerSpacer: { width: 40 },
-  title: { color: Palette.cream, fontFamily: VokaFonts.displayBold, fontSize: 20, marginTop: 3 },
+  title: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 18, marginTop: 3 },
   player: { paddingHorizontal: 18, paddingTop: 12 },
   playerTop: { alignItems: 'center', flexDirection: 'row', gap: 18 },
   audioStatus: {
@@ -285,20 +299,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 13,
     paddingVertical: 9,
   },
-  controlActive: { backgroundColor: Palette.orange },
-  controlText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 11 },
-  controlTextActive: { color: Palette.ink },
+  controlText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   subtitleArea: { justifyContent: 'center', minHeight: 150, paddingVertical: 22 },
   speaker: {
     color: Palette.orange,
-    fontFamily: VokaFonts.monoMedium,
-    fontSize: 10,
-    letterSpacing: 1.5,
-    textTransform: 'uppercase',
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: 12,
   },
   subtitle: {
     color: Palette.cream,
-    fontFamily: VokaFonts.displayBold,
+    fontFamily: VokaFonts.bodyBold,
     fontSize: 28,
     lineHeight: 35,
     marginTop: 8,
@@ -323,22 +333,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 11,
     paddingVertical: 7,
   },
-  heardText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 11 },
+  heardText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 12 },
   phraseCopy: { flex: 1 },
   fullPhrase: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 13 },
   meaning: {
     color: Palette.secondary,
     fontFamily: VokaFonts.body,
-    fontSize: 11,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 17,
     marginTop: 2,
   },
   questionBlock: { borderTopColor: Palette.line, borderTopWidth: 1, marginTop: 24, paddingTop: 22 },
   question: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 23,
-    lineHeight: 28,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 22,
+    lineHeight: 27,
     marginTop: 8,
   },
   answers: { gap: 8, marginTop: 15 },
@@ -352,7 +362,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
     padding: 17,
   },
-  checkText: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 17 },
+  checkText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
   disabled: { opacity: 0.35 },
   pressed: { opacity: 0.72 },
 });

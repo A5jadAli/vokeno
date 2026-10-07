@@ -68,6 +68,21 @@ describe('guided lesson content', () => {
     );
   });
 
+  it('builds Spanish from A1 to A2 in level order with audio-checked tasks', () => {
+    const spanish = getTrackLessons('ES');
+    expect(spanish[0].id).toBe('es-first-words');
+    for (const level of ['A1', 'A2'] as const)
+      expect(spanish.filter((lesson) => lesson.level === level).length).toBeGreaterThanOrEqual(12);
+    expect(spanish.map((lesson) => lesson.level)).toEqual(
+      [...spanish.map((lesson) => lesson.level)].sort((a, b) => levelRank[a] - levelRank[b]),
+    );
+    expect(spanish.every((lesson) => lesson.checks.some((check) => check.audio))).toBe(true);
+    expect(spanish.every((lesson) => lesson.pronunciation)).toBe(true);
+    const prices = spanish.find((lesson) => lesson.id === 'es-prices')!;
+    expect(checkFoundationWriting(prices, 'Cuanto cuesta?')).toBe(true);
+    expect(checkFoundationWriting(prices, 'Cuanto cuestan?')).toBe(false);
+  });
+
   it('trains listening in most lessons and gives pronunciation guidance for speech', () => {
     for (const track of ['DE', 'EN'] as const) {
       const lessons = getTrackLessons(track);
@@ -132,7 +147,7 @@ describe('lesson progress', () => {
     expect(parseFoundationProgress(null)).toEqual({});
   });
 
-  it('keeps worst-case progress for every lesson under the 64 KB cloud limit', () => {
+  it('keeps worst-case progress within the 256 KB cloud limit and 1 KB per lesson', () => {
     const at = '2026-09-23T10:00:00.000Z';
     const full = Object.fromEntries(
       foundationLessons.map((lesson) => [
@@ -157,7 +172,10 @@ describe('lesson progress', () => {
     expect(Object.keys(parsed)).toHaveLength(foundationLessons.length);
     // Postgres measures jsonb::text, which adds a space after every comma and colon.
     const postgresText = JSON.stringify(parsed).replace(/,/g, ', ').replace(/:/g, ': ');
-    expect(new TextEncoder().encode(postgresText).length).toBeLessThan(65536);
+    const bytes = new TextEncoder().encode(postgresText).length;
+    expect(bytes).toBeLessThan(262144);
+    // A per-lesson budget keeps room for future courses without nearing the limit.
+    expect(bytes / foundationLessons.length).toBeLessThan(1024);
   });
 
   it('keeps the latest draft while combining recorded attempts from two devices', () => {

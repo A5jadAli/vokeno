@@ -2,7 +2,7 @@
   "expo": {
     "name": "Vokeno",
     "slug": "voka",
-    "version": "1.6.0",
+    "version": "1.7.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "voka",
@@ -21,7 +21,9 @@
         "android.permission.USE_BIOMETRIC",
         "android.permission.USE_FINGERPRINT",
         "android.permission.VIBRATE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.USE_EXACT_ALARM"
       ],
       "adaptiveIcon": {
         "backgroundColor": "#131211",
@@ -57,7 +59,14 @@
       "./plugins/with-webrtc-media-audio",
       "./plugins/with-single-top-main-activity",
       "@react-native-community/datetimepicker",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#FF4A17"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

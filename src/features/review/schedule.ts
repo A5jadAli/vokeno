@@ -8,7 +8,7 @@ import type { FoundationEntry, FoundationProgress } from '@/features/foundations
 
 /** Days until the next review for each Leitner box. Expanding gaps favour long-term retention. */
 export const REVIEW_INTERVALS = [1, 3, 7, 16, 35, 90] as const;
-export const REVIEW_SESSION_SIZE = 12;
+export const REVIEW_SESSION_SIZE = 8;
 
 export const dayNumber = (time = Date.now()) => Math.floor(time / 86_400_000);
 

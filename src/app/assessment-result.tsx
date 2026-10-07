@@ -7,6 +7,7 @@ import { ReportContent } from '@/components/report-content';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { useAssessmentStore } from '@/features/assessment/store';
 import { useSelectedLanguage } from '@/features/language/selection';
+import { languageDetails, trackColors } from '@/features/language/config';
 
 export default function AssessmentResultScreen() {
   const router = useRouter();
@@ -32,8 +33,8 @@ export default function AssessmentResultScreen() {
             <View style={styles.levelCircle}>
               <Text style={styles.level}>{assessment.estimatedLevel}</Text>
             </View>
-            <Eyebrow color={Palette.orange}>
-              {track === 'DE' ? 'German' : 'English'} · {assessment.confidence} confidence
+            <Eyebrow color={trackColors[track].onDark}>
+              {languageDetails[track].name} · {assessment.confidence} confidence
             </Eyebrow>
             <Text style={styles.title}>Your current spoken range</Text>
             <Text style={styles.copy}>{assessment.summary}</Text>
@@ -58,7 +59,7 @@ export default function AssessmentResultScreen() {
             <View style={styles.icon}>
               <MaterialCommunityIcons color={Palette.ink} name="account-voice" size={38} />
             </View>
-            <Eyebrow color={Palette.orange}>No result yet</Eyebrow>
+            <Eyebrow color={trackColors[track].onDark}>No result yet</Eyebrow>
             <Text style={styles.title}>Complete a real conversation first.</Text>
             <Text style={styles.copy}>
               Vokeno only estimates a level after it has enough transcript evidence. It never fills
@@ -136,24 +137,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: 82,
   },
-  level: { color: Palette.ink, fontFamily: VokaFonts.displayExtraBold, fontSize: 32 },
+  level: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 28 },
   title: {
     color: Palette.cream,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 34,
-    letterSpacing: -1,
-    lineHeight: 39,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
+    lineHeight: 34,
     marginTop: 10,
   },
   copy: {
     color: 'rgba(241,237,227,.68)',
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 14,
-    lineHeight: 22,
+    lineHeight: 21,
     marginTop: 12,
   },
   resultCard: { backgroundColor: '#282623', borderRadius: 20, gap: 10, marginTop: 18, padding: 16 },
-  resultTitle: { color: Palette.cream, fontFamily: VokaFonts.displayBold, fontSize: 17 },
+  resultTitle: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
   resultRow: { alignItems: 'flex-start', flexDirection: 'row', gap: 9 },
   resultText: {
     color: 'rgba(241,237,227,.72)',
@@ -165,8 +165,8 @@ const styles = StyleSheet.create({
   disclaimer: {
     color: 'rgba(241,237,227,.4)',
     fontFamily: VokaFonts.body,
-    fontSize: 10,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 16,
   },
   button: {

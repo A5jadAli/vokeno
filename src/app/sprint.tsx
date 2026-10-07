@@ -8,8 +8,10 @@ import { Palette, VokaFonts } from '@/constants/theme';
 import { speakingGoalCopy, useCoachingStore } from '@/features/coaching/store';
 import { examMockUnitIds, getCurriculumUnits } from '@/features/curriculum/catalog';
 import { useSelectedLanguage } from '@/features/language/selection';
+import { languageDetails, trackColors } from '@/features/language/config';
 import { formatTestDate, getTestDatePlan } from '@/features/profile/test-date';
 import { FoundationPath } from '@/components/foundation-path';
+import { LanguageSwitch } from '@/components/language-switch';
 
 export default function SprintScreen() {
   const router = useRouter();
@@ -19,29 +21,22 @@ export default function SprintScreen() {
   const testDate = useCoachingStore((state) => state.testDate);
   const testPlan = getTestDatePlan(testDate);
   const units = getCurriculumUnits(track);
-  const accent = track === 'EN' ? Palette.orange : Palette.yellow;
+  const accent = languageDetails[track].accent;
 
   return (
     <AppScreen activeNav="plan">
       <View style={styles.header}>
         <View style={styles.headerCopy}>
-          <Eyebrow>{track === 'EN' ? 'English' : 'German'} learning path</Eyebrow>
+          <Eyebrow>{languageDetails[track].name} learning path</Eyebrow>
           <Text style={styles.title}>Learn</Text>
         </View>
-        <View style={styles.trackSwitch}>
-          {(['EN', 'DE'] as const).map((item) => (
-            <Pressable
-              accessibilityLabel={item === 'EN' ? 'English learning path' : 'German learning path'}
-              accessibilityRole="button"
-              accessibilityState={{ selected: track === item }}
-              key={item}
-              onPress={() => setTrack(item)}
-              style={[styles.trackButton, track === item && { backgroundColor: accent }]}
-            >
-              <Text style={styles.trackText}>{item}</Text>
-            </Pressable>
-          ))}
-        </View>
+        <LanguageSwitch
+          groupLabel="Learning path language"
+          itemLabel={(name) => `${name} learning path`}
+          onChange={setTrack}
+          show="code"
+          track={track}
+        />
       </View>
 
       {testDate && testPlan ? (
@@ -69,26 +64,47 @@ export default function SprintScreen() {
         {(
           [
             ['Review', 'Phrases due today', 'cards-outline', `/review?track=${track}`],
-            ['Listening', 'Real dialogues, A1–B2', 'headphones', `/listening?track=${track}`],
+            [
+              'Listening',
+              track === 'ES' ? 'Everyday dialogues, A1' : 'Real dialogues, A1–B2',
+              'headphones',
+              `/listening?track=${track}`,
+            ],
             [
               'Writing',
               'AI feedback, timed mode',
               'pencil-outline',
               `/activity/write?track=${track}`,
             ],
-            [
-              'Speaking mock',
-              track === 'EN' ? 'IELTS Parts 2 and 3' : 'Goethe B1 Sprechen',
-              'card-text-outline',
-              `/speaking-mock?track=${track}`,
-            ],
+            ...(track === 'ES'
+              ? []
+              : ([
+                  [
+                    'Speaking mock',
+                    track === 'EN' ? 'IELTS Parts 2 and 3' : 'Goethe B1 Sprechen',
+                    'card-text-outline',
+                    `/speaking-mock?track=${track}`,
+                  ],
+                ] as [string, string, IconName, string][])),
             ...(track === 'EN'
               ? [
                   ['Reading', 'Main idea, detail, T/F/NG', 'book-open-variant', '/reading'],
                   ['IELTS guide', 'All four papers', 'school-outline', '/exam-practice'],
                 ]
-              : [['Vocabulary', 'Nouns with articles', 'cards-variant', '/vocabulary']]),
+              : track === 'DE'
+                ? [['Vocabulary', 'Nouns with articles', 'cards-variant', '/vocabulary']]
+                : []),
             ['Placement', 'Find your level', 'compass-outline', `/placement?track=${track}`],
+            ...(track === 'ES'
+              ? ([
+                  [
+                    'Spoken check',
+                    'A short, non-certified estimate',
+                    'account-voice',
+                    '/level-check',
+                  ],
+                ] as [string, string, IconName, string][])
+              : []),
           ] as [string, string, IconName, string][]
         ).map(([title, copy, icon, href]) => (
           <Pressable
@@ -99,7 +115,7 @@ export default function SprintScreen() {
             style={({ pressed }) => [styles.tool, pressed && styles.pressed]}
           >
             <View style={[styles.toolIcon, { backgroundColor: accent }]}>
-              <MaterialCommunityIcons color={Palette.ink} name={icon} size={22} />
+              <MaterialCommunityIcons color={trackColors[track].onAccent} name={icon} size={22} />
             </View>
             <Text style={styles.toolTitle}>{title}</Text>
             <Text style={styles.toolCopy}>{copy}</Text>
@@ -115,9 +131,11 @@ export default function SprintScreen() {
         onPress={() => router.push(`/accent?track=${track}`)}
         style={({ pressed }) => [styles.goalCard, pressed && styles.pressed]}
       >
-        <MaterialCommunityIcons color={accent} name="target" size={23} />
+        <MaterialCommunityIcons color={trackColors[track].onDark} name="target" size={23} />
         <View style={styles.goalCopy}>
-          <Eyebrow color={accent}>Your goal · {speakingGoalCopy[goal].label}</Eyebrow>
+          <Eyebrow color={trackColors[track].onDark}>
+            Your goal · {speakingGoalCopy[goal].label}
+          </Eyebrow>
           <Text style={styles.goalText}>{speakingGoalCopy[goal].description}</Text>
         </View>
         <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={22} />
@@ -143,7 +161,11 @@ export default function SprintScreen() {
             >
               <View style={[styles.level, { backgroundColor: complete ? accent : Palette.ink }]}>
                 {complete ? (
-                  <MaterialCommunityIcons color={Palette.ink} name="check" size={19} />
+                  <MaterialCommunityIcons
+                    color={trackColors[track].onAccent}
+                    name="check"
+                    size={19}
+                  />
                 ) : (
                   <Text style={styles.levelText}>{unit.level}</Text>
                 )}
@@ -177,7 +199,7 @@ type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 const styles = StyleSheet.create({
   sectionTitle: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayBold,
+    fontFamily: VokaFonts.bodyBold,
     fontSize: 22,
     marginBottom: 12,
     marginHorizontal: 18,
@@ -207,35 +229,17 @@ const styles = StyleSheet.create({
   headerCopy: { flex: 1 },
   title: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 31,
-    letterSpacing: -1,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
     lineHeight: 34,
     marginTop: 6,
-  },
-  trackSwitch: {
-    backgroundColor: Palette.soft,
-    borderRadius: 99,
-    flexDirection: 'row',
-    padding: 3,
-  },
-  trackButton: { borderRadius: 99, paddingHorizontal: 12, paddingVertical: 8 },
-  trackText: { color: Palette.ink, fontFamily: VokaFonts.monoMedium, fontSize: 10 },
-  goalCard: {
-    alignItems: 'center',
-    backgroundColor: Palette.ink,
-    borderRadius: 22,
-    flexDirection: 'row',
-    gap: 12,
-    marginHorizontal: 18,
-    padding: 17,
   },
   goalCopy: { flex: 1 },
   goalText: {
     color: 'rgba(241,237,227,.65)',
     fontFamily: VokaFonts.body,
-    fontSize: 10,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 5,
   },
   testPlanCard: {
@@ -250,15 +254,15 @@ const styles = StyleSheet.create({
   },
   testPlanTitle: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayBold,
+    fontFamily: VokaFonts.bodyBold,
     fontSize: 18,
     marginTop: 4,
   },
   testPlanCopy: {
     color: 'rgba(19,18,17,.68)',
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 10,
-    lineHeight: 15,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 3,
   },
   path: { gap: 12, marginTop: 22, paddingHorizontal: 18 },
@@ -288,14 +292,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 52,
   },
-  levelText: { color: Palette.cream, fontFamily: VokaFonts.monoMedium, fontSize: 12 },
+  levelText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   unitCopy: { flex: 1 },
-  unitTitle: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 19, marginTop: 4 },
+  unitTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18, marginTop: 4 },
   outcome: {
     color: Palette.secondary,
     fontFamily: VokaFonts.body,
-    fontSize: 10,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 3,
   },
   focusRow: { alignItems: 'center', flexDirection: 'row', gap: 5, marginTop: 7 },
@@ -303,16 +307,25 @@ const styles = StyleSheet.create({
     color: Palette.muted,
     flex: 1,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 9,
-    lineHeight: 14,
+    fontSize: 12,
+    lineHeight: 18,
   },
   note: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
-    fontSize: 10,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 18,
     margin: 22,
     textAlign: 'center',
   },
   pressed: { opacity: 0.72, transform: [{ scale: 0.99 }] },
+  goalCard: {
+    alignItems: 'center',
+    backgroundColor: Palette.ink,
+    borderRadius: 22,
+    flexDirection: 'row',
+    gap: 12,
+    marginHorizontal: 18,
+    padding: 17,
+  },
 });

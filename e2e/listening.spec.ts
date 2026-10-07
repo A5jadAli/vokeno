@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/');
 });
 
-test('matches the two-track home and has no horizontal overflow', async ({ page }) => {
+test('matches the three-track home and has no horizontal overflow', async ({ page }) => {
   await expect(page.getByText('Build real-world listening')).toBeVisible();
   await expect(page.getByText('Choose your next practice')).toBeVisible();
   await expect(page.getByLabel('Open live English conversation')).toBeVisible();
@@ -23,6 +23,13 @@ test('matches the two-track home and has no horizontal overflow', async ({ page 
   await expect(page.getByText('Everyday German').first()).toBeVisible();
   await expect(page.getByText('A1 · Erster Kontakt')).toBeVisible();
   await expect(page.getByLabel('Open German vocabulary')).toBeVisible();
+  await page.getByRole('button', { name: 'Spanish', exact: true }).click();
+  await expect(page.getByText('Español for real life')).toBeVisible();
+  await expect(page.getByLabel('Open live Spanish conversation')).toBeVisible();
+  const spanishOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+  );
+  expect(spanishOverflow).toBe(false);
 });
 
 test('connects all five primary navigation destinations', async ({ page }) => {

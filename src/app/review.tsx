@@ -13,12 +13,15 @@ import {
   lessonText,
   PrimaryButton,
   TextButton,
+  PrimaryAccent,
 } from '@/components/lesson-ui';
 import { AppScreen } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { freshFoundationEntry } from '@/features/foundations/progress';
 import { useSelectedLanguage } from '@/features/language/selection';
+import { languageDetails, trackColors } from '@/features/language/config';
+import type { LanguageTrack } from '@/features/language/config';
 import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
 import {
   buildReviewSession,
@@ -30,15 +33,19 @@ import {
 
 export default function ReviewScreen() {
   const [track] = useSelectedLanguage();
-  return <ReviewSession key={track} track={track} />;
+  return (
+    <PrimaryAccent background={trackColors[track].accent} text={trackColors[track].onAccent}>
+      <ReviewSession key={track} track={track} />
+    </PrimaryAccent>
+  );
 }
 
-function ReviewSession({ track }: { track: 'DE' | 'EN' }) {
+function ReviewSession({ track }: { track: LanguageTrack }) {
   const router = useRouter();
   const progress = useCoachingStore((state) => state.foundations);
   const save = useCoachingStore((state) => state.saveFoundation);
-  const speech = useLessonSpeech(track === 'EN' ? 'en-GB' : 'de-DE');
-  const language = track === 'EN' ? 'English' : 'German';
+  const speech = useLessonSpeech(languageDetails[track].speechLocale);
+  const language = languageDetails[track].name;
   // Build once so grading does not reshuffle the running session.
   const [queue, setQueue] = useState<ReviewItem[]>(() => buildReviewSession(progress, track));
   const [total] = useState(queue.length);
@@ -54,6 +61,7 @@ function ReviewSession({ track }: { track: 'DE' | 'EN' }) {
     // Only the first attempt in a session moves the card; retries are for learning.
     if (!graded.current.has(item.key)) {
       graded.current.add(item.key);
+      useCoachingStore.getState().recordPractice('review');
       const entry =
         useCoachingStore.getState().foundations[item.lessonId] ?? freshFoundationEntry();
       save(item.lessonId, gradeCard(entry, item.phraseIndex, correct, dayNumber()));
@@ -293,7 +301,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
   },
-  statValue: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 22 },
+  statValue: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22 },
   listen: { alignItems: 'center', flexDirection: 'row', gap: 16, justifyContent: 'center' },
   answer: {
     alignItems: 'center',
@@ -307,8 +315,8 @@ const styles = StyleSheet.create({
     color: Palette.ink,
     flex: 1,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 20,
-    lineHeight: 27,
+    fontSize: 18,
+    lineHeight: 24,
   },
   selfGrade: { flexDirection: 'row', gap: 10 },
 });

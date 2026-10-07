@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 18,
   },
-  headerTitle: { color: Palette.cream, fontFamily: VokaFonts.displayBold, fontSize: 20 },
+  headerTitle: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
   spacer: { width: 40 },
   body: { padding: 24, paddingTop: 30 },
   icon: {
@@ -117,17 +117,16 @@ const styles = StyleSheet.create({
   },
   title: {
     color: Palette.cream,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 36,
-    letterSpacing: -1.1,
-    lineHeight: 41,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
+    lineHeight: 34,
     marginTop: 9,
   },
   copy: {
     color: 'rgba(241,237,227,.63)',
     fontFamily: VokaFonts.body,
     fontSize: 13,
-    lineHeight: 21,
+    lineHeight: 20,
     marginTop: 11,
   },
   dateButton: {
@@ -156,7 +155,7 @@ const styles = StyleSheet.create({
     marginTop: 25,
     minHeight: 58,
   },
-  saveText: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 17 },
+  saveText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
   removeText: {
     color: '#FFB49E',
     fontFamily: VokaFonts.bodyBold,

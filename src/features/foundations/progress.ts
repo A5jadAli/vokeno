@@ -1,8 +1,9 @@
 import { foundationLessons } from './catalog';
 import { MAX_LESSON_CHECKS } from './types';
 
-// Keep the per-lesson history short: cloud state for every lesson must stay under 64 KB.
-export const MAX_FOUNDATION_ATTEMPTS = 5;
+// Keep the per-lesson history short: cloud state for every lesson must stay under 256 KB
+// (about 1 KB per lesson in the worst case).
+export const MAX_FOUNDATION_ATTEMPTS = 4;
 export const MAX_DRAFT_LENGTH = 160;
 
 export type FoundationAttempt = { at: string; correctFirstTry: number; spoken: boolean };

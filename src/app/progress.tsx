@@ -12,6 +12,9 @@ import { daysUntilTest, formatTestDate } from '@/features/profile/test-date';
 import { useProgressStore } from '@/features/progress/store';
 import { useLanguageSelection } from '@/features/language/selection';
 import { FoundationPath } from '@/components/foundation-path';
+import { StreakStrip } from '@/components/streak-strip';
+import { useHabits } from '@/features/habits/use-habits';
+import { trackColors } from '@/features/language/config';
 
 export default function ProgressScreen() {
   const router = useRouter();
@@ -19,18 +22,16 @@ export default function ProgressScreen() {
   const trackUnits = curriculumUnits.filter((unit) => unit.track === track);
   const completedIds = useProgressStore((state) => state.completedScenarioIds);
   const completedUnitIds = useCoachingStore((state) => state.completedUnitIds);
-  const foundations = useCoachingStore((state) => state.foundations);
-  const coachingSignals = useCoachingStore((state) => state.signals);
+  const coachingSignals = useCoachingStore((state) => state.signals).filter(
+    (signal) => signal.track === track,
+  );
   const speakingPracticeDates = useCoachingStore((state) => state.speakingPracticeDates);
   const testDate = useCoachingStore((state) => state.testDate);
   const writingPracticeDates = useCoachingStore((state) => state.writingPracticeDates);
   const daysRemaining = daysUntilTest(testDate);
-  const completed = completedIds.length;
-  const learningMilestones =
-    completed +
-    completedUnitIds.length +
-    writingPracticeDates.length +
-    Object.values(foundations).filter((entry) => entry.attempts.length).length;
+  const habits = useHabits(track);
+  const next =
+    habits.plan.steps.find((step) => !step.done) ?? habits.plan.bonus ?? habits.plan.steps[0];
   const completedFor = (track: LanguageTrack) =>
     listeningScenarios.filter(
       (scenario) => scenario.track === track && completedIds.includes(scenario.id),
@@ -42,15 +43,7 @@ export default function ProgressScreen() {
     <AppScreen activeNav="progress">
       <Text style={styles.title}>Your progress</Text>
       <SyncStatusNotice />
-      <View style={styles.summaryCard}>
-        <View style={styles.summaryIcon}>
-          <MaterialCommunityIcons color={Palette.ink} name="check-decagram" size={30} />
-        </View>
-        <View style={styles.summaryCopy}>
-          <Text style={styles.completedValue}>{learningMilestones}</Text>
-          <Text style={styles.summaryLabel}>recorded practice activities</Text>
-        </View>
-      </View>
+      <StreakStrip streak={habits.streak} track={track} week={habits.week} />
 
       {testDate ? (
         <Pressable
@@ -78,20 +71,9 @@ export default function ProgressScreen() {
 
       <View style={styles.activitySection}>
         <Eyebrow>Learning activity</Eyebrow>
-        <View style={styles.activityDots}>
-          {Array.from({ length: 7 }, (_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.activityDot,
-                index < Math.min(learningMilestones, 7) && styles.activityDotDone,
-              ]}
-            />
-          ))}
-        </View>
         <Text style={styles.activityHint}>
-          Finish listening, speaking-path, or writing practice to add progress here. Vokeno does not
-          invent streaks or scores.
+          Your streak counts the days you practise. One missed day a week is covered as a rest day,
+          and nothing you have learned is lost when a run ends.
         </Text>
       </View>
 
@@ -122,6 +104,13 @@ export default function ProgressScreen() {
           label="German listening"
           total={totalFor('DE')}
           track="DE"
+        />
+        <TrackCard
+          color={trackColors.ES.accent}
+          completed={completedFor('ES')}
+          label="Spanish listening"
+          total={totalFor('ES')}
+          track="ES"
         />
       </View>
 
@@ -170,23 +159,17 @@ export default function ProgressScreen() {
       <View style={styles.nextCard}>
         <View style={styles.nextCopy}>
           <Eyebrow color={Palette.orange}>Next step</Eyebrow>
-          <Text style={styles.nextTitle}>
-            {learningMilestones
-              ? 'Keep the momentum with a live conversation.'
-              : 'Start with a real conversation.'}
-          </Text>
-          <Text style={styles.nextDescription}>
-            Live captions and interruption support stay available while you practise.
-          </Text>
+          <Text style={styles.nextTitle}>{next.title}</Text>
+          <Text style={styles.nextDescription}>{next.why}</Text>
         </View>
         <Pressable
-          accessibilityLabel="Start live conversation from progress"
+          accessibilityLabel={`${next.action}: ${next.title}`}
           accessibilityRole="button"
-          onPress={() => router.push(`/conversation?track=${track}`)}
+          onPress={() => router.push(next.href as Href)}
           style={({ pressed }) => [styles.nextButton, pressed && styles.pressed]}
         >
           <MaterialCommunityIcons color={Palette.ink} name="microphone" size={20} />
-          <Text style={styles.nextButtonText}>Practise now</Text>
+          <Text style={styles.nextButtonText}>{next.action}</Text>
         </Pressable>
       </View>
     </AppScreen>
@@ -227,7 +210,7 @@ function TrackCard({
   return (
     <View style={styles.trackCard}>
       <View style={[styles.trackBadge, { backgroundColor: color }]}>
-        <Text style={styles.trackValue}>{track}</Text>
+        <Text style={[styles.trackValue, { color: trackColors[track].onAccent }]}>{track}</Text>
       </View>
       <Text style={styles.trackCount}>
         {completed}/{total}
@@ -240,38 +223,10 @@ function TrackCard({
 const styles = StyleSheet.create({
   title: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 34,
-    letterSpacing: -1.1,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
     paddingHorizontal: 22,
     paddingTop: 14,
-  },
-  summaryCard: {
-    alignItems: 'center',
-    backgroundColor: Palette.ink,
-    borderRadius: 28,
-    flexDirection: 'row',
-    gap: 18,
-    marginHorizontal: 18,
-    marginTop: 22,
-    padding: 24,
-  },
-  summaryIcon: {
-    alignItems: 'center',
-    backgroundColor: Palette.orange,
-    borderRadius: 20,
-    height: 64,
-    justifyContent: 'center',
-    width: 64,
-  },
-  summaryCopy: { flex: 1 },
-  completedValue: { color: Palette.cream, fontFamily: VokaFonts.displayExtraBold, fontSize: 34 },
-  summaryLabel: {
-    color: 'rgba(241,237,227,.62)',
-    fontFamily: VokaFonts.bodyMedium,
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 2,
   },
   activitySection: { paddingHorizontal: 22, paddingTop: 24 },
   testDateCard: {
@@ -289,18 +244,15 @@ const styles = StyleSheet.create({
   testDateCopy: { flex: 1 },
   testDateTitle: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayBold,
+    fontFamily: VokaFonts.bodyBold,
     fontSize: 18,
     marginTop: 4,
   },
-  activityDots: { flexDirection: 'row', gap: 8, marginTop: 14 },
-  activityDot: { backgroundColor: Palette.soft, borderRadius: 12, flex: 1, height: 42 },
-  activityDotDone: { backgroundColor: Palette.orange },
   activityHint: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
-    fontSize: 11,
-    lineHeight: 17,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 10,
   },
   trackCards: { flexDirection: 'row', gap: 12, paddingHorizontal: 18, paddingTop: 18 },
@@ -316,14 +268,14 @@ const styles = StyleSheet.create({
   },
   practiceCount: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 24,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 22,
     marginTop: 5,
   },
   practiceLabel: {
     color: Palette.muted,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 10,
+    fontSize: 12,
     marginTop: 2,
   },
   trackCard: {
@@ -342,17 +294,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 52,
   },
-  trackValue: { color: Palette.ink, fontFamily: VokaFonts.monoMedium, fontSize: 13 },
+  trackValue: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
   trackCount: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayBold,
-    fontSize: 20,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 18,
     marginTop: 10,
   },
   trackLabel: {
     color: Palette.secondary,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 11,
+    fontSize: 12,
     marginTop: 2,
     textAlign: 'center',
   },
@@ -368,8 +320,8 @@ const styles = StyleSheet.create({
   speakingHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
   speakingValue: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayBold,
-    fontSize: 20,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 18,
     marginTop: 4,
   },
   pathButton: {
@@ -394,25 +346,25 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.soft,
     borderRadius: 8,
     color: Palette.ink,
-    fontFamily: VokaFonts.monoMedium,
-    fontSize: 9,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: 12,
     paddingHorizontal: 7,
     paddingVertical: 5,
   },
   signalCopy: { flex: 1 },
-  signalTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 11 },
+  signalTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 12 },
   signalReason: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
-    fontSize: 9,
-    lineHeight: 14,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 2,
   },
   noSignals: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
-    fontSize: 10,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 14,
   },
   nextCard: {
@@ -426,9 +378,9 @@ const styles = StyleSheet.create({
   nextCopy: { gap: 7 },
   nextTitle: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayBold,
-    fontSize: 21,
-    lineHeight: 26,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 22,
+    lineHeight: 27,
   },
   nextDescription: {
     color: Palette.muted,

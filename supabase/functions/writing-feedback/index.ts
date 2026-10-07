@@ -49,7 +49,7 @@ const schema = {
 
 function instructions(taskId: string, text: string) {
   const task = writingTaskSpecs[taskId];
-  const language = task.track === 'DE' ? 'German' : 'English';
+  const language = { DE: 'German', EN: 'English', ES: 'Spanish' }[task.track];
   return [
     `You are an experienced ${language} writing teacher and examiner. Give feedback on a learner's ${language} text.`,
     `Task (${task.exam}, target level ${task.level}): ${task.prompt}`,

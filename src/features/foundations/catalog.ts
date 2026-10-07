@@ -2,6 +2,8 @@ import { englishLessons } from './english-lessons';
 import { germanA1Lessons } from './german-a1';
 import { germanA2Lessons } from './german-a2';
 import { germanB1Lessons } from './german-b1';
+import { spanishA1Lessons } from './spanish-a1';
+import { spanishA2Lessons } from './spanish-a2';
 import type { FoundationLesson, LessonTrack } from './types';
 
 export type { FoundationLesson, LessonCheck, LessonLevel, LessonTrack } from './types';
@@ -9,38 +11,79 @@ export type { FoundationLesson, LessonCheck, LessonLevel, LessonTrack } from './
 // Original guided lessons. German runs from first words to selected B1 tasks; English covers
 // modern everyday communication and optional IELTS skills. Neither is a certified course.
 export const germanLessons = [...germanA1Lessons, ...germanA2Lessons, ...germanB1Lessons];
-export const foundationLessons: FoundationLesson[] = [...germanLessons, ...englishLessons];
+export const foundationLessons: FoundationLesson[] = [
+  ...germanLessons,
+  ...englishLessons,
+  ...spanishA1Lessons,
+  ...spanishA2Lessons,
+];
 
 export function getTrackLessons(track: LessonTrack) {
   return foundationLessons.filter((lesson) => lesson.track === track);
 }
 
-export function normaliseFoundationAnswer(value: string) {
-  return value
-    .normalize('NFC')
-    .trim()
-    .toLocaleLowerCase('de-DE')
+/**
+ * Lower-cases and strips punctuation (including Spanish ¿ ¡) so only the words are compared.
+ * Accents are kept; `ignoreAccents` also drops Spanish acute accents and the diaeresis in ü
+ * (as in pingüino) but never ñ, and never German umlauts, which change meaning.
+ */
+export function normaliseFoundationAnswer(value: string, { ignoreAccents = false } = {}) {
+  let text = value.normalize('NFC').trim().toLocaleLowerCase();
+  if (ignoreAccents) {
+    text = text
+      .normalize('NFD')
+      .replace(/([aeiou])\u0301/g, '$1')
+      .replace(/([u])\u0308(?=[ei])/g, '$1')
+      .normalize('NFC');
+  }
+  return text
     .replace(/ß/g, 'ss')
     .replace(/ä/g, 'ae')
     .replace(/ö/g, 'oe')
     .replace(/ü/g, 'ue')
     .replace(/['’‘`]/g, '')
-    .replace(/[.,!?;:„“”"–—-]/g, ' ')
+    .replace(/[.,!?¿¡;:„“”"«»–—-]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
-export function checkFoundationWriting(lesson: FoundationLesson, value: string) {
+export type WritingGrade =
+  | { status: 'correct' }
+  /** Right words, missing or wrong accents. Accepted, with the accented form to notice. */
+  | { status: 'accents'; expected: string }
+  | { status: 'close' }
+  | { status: 'wrong' };
+
+export function gradeFoundationWriting(lesson: FoundationLesson, value: string): WritingGrade {
   const answer = normaliseFoundationAnswer(value);
-  return lesson.writing.accepted.some((item) => normaliseFoundationAnswer(item) === answer);
+  if (!answer) return { status: 'wrong' };
+  if (lesson.writing.accepted.some((item) => normaliseFoundationAnswer(item) === answer))
+    return { status: 'correct' };
+  if (lesson.track === 'ES') {
+    const loose = normaliseFoundationAnswer(value, { ignoreAccents: true });
+    const match = lesson.writing.accepted.find(
+      (item) => normaliseFoundationAnswer(item, { ignoreAccents: true }) === loose,
+    );
+    if (match) return { status: 'accents', expected: match };
+  }
+  return isNearMiss(lesson, value) ? { status: 'close' } : { status: 'wrong' };
+}
+
+export function checkFoundationWriting(lesson: FoundationLesson, value: string) {
+  const grade = gradeFoundationWriting(lesson, value).status;
+  return grade === 'correct' || grade === 'accents';
 }
 
 /** True when an answer is not accepted but is within two letters of an accepted one. */
 export function isNearMiss(lesson: FoundationLesson, value: string) {
-  const answer = normaliseFoundationAnswer(value);
-  if (answer.length < 4 || checkFoundationWriting(lesson, value)) return false;
+  // Spanish accents are graded separately, so they should not count as typos here.
+  const options = { ignoreAccents: lesson.track === 'ES' };
+  const answer = normaliseFoundationAnswer(value, options);
+  if (answer.length < 4) return false;
+  if (lesson.writing.accepted.some((item) => normaliseFoundationAnswer(item, options) === answer))
+    return false;
   return lesson.writing.accepted.some(
-    (item) => editDistance(normaliseFoundationAnswer(item), answer, 2) <= 2,
+    (item) => editDistance(normaliseFoundationAnswer(item, options), answer, 2) <= 2,
   );
 }
 

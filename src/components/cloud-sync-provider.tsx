@@ -73,7 +73,7 @@ export function CloudSyncProvider({ children }: PropsWithChildren) {
                   }}
                 >
                   <Text
-                    style={{ color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 16 }}
+                    style={{ color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 }}
                   >
                     Try again
                   </Text>

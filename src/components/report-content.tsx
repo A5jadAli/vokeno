@@ -31,7 +31,7 @@ export function ReportContent({
 }: {
   surface: ReportSurface;
   excerpt?: string;
-  track?: 'EN' | 'DE';
+  track?: 'EN' | 'DE' | 'ES';
   dark?: boolean;
 }) {
   const insets = useSafeAreaInsets();

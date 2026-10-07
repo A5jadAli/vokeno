@@ -1,11 +1,19 @@
 import { useState } from 'react';
+import { Redirect } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { AnswerChoice } from '@/components/answer-choice';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { readingLessons } from '@/features/reading/catalog';
 import { useCoachingStore } from '@/features/coaching/store';
+import { useSelectedLanguage } from '@/features/language/selection';
 export default function ReadingScreen() {
+  const [track] = useSelectedLanguage();
+  if (track !== 'EN') return <Redirect href={`/sprint?track=${track}`} />;
+  return <EnglishReading />;
+}
+
+function EnglishReading() {
   const [lessonIndex, setLessonIndex] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -23,7 +31,7 @@ export default function ReadingScreen() {
       <View style={{ padding: 20, gap: 18 }}>
         <HeaderBack />
         <Eyebrow>Read, check, explain</Eyebrow>
-        <Text style={{ color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 28 }}>
+        <Text style={{ color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 28 }}>
           English reading practice
         </Text>
         {readingLessons.map((item, index) => (
@@ -82,6 +90,7 @@ export default function ReadingScreen() {
                 onPress={() => {
                   if (questionIndex === lesson.questions.length - 1)
                     complete(`reading-${lesson.id}`);
+                  useCoachingStore.getState().recordPractice('lesson');
                   setQuestionIndex(questionIndex + 1);
                   setSelected(null);
                 }}
@@ -110,14 +119,14 @@ export default function ReadingScreen() {
 }
 
 const styles = StyleSheet.create({
-  passage: { color: Palette.ink, fontFamily: VokaFonts.body, fontSize: 17, lineHeight: 28 },
+  passage: { color: Palette.ink, fontFamily: VokaFonts.body, fontSize: 16, lineHeight: 24 },
   question: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 20,
-    lineHeight: 28,
+    fontSize: 18,
+    lineHeight: 25,
   },
-  copy: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, lineHeight: 23 },
+  copy: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, lineHeight: 21 },
 });
 function Button({
   label,

@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   email: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 17,
+    fontSize: 16,
     textAlign: 'center',
   },
   steps: { gap: 10 },
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     fontFamily: VokaFonts.bodyBold,
     fontSize: 13,
     height: 24,
-    lineHeight: 24,
+    lineHeight: 20,
     overflow: 'hidden',
     textAlign: 'center',
     width: 24,
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 15,
-    lineHeight: 23,
+    lineHeight: 22,
   },
   notice: {
     backgroundColor: '#E3F2E5',

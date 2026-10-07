@@ -6,6 +6,8 @@ import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { speakingGoalCopy, type SpeakingGoal, useCoachingStore } from '@/features/coaching/store';
 import { useSelectedLanguage } from '@/features/language/selection';
+import { languageDetails, trackColors } from '@/features/language/config';
+import { LanguageSwitch } from '@/components/language-switch';
 
 const goals = Object.keys(speakingGoalCopy) as SpeakingGoal[];
 
@@ -15,7 +17,7 @@ export default function AccentScreen() {
   const preferences = useCoachingStore((state) => state.preferences);
   const hasHydrated = useCoachingStore((state) => state.hasHydrated);
   const setGoal = useCoachingStore((state) => state.setGoal);
-  const accent = track === 'EN' ? Palette.orange : Palette.yellow;
+  const accent = languageDetails[track].accent;
 
   if (!hasHydrated) {
     return (
@@ -44,33 +46,30 @@ export default function AccentScreen() {
           accent erasure or imitation of a celebrity.
         </Text>
 
-        <View accessibilityLabel="Speaking profile language" style={styles.trackRow}>
-          {(['EN', 'DE'] as const).map((item) => (
-            <Pressable
-              accessibilityLabel={
-                item === 'EN' ? 'English speaking profile' : 'German speaking profile'
-              }
-              accessibilityRole="button"
-              accessibilityState={{ selected: track === item }}
-              key={item}
-              onPress={() => setTrack(item)}
-              style={[styles.trackButton, track === item && { backgroundColor: accent }]}
-            >
-              <Text style={styles.trackText}>{item === 'EN' ? 'English' : 'Deutsch'}</Text>
-            </Pressable>
-          ))}
-        </View>
+        <LanguageSwitch
+          groupLabel="Speaking profile language"
+          itemLabel={(name) => `${name} speaking profile`}
+          onChange={setTrack}
+          tone="dark"
+          track={track}
+        />
 
         <View style={styles.referenceCard}>
-          <MaterialCommunityIcons color={accent} name="waveform" size={25} />
+          <MaterialCommunityIcons color={trackColors[track].onDark} name="waveform" size={25} />
           <View style={styles.referenceCopy}>
             <Text style={styles.referenceTitle}>
-              {track === 'EN' ? 'Contemporary British reference' : 'Standard German reference'}
+              {track === 'EN'
+                ? 'Contemporary British reference'
+                : track === 'DE'
+                  ? 'Standard German reference'
+                  : 'Everyday Mexican Spanish reference'}
             </Text>
             <Text style={styles.referenceText}>
               {track === 'EN'
                 ? 'Widely understood modern British speech, including connected speech and current phrases, never a named person’s voice.'
-                : 'Widely understood German from Germany, while recognising natural reductions and regional variation.'}
+                : track === 'DE'
+                  ? 'Widely understood German from Germany, while recognising natural reductions and regional variation.'
+                  : 'Clear everyday speech from Mexico, with notes about other common Spanish varieties. Your own accent is welcome.'}
             </Text>
           </View>
         </View>
@@ -91,7 +90,11 @@ export default function AccentScreen() {
               >
                 <View style={[styles.radio, selected && { backgroundColor: accent }]}>
                   {selected ? (
-                    <MaterialCommunityIcons color={Palette.ink} name="check" size={14} />
+                    <MaterialCommunityIcons
+                      color={trackColors[track].onAccent}
+                      name="check"
+                      size={14}
+                    />
                   ) : null}
                 </View>
                 <View style={styles.goalCopy}>
@@ -113,8 +116,14 @@ export default function AccentScreen() {
             pressed && styles.pressed,
           ]}
         >
-          <MaterialCommunityIcons color={Palette.ink} name="account-voice" size={21} />
-          <Text style={styles.primaryText}>Try a short speaking check</Text>
+          <MaterialCommunityIcons
+            color={trackColors[track].onAccent}
+            name="account-voice"
+            size={21}
+          />
+          <Text style={[styles.primaryText, { color: trackColors[track].onAccent }]}>
+            Try a short speaking check
+          </Text>
         </Pressable>
         <Text style={styles.disclaimer}>
           Feedback is qualitative and adaptive. It is not a certified language assessment.
@@ -135,41 +144,23 @@ const styles = StyleSheet.create({
   body: { padding: 22, paddingTop: 20 },
   title: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 34,
-    letterSpacing: -1,
-    lineHeight: 38,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
+    lineHeight: 34,
   },
   intro: {
     color: Palette.secondary,
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 13,
-    lineHeight: 21,
+    lineHeight: 20,
     marginTop: 10,
   },
-  trackRow: {
-    backgroundColor: Palette.soft,
-    borderRadius: 99,
-    flexDirection: 'row',
-    marginVertical: 20,
-    padding: 4,
-  },
-  trackButton: { alignItems: 'center', borderRadius: 99, flex: 1, paddingVertical: 11 },
-  trackText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 13 },
-  referenceCard: {
-    backgroundColor: Palette.ink,
-    borderRadius: 22,
-    flexDirection: 'row',
-    gap: 13,
-    marginBottom: 24,
-    padding: 18,
-  },
   referenceCopy: { flex: 1 },
-  referenceTitle: { color: Palette.cream, fontFamily: VokaFonts.displayBold, fontSize: 17 },
+  referenceTitle: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
   referenceText: {
     color: 'rgba(241,237,227,.62)',
     fontFamily: VokaFonts.body,
-    fontSize: 11,
+    fontSize: 12,
     lineHeight: 18,
     marginTop: 5,
   },
@@ -199,8 +190,8 @@ const styles = StyleSheet.create({
   goalDescription: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
-    fontSize: 11,
-    lineHeight: 17,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 3,
   },
   primaryButton: {
@@ -212,15 +203,23 @@ const styles = StyleSheet.create({
     marginTop: 22,
     minHeight: 56,
   },
-  primaryText: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 15 },
+  primaryText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
   disclaimer: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
-    fontSize: 10,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 9,
     textAlign: 'center',
   },
   pressed: { opacity: 0.72, transform: [{ scale: 0.99 }] },
   loading: { color: Palette.muted, fontFamily: VokaFonts.bodyMedium, fontSize: 13, padding: 22 },
+  referenceCard: {
+    backgroundColor: Palette.ink,
+    borderRadius: 22,
+    flexDirection: 'row',
+    gap: 13,
+    marginBottom: 24,
+    padding: 18,
+  },
 });

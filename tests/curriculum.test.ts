@@ -20,6 +20,16 @@ describe('speaking curriculum', () => {
   it('uses unique stable ids', () => {
     expect(new Set(curriculumUnits.map((unit) => unit.id)).size).toBe(curriculumUnits.length);
   });
+
+  it('gives Spanish speaking practice at A1 and A2 with usable lesson data', () => {
+    const units = getCurriculumUnits('ES');
+    expect(units.filter((unit) => unit.level === 'A1').length).toBeGreaterThanOrEqual(3);
+    expect(units.filter((unit) => unit.level === 'A2').length).toBeGreaterThanOrEqual(3);
+    units.forEach((unit) => {
+      expect(unit.phrases.length).toBeGreaterThanOrEqual(3);
+      expect(unit.coachBrief.length).toBeGreaterThan(20);
+    });
+  });
 });
 
 describe('coaching memory', () => {

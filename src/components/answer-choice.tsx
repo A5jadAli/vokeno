@@ -79,6 +79,7 @@ export function AnswerChoice({
         ariaChecked={selected}
         disabled={disabled}
         face={look.face}
+        faceTestID="answer-face"
         lip={look.lip}
         borderColor={look.border}
         borderWidth={2}

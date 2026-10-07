@@ -1,11 +1,11 @@
 # Vokeno
 
-Vokeno combines guided German and English practice with a live speaking coach. German starts with English-supported first words and develops into selected practical A2/B1 tasks. It is not yet a complete or independently validated CEFR course.
+Vokeno combines guided English, German and Spanish practice with a live speaking coach. German starts with English-supported first words and develops into selected practical A2/B1 tasks. Spanish starts with a focused, Mexican-Spanish-referenced A1 travel and everyday path. None of these tracks is a certified or independently validated CEFR course.
 
 ## Current experience
 
-- Six English and German real-world listening scenarios
-- Thirteen guided German lessons with translated phrases, contextual reading, meaning checks, saved writing and optional speaking rehearsal
+- English, German and Spanish real-world listening scenarios, including four Spanish A1 dialogues
+- Guided lessons with translated phrases, contextual reading, meaning checks, saved writing and optional speaking rehearsal; the Spanish starter path has nine A1 lessons
 - English reading with evidence-based questions; chart, letter and opinion writing with persistent drafts and revision prompts
 - Starting-ability and goal selection, including optional IELTS Academic/General Training preparatory guidance
 - Normal and slow device speech playback
@@ -13,9 +13,9 @@ Vokeno combines guided German and English practice with a live speaking coach. G
 - Explanations of blended, shortened, and context-dependent phrases
 - Comprehension checks with retry feedback
 - Account progress and preferences synced through Supabase; guest progress remains on-device
-- Labelled primary navigation and a visible next practice recommendation
+- A visible next small step on Home and Progress: resume, short review, new lesson, listening, then conversation
 - OpenAI Realtime voice conversations with natural interruption
-- Live English/German captions and conservative struggle signals
+- Live English, German and Spanish captions and conservative struggle signals
 - Optional Supabase accounts and a protected server-side provider key
 - A skippable first-run tour with an account-optional guest path
 - Non-blocking EAS Update notices with Restart and Later choices
@@ -25,6 +25,10 @@ Vokeno combines guided German and English practice with a live speaking coach. G
 Offline listening lessons need no API key. Live voice uses OpenAI Realtime through a protected
 Supabase Edge Function. Structured assessment uses xAI when configured and falls back to OpenAI;
 provider keys are never bundled in the APK.
+
+The Spanish launch and gentle three-language learning sequence are detailed in
+[the language expansion plan](docs/language-expansion-plan.md). Spanish live coaching needs the
+updated `realtime-session` Edge Function deployed before a mobile update containing this code.
 
 ## Stack and compatibility
 

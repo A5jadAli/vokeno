@@ -359,6 +359,138 @@ export const curriculumUnits: CurriculumUnit[] = [
     title: 'Goethe B1 Sprechen mock',
     track: 'DE',
   },
+  {
+    coachBrief:
+      'Run a friendly first meeting in widely understood Mexican Spanish. Model one short sentence at a time, pause for the learner, and help them ask a question back. Explain unfamiliar words briefly in English.',
+    context: 'Names, origin and a question back',
+    id: 'es-a1-meet',
+    level: 'A1',
+    outcome: 'Introduce yourself and keep a first meeting going.',
+    phrases: [
+      { meaning: 'My name is Sara.', phrase: 'Me llamo Sara.', usage: 'Everyday introduction' },
+      {
+        meaning: 'I am from Pakistan.',
+        phrase: 'Soy de Pakistán.',
+        usage: 'Introduce your home country',
+      },
+      { meaning: 'And you?', phrase: '¿Y tú?', usage: 'Ask a peer in a casual setting' },
+    ],
+    pronunciationFocus: 'Clear Spanish vowels and the ll sound in llamo',
+    title: 'Meet someone',
+    track: 'ES',
+  },
+  {
+    coachBrief:
+      'Play a café worker in Mexico. Begin with a simple question, let the learner order, then ask whether it is for here or to take away. If they hesitate, offer one short model and let them try again.',
+    context: 'Café ordering and payment',
+    id: 'es-a1-cafe',
+    level: 'A1',
+    outcome: 'Order a drink and ask to pay.',
+    phrases: [
+      {
+        meaning: 'I would like a coffee with milk.',
+        phrase: 'Quisiera un café con leche.',
+        usage: 'Polite order',
+      },
+      { meaning: 'To take away.', phrase: 'Para llevar.', usage: 'At the counter' },
+      { meaning: 'Can I pay by card?', phrase: '¿Puedo pagar con tarjeta?', usage: 'At payment' },
+    ],
+    pronunciationFocus: 'Steady vowels and stress in quisiera and café',
+    title: 'At the café',
+    track: 'ES',
+  },
+  {
+    coachBrief:
+      'Play a helpful local giving short directions. Use one or two turns at a time and check whether the learner understood left, right and straight ahead. Keep the learner speaking more than you.',
+    context: 'Finding a station and checking directions',
+    id: 'es-a1-directions',
+    level: 'A1',
+    outcome: 'Ask for a station and check a short direction.',
+    phrases: [
+      {
+        meaning: 'Where is the station?',
+        phrase: '¿Dónde está la estación?',
+        usage: 'Ask for a place',
+      },
+      { meaning: 'Go straight ahead.', phrase: 'Siga derecho.', usage: 'Direction you may hear' },
+      { meaning: 'Is it nearby?', phrase: '¿Está cerca?', usage: 'Check the distance' },
+    ],
+    pronunciationFocus: 'Question rhythm and the r in derecho',
+    title: 'Find your way',
+    track: 'ES',
+  },
+  {
+    coachBrief:
+      'Play a friendly coworker in Mexico on a Monday morning. Ask what the learner did at the weekend, react naturally (¡Qué padre!, ¿En serio?) and ask one follow-up question about each answer. Recast past-tense mistakes inside your reply instead of correcting them directly.',
+    context: 'Monday small talk about the weekend',
+    id: 'es-a2-weekend',
+    level: 'A2',
+    outcome: 'Tell what you did at the weekend and keep the chat going.',
+    phrases: [
+      {
+        meaning: 'What did you do at the weekend?',
+        phrase: '¿Qué hiciste el fin de semana?',
+        usage: 'Ask it back',
+      },
+      { meaning: 'I went to…', phrase: 'Fui a…', usage: 'Past of ir' },
+      { meaning: 'It was really good.', phrase: 'Estuvo muy bien.', usage: 'Sum up an event' },
+    ],
+    pronunciationFocus: 'Final stress in past forms such as descansé and comí',
+    title: 'Your weekend',
+    track: 'ES',
+  },
+  {
+    coachBrief:
+      'Play a receptionist at a clinic in Mexico, using usted. The learner needs to move an appointment. Offer two alternative times, one of which does not work for them, and confirm the final day and time clearly.',
+    context: 'Rescheduling a clinic appointment by phone',
+    id: 'es-a2-appointment',
+    level: 'A2',
+    outcome: 'Change an appointment and confirm the new time.',
+    phrases: [
+      {
+        meaning: 'Can we change the appointment?',
+        phrase: '¿Podemos cambiar la cita?',
+        usage: 'Start the change',
+      },
+      {
+        meaning: 'Does Friday suit you?',
+        phrase: '¿Le queda bien el viernes?',
+        usage: 'Suggest a day',
+      },
+      {
+        meaning: 'Perfect, see you on Friday.',
+        phrase: 'Perfecto, nos vemos el viernes.',
+        usage: 'Confirm',
+      },
+    ],
+    pronunciationFocus: 'Clear numbers and days: jueves, viernes, a las diez',
+    title: 'Change an appointment',
+    track: 'ES',
+  },
+  {
+    coachBrief:
+      'Play a server at a busy taquería in Mexico. Take the order, ask about drinks, handle one change (sin cebolla) and, at the end, respond to a request to pay separately. Mention the tip only if the learner asks.',
+    context: 'Ordering and paying at a taquería',
+    id: 'es-a2-restaurant',
+    level: 'A2',
+    outcome: 'Order for yourself, change a dish and split the bill.',
+    phrases: [
+      { meaning: 'For me, …', phrase: 'Para mí, …', usage: 'Order' },
+      {
+        meaning: 'Without onion, please.',
+        phrase: 'Sin cebolla, por favor.',
+        usage: 'Change a dish',
+      },
+      {
+        meaning: 'Can we pay separately?',
+        phrase: '¿Podemos pagar por separado?',
+        usage: 'Split the bill',
+      },
+    ],
+    pronunciationFocus: 'The rolled r at the start of recomienda and the ll in cebolla',
+    title: 'At the taquería',
+    track: 'ES',
+  },
 ];
 
 export function getCurriculumUnits(track: LanguageTrack) {

@@ -1,4 +1,5 @@
 import type { LanguageTrack } from '@/features/listening/scenarios';
+import { Palette } from '@/constants/theme';
 
 export type ConversationModeId = 'interview' | 'real-life';
 
@@ -7,7 +8,7 @@ export type ConversationMode = {
   description: string;
   id: ConversationModeId;
   language: string;
-  languageCode: 'de' | 'en';
+  languageCode: 'de' | 'en' | 'es';
   level: string;
   starter: string;
   title: string;
@@ -16,7 +17,7 @@ export type ConversationMode = {
 
 export const conversationModes: ConversationMode[] = [
   {
-    accent: '#FF4A17',
+    accent: Palette.orange,
     description:
       'A quick, natural British conversation with current expressions, connected speech and interview-style follow-ups.',
     id: 'interview',
@@ -28,7 +29,7 @@ export const conversationModes: ConversationMode[] = [
     track: 'EN',
   },
   {
-    accent: '#F2B705',
+    accent: Palette.yellow,
     description:
       'Handle a realistic everyday situation at native speed, then get gentle help with the phrases that slowed you down.',
     id: 'real-life',
@@ -38,6 +39,18 @@ export const conversationModes: ConversationMode[] = [
     starter: 'Begin a friendly conversation as a local at a busy bakery in Berlin.',
     title: 'Everyday German',
     track: 'DE',
+  },
+  {
+    accent: Palette.violet,
+    description:
+      'A friendly everyday exchange in Mexican Spanish. Start with a short question, then try your own answer.',
+    id: 'real-life',
+    language: 'Spanish',
+    languageCode: 'es',
+    level: 'A1',
+    starter: 'Start a short first-meeting conversation in clear Mexican Spanish.',
+    title: 'Everyday Spanish',
+    track: 'ES',
   },
 ];
 

@@ -15,15 +15,15 @@ import {
   PrimaryButton,
   SectionLabel,
   TextButton,
+  PrimaryAccent,
 } from '@/components/lesson-ui';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import {
-  checkFoundationWriting,
   foundationLessons,
+  gradeFoundationWriting,
   getTrackLessons,
-  isNearMiss,
   optionOrder,
   type FoundationLesson,
 } from '@/features/foundations/catalog';
@@ -34,9 +34,16 @@ import {
   type FoundationEntry,
 } from '@/features/foundations/progress';
 import { useLanguageSelection } from '@/features/language/selection';
+import { languageDetails, trackColors } from '@/features/language/config';
 import { useLessonSpeech, type LessonSpeech } from '@/features/listening/use-lesson-speech';
 import { REVIEW_INTERVALS, seedCards } from '@/features/review/schedule';
 import { haptic } from '@/features/feedback/haptics';
+
+const closeHint = {
+  DE: 'Check endings, umlauts and spelling.',
+  EN: 'Check the spelling and word endings.',
+  ES: 'Check the spelling, ñ and word endings.',
+} as const;
 
 export default function FoundationScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -63,11 +70,11 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
       useLanguageSelection.getState().choose(lesson.track);
     }, [lesson.track]),
   );
-  const languageName = lesson.track === 'EN' ? 'English' : 'German';
+  const languageName = languageDetails[lesson.track].name;
   const saved = useCoachingStore((state) => state.foundations[lesson.id]);
   const save = useCoachingStore((state) => state.saveFoundation);
   const entry = saved ?? freshFoundationEntry();
-  const speech = useLessonSpeech(lesson.track === 'EN' ? 'en-GB' : 'de-DE');
+  const speech = useLessonSpeech(languageDetails[lesson.track].speechLocale);
   const [selected, setSelected] = useState<number | null>(null);
   const [pinned, setPinned] = useState<number | null>(null);
   const [result, setResult] = useState<Result | null>(null);
@@ -85,6 +92,7 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
   };
   const advance = (step: number) => {
     resetTransient();
+    useCoachingStore.getState().recordPractice('lesson');
     update({ step });
   };
 
@@ -134,25 +142,34 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
   };
   const checkWriting = () => {
     Keyboard.dismiss();
-    if (checkFoundationWriting(lesson, entry.draft)) {
+    const grade = gradeFoundationWriting(lesson, entry.draft);
+    if (grade.status === 'correct' || grade.status === 'accents') {
       haptic.correct();
-      setResult({ tone: 'correct', title: 'Correct', message: lesson.writing.explanation });
+      setResult({
+        tone: 'correct',
+        title: 'Correct',
+        message:
+          grade.status === 'accents'
+            ? `Watch the accents: ${grade.expected}. ${lesson.writing.explanation}`
+            : lesson.writing.explanation,
+      });
       return;
     }
     haptic.wrong();
     update({ writingMistakes: entry.writingMistakes + 1 });
     setResult(
-      isNearMiss(lesson, entry.draft)
+      grade.status === 'close'
         ? {
             tone: 'close',
             title: 'Very close',
-            message: `One or two letters differ. Check endings, umlauts and spelling. ${lesson.writing.hint}`,
+            message: `One or two letters differ. ${closeHint[lesson.track]} ${lesson.writing.hint}`,
           }
         : { tone: 'wrong', title: 'Not yet', message: lesson.writing.hint },
     );
   };
   const complete = (spoken: boolean) => {
     resetTransient();
+    useCoachingStore.getState().recordPractice('lesson');
     haptic.complete();
     update({
       step: 4,
@@ -266,52 +283,29 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
     );
 
   return (
-    <AppScreen showNav={false} keyboardAware footer={footer}>
-      <LessonTopBar progress={position / segments} label={`${lesson.level}`} />
-      <View style={styles.body}>
-        {speech.error ? (
-          <Text accessibilityRole="alert" style={styles.alert}>
-            {speech.error}
-          </Text>
-        ) : null}
-
-        {entry.step === 0 ? (
-          <>
-            <Text style={lessonText.meta}>
-              {languageName} · {lesson.level} · {lesson.phrases.length} phrases
+    <PrimaryAccent
+      background={trackColors[lesson.track].accent}
+      text={trackColors[lesson.track].onAccent}
+    >
+      <AppScreen showNav={false} keyboardAware footer={footer}>
+        <LessonTopBar progress={position / segments} label={`${lesson.level}`} />
+        <View style={styles.body}>
+          {speech.error ? (
+            <Text accessibilityRole="alert" style={styles.alert}>
+              {speech.error}
             </Text>
-            <Text accessibilityRole="header" style={lessonText.title}>
-              {lesson.title}
-            </Text>
-            <Text style={lessonText.lead}>{lesson.outcome}</Text>
-            {lesson.reading ? (
-              <ReadingCard
-                lesson={lesson}
-                speech={speech}
-                showTranslation={showTranslation}
-                onToggle={() => setShowTranslation(!showTranslation)}
-              />
-            ) : null}
-            <SectionLabel>Key phrases</SectionLabel>
-            <PhraseList lesson={lesson} speech={speech} />
-            <InfoCard icon="lightbulb-on-outline" title="How it works" tone="yellow">
-              {lesson.notice}
-            </InfoCard>
-            {lesson.pronunciation ? (
-              <InfoCard icon="waveform" title="Sound and rhythm">
-                {lesson.pronunciation}
-              </InfoCard>
-            ) : null}
-          </>
-        ) : null}
+          ) : null}
 
-        {entry.step === 1 ? (
-          question ? (
+          {entry.step === 0 ? (
             <>
               <Text style={lessonText.meta}>
-                Question {index + 1} of {checks.length}
+                {languageName} · {lesson.level} · {lesson.phrases.length} phrases
               </Text>
-              {lesson.reading && !question.audio ? (
+              <Text accessibilityRole="header" style={lessonText.title}>
+                {lesson.title}
+              </Text>
+              <Text style={lessonText.lead}>{lesson.outcome}</Text>
+              {lesson.reading ? (
                 <ReadingCard
                   lesson={lesson}
                   speech={speech}
@@ -319,186 +313,223 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
                   onToggle={() => setShowTranslation(!showTranslation)}
                 />
               ) : null}
-              <Text accessibilityRole="header" style={lessonText.prompt}>
-                {question.prompt}
-              </Text>
-              {question.audio ? (
-                <View style={styles.listenBlock}>
-                  <AudioIconButton
-                    speech={speech}
-                    text={question.audio}
-                    label="Play the listening question"
-                    size={76}
-                    tone="accent"
-                  />
-                  <AudioIconButton
-                    speech={speech}
-                    text={question.audio}
-                    label="Play the listening question slowly"
-                    rate={0.6}
-                    slow
-                    size={56}
-                  />
-                  <Text style={[lessonText.small, { flex: 1 }]}>
-                    Listen first. The words appear after you answer correctly.
-                  </Text>
-                </View>
-              ) : null}
-              <View style={styles.options}>
-                {optionOrder(`${lesson.id}:${index}`, question.options.length).map((choice) => (
-                  <AnswerChoice
-                    key={question.options[choice]}
-                    label={question.options[choice]}
-                    selected={selected === choice}
-                    result={
-                      result && selected === choice
-                        ? correctNow
-                          ? 'correct'
-                          : 'incorrect'
-                        : undefined
-                    }
-                    disabled={correctNow}
-                    onPress={() => {
-                      setSelected(choice);
-                      setResult(null);
-                    }}
-                  />
-                ))}
-              </View>
-              {correctNow && question.audio && !question.explanation.includes(question.audio) ? (
-                <InfoCard icon="text-box-outline" title="You heard">
-                  {question.audio}
+              <SectionLabel>Key phrases</SectionLabel>
+              <PhraseList lesson={lesson} speech={speech} />
+              <InfoCard icon="lightbulb-on-outline" title="How it works" tone="yellow">
+                {lesson.notice}
+              </InfoCard>
+              {lesson.pronunciation ? (
+                <InfoCard icon="waveform" title="Sound and rhythm">
+                  {lesson.pronunciation}
                 </InfoCard>
+              ) : null}
+            </>
+          ) : null}
+
+          {entry.step === 1 ? (
+            question ? (
+              <>
+                <Text style={lessonText.meta}>
+                  Question {index + 1} of {checks.length}
+                </Text>
+                {lesson.reading && !question.audio ? (
+                  <ReadingCard
+                    lesson={lesson}
+                    speech={speech}
+                    showTranslation={showTranslation}
+                    onToggle={() => setShowTranslation(!showTranslation)}
+                  />
+                ) : null}
+                <Text accessibilityRole="header" style={lessonText.prompt}>
+                  {question.prompt}
+                </Text>
+                {question.audio ? (
+                  <View style={styles.listenBlock}>
+                    <AudioIconButton
+                      speech={speech}
+                      text={question.audio}
+                      label="Play the listening question"
+                      size={76}
+                      tone="accent"
+                    />
+                    <AudioIconButton
+                      speech={speech}
+                      text={question.audio}
+                      label="Play the listening question slowly"
+                      rate={0.6}
+                      slow
+                      size={56}
+                    />
+                    <Text style={[lessonText.small, { flex: 1 }]}>
+                      Listen first. The words appear after you answer correctly.
+                    </Text>
+                  </View>
+                ) : null}
+                <View style={styles.options}>
+                  {optionOrder(`${lesson.id}:${index}`, question.options.length).map((choice) => (
+                    <AnswerChoice
+                      key={question.options[choice]}
+                      label={question.options[choice]}
+                      selected={selected === choice}
+                      result={
+                        result && selected === choice
+                          ? correctNow
+                            ? 'correct'
+                            : 'incorrect'
+                          : undefined
+                      }
+                      disabled={correctNow}
+                      onPress={() => {
+                        setSelected(choice);
+                        setResult(null);
+                      }}
+                    />
+                  ))}
+                </View>
+                {correctNow && question.audio && !question.explanation.includes(question.audio) ? (
+                  <InfoCard icon="text-box-outline" title="You heard">
+                    {question.audio}
+                  </InfoCard>
+                ) : null}
+                <TextButton
+                  title={showHelp ? 'Hide phrase help' : 'Show phrase help'}
+                  onPress={() => setShowHelp(!showHelp)}
+                />
+                {showHelp ? <PhraseList lesson={lesson} speech={speech} /> : null}
+              </>
+            ) : (
+              <Text style={lessonText.lead}>
+                All checks are complete. Next, use a phrase yourself.
+              </Text>
+            )
+          ) : null}
+
+          {entry.step === 2 ? (
+            <>
+              <Text style={lessonText.meta}>Write it</Text>
+              <Text accessibilityRole="header" style={lessonText.prompt}>
+                {lesson.writing.prompt}
+              </Text>
+              <TextInput
+                accessibilityLabel={`Your ${languageName} answer`}
+                autoCapitalize="sentences"
+                autoCorrect={false}
+                autoComplete="off"
+                spellCheck={false}
+                maxLength={MAX_DRAFT_LENGTH}
+                multiline
+                placeholder={`Type in ${languageName}`}
+                placeholderTextColor={Palette.muted}
+                style={[
+                  styles.input,
+                  result?.tone === 'correct' && { borderColor: '#2F7A47' },
+                  result?.tone === 'wrong' && { borderColor: '#B44931' },
+                ]}
+                value={entry.draft}
+                editable={!correctNow}
+                onChangeText={(draft) => {
+                  setResult(null);
+                  update({ draft });
+                }}
+              />
+              <Text style={lessonText.small}>
+                {lesson.track === 'DE'
+                  ? 'Punctuation and capital letters are not marked. No ß or umlaut key? Type ss, ae, oe or ue, or add German to your keyboard languages so autocorrect leaves German words alone.'
+                  : lesson.track === 'ES'
+                    ? 'Punctuation, capital letters and missing vowel accents are not marked here. Keep ñ distinct, and use the written accents when you can.'
+                    : 'Punctuation and capital letters are not marked. Your draft is saved.'}
+              </Text>
+              {entry.writingMistakes >= 2 && !correctNow ? (
+                <TextButton
+                  title="Show one possible answer"
+                  onPress={() =>
+                    setResult({
+                      tone: 'close',
+                      title: 'One possible answer',
+                      message: `${lesson.writing.accepted[0]}. Type it yourself to continue.`,
+                    })
+                  }
+                />
               ) : null}
               <TextButton
                 title={showHelp ? 'Hide phrase help' : 'Show phrase help'}
-                onPress={() => setShowHelp(!showHelp)}
+                onPress={() => {
+                  setShowHelp(!showHelp);
+                  if (!showHelp) update({ writingMistakes: Math.max(entry.writingMistakes, 1) });
+                }}
               />
               {showHelp ? <PhraseList lesson={lesson} speech={speech} /> : null}
             </>
-          ) : (
-            <Text style={lessonText.lead}>
-              All checks are complete. Next, use a phrase yourself.
-            </Text>
-          )
-        ) : null}
+          ) : null}
 
-        {entry.step === 2 ? (
-          <>
-            <Text style={lessonText.meta}>Write it</Text>
-            <Text accessibilityRole="header" style={lessonText.prompt}>
-              {lesson.writing.prompt}
-            </Text>
-            <TextInput
-              accessibilityLabel={`Your ${languageName} answer`}
-              autoCapitalize="sentences"
-              autoCorrect={false}
-              autoComplete="off"
-              spellCheck={false}
-              maxLength={MAX_DRAFT_LENGTH}
-              multiline
-              placeholder={`Type in ${languageName}`}
-              placeholderTextColor={Palette.muted}
-              style={[
-                styles.input,
-                result?.tone === 'correct' && { borderColor: '#2F7A47' },
-                result?.tone === 'wrong' && { borderColor: '#B44931' },
-              ]}
-              value={entry.draft}
-              editable={!correctNow}
-              onChangeText={(draft) => {
-                setResult(null);
-                update({ draft });
-              }}
-            />
-            <Text style={lessonText.small}>
-              {lesson.track === 'DE'
-                ? 'Punctuation and capital letters are not marked. No ß or umlaut key? Type ss, ae, oe or ue, or add German to your keyboard languages so autocorrect leaves German words alone.'
-                : 'Punctuation and capital letters are not marked. Your draft is saved.'}
-            </Text>
-            {entry.writingMistakes >= 2 && !correctNow ? (
-              <TextButton
-                title="Show one possible answer"
-                onPress={() =>
-                  setResult({
-                    tone: 'close',
-                    title: 'One possible answer',
-                    message: `${lesson.writing.accepted[0]}. Type it yourself to continue.`,
-                  })
-                }
-              />
-            ) : null}
-            <TextButton
-              title={showHelp ? 'Hide phrase help' : 'Show phrase help'}
-              onPress={() => {
-                setShowHelp(!showHelp);
-                if (!showHelp) update({ writingMistakes: Math.max(entry.writingMistakes, 1) });
-              }}
-            />
-            {showHelp ? <PhraseList lesson={lesson} speech={speech} /> : null}
-          </>
-        ) : null}
-
-        {entry.step === 3 ? (
-          <>
-            <Text style={lessonText.meta}>Say it</Text>
-            <Text accessibilityRole="header" style={lessonText.prompt}>
-              Speak out loud
-            </Text>
-            <InfoCard icon="account-voice" title="Your task" tone="ink">
-              {lesson.speaking}
-            </InfoCard>
-            <Text style={lessonText.small}>
-              Say each phrase, then play it to compare. Nothing is recorded here. For feedback on
-              your speaking, practise with the live coach.
-            </Text>
-            <PhraseList lesson={lesson} speech={speech} />
-            <TextButton
-              title="Practise with the live coach"
-              onPress={() => router.push(`/conversation?track=${lesson.track}` as Href)}
-            />
-          </>
-        ) : null}
-
-        {entry.step === 4 && lastAttempt ? (
-          <>
-            <View style={styles.celebrate}>
-              <Animated.View entering={ZoomIn.springify().damping(12)} style={styles.badge}>
-                <MaterialCommunityIcons name="check-bold" size={40} color={Palette.ink} />
-              </Animated.View>
-              <Text accessibilityRole="header" style={lessonText.title}>
-                Lesson complete
+          {entry.step === 3 ? (
+            <>
+              <Text style={lessonText.meta}>Say it</Text>
+              <Text accessibilityRole="header" style={lessonText.prompt}>
+                Speak out loud
               </Text>
-              <Text style={styles.score}>
-                {lastAttempt.correctFirstTry}/{totalChecks} checks right first time
-              </Text>
-            </View>
-            <Animated.View entering={FadeInDown.delay(180).springify()} style={styles.stats}>
-              <Stat label="Phrases" value={String(lesson.phrases.length)} />
-              <Stat label="Speaking" value={lastAttempt.spoken ? 'Done' : 'Skipped'} />
-              <Stat label="Review" value={`In ${REVIEW_INTERVALS[0]} day`} />
-            </Animated.View>
-            <Text style={lessonText.lead}>
-              {lastAttempt.spoken
-                ? 'You also marked the speaking practice as done.'
-                : 'You skipped the speaking practice this time.'}{' '}
-              These phrases are now in your review queue, so they come back just before you are
-              likely to forget them. This is practice evidence, not a language level.
-            </Text>
-            {next ? (
-              <InfoCard icon="arrow-right-circle-outline" title={`Up next: ${next.title}`}>
-                {next.outcome}
+              <InfoCard icon="account-voice" title="Your task" tone="ink">
+                {lesson.speaking}
               </InfoCard>
-            ) : null}
-            <TextButton title="Practise this lesson again" onPress={retry} />
-            <TextButton
-              title="See my learning path"
-              onPress={() => router.replace(`/sprint?track=${lesson.track}` as Href)}
-            />
-          </>
-        ) : null}
-      </View>
-    </AppScreen>
+              <Text style={lessonText.small}>
+                Say each phrase, then play it to compare. Nothing is recorded here. For feedback on
+                your speaking, practise with the live coach.
+              </Text>
+              <PhraseList lesson={lesson} speech={speech} />
+              <TextButton
+                title="Practise with the live coach"
+                onPress={() => router.push(`/conversation?track=${lesson.track}` as Href)}
+              />
+            </>
+          ) : null}
+
+          {entry.step === 4 && lastAttempt ? (
+            <>
+              <View style={styles.celebrate}>
+                <Animated.View
+                  entering={ZoomIn.springify().damping(12)}
+                  style={[styles.badge, { backgroundColor: trackColors[lesson.track].accent }]}
+                >
+                  <MaterialCommunityIcons
+                    name="check-bold"
+                    size={40}
+                    color={trackColors[lesson.track].onAccent}
+                  />
+                </Animated.View>
+                <Text accessibilityRole="header" style={lessonText.title}>
+                  Lesson complete
+                </Text>
+                <Text style={styles.score}>
+                  {lastAttempt.correctFirstTry}/{totalChecks} checks right first time
+                </Text>
+              </View>
+              <Animated.View entering={FadeInDown.delay(180).springify()} style={styles.stats}>
+                <Stat label="Phrases" value={String(lesson.phrases.length)} />
+                <Stat label="Speaking" value={lastAttempt.spoken ? 'Done' : 'Skipped'} />
+                <Stat label="Review" value={`In ${REVIEW_INTERVALS[0]} day`} />
+              </Animated.View>
+              <Text style={lessonText.lead}>
+                {lastAttempt.spoken
+                  ? 'You also marked the speaking practice as done.'
+                  : 'You skipped the speaking practice this time.'}{' '}
+                These phrases are now in your review queue, so they come back just before you are
+                likely to forget them. This is practice evidence, not a language level.
+              </Text>
+              {next ? (
+                <InfoCard icon="arrow-right-circle-outline" title={`Up next: ${next.title}`}>
+                  {next.outcome}
+                </InfoCard>
+              ) : null}
+              <TextButton title="Practise this lesson again" onPress={retry} />
+              <TextButton
+                title="See my learning path"
+                onPress={() => router.replace(`/sprint?track=${lesson.track}` as Href)}
+              />
+            </>
+          ) : null}
+        </View>
+      </AppScreen>
+    </PrimaryAccent>
   );
 }
 
@@ -581,7 +612,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     color: Palette.ink,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 19,
+    fontSize: 18,
     minHeight: 120,
     padding: 16,
     textAlignVertical: 'top',
@@ -591,8 +622,8 @@ const styles = StyleSheet.create({
     color: Palette.ink,
     flex: 1,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 17,
-    lineHeight: 26,
+    fontSize: 16,
+    lineHeight: 24,
   },
   toggle: {
     alignItems: 'center',
@@ -624,5 +655,5 @@ const styles = StyleSheet.create({
     gap: 2,
     paddingVertical: 14,
   },
-  statValue: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 18 },
+  statValue: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
 });

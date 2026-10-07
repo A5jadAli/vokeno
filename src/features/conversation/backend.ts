@@ -4,6 +4,7 @@ import {
   getSupabaseFunctionUrl,
 } from '@/features/auth/supabase';
 import { parseSpokenAssessment } from '@/features/assessment/types';
+import type { LanguageTrack } from '@/features/language/config';
 import type { TranscriptTurn } from './events';
 
 export const conversationApiUrl =
@@ -13,7 +14,7 @@ export const isConversationBackendConfigured = Boolean(conversationApiUrl);
 
 export async function createConversationRequest(
   sdp: string,
-  track: 'DE' | 'EN',
+  track: LanguageTrack,
   options: {
     coachTone: 'supportive' | 'tough';
     goal: string;
@@ -74,7 +75,7 @@ export async function createConversationRequest(
 }
 
 export async function createAssessmentRequest(
-  track: 'DE' | 'EN',
+  track: LanguageTrack,
   turns: TranscriptTurn[],
   coachTone: 'supportive' | 'tough',
   signal?: AbortSignal,

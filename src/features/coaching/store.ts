@@ -18,6 +18,15 @@ import {
 
 import { mergeCoachingSignal } from './signals';
 import type { CoachingSignal } from './store-types';
+import {
+  addPractice,
+  localDay,
+  mergePracticeLogs,
+  parsePracticeLog,
+  serializePracticeLog,
+  type PracticeKind,
+  type PracticeLog,
+} from '@/features/habits/practice-log';
 
 export type { CoachingSignal } from './store-types';
 
@@ -30,12 +39,24 @@ type LearningChoices = { ability?: StartingAbility; studyGoal?: StudyGoal };
 export type SpeakingPreferences = {
   DE: { goal: SpeakingGoal; reference: 'de-DE' } & LearningChoices;
   EN: { goal: SpeakingGoal; reference: 'en-GB' } & LearningChoices;
+  ES: { goal: SpeakingGoal; reference: 'es-MX' } & LearningChoices;
 };
 
 const defaultPreferences: SpeakingPreferences = {
   DE: { goal: 'everyday', reference: 'de-DE' },
   EN: { goal: 'interviews', reference: 'en-GB' },
+  ES: { goal: 'everyday', reference: 'es-MX' },
 };
+
+function withLanguageDefaults(
+  value: Partial<SpeakingPreferences> | undefined,
+): SpeakingPreferences {
+  return {
+    DE: { ...defaultPreferences.DE, ...value?.DE },
+    EN: { ...defaultPreferences.EN, ...value?.EN },
+    ES: { ...defaultPreferences.ES, ...value?.ES },
+  };
+}
 
 type CoachingState = {
   writing: WritingProgress;
@@ -58,6 +79,9 @@ type CoachingState = {
   saveFoundation: (id: string, entry: FoundationEntry) => void;
   completeUnit: (unitId: string) => void;
   mergeCloudState: (state: Partial<PersistedCoachingState>) => void;
+  /** What was practised today, for the honest streak and today's plan. */
+  practiceLog: PracticeLog;
+  recordPractice: (kind: PracticeKind) => void;
   recordSpeakingPractice: () => void;
   recordWritingPractice: () => void;
   recordSignal: (signal: Omit<CoachingSignal, 'count' | 'lastSeenAt'>) => void;
@@ -75,6 +99,7 @@ export type PersistedCoachingState = Pick<
   | 'preferences'
   | 'signals'
   | 'speakingPracticeDates'
+  | 'practiceLog'
   | 'testDate'
   | 'writingPracticeDates'
   | 'foundations'
@@ -156,6 +181,7 @@ export const useCoachingStore = create<CoachingState>()(
       preferences: defaultPreferences,
       signals: [],
       speakingPracticeDates: [],
+      practiceLog: {},
       testDate: null,
       writingPracticeDates: [],
       foundations: {},
@@ -180,8 +206,15 @@ export const useCoachingStore = create<CoachingState>()(
           completedUnitIds: [
             ...new Set([...state.completedUnitIds, ...(cloud.completedUnitIds ?? [])]),
           ],
-          preferences: cloud.preferences ?? state.preferences,
+          preferences: cloud.preferences
+            ? withLanguageDefaults(cloud.preferences)
+            : state.preferences,
           signals: mergePersistedSignals(state.signals, cloud.signals ?? []),
+          practiceLog: mergePracticeLogs(
+            state.practiceLog,
+            cloud.practiceLog ?? {},
+            localDay(Date.now()),
+          ),
           speakingPracticeDates: [
             ...new Set([...state.speakingPracticeDates, ...(cloud.speakingPracticeDates ?? [])]),
           ]
@@ -196,19 +229,32 @@ export const useCoachingStore = create<CoachingState>()(
         })),
       recordSignal: (signal) =>
         set((state) => ({ signals: mergeCoachingSignal(state.signals, signal) })),
+      recordPractice: (kind) =>
+        set((state) => {
+          const practiceLog = addPractice(state.practiceLog, kind, Date.now());
+          return practiceLog === state.practiceLog ? state : { practiceLog };
+        }),
       recordSpeakingPractice: () =>
         set((state) => {
           const today = new Date().toISOString().slice(0, 10);
-          return state.speakingPracticeDates.includes(today)
-            ? state
-            : { speakingPracticeDates: [...state.speakingPracticeDates, today].slice(-30) };
+          const practiceLog = addPractice(state.practiceLog, 'speaking', Date.now());
+          return {
+            practiceLog,
+            speakingPracticeDates: state.speakingPracticeDates.includes(today)
+              ? state.speakingPracticeDates
+              : [...state.speakingPracticeDates, today].slice(-30),
+          };
         }),
       recordWritingPractice: () =>
         set((state) => {
           const today = new Date().toISOString().slice(0, 10);
-          return state.writingPracticeDates.includes(today)
-            ? state
-            : { writingPracticeDates: [...state.writingPracticeDates, today].slice(-30) };
+          const practiceLog = addPractice(state.practiceLog, 'writing', Date.now());
+          return {
+            practiceLog,
+            writingPracticeDates: state.writingPracticeDates.includes(today)
+              ? state.writingPracticeDates
+              : [...state.writingPracticeDates, today].slice(-30),
+          };
         }),
       resetCoaching: () =>
         set({
@@ -219,6 +265,7 @@ export const useCoachingStore = create<CoachingState>()(
           preferences: defaultPreferences,
           signals: [],
           speakingPracticeDates: [],
+          practiceLog: {},
           testDate: null,
           writingPracticeDates: [],
         }),
@@ -241,9 +288,10 @@ export const useCoachingStore = create<CoachingState>()(
           foundations: parseFoundationProgress(state.foundations),
           coachTone: state.coachTone ?? 'supportive',
           completedUnitIds: state.completedUnitIds ?? [],
-          preferences: state.preferences ?? defaultPreferences,
+          preferences: withLanguageDefaults(state.preferences),
           signals: state.signals ?? [],
           speakingPracticeDates: state.speakingPracticeDates ?? [],
+          practiceLog: parsePracticeLog(serializePracticeLog(state.practiceLog ?? {})),
           testDate: state.testDate ?? null,
           writingPracticeDates: state.writingPracticeDates ?? [],
         };
@@ -258,12 +306,13 @@ export const useCoachingStore = create<CoachingState>()(
         preferences: state.preferences,
         signals: state.signals,
         speakingPracticeDates: state.speakingPracticeDates,
+        practiceLog: state.practiceLog,
         testDate: state.testDate,
         writingPracticeDates: state.writingPracticeDates,
       }),
       skipHydration: true,
       storage: createJSONStorage(() => scopedLearningStorage.storage),
-      version: 5,
+      version: 7,
     },
   ),
 );

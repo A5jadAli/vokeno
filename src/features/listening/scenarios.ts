@@ -1,4 +1,6 @@
-export type LanguageTrack = 'EN' | 'DE';
+import type { LanguageTrack } from '@/features/language/config';
+
+export type { LanguageTrack } from '@/features/language/config';
 export type SubtitleMode = 'target' | 'meaning' | 'off';
 
 export type DialogueLine = {
@@ -10,8 +12,8 @@ export type DialogueLine = {
 export type ListeningScenario = {
   id: string;
   track: LanguageTrack;
-  language: 'en-GB' | 'de-DE';
-  languageName: 'English' | 'German';
+  language: 'en-GB' | 'de-DE' | 'es-MX';
+  languageName: 'English' | 'German' | 'Spanish';
   title: string;
   context: string;
   level: 'A1' | 'A2' | 'B1' | 'B2';
@@ -19,12 +21,15 @@ export type ListeningScenario = {
   accent: string;
   icon:
     | 'account-group-outline'
+    | 'airplane'
     | 'basket-outline'
+    | 'bus'
     | 'book-open-variant'
     | 'school-outline'
     | 'coffee-outline'
     | 'food-croissant'
     | 'home-city-outline'
+    | 'food'
     | 'office-building-outline'
     | 'phone-outline'
     | 'podcast'
@@ -1127,6 +1132,508 @@ export const listeningScenarios: ListeningScenario[] = [
       prompt: 'Why is the neighbour at the door?',
       options: ['It is often loud in the evenings', 'She needs a parcel', 'She is moving out'],
       correctIndex: 0,
+    },
+  },
+  {
+    id: 'es-first-meeting',
+    track: 'ES',
+    language: 'es-MX',
+    languageName: 'Spanish',
+    title: 'A first meeting',
+    context: 'A short introduction and a question back',
+    level: 'A1',
+    duration: '25 sec',
+    accent: 'Everyday Mexican Spanish',
+    icon: 'account-group-outline',
+    lines: [
+      {
+        speaker: 'Ana',
+        text: 'Hola, me llamo Ana. ¿Y tú?',
+        translation: 'Hi, my name is Ana. And you?',
+      },
+      {
+        speaker: 'Omar',
+        text: 'Soy Omar. Mucho gusto.',
+        translation: 'I am Omar. Nice to meet you.',
+      },
+      {
+        speaker: 'Ana',
+        text: 'Mucho gusto. ¿De dónde eres?',
+        translation: 'Nice to meet you. Where are you from?',
+      },
+      {
+        speaker: 'Omar',
+        text: 'Soy de Pakistán. ¿Y tú?',
+        translation: 'I am from Pakistan. And you?',
+      },
+    ],
+    phrases: [
+      {
+        heard: '¿Y tú?',
+        full: '¿Y tú?',
+        meaning: 'And you? A quick way to pass the question back.',
+      },
+      {
+        heard: 'Mucho gusto.',
+        full: 'Mucho gusto.',
+        meaning: 'A common nice to meet you in Mexico.',
+      },
+      {
+        heard: '¿De dónde eres?',
+        full: '¿De dónde eres?',
+        meaning: 'Where are you from? Informal tú form.',
+      },
+    ],
+    question: {
+      prompt: 'Where is Omar from?',
+      options: ['Mexico', 'Pakistan', 'Spain'],
+      correctIndex: 1,
+    },
+  },
+  {
+    id: 'es-cafe-order',
+    track: 'ES',
+    language: 'es-MX',
+    languageName: 'Spanish',
+    title: 'A quick café order',
+    context: 'Order a drink, make a change and pay',
+    level: 'A1',
+    duration: '35 sec',
+    accent: 'Everyday Mexican Spanish',
+    icon: 'coffee-outline',
+    lines: [
+      {
+        speaker: 'Barista',
+        text: 'Buenos días. ¿Qué le sirvo?',
+        translation: 'Good morning. What can I get you?',
+      },
+      {
+        speaker: 'Cliente',
+        text: 'Un café con leche, sin azúcar, por favor.',
+        translation: 'A coffee with milk, without sugar, please.',
+      },
+      { speaker: 'Barista', text: 'Claro. ¿Para llevar?', translation: 'Of course. To take away?' },
+      {
+        speaker: 'Cliente',
+        text: 'Sí, gracias. ¿Puedo pagar con tarjeta?',
+        translation: 'Yes, thank you. Can I pay by card?',
+      },
+    ],
+    phrases: [
+      {
+        heard: '¿Qué le sirvo?',
+        full: '¿Qué le puedo servir?',
+        meaning: 'A natural, polite “what can I get you?”',
+      },
+      { heard: 'Sin azúcar.', full: 'Sin azúcar.', meaning: 'Without sugar.' },
+      { heard: '¿Para llevar?', full: '¿Es para llevar?', meaning: 'Is it to take away?' },
+    ],
+    question: {
+      prompt: 'How does the customer want to pay?',
+      options: ['With cash', 'By card', 'They do not say'],
+      correctIndex: 1,
+    },
+  },
+  {
+    id: 'es-find-bus',
+    track: 'ES',
+    language: 'es-MX',
+    languageName: 'Spanish',
+    title: 'Find the right bus',
+    context: 'Check the destination and departure time',
+    level: 'A1',
+    duration: '30 sec',
+    accent: 'Everyday Mexican Spanish',
+    icon: 'bus',
+    lines: [
+      {
+        speaker: 'Viajera',
+        text: 'Disculpe, ¿este autobús va al centro?',
+        translation: 'Excuse me, does this bus go downtown?',
+      },
+      { speaker: 'Conductor', text: 'Sí, va al centro.', translation: 'Yes, it goes downtown.' },
+      { speaker: 'Viajera', text: '¿A qué hora sale?', translation: 'What time does it leave?' },
+      {
+        speaker: 'Conductor',
+        text: 'Sale a las nueve. Puede subir ahora.',
+        translation: 'It leaves at nine. You can board now.',
+      },
+    ],
+    phrases: [
+      {
+        heard: '¿Este autobús va al centro?',
+        full: '¿Va al centro?',
+        meaning: 'Check the destination before boarding.',
+      },
+      { heard: '¿A qué hora sale?', full: '¿A qué hora sale?', meaning: 'Ask the departure time.' },
+      { heard: 'Puede subir ahora.', full: 'Puede subir ahora.', meaning: 'You can board now.' },
+    ],
+    question: {
+      prompt: 'When does the bus leave?',
+      options: ['At eight', 'At nine', 'At ten'],
+      correctIndex: 1,
+    },
+  },
+  {
+    id: 'es-hotel-key',
+    track: 'ES',
+    language: 'es-MX',
+    languageName: 'Spanish',
+    title: 'The hotel key',
+    context: 'Report a problem and ask for help',
+    level: 'A1',
+    duration: '30 sec',
+    accent: 'Everyday Mexican Spanish',
+    icon: 'home-city-outline',
+    lines: [
+      {
+        speaker: 'Huésped',
+        text: 'Disculpe, la llave de mi habitación no funciona.',
+        translation: 'Excuse me, my room key does not work.',
+      },
+      {
+        speaker: 'Recepcionista',
+        text: 'Lo siento. ¿Qué número de habitación tiene?',
+        translation: 'I am sorry. What room number do you have?',
+      },
+      {
+        speaker: 'Huésped',
+        text: 'La doscientos cuatro. ¿Me puede ayudar?',
+        translation: 'Room 204. Can you help me?',
+      },
+      {
+        speaker: 'Recepcionista',
+        text: 'Claro. Le doy otra llave.',
+        translation: 'Of course. I will give you another key.',
+      },
+    ],
+    phrases: [
+      { heard: 'No funciona.', full: 'No funciona.', meaning: 'It does not work.' },
+      {
+        heard: '¿Me puede ayudar?',
+        full: '¿Me puede ayudar?',
+        meaning: 'Can you help me? Polite.',
+      },
+      {
+        heard: 'Le doy otra llave.',
+        full: 'Le doy otra llave.',
+        meaning: 'I will give you another key.',
+      },
+    ],
+    question: {
+      prompt: 'What does the receptionist offer?',
+      options: ['A new room', 'Another key', 'A refund'],
+      correctIndex: 1,
+    },
+  },
+  {
+    id: 'es-market-stall',
+    track: 'ES',
+    language: 'es-MX',
+    languageName: 'Spanish',
+    title: 'At the market stall',
+    context: 'Ask for quantities and pay',
+    level: 'A1',
+    duration: '30 sec',
+    accent: 'Everyday Mexican Spanish',
+    icon: 'basket-outline',
+    lines: [
+      { speaker: 'Vendedor', text: '¿Qué le damos, joven?', translation: 'What can we get you?' },
+      {
+        speaker: 'Cliente',
+        text: '¿Me da un kilo de jitomates y dos aguacates?',
+        translation: 'Can I have a kilo of tomatoes and two avocados?',
+      },
+      { speaker: 'Vendedor', text: 'Claro. ¿Algo más?', translation: 'Of course. Anything else?' },
+      {
+        speaker: 'Cliente',
+        text: 'Nada más, gracias. ¿Cuánto es?',
+        translation: 'That’s all, thanks. How much is it?',
+      },
+      { speaker: 'Vendedor', text: 'Son ochenta pesos.', translation: 'That’s eighty pesos.' },
+    ],
+    phrases: [
+      {
+        heard: '¿Qué le damos?',
+        full: '¿Qué le damos?',
+        meaning: 'What can we get you? A friendly market call.',
+      },
+      {
+        heard: '¿Me da…?',
+        full: '¿Me da…?',
+        meaning: 'Can I have…? Polite and very common in Mexico.',
+      },
+      { heard: '¿Cuánto es?', full: '¿Cuánto es?', meaning: 'How much is it all together?' },
+    ],
+    question: {
+      prompt: 'How much does the customer pay?',
+      options: ['18 pesos', '80 pesos', '90 pesos'],
+      correctIndex: 1,
+    },
+  },
+  {
+    id: 'es-weekend-plan',
+    track: 'ES',
+    language: 'es-MX',
+    languageName: 'Spanish',
+    title: 'Making weekend plans',
+    context: 'Two friends agree a time and place',
+    level: 'A1',
+    duration: '30 sec',
+    accent: 'Everyday Mexican Spanish',
+    icon: 'phone-outline',
+    lines: [
+      { speaker: 'Diego', text: '¿Bueno? ¡Qué onda, Lucía!', translation: 'Hello? Hey, Lucía!' },
+      {
+        speaker: 'Lucía',
+        text: 'Hola, Diego. ¿Nos vemos el sábado?',
+        translation: 'Hi, Diego. Shall we meet on Saturday?',
+      },
+      {
+        speaker: 'Diego',
+        text: 'Va. ¿A qué hora?',
+        translation: 'Sounds good. What time?',
+      },
+      {
+        speaker: 'Lucía',
+        text: 'A las cinco, en el café del parque.',
+        translation: 'At five, at the café in the park.',
+      },
+      { speaker: 'Diego', text: 'Sale, nos vemos.', translation: 'OK, see you.' },
+    ],
+    phrases: [
+      {
+        heard: '¿Bueno?',
+        full: '¿Bueno?',
+        meaning: 'Hello? How many people answer the phone in Mexico.',
+      },
+      { heard: 'Va.', full: 'Va.', meaning: 'OK, sounds good. Informal.' },
+      { heard: 'Sale.', full: 'Sale.', meaning: 'Deal, OK. Informal and Mexican.' },
+    ],
+    question: {
+      prompt: 'Where will they meet?',
+      options: ['At the café in the park', 'At Diego’s house', 'At the cinema'],
+      correctIndex: 0,
+    },
+  },
+  {
+    id: 'es-monday-chat',
+    track: 'ES',
+    language: 'es-MX',
+    languageName: 'Spanish',
+    title: 'How was your weekend?',
+    context: 'Colleagues chat about the weekend',
+    level: 'A2',
+    duration: '35 sec',
+    accent: 'Everyday Mexican Spanish',
+    icon: 'account-group-outline',
+    lines: [
+      {
+        speaker: 'Mariana',
+        text: '¿Qué hiciste el fin de semana?',
+        translation: 'What did you do at the weekend?',
+      },
+      {
+        speaker: 'Raúl',
+        text: 'El sábado fui a Puebla con mi familia. Comimos mole.',
+        translation: 'On Saturday I went to Puebla with my family. We ate mole.',
+      },
+      {
+        speaker: 'Mariana',
+        text: '¡Qué padre! ¿Y el domingo?',
+        translation: 'How cool! And on Sunday?',
+      },
+      {
+        speaker: 'Raúl',
+        text: 'Descansé. Estaba muy cansado. ¿Y tú?',
+        translation: 'I rested. I was really tired. And you?',
+      },
+      {
+        speaker: 'Mariana',
+        text: 'Yo vi una peli en casa. Estuvo bien.',
+        translation: 'I watched a film at home. It was good.',
+      },
+    ],
+    phrases: [
+      {
+        heard: '¿Qué hiciste?',
+        full: '¿Qué hiciste?',
+        meaning: 'What did you do? Past of hacer for tú.',
+      },
+      {
+        heard: '¡Qué padre!',
+        full: '¡Qué padre!',
+        meaning: 'How cool! Informal Mexican reaction.',
+      },
+      {
+        heard: 'una peli',
+        full: 'una película',
+        meaning: 'A film. Peli is the casual short form.',
+      },
+    ],
+    question: {
+      prompt: 'What did Raúl do on Sunday?',
+      options: ['He went to Puebla', 'He rested', 'He watched a film'],
+      correctIndex: 1,
+    },
+  },
+  {
+    id: 'es-pharmacy-visit',
+    track: 'ES',
+    language: 'es-MX',
+    languageName: 'Spanish',
+    title: 'At the pharmacy',
+    context: 'Describe symptoms and check the dose',
+    level: 'A2',
+    duration: '35 sec',
+    accent: 'Everyday Mexican Spanish',
+    icon: 'stethoscope',
+    lines: [
+      {
+        speaker: 'Farmacéutica',
+        text: 'Buenas tardes. ¿En qué le ayudo?',
+        translation: 'Good afternoon. How can I help you?',
+      },
+      {
+        speaker: 'Cliente',
+        text: 'Tengo tos y me duele la garganta desde ayer.',
+        translation: 'I have a cough and my throat has hurt since yesterday.',
+      },
+      { speaker: 'Farmacéutica', text: '¿Tiene fiebre?', translation: 'Do you have a fever?' },
+      { speaker: 'Cliente', text: 'No, fiebre no.', translation: 'No, no fever.' },
+      {
+        speaker: 'Farmacéutica',
+        text: 'Tome este jarabe cada ocho horas. Si no mejora, vaya al médico.',
+        translation: 'Take this syrup every eight hours. If it does not get better, see a doctor.',
+      },
+    ],
+    phrases: [
+      {
+        heard: '¿En qué le ayudo?',
+        full: '¿En qué le puedo ayudar?',
+        meaning: 'How can I help you? Polite usted.',
+      },
+      {
+        heard: 'Me duele la garganta.',
+        full: 'Me duele la garganta.',
+        meaning: 'My throat hurts.',
+      },
+      { heard: 'cada ocho horas', full: 'cada ocho horas', meaning: 'Every eight hours.' },
+    ],
+    question: {
+      prompt: 'How often should the customer take the syrup?',
+      options: ['Every eight hours', 'Once a day', 'Every four hours'],
+      correctIndex: 0,
+    },
+  },
+  {
+    id: 'es-taqueria',
+    track: 'ES',
+    language: 'es-MX',
+    languageName: 'Spanish',
+    title: 'Tacos with friends',
+    context: 'Order, change a dish and split the bill',
+    level: 'A2',
+    duration: '40 sec',
+    accent: 'Everyday Mexican Spanish',
+    icon: 'food',
+    lines: [
+      {
+        speaker: 'Mesero',
+        text: '¿Ya saben qué van a pedir?',
+        translation: 'Do you know what you will order?',
+      },
+      {
+        speaker: 'Sofía',
+        text: 'Para mí, tres tacos al pastor, pero sin cebolla.',
+        translation: 'For me, three tacos al pastor, but without onion.',
+      },
+      {
+        speaker: 'Andrés',
+        text: 'Y para mí una quesadilla. ¿Qué nos recomienda para tomar?',
+        translation: 'And a quesadilla for me. What do you recommend to drink?',
+      },
+      {
+        speaker: 'Mesero',
+        text: 'El agua de horchata está muy rica.',
+        translation: 'The horchata is really good.',
+      },
+      {
+        speaker: 'Sofía',
+        text: 'Perfecto. Y al final, ¿podemos pagar por separado?',
+        translation: 'Perfect. And at the end, can we pay separately?',
+      },
+    ],
+    phrases: [
+      {
+        heard: '¿Ya saben qué van a pedir?',
+        full: '¿Ya saben qué van a pedir?',
+        meaning: 'Are you ready to order?',
+      },
+      { heard: 'sin cebolla', full: 'sin cebolla', meaning: 'Without onion.' },
+      { heard: 'por separado', full: 'pagar por separado', meaning: 'Pay separately.' },
+    ],
+    question: {
+      prompt: 'What does Sofía not want in her tacos?',
+      options: ['Cheese', 'Onion', 'Salsa'],
+      correctIndex: 1,
+    },
+  },
+  {
+    id: 'es-flight-desk',
+    track: 'ES',
+    language: 'es-MX',
+    languageName: 'Spanish',
+    title: 'A cancelled flight',
+    context: 'Rebook at the airline desk',
+    level: 'A2',
+    duration: '40 sec',
+    accent: 'Everyday Mexican Spanish',
+    icon: 'airplane',
+    lines: [
+      {
+        speaker: 'Pasajero',
+        text: 'Disculpe, mi vuelo a Guadalajara está cancelado.',
+        translation: 'Excuse me, my flight to Guadalajara is cancelled.',
+      },
+      {
+        speaker: 'Agente',
+        text: 'Lo siento mucho. ¿Me permite su pase de abordar?',
+        translation: 'I am very sorry. May I see your boarding pass?',
+      },
+      {
+        speaker: 'Pasajero',
+        text: 'Sí, aquí está. ¿Hay otro vuelo hoy?',
+        translation: 'Yes, here it is. Is there another flight today?',
+      },
+      {
+        speaker: 'Agente',
+        text: 'Hay uno a las nueve de la noche. Le cambio el boleto sin costo.',
+        translation: 'There is one at nine in the evening. I will change your ticket at no cost.',
+      },
+      {
+        speaker: 'Pasajero',
+        text: 'Muchas gracias. ¿Me da un comprobante, por favor?',
+        translation: 'Thank you very much. Could I have written confirmation, please?',
+      },
+    ],
+    phrases: [
+      {
+        heard: 'pase de abordar',
+        full: 'el pase de abordar',
+        meaning: 'Boarding pass, in Mexico. Spain says tarjeta de embarque.',
+      },
+      { heard: 'sin costo', full: 'sin costo', meaning: 'At no cost, free of charge.' },
+      {
+        heard: 'un comprobante',
+        full: 'un comprobante',
+        meaning: 'A written confirmation or receipt.',
+      },
+    ],
+    question: {
+      prompt: 'When is the new flight?',
+      options: ['At nine in the morning', 'Tomorrow', 'At nine in the evening'],
+      correctIndex: 2,
     },
   },
 ];

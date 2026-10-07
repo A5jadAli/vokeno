@@ -81,9 +81,11 @@ describe('cloud sync ownership and failures', () => {
         preferences: {
           DE: { goal: 'everyday', reference: 'de-DE' },
           EN: { goal: 'interviews', reference: 'en-GB' },
+          ES: { goal: 'everyday', reference: 'es-MX' },
         },
         signals: [],
         speakingPracticeDates: [],
+        practiceLog: {},
         testDate: '2027-01-01',
         writingPracticeDates: [],
       }),

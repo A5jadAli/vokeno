@@ -219,7 +219,10 @@ function PlusContent() {
                 `${state.config.assessmentDaily} spoken assessment requests per day`,
                 'Daily allowances reset at midnight UTC',
               ]
-            : ['English and German learning', 'Your learning progress stays with your account']
+            : [
+                'English, German and Spanish learning',
+                'Your learning progress stays with your account',
+              ]
           ).map((benefit) => (
             <View key={benefit} style={styles.benefit}>
               <MaterialCommunityIcons color={Palette.orange} name="check-circle" size={21} />
@@ -343,17 +346,16 @@ const styles = StyleSheet.create({
   },
   title: {
     color: Palette.cream,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 38,
-    letterSpacing: -1.2,
-    lineHeight: 42,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
+    lineHeight: 34,
     marginTop: 9,
   },
   copy: {
     color: 'rgba(241,237,227,.64)',
     fontFamily: VokaFonts.body,
     fontSize: 14,
-    lineHeight: 22,
+    lineHeight: 21,
     marginTop: 12,
   },
   benefits: { gap: 14, marginTop: 27 },
@@ -369,7 +371,7 @@ const styles = StyleSheet.create({
     color: Palette.cream,
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 13,
-    lineHeight: 21,
+    lineHeight: 20,
     marginTop: 20,
   },
   loader: { marginTop: 28 },
@@ -380,16 +382,21 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     marginTop: 22,
   },
-  primaryButton: {
-    alignItems: 'center',
-    backgroundColor: Palette.orange,
-    borderRadius: 18,
-    marginTop: 28,
-    minHeight: 58,
-    justifyContent: 'center',
-    paddingHorizontal: 18,
+  terms: {
+    color: 'rgba(241,237,227,.7)',
+    fontFamily: VokaFonts.body,
+    fontSize: 12,
+    lineHeight: 18,
+    textAlign: 'center',
   },
-  primaryText: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 17 },
+  legalLinks: { flexDirection: 'row', gap: 22, justifyContent: 'center', marginTop: 13 },
+  legalTarget: { minHeight: 44, minWidth: 64, justifyContent: 'center', alignItems: 'center' },
+  legalText: {
+    color: Palette.cream,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: 12,
+    textDecorationLine: 'underline',
+  },
   primaryWrap: { alignSelf: 'stretch', gap: 10, marginTop: 28 },
   priceNote: {
     color: 'rgba(241,237,227,.7)',
@@ -398,27 +405,11 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     textAlign: 'center',
   },
-  disabled: { opacity: 0.45 },
   restore: {
     color: Palette.cream,
     fontFamily: VokaFonts.bodyBold,
     fontSize: 13,
     paddingVertical: 18,
     textAlign: 'center',
-  },
-  terms: {
-    color: 'rgba(241,237,227,.7)',
-    fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
-  legalLinks: { flexDirection: 'row', gap: 22, justifyContent: 'center', marginTop: 13 },
-  legalTarget: { minHeight: 44, minWidth: 64, justifyContent: 'center', alignItems: 'center' },
-  legalText: {
-    color: Palette.cream,
-    fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 11,
-    textDecorationLine: 'underline',
   },
 });

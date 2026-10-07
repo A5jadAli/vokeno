@@ -103,13 +103,19 @@ test('German meaning checks mark the chosen answer and preserve correct feedback
   await expect(wrong).toBeChecked();
   await page.getByRole('button', { name: 'Check', exact: true }).click();
   // The coloured face sits inside the tactile lip.
-  await expect(wrong.locator('div').nth(1)).toHaveCSS('background-color', 'rgb(255, 233, 225)');
+  await expect(wrong.getByTestId('answer-face')).toHaveCSS(
+    'background-color',
+    'rgb(255, 233, 225)',
+  );
   await page.getByRole('button', { name: 'Try again' }).click();
   const right = page.getByRole('radio', { name: 'Guten Tag!', exact: true });
   await right.click();
   await page.getByRole('button', { name: 'Check', exact: true }).click();
   await expect(right).toBeChecked();
-  await expect(right.locator('div').nth(1)).toHaveCSS('background-color', 'rgb(227, 242, 229)');
+  await expect(right.getByTestId('answer-face')).toHaveCSS(
+    'background-color',
+    'rgb(227, 242, 229)',
+  );
   await expect(right).toBeDisabled();
   await page.getByRole('button', { name: 'Next question' }).click();
   await expect(page.getByRole('radio', { checked: true })).toHaveCount(0);
@@ -137,7 +143,10 @@ test('dialogue replay restarts, speed takes effect and listening does not erase 
   await page.getByRole('radio', { name: 'An extra espresso shot' }).click();
   await page.getByRole('button', { name: 'Check answer', exact: true }).click();
   const correct = page.getByRole('radio', { name: 'An extra espresso shot' });
-  await expect(correct.locator('div').nth(1)).toHaveCSS('background-color', 'rgb(227, 242, 229)');
+  await expect(correct.getByTestId('answer-face')).toHaveCSS(
+    'background-color',
+    'rgb(227, 242, 229)',
+  );
   await page.getByRole('button', { name: 'Replay audio', exact: true }).click();
   await expect(page.getByText('More listening practice', { exact: true })).toBeVisible();
   await expect(correct).toBeChecked();

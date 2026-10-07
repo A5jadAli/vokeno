@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   copy: { flex: 1, gap: 4 },
   label: { fontFamily: VokaFonts.bodySemiBold, fontSize: 15, lineHeight: 22 },
   status: { fontFamily: VokaFonts.body, fontSize: 12, lineHeight: 18 },
-  error: { fontFamily: VokaFonts.body, color: Palette.secondary, fontSize: 14, lineHeight: 22 },
+  error: { fontFamily: VokaFonts.body, color: Palette.secondary, fontSize: 14, lineHeight: 21 },
   round: {
     alignItems: 'center',
     justifyContent: 'center',

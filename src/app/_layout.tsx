@@ -1,9 +1,4 @@
-import {
-  BricolageGrotesque_500Medium,
-  BricolageGrotesque_700Bold,
-  BricolageGrotesque_800ExtraBold,
-} from '@expo-google-fonts/bricolage-grotesque';
-import { DMMono_400Regular, DMMono_500Medium } from '@expo-google-fonts/dm-mono';
+import { BricolageGrotesque_800ExtraBold } from '@expo-google-fonts/bricolage-grotesque';
 import {
   PlusJakartaSans_400Regular,
   PlusJakartaSans_500Medium,
@@ -25,16 +20,14 @@ import {
   useLearningScopeReady,
 } from '@/components/cloud-sync-provider';
 import { useLanguageSelection } from '@/features/language/selection';
+import { useReminderSync } from '@/features/habits/use-reminder-sync';
 
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  useReminderSync();
   const [fontsLoaded, fontError] = useFonts({
-    BricolageGrotesque_500Medium,
-    BricolageGrotesque_700Bold,
     BricolageGrotesque_800ExtraBold,
-    DMMono_400Regular,
-    DMMono_500Medium,
     PlusJakartaSans_400Regular,
     PlusJakartaSans_500Medium,
     PlusJakartaSans_600SemiBold,

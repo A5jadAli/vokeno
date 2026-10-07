@@ -1,9 +1,32 @@
 import type { StartingAbility, StudyGoal } from './store';
+import type { LanguageTrack } from '@/features/language/config';
 export function learningRecommendation(
-  track: 'DE' | 'EN',
+  track: LanguageTrack,
   ability: StartingAbility = 'new',
   goal: StudyGoal = 'everyday',
 ) {
+  if (track === 'ES') {
+    if (ability === 'new')
+      return {
+        title: 'Your first useful Spanish exchange',
+        why: 'Greet someone, ask politely and leave with a complete exchange.',
+        href: '/foundation/es-first-words',
+      };
+    if (ability === 'basics')
+      return {
+        title: 'Order at a café',
+        why: 'Put familiar words to work in a real service conversation.',
+        href: '/foundation/es-cafe',
+      };
+    return {
+      title: goal === 'work-study' ? 'Keep the conversation going' : 'Find your way',
+      why:
+        goal === 'work-study'
+          ? 'Ask for repetition and clarification before practising longer conversations.'
+          : 'Ask for a place, follow directions and confirm what you heard.',
+      href: goal === 'work-study' ? '/foundation/es-repair' : '/foundation/es-directions',
+    };
+  }
   if (track === 'DE') {
     if (ability === 'new')
       return {

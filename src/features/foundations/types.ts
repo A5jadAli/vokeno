@@ -1,4 +1,6 @@
-export type LessonTrack = 'DE' | 'EN';
+import type { LanguageTrack } from '@/features/language/config';
+
+export type LessonTrack = LanguageTrack;
 export type LessonLevel = 'A1' | 'A2' | 'B1' | 'B2';
 
 export type LessonCheck = {

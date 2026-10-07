@@ -17,7 +17,7 @@ test('a complete beginner gets correction, a persistent draft, evidence and a ne
   await page.goto('/');
   await page.getByRole('button', { name: 'German', exact: true }).click();
   await page
-    .getByRole('button', { name: 'Open practice: Start with your first German words' })
+    .getByRole('button', { name: 'Start lesson: Start with your first German words' })
     .click();
   await expect(page.getByText('Hello! / Good day!', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Practise these phrases' }).click();
@@ -56,9 +56,7 @@ test('a complete beginner gets correction, a persistent draft, evidence and a ne
   await expect(page.getByText('My name is Sara.', { exact: true })).toBeVisible();
   // Home now points at the next lesson in the path instead of the onboarding suggestion.
   await page.goto('/');
-  await expect(
-    page.getByRole('button', { name: 'Open practice: Next: Say your name' }),
-  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Optional extra: Say your name' })).toBeVisible();
   await expect(page.getByText('7 phrases · next review tomorrow')).toBeVisible();
 });
 
@@ -68,7 +66,7 @@ test('all lessons can be completed without audio and without false speaking cred
   test.setTimeout(600_000);
   const lessons = foundationLessons.map((lesson) => ({
     id: lesson.id,
-    language: lesson.track === 'EN' ? 'English' : 'German',
+    language: lesson.track === 'EN' ? 'English' : lesson.track === 'ES' ? 'Spanish' : 'German',
     choices: lesson.checks.map((check) => check.options[check.answer]),
     answer: lesson.writing.accepted[0],
   }));
@@ -92,8 +90,8 @@ test('all lessons can be completed without audio and without false speaking cred
     await expect(page.getByText(`${total}/${total} checks right first time`)).toBeVisible();
     await expect(page.getByText(/You skipped the speaking practice/)).toBeVisible();
   }
-  await page.getByRole('button', { name: 'Try English listening' }).click();
-  await expect(page).toHaveURL(/\/listening\?track=EN$/);
+  await page.getByRole('button', { name: 'Try Spanish listening' }).click();
+  await expect(page).toHaveURL(/\/listening\?track=ES$/);
 });
 
 test('unavailable German audio explains the fallback and does not block learning', async ({

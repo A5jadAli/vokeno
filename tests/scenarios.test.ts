@@ -11,6 +11,14 @@ describe('listening scenario catalogue', () => {
     expect(scenarios.every((scenario) => scenario.phrases.length >= 3)).toBe(true);
   });
 
+  it('has a Spanish A1–A2 listening set with regional metadata', () => {
+    const scenarios = getScenarios('ES');
+    expect(scenarios.length).toBeGreaterThanOrEqual(4);
+    expect(scenarios.every((scenario) => scenario.language === 'es-MX')).toBe(true);
+    expect(scenarios.every((scenario) => ['A1', 'A2'].includes(scenario.level))).toBe(true);
+    expect(scenarios.every((scenario) => scenario.lines.length >= 3)).toBe(true);
+  });
+
   it('uses unique ids and valid answer indexes', () => {
     const ids = listeningScenarios.map((scenario) => scenario.id);
 

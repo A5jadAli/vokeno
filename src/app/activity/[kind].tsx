@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
+import { type Href, Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -8,12 +8,17 @@ import { Palette, VokaFonts } from '@/constants/theme';
 import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
 import { AnswerChoice } from '@/components/answer-choice';
 import { WritingActivity } from '@/components/writing-activity';
+import { useSelectedLanguage } from '@/features/language/selection';
+import { useCoachingStore } from '@/features/coaching/store';
 
 export default function ActivityScreen() {
   const { kind } = useLocalSearchParams<{ kind: string }>();
+  const [track] = useSelectedLanguage();
   if (kind === 'write') return <WritingActivity />;
+  // English listening drills only; Spanish and German listening lives in the dialogue library.
+  if (track === 'ES') return <Redirect href={'/listening?track=ES' as Href} />;
   if (kind === 'listen') return <ListeningActivity />;
-  return <Redirect href="/conversation?track=EN" />;
+  return <Redirect href={`/conversation?track=${track}`} />;
 }
 
 function ActivityHeader({
@@ -60,13 +65,16 @@ function ListeningActivity() {
       accessibilityState={{ disabled: selected === null }}
       disabled={selected === null}
       onPress={() => {
-        if (feedback && selected === 1) router.push('/lesson/coffee-run');
-        else
-          setFeedback(
-            selected === 1
-              ? 'Correct. They will meet outside the station.'
-              : 'Not quite. Replay it slowly and listen for the place.',
-          );
+        if (feedback && selected === 1) {
+          router.push('/lesson/coffee-run');
+          return;
+        }
+        if (selected === 1) useCoachingStore.getState().recordPractice('listening');
+        setFeedback(
+          selected === 1
+            ? 'Correct. They will meet outside the station.'
+            : 'Not quite. Replay it slowly and listen for the place.',
+        );
       }}
       style={({ pressed }) => [
         styles.checkButton,
@@ -216,91 +224,12 @@ function Waveform() {
 }
 
 const styles = StyleSheet.create({
-  writingCopy: { color: Palette.secondary },
-  header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-  },
   headerSpacer: { width: 40 },
   progressBars: { flexDirection: 'row', gap: 4 },
   progressBar: { borderRadius: 99, height: 5, width: 20 },
   progressDone: { backgroundColor: Palette.orange },
   activityBody: { flex: 1, paddingHorizontal: 18, paddingTop: 12 },
-  prompt: {
-    color: Palette.ink,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 27,
-    lineHeight: 33,
-    marginTop: 8,
-  },
-  chartCard: {
-    backgroundColor: Palette.white,
-    borderColor: Palette.line,
-    borderRadius: 20,
-    borderWidth: 1,
-    marginVertical: 18,
-    padding: 16,
-  },
-  chartCaption: { color: Palette.muted, fontFamily: VokaFonts.bodyMedium, fontSize: 11 },
-  chart: { alignItems: 'flex-end', flexDirection: 'row', gap: 8, height: 110, marginTop: 12 },
-  barColumn: { alignItems: 'center', flex: 1, justifyContent: 'flex-end' },
-  chartBar: { backgroundColor: '#D9D9D7', borderRadius: 5, width: '100%' },
-  chartBarHot: { backgroundColor: Palette.orange },
-  barLabel: { color: Palette.muted, fontFamily: VokaFonts.monoMedium, fontSize: 8, marginTop: 6 },
-  wordChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 10 },
-  wordChip: {
-    backgroundColor: Palette.ink,
-    borderRadius: 99,
-    color: Palette.cream,
-    fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 11,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-  },
-  writingInput: {
-    backgroundColor: Palette.white,
-    borderColor: Palette.line,
-    borderRadius: 18,
-    borderWidth: 1,
-    color: Palette.ink,
-    fontFamily: VokaFonts.bodyMedium,
-    fontSize: 14,
-    lineHeight: 21,
-    marginTop: 16,
-    minHeight: 130,
-    maxHeight: 220,
-    padding: 15,
-  },
-  savedText: { color: '#3B754C', fontFamily: VokaFonts.bodySemiBold, fontSize: 11, marginTop: 8 },
-  wordCount: {
-    color: Palette.muted,
-    fontFamily: VokaFonts.monoMedium,
-    fontSize: 10,
-    marginTop: 8,
-    textAlign: 'right',
-  },
-  validationText: { color: '#A4391B' },
-  bottomActionRow: { flexDirection: 'row', gap: 8, padding: 18 },
-  smallAction: {
-    alignItems: 'center',
-    backgroundColor: Palette.white,
-    borderRadius: 18,
-    height: 60,
-    justifyContent: 'center',
-    width: 60,
-  },
-  primaryAction: {
-    alignItems: 'center',
-    backgroundColor: Palette.orange,
-    borderRadius: 18,
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  primaryActionText: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 18 },
+  primaryActionText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
   pressed: { opacity: 0.7 },
   actionDisabled: { opacity: 0.45 },
   audioCard: { backgroundColor: Palette.ink, borderRadius: 26, padding: 20 },
@@ -336,7 +265,7 @@ const styles = StyleSheet.create({
     borderRadius: 99,
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 11,
+    fontSize: 12,
     paddingHorizontal: 13,
     paddingVertical: 8,
   },
@@ -345,15 +274,15 @@ const styles = StyleSheet.create({
     borderRadius: 99,
     color: Palette.cream,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 11,
+    fontSize: 12,
     paddingHorizontal: 13,
     paddingVertical: 8,
   },
   questionBlock: { marginTop: 28 },
   question: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 27,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
     marginTop: 8,
   },
   answers: { gap: 10, marginTop: 18 },
@@ -372,5 +301,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 18,
     minHeight: 60,
+  },
+  header: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 18,
+    paddingVertical: 12,
   },
 });

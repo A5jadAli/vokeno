@@ -16,7 +16,7 @@ export async function reportAiContent(report: {
   reason: ReportReason;
   details?: string;
   excerpt?: string;
-  track?: 'EN' | 'DE';
+  track?: 'EN' | 'DE' | 'ES';
 }) {
   if (!supabase) throw new Error('Reporting is not available in this build.');
   await getOrCreateSession();

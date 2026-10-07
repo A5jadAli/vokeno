@@ -102,8 +102,8 @@ const styles = StyleSheet.create({
   notes: {
     color: 'rgba(241,237,227,.64)',
     fontFamily: VokaFonts.body,
-    fontSize: 11,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 17,
     marginTop: 3,
   },
   actions: { alignItems: 'center', flexDirection: 'row', gap: 18, marginTop: 12 },

@@ -40,18 +40,17 @@ const styles = StyleSheet.create({
   body: { paddingBottom: 36, paddingHorizontal: 22 },
   title: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 38,
-    letterSpacing: -1.2,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
   },
-  date: { color: Palette.muted, fontFamily: VokaFonts.mono, fontSize: 10, marginTop: 7 },
+  date: { color: Palette.muted, fontFamily: VokaFonts.bodyMedium, fontSize: 12, marginTop: 7 },
   section: { borderTopColor: Palette.line, borderTopWidth: 1, marginTop: 22, paddingTop: 18 },
-  heading: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 19 },
+  heading: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
   copy: {
     color: Palette.secondary,
     fontFamily: VokaFonts.body,
     fontSize: 13,
-    lineHeight: 21,
+    lineHeight: 20,
     marginTop: 7,
   },
 });

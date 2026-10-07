@@ -11,7 +11,7 @@ test('Home actions are distinct and icon navigation keeps accessible names', asy
   const home = page.getByRole('button', { name: 'Home', exact: true });
   await expect(home).toBeVisible();
   await expect(home.getByText('Home', { exact: true })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: /^Open practice:/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Start lesson:/ })).toBeVisible();
   await page
     .getByRole('button', { name: 'Change my starting point and goal', exact: true })
     .click();
@@ -129,7 +129,10 @@ test('reading gives correction, records completion and offers the next text', as
   await wrong.click();
   await expect(wrong).toBeChecked();
   // The coloured face sits inside the tactile lip.
-  await expect(wrong.locator('div').nth(1)).toHaveCSS('background-color', 'rgb(255, 233, 225)');
+  await expect(wrong.getByTestId('answer-face')).toHaveCSS(
+    'background-color',
+    'rgb(255, 233, 225)',
+  );
   await expect(page.getByText(/Not quite. Check the evidence/)).toBeVisible();
   await page
     .getByRole('radio', { name: 'To explain temporary service changes', exact: true })
@@ -139,7 +142,10 @@ test('reading gives correction, records completion and offers the next text', as
     exact: true,
   });
   await expect(correct).toBeChecked();
-  await expect(correct.locator('div').nth(1)).toHaveCSS('background-color', 'rgb(227, 242, 229)');
+  await expect(correct.getByTestId('answer-face')).toHaveCSS(
+    'background-color',
+    'rgb(227, 242, 229)',
+  );
   await expect(correct).toBeDisabled();
   await expect(wrong).not.toBeChecked();
   await page.getByRole('button', { name: 'Read a practical notice', exact: true }).click();

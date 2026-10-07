@@ -45,12 +45,14 @@ import type {
   RealtimeSessionStatus,
 } from '@/features/conversation/realtime-types';
 import { useSelectedLanguage } from '@/features/language/selection';
+import { trackColors } from '@/features/language/config';
 import { getCurriculumUnit } from '@/features/curriculum/catalog';
 import { formatClock, useMockNotes } from '@/features/speaking-mock/store';
 import {
   getSpeakingCard,
   type SpeakingCard,
 } from '../../supabase/functions/_shared/speaking-cards';
+import { LanguageSwitch } from '@/components/language-switch';
 
 const BRIEF_OPENING =
   'Keep this opening very short: one brief greeting and one simple question, under eight seconds of speech. Then stop and wait for the learner.';
@@ -166,10 +168,13 @@ export default function ConversationScreen() {
           starter:
             track === 'EN'
               ? 'Run a brief spoken English check. First ask the learner to read: “The bus to the city leaves every twenty minutes.” Then ask two progressively harder everyday questions. Give a broad CEFR range only when there is enough evidence, and explain that it is an estimate rather than a certified result.'
-              : 'Run a brief spoken German check. First ask the learner to read: “Der Bus in die Stadt fährt alle zwanzig Minuten.” Then ask two progressively harder everyday questions. Give a broad CEFR range only when there is enough evidence, and explain that it is an estimate rather than a certified result.',
+              : track === 'DE'
+                ? 'Run a brief spoken German check. First ask the learner to read: “Der Bus in die Stadt fährt alle zwanzig Minuten.” Then ask two progressively harder everyday questions. Give a broad CEFR range only when there is enough evidence, and explain that it is an estimate rather than a certified result.'
+                : 'Run a brief spoken Spanish check in everyday Mexican Spanish. First ask the learner to read: “El autobús al centro sale a las nueve.” Then ask two short practical questions. Explain that the result is only a broad, non-certified estimate.',
           title: 'Spoken level check',
         }
       : baseMode;
+  const darkAccent = trackColors[track].onDark;
   const active = !['ended', 'error', 'idle'].includes(status);
 
   const releaseSession = useCallback(() => {
@@ -439,7 +444,7 @@ export default function ConversationScreen() {
       </View>
 
       <View style={styles.body}>
-        <Eyebrow color={mode.accent}>
+        <Eyebrow color={darkAccent}>
           {examCard ? 'Exam mock' : 'Natural conversation'} · {mode.level}
         </Eyebrow>
         <Text style={styles.title}>{mode.title}</Text>
@@ -450,37 +455,25 @@ export default function ConversationScreen() {
         </Text>
 
         {!diagnostic && !unit ? (
-          <View accessibilityLabel="Conversation language" style={styles.trackRow}>
-            {(['EN', 'DE'] as const).map((item) => (
-              <Pressable
-                accessibilityLabel={item === 'EN' ? 'English conversation' : 'German conversation'}
-                accessibilityRole="button"
-                accessibilityState={{
-                  disabled: active || permissionPending,
-                  selected: track === item,
-                }}
-                disabled={active || permissionPending}
-                key={item}
-                onPress={() => {
-                  setTrack(item);
-                  setError('');
-                  setStatus('idle');
-                }}
-                style={[styles.trackButton, track === item && { backgroundColor: mode.accent }]}
-              >
-                <Text style={[styles.trackLabel, track === item && styles.trackLabelSelected]}>
-                  {item === 'EN' ? 'English' : 'Deutsch'}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
+          <LanguageSwitch
+            disabled={active || permissionPending}
+            groupLabel="Conversation language"
+            itemLabel={(name) => `${name} conversation`}
+            onChange={(item) => {
+              setTrack(item);
+              setError('');
+              setStatus('idle');
+            }}
+            tone="dark"
+            track={track}
+          />
         ) : null}
 
         {examCard ? <ExamCardPanel card={examCard} active={active} /> : null}
         {unit && !examCard ? (
           <View style={styles.practiceCard}>
             <View style={styles.practiceHeading}>
-              <MaterialCommunityIcons color={mode.accent} name="waveform" size={18} />
+              <MaterialCommunityIcons color={darkAccent} name="waveform" size={18} />
               <Text style={styles.practiceFocus}>{unit.pronunciationFocus}</Text>
             </View>
             <View style={styles.phraseRow}>
@@ -499,10 +492,10 @@ export default function ConversationScreen() {
             pulsing={['connecting', 'joining', 'speaking'].includes(status) || permissionPending}
           >
             {['connecting', 'joining'].includes(status) || permissionPending ? (
-              <ActivityIndicator color={Palette.ink} size="large" />
+              <ActivityIndicator color={trackColors[track].onAccent} size="large" />
             ) : (
               <MaterialCommunityIcons
-                color={Palette.ink}
+                color={trackColors[track].onAccent}
                 name={status === 'listening' ? 'microphone' : 'account-voice'}
                 size={42}
               />
@@ -640,6 +633,7 @@ export default function ConversationScreen() {
             <Text style={styles.captionHint}>Follow along without losing the conversation.</Text>
           </View>
           <Switch
+            thumbColor={Palette.white}
             accessibilityLabel="Show live captions"
             onValueChange={setCaptions}
             trackColor={{ false: '#47443F', true: mode.accent }}
@@ -670,13 +664,13 @@ export default function ConversationScreen() {
 
         <View style={styles.coachCard}>
           <View style={styles.coachHeading}>
-            <MaterialCommunityIcons color={mode.accent} name="creation" size={20} />
+            <MaterialCommunityIcons color={darkAccent} name="creation" size={20} />
             <Text style={styles.coachTitle}>Vokeno notices the struggle, not just the mistake</Text>
           </View>
           {signals.length ? (
             signals.map((signal, index) => (
               <View key={`${signal.label}-${index}`} style={styles.signal}>
-                <Text style={[styles.signalLabel, { color: mode.accent }]}>{signal.label}</Text>
+                <Text style={[styles.signalLabel, { color: darkAccent }]}>{signal.label}</Text>
                 <Text style={styles.signalReason}>{signal.reason}</Text>
               </View>
             ))
@@ -712,14 +706,13 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
   },
   liveDot: { backgroundColor: '#55DB8A', borderRadius: 99, height: 7, width: 7 },
-  liveText: { color: Palette.cream, fontFamily: VokaFonts.monoMedium, fontSize: 8 },
+  liveText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   body: { paddingBottom: 34, paddingHorizontal: 20, paddingTop: 15 },
   title: {
     color: Palette.cream,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 35,
-    letterSpacing: -1,
-    lineHeight: 39,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
+    lineHeight: 34,
     marginTop: 8,
   },
   description: {
@@ -728,21 +721,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 20,
     marginTop: 9,
-  },
-  trackRow: { flexDirection: 'row', gap: 8, marginTop: 20 },
-  trackButton: {
-    backgroundColor: 'rgba(241,237,227,0.1)',
-    borderRadius: 99,
-    paddingHorizontal: 16,
-    paddingVertical: 9,
-  },
-  trackLabel: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 11 },
-  trackLabelSelected: { color: Palette.ink },
-  practiceCard: {
-    backgroundColor: 'rgba(241,237,227,.08)',
-    borderRadius: 18,
-    marginTop: 15,
-    padding: 14,
   },
   practiceHeading: { alignItems: 'center', flexDirection: 'row', gap: 8 },
   reportRow: {
@@ -758,7 +736,7 @@ const styles = StyleSheet.create({
     fontFamily: VokaFonts.body,
     fontSize: 12,
   },
-  examClock: { color: Palette.cream, fontFamily: VokaFonts.monoMedium, fontSize: 14 },
+  examClock: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   examBullet: {
     color: 'rgba(241,237,227,.8)',
     fontFamily: VokaFonts.body,
@@ -777,8 +755,8 @@ const styles = StyleSheet.create({
     color: Palette.cream,
     flex: 1,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 11,
-    lineHeight: 17,
+    fontSize: 12,
+    lineHeight: 18,
   },
   phraseRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 10 },
   phraseChip: {
@@ -807,24 +785,24 @@ const styles = StyleSheet.create({
   },
   status: {
     color: Palette.cream,
-    fontFamily: VokaFonts.displayBold,
-    fontSize: 20,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 18,
     marginTop: 17,
     textAlign: 'center',
   },
   statusHint: {
     color: 'rgba(241,237,227,0.55)',
     fontFamily: VokaFonts.body,
-    fontSize: 11,
-    lineHeight: 17,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 7,
     textAlign: 'center',
   },
   audioRouteHint: {
     color: 'rgba(241,237,227,0.42)',
     fontFamily: VokaFonts.body,
-    fontSize: 9,
-    lineHeight: 14,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 8,
     textAlign: 'center',
   },
@@ -838,7 +816,7 @@ const styles = StyleSheet.create({
     minHeight: 54,
     paddingHorizontal: 22,
   },
-  startText: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 16 },
+  startText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
   controls: { flexDirection: 'row', gap: 13, marginTop: 20 },
   controlButton: {
     alignItems: 'center',
@@ -852,8 +830,8 @@ const styles = StyleSheet.create({
   error: {
     color: '#FFB49E',
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 11,
-    lineHeight: 17,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 14,
     textAlign: 'center',
   },
@@ -866,7 +844,7 @@ const styles = StyleSheet.create({
   captionHint: {
     color: 'rgba(241,237,227,0.5)',
     fontFamily: VokaFonts.body,
-    fontSize: 10,
+    fontSize: 12,
     marginTop: 5,
   },
   transcript: {
@@ -881,8 +859,8 @@ const styles = StyleSheet.create({
   userTurn: { alignSelf: 'flex-end', alignItems: 'flex-end' },
   turnRole: {
     color: 'rgba(241,237,227,0.4)',
-    fontFamily: VokaFonts.monoMedium,
-    fontSize: 8,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: 12,
     marginBottom: 3,
   },
   turnText: {
@@ -894,16 +872,16 @@ const styles = StyleSheet.create({
   emptyTranscript: {
     color: 'rgba(241,237,227,0.45)',
     fontFamily: VokaFonts.body,
-    fontSize: 11,
-    lineHeight: 17,
+    fontSize: 12,
+    lineHeight: 18,
   },
   coachCard: { backgroundColor: '#282623', borderRadius: 22, marginTop: 18, padding: 17 },
   coachHeading: { alignItems: 'center', flexDirection: 'row', gap: 9 },
-  coachTitle: { color: Palette.cream, flex: 1, fontFamily: VokaFonts.displayBold, fontSize: 15 },
+  coachTitle: { color: Palette.cream, flex: 1, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
   coachCopy: {
     color: 'rgba(241,237,227,0.58)',
     fontFamily: VokaFonts.body,
-    fontSize: 11,
+    fontSize: 12,
     lineHeight: 18,
     marginTop: 10,
   },
@@ -913,23 +891,29 @@ const styles = StyleSheet.create({
     marginTop: 11,
     paddingTop: 10,
   },
-  signalLabel: { fontFamily: VokaFonts.bodyBold, fontSize: 11 },
+  signalLabel: { fontFamily: VokaFonts.bodyBold, fontSize: 12 },
   signalReason: {
     color: 'rgba(241,237,227,0.58)',
     fontFamily: VokaFonts.body,
-    fontSize: 10,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 3,
   },
   privacy: {
     color: 'rgba(241,237,227,0.35)',
-    fontFamily: VokaFonts.mono,
-    fontSize: 8,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: 12,
     marginTop: 14,
     textAlign: 'center',
   },
   pressed: { opacity: 0.7, transform: [{ scale: 0.99 }] },
   disabled: { opacity: 0.5 },
+  practiceCard: {
+    backgroundColor: 'rgba(241,237,227,.08)',
+    borderRadius: 18,
+    marginTop: 15,
+    padding: 14,
+  },
 });
 
 function ExamCardPanel({ card, active }: { card: SpeakingCard; active: boolean }) {

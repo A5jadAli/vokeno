@@ -25,6 +25,8 @@ type TactileProps = PropsWithChildren<{
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
   faceStyle?: StyleProp<ViewStyle>;
+  /** Lets tests find the coloured surface regardless of how it is nested. */
+  faceTestID?: string;
   accessibilityRole?: PressableProps['accessibilityRole'];
   accessibilityLabel?: string;
   accessibilityHint?: string;
@@ -33,20 +35,20 @@ type TactileProps = PropsWithChildren<{
 }>;
 
 /**
- * A pressable with a visible "lip" under its face. Pressing pushes the face down onto the lip,
- * and releasing springs it back, which reads as a physical button.
+ * A flat pressable surface, like buttons in WhatsApp or Instagram: Android shows its ripple and
+ * every platform gets a slight press-in scale. `lip` and `depth` are accepted for compatibility
+ * and ignored, since raised 3D buttons read as dated.
  */
 export function Tactile({
   face,
-  lip,
   radius = 16,
-  depth = 4,
   borderColor,
   borderWidth = 0,
   disabled = false,
   onPress,
   style,
   faceStyle,
+  faceTestID,
   children,
   accessibilityRole = 'button',
   accessibilityLabel,
@@ -56,9 +58,8 @@ export function Tactile({
 }: TactileProps) {
   const press = useSharedValue(0);
   const faceAnimation = useAnimatedStyle(() => ({
-    transform: [{ translateY: press.value * depth }],
+    transform: [{ scale: 1 - press.value * 0.02 }],
   }));
-  const activeDepth = disabled ? 0 : depth;
   return (
     <View style={style}>
       <Pressable
@@ -68,31 +69,30 @@ export function Tactile({
         accessibilityState={{ disabled, ...accessibilityState }}
         aria-checked={ariaChecked}
         aria-disabled={disabled}
+        // Drawn in the foreground so the ripple shows on top of the coloured face.
+        android_ripple={
+          disabled ? undefined : { color: 'rgba(19, 18, 17, 0.08)', foreground: true }
+        }
         disabled={disabled}
         onPress={onPress}
         onPressIn={() => {
-          press.value = withTiming(1, { duration: 70 });
+          press.value = withTiming(1, { duration: 80 });
         }}
         onPressOut={() => {
-          press.value = withSpring(0, { damping: 14, stiffness: 320 });
+          press.value = withTiming(0, { duration: 140 });
         }}
+        style={{ borderRadius: radius, overflow: 'hidden' }}
       >
-        <View style={{ backgroundColor: lip, borderRadius: radius, paddingBottom: activeDepth }}>
-          <Animated.View
-            style={[
-              {
-                backgroundColor: face,
-                borderRadius: radius,
-                borderColor,
-                borderWidth,
-              },
-              faceStyle,
-              faceAnimation,
-            ]}
-          >
-            {children}
-          </Animated.View>
-        </View>
+        <Animated.View
+          testID={faceTestID}
+          style={[
+            { backgroundColor: face, borderRadius: radius, borderColor, borderWidth },
+            faceStyle,
+            faceAnimation,
+          ]}
+        >
+          {children}
+        </Animated.View>
       </Pressable>
     </View>
   );

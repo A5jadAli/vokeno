@@ -1,4 +1,5 @@
 import { countWritingWords } from './validation';
+import type { LanguageTrack } from '@/features/language/config';
 
 export type WritingRating = 'strong' | 'developing' | 'needs work';
 export type WritingFeedback = {
@@ -20,7 +21,7 @@ export type WritingDraft = {
 export type WritingProgress = Record<string, WritingDraft>;
 
 type WritingTask = {
-  track: 'EN' | 'DE';
+  track: LanguageTrack;
   label: string;
   title: string;
   prompt: string;
@@ -125,10 +126,40 @@ export const writingTasks = {
     checklist:
       'Check that you give your opinion, at least one reason (weil/denn), an example and a conclusion. Linking words such as andererseits and deshalb help.',
   },
+  'es-message': {
+    track: 'ES',
+    label: 'Mensaje',
+    title: 'Un mensaje a Carla',
+    prompt:
+      'No puedes ir a la fiesta de Carla el sábado. Escríbele un mensaje: discúlpate, explica por qué y propón otro día para verse.',
+    promptHelp:
+      'You can’t go to Carla’s party on Saturday. Apologise, explain why and suggest another day to meet.',
+    minimum: 25,
+    target: 'A2 informal message. Use tú and a friendly tone.',
+    example:
+      '¡Hola, Carla! Gracias por la invitación. Perdón, pero el sábado no puedo ir porque mis papás vienen a visitarme. ¡Qué pena! ¿Nos vemos el miércoles para tomar un café? Que te diviertas mucho en la fiesta. Un abrazo, Sam',
+    checklist:
+      'Check all three points: an apology (perdón or lo siento), a reason with porque and a suggestion (¿Nos vemos…?). Start with ¡Hola, Carla! and end with Un abrazo or Saludos.',
+  },
+  'es-email': {
+    track: 'ES',
+    label: 'Correo',
+    title: 'Un correo a la escuela',
+    prompt:
+      'Usted tiene una clase de español los martes, pero cambió su horario de trabajo. Escriba un correo a la escuela: explique el problema, pida otro horario y pregunte cómo cambiar su inscripción.',
+    promptHelp:
+      'You have a Spanish class on Tuesdays, but your work schedule changed. Write to the school: explain the problem, ask for another time and ask how to change your enrolment.',
+    minimum: 35,
+    target: 'A2 formal email. Use usted and a polite tone.',
+    example:
+      'Estimada señora Ramírez: Le escribo porque tengo una clase de español los martes a las seis, pero cambió mi horario de trabajo y ya no puedo asistir ese día. ¿Sería posible cambiar a la clase de los jueves? Por favor, dígame qué tengo que hacer para cambiar mi inscripción. Muchas gracias por su ayuda. Atentamente, Amir Rahimi',
+    checklist:
+      'Check the three points: the problem, a polite request (¿Sería posible…? or ¿Podría…?) and how to change your enrolment. Start with Estimada señora Ramírez: and end with Atentamente or Saludos cordiales.',
+  },
 } as const satisfies Record<string, WritingTask>;
 export type WritingTaskId = keyof typeof writingTasks;
 
-export function tasksForTrack(track: 'EN' | 'DE') {
+export function tasksForTrack(track: LanguageTrack) {
   return (Object.keys(writingTasks) as WritingTaskId[]).filter(
     (id) => writingTasks[id].track === track,
   );
@@ -235,6 +266,12 @@ export function writingChecklist(text: string, id: WritingTaskId, examMode = fal
     tips.push('Avoid very informal forms such as gonna or wanna in a letter to an organiser.');
   if (task.track === 'DE' && id === 'de-email' && /\b(du|dich|dir|dein)\b/i.test(text))
     tips.push('This is a formal email: use Sie, Ihnen and Ihr instead of du forms.');
+  if (id === 'es-email' && /(?<!\p{L})(tú|te|ti|contigo|tienes|puedes)(?!\p{L})/iu.test(text))
+    tips.push('This is a formal email: use usted forms such as puede, tiene and le instead of tú.');
+  if (id === 'es-message' && /(?<!\p{L})usted(?!\p{L})/iu.test(text))
+    tips.push('This is a message to a friend: tú sounds more natural than usted.');
+  if (task.track === 'ES' && text.includes('?') && !text.includes('¿'))
+    tips.push('Spanish questions open with ¿ as well as closing with ?: ¿Nos vemos el miércoles?');
   tips.push('These are rule-based revision prompts, not a grammar assessment or an exam score.');
   return tips;
 }

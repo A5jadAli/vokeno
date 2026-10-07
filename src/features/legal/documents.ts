@@ -11,6 +11,10 @@ export const documents = {
         'Account details, learning progress, preferences, assessment results, and live-session transcripts needed to provide the service.',
       ],
       [
+        'Practice history and reminders',
+        'We keep a short record of which days you practised and what you did (for example a lesson or a review) to show your streak and plan each day. It is kept for 120 days and synced to your account. If you turn on daily reminders, they are scheduled on your phone only; no reminder data is sent to us, and you can turn them off at any time in Settings.',
+      ],
+      [
         'Signing in with Google',
         'If you choose Continue with Google, Google shares your name, email address and profile picture link with us so we can create and secure your account. We use your name and email only; we do not receive your Google password or access your Google data.',
       ],

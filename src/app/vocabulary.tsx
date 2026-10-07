@@ -7,6 +7,7 @@ import { AppScreen, HeaderBack } from '@/components/voka-ui';
 import { LessonAudioButton } from '@/components/lesson-audio-button';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
+import { useCoachingStore } from '@/features/coaching/store';
 
 export default function VocabularyScreen() {
   const router = useRouter();
@@ -133,6 +134,7 @@ export default function VocabularyScreen() {
           accessibilityLabel={isLast ? 'Finish vocabulary deck' : 'Next vocabulary card'}
           accessibilityRole="button"
           onPress={() => {
+            useCoachingStore.getState().recordPractice('review');
             if (isLast) router.replace('/sprint?track=DE');
             else move(1);
           }}
@@ -174,10 +176,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginTop: 4,
     padding: 28,
-    shadowColor: Palette.ink,
-    shadowOffset: { height: 12, width: 0 },
-    shadowOpacity: 0.09,
-    shadowRadius: 30,
     width: '100%',
   },
   cardTop: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
@@ -185,19 +183,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(242, 183, 5, 0.25)',
     borderRadius: 99,
     color: Palette.ink,
-    fontFamily: VokaFonts.monoMedium,
-    fontSize: 11,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: 12,
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
   word: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 42,
-    letterSpacing: -1.4,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
     marginTop: 20,
   },
-  pronunciation: { color: Palette.muted, fontFamily: VokaFonts.mono, fontSize: 15, marginTop: 8 },
+  pronunciation: {
+    color: Palette.muted,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: 15,
+    marginTop: 8,
+  },
   divider: { backgroundColor: Palette.line, height: 1, marginVertical: 22 },
   translationRow: { alignItems: 'center', flexDirection: 'row', gap: 14 },
   receipt: {
@@ -208,7 +210,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 46,
   },
-  translation: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 22 },
+  translation: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22 },
   example: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: 12, marginTop: 3 },
   hint: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 12, marginTop: 22 },
   swipeHint: { alignItems: 'center', flexDirection: 'row', gap: 6 },
@@ -223,7 +225,7 @@ const styles = StyleSheet.create({
     minHeight: 50,
     paddingHorizontal: 24,
   },
-  nextButtonText: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 15 },
+  nextButtonText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
   mic: {
     alignItems: 'center',
     backgroundColor: Palette.ink,

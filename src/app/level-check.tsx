@@ -6,7 +6,9 @@ import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { LessonAudioButton } from '@/components/lesson-audio-button';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { useSelectedLanguage } from '@/features/language/selection';
+import { trackColors } from '@/features/language/config';
 import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
+import { LanguageSwitch } from '@/components/language-switch';
 
 const checks = {
   DE: {
@@ -16,6 +18,10 @@ const checks = {
   EN: {
     language: 'en-GB',
     sentence: 'The bus to the city leaves every twenty minutes.',
+  },
+  ES: {
+    language: 'es-MX',
+    sentence: 'El autobús al centro sale a las nueve.',
   },
 } as const;
 
@@ -33,22 +39,14 @@ export default function LevelCheckScreen() {
         <View style={styles.spacer} />
       </View>
       <View style={styles.body}>
-        <Eyebrow color={Palette.orange}>Read out loud</Eyebrow>
-        <View accessibilityLabel="Assessment language" style={styles.trackRow}>
-          {(['EN', 'DE'] as const).map((item) => (
-            <Pressable
-              accessibilityRole="radio"
-              accessibilityState={{ checked: track === item }}
-              key={item}
-              onPress={() => setTrack(item)}
-              style={[styles.trackButton, track === item && styles.trackButtonSelected]}
-            >
-              <Text style={[styles.trackText, track === item && styles.trackTextSelected]}>
-                {item === 'EN' ? 'English' : 'Deutsch'}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
+        <Eyebrow color={trackColors[track].onDark}>Read out loud</Eyebrow>
+        <LanguageSwitch
+          groupLabel="Assessment language"
+          onChange={setTrack}
+          role="radio"
+          tone="dark"
+          track={track}
+        />
         <Text style={styles.sentence}>{check.sentence}</Text>
         <View style={{ marginTop: 20 }}>
           <LessonAudioButton
@@ -77,15 +75,17 @@ export default function LevelCheckScreen() {
           </Pressable>
           <Text style={styles.listenText}>Tap to start your spoken check</Text>
           <Text style={styles.privacy}>Microphone access is requested only after you tap.</Text>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => router.push('/placement' as Href)}
-            style={styles.placementLink}
-          >
-            <Text style={styles.placementText}>
-              Prefer not to speak? Take the written and listening placement check
-            </Text>
-          </Pressable>
+          {track !== 'ES' ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push('/placement' as Href)}
+              style={styles.placementLink}
+            >
+              <Text style={styles.placementText}>
+                Prefer not to speak? Take the written and listening placement check
+              </Text>
+            </Pressable>
+          ) : null}
         </View>
       </View>
     </AppScreen>
@@ -103,31 +103,12 @@ const styles = StyleSheet.create({
   duration: {
     color: 'rgba(241,237,227,.5)',
     flex: 1,
-    fontFamily: VokaFonts.monoMedium,
-    fontSize: 10,
-    letterSpacing: 1,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: 12,
     textAlign: 'center',
   },
   spacer: { width: 40 },
   body: { flex: 1, paddingHorizontal: 24, paddingTop: 34 },
-  trackRow: { flexDirection: 'row', gap: 8, marginTop: 14 },
-  trackButton: {
-    backgroundColor: 'rgba(241,237,227,.1)',
-    borderRadius: 99,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-  },
-  trackButtonSelected: { backgroundColor: Palette.orange },
-  trackText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 11 },
-  trackTextSelected: { color: Palette.ink },
-  sentence: {
-    color: Palette.cream,
-    fontFamily: VokaFonts.displayBold,
-    fontSize: 38,
-    letterSpacing: -0.8,
-    lineHeight: 44,
-    marginTop: 14,
-  },
   wave: {
     alignItems: 'flex-end',
     flex: 1,
@@ -171,7 +152,7 @@ const styles = StyleSheet.create({
   privacy: {
     color: 'rgba(241,237,227,.4)',
     fontFamily: VokaFonts.body,
-    fontSize: 10,
+    fontSize: 12,
     marginTop: 6,
   },
   placementLink: {
@@ -189,4 +170,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   pressed: { opacity: 0.72, transform: [{ scale: 0.98 }] },
+  sentence: {
+    color: Palette.cream,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 28,
+    lineHeight: 34,
+    marginTop: 14,
+  },
 });

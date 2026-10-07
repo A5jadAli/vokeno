@@ -43,6 +43,7 @@ export const useAssessmentStore = create<AssessmentState>()(
           assessments: {
             DE: newest(state.assessments.DE, incoming.DE),
             EN: newest(state.assessments.EN, incoming.EN),
+            ES: newest(state.assessments.ES, incoming.ES),
           },
         })),
       resetAssessment: () => set({ assessments: {} }),

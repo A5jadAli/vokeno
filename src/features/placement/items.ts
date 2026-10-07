@@ -1,5 +1,7 @@
 import { getTrackLessons, type LessonTrack } from '@/features/foundations/catalog';
 
+type PlacementTrack = LessonTrack;
+
 export type PlacementLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
 export type PlacementSkill = 'grammar' | 'vocabulary' | 'listening' | 'reading' | 'pragmatics';
 
@@ -31,7 +33,7 @@ const item = (
 
 // Original items. Each stage mixes grammar, vocabulary, listening and real-world pragmatics
 // so a learner cannot pass on textbook grammar alone.
-export const placementItems: Record<LessonTrack, PlacementItem[]> = {
+export const placementItems: Record<PlacementTrack, PlacementItem[]> = {
   DE: [
     item(
       'de-a1-verb',
@@ -412,9 +414,153 @@ export const placementItems: Record<LessonTrack, PlacementItem[]> = {
       'Polite words, strong disagreement.',
     ),
   ],
+  ES: [
+    item(
+      'es-a1-ser',
+      'A1',
+      'grammar',
+      'Yo ___ de México.',
+      ['soy', 'eres', 'es'],
+      0,
+      'With yo, ser becomes soy.',
+    ),
+    item(
+      'es-a1-bill',
+      'A1',
+      'vocabulary',
+      'In a café, what is “la cuenta”?',
+      ['The bill', 'The count', 'The table'],
+      0,
+      'La cuenta, por favor: the bill, please.',
+    ),
+    item(
+      'es-a1-price',
+      'A1',
+      'listening',
+      'Listen. How much is it?',
+      ['25 pesos', '35 pesos', '52 pesos'],
+      0,
+      'Veinticinco is 25.',
+      'Son veinticinco pesos.',
+    ),
+    item(
+      'es-a1-polite',
+      'A1',
+      'pragmatics',
+      'You ask a stranger for directions. How do you start?',
+      ['Disculpe, ¿dónde está el metro?', 'Oye, ¿metro?', 'Dame el metro.'],
+      0,
+      'Disculpe is a polite way to start with a stranger.',
+    ),
+    item(
+      'es-a1-sign',
+      'A1',
+      'reading',
+      'A shop sign says CERRADO. What does it mean?',
+      ['Closed', 'Open', 'Exit'],
+      0,
+      'Cerrado means closed; abierto means open.',
+    ),
+    item(
+      'es-a2-past',
+      'A2',
+      'grammar',
+      'Ayer ___ al cine con mis amigos.',
+      ['fui', 'voy', 'iré'],
+      0,
+      'Ayer needs the past: fui.',
+    ),
+    item(
+      'es-a2-estar',
+      'A2',
+      'grammar',
+      'Las llaves ___ en la mesa.',
+      ['están', 'son', 'hay'],
+      0,
+      'Location uses estar: están.',
+    ),
+    item(
+      'es-a2-gustar',
+      'A2',
+      'grammar',
+      'A mi hermana le ___ los perros.',
+      ['gustan', 'gusta', 'gusto'],
+      0,
+      'Perros is plural, so the verb is gustan.',
+    ),
+    item(
+      'es-a2-appointment',
+      'A2',
+      'listening',
+      'Listen. When is the new appointment?',
+      ['Wednesday at eleven', 'Tuesday at eleven', 'Wednesday at one'],
+      0,
+      'El miércoles a las once: Wednesday at eleven.',
+      'El martes no puedo. ¿Le queda bien el miércoles a las once?',
+    ),
+    item(
+      'es-a2-ahorita',
+      'A2',
+      'pragmatics',
+      'A Mexican colleague says “Ahorita lo hago.” What should you understand?',
+      [
+        'They will do it soon, though maybe not this second',
+        'They have already done it',
+        'They refuse to do it',
+      ],
+      0,
+      'Ahorita is flexible: usually soon, not necessarily right now.',
+    ),
+    item(
+      'es-b1-subjunctive',
+      'B1',
+      'grammar',
+      'Quiero que ___ a mi fiesta.',
+      ['vengas', 'vienes', 'venir'],
+      0,
+      'Querer que with a different subject takes the subjunctive: vengas.',
+    ),
+    item(
+      'es-b1-imperfect',
+      'B1',
+      'grammar',
+      'Cuando ___ niño, vivía en Monterrey.',
+      ['era', 'fui', 'soy'],
+      0,
+      'Background in the past takes the imperfect: era.',
+    ),
+    item(
+      'es-b1-disagree',
+      'B1',
+      'pragmatics',
+      'In a meeting, you want to disagree politely. Which fits best?',
+      ['Entiendo tu punto, pero yo lo veo de otra manera.', 'Estás mal.', 'No.'],
+      0,
+      'Acknowledge the other view first, then disagree.',
+    ),
+    item(
+      'es-b1-meeting',
+      'B1',
+      'listening',
+      'Listen. Why was the meeting moved?',
+      ['The director is travelling', 'The room is booked', 'It is a public holiday'],
+      0,
+      'El director está de viaje: the director is travelling.',
+      'Movimos la reunión al jueves porque el director está de viaje hasta el miércoles.',
+    ),
+    item(
+      'es-b1-email',
+      'B1',
+      'reading',
+      'An email says: “Le agradecería que me enviara el contrato a la brevedad.” What is requested?',
+      ['Send the contract as soon as possible', 'Cancel the contract', 'Read the contract slowly'],
+      0,
+      'A la brevedad means as soon as possible.',
+    ),
+  ],
 };
 
-export function placementStages(track: LessonTrack) {
+export function placementStages(track: PlacementTrack) {
   const stages: PlacementItem[][] = [];
   for (const entry of placementItems[track]) {
     const current = stages.at(-1);
@@ -434,7 +580,7 @@ export type PlacementResult = {
 
 /** Scores stages in order and stops at the first stage below the pass mark. */
 export function evaluatePlacement(
-  track: LessonTrack,
+  track: PlacementTrack,
   answers: Record<string, number>,
 ): PlacementResult {
   const stages = placementStages(track);
@@ -460,9 +606,9 @@ export function stagePassed(stage: PlacementItem[], answers: Record<string, numb
   return stage.filter((entry) => answers[entry.id] === entry.answer).length >= STAGE_PASS_MARK;
 }
 
-function recommend(track: LessonTrack, failedLevel: PlacementLevel | null) {
+function recommend(track: PlacementTrack, failedLevel: PlacementLevel | null) {
   const lessons = getTrackLessons(track);
-  const language = track === 'DE' ? 'German' : 'English';
+  const language = { DE: 'German', EN: 'English', ES: 'Spanish' }[track];
   const start = failedLevel ? lessons.find((lesson) => lesson.level === failedLevel) : undefined;
   if (start)
     return {

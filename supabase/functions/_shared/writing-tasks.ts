@@ -1,6 +1,6 @@
 // Server-side task definitions. Clients send only a task id, so learners cannot inject a prompt.
 export type WritingTaskSpec = {
-  track: 'EN' | 'DE';
+  track: 'EN' | 'DE' | 'ES';
   level: string;
   exam: string;
   prompt: string;
@@ -55,5 +55,21 @@ export const writingTaskSpecs: Record<string, WritingTaskSpec> = {
     prompt:
       'In an online forum, readers discuss working from home. Write your opinion with reasons and an example from your experience (about 80 words).',
     minimumWords: 50,
+  },
+  'es-message': {
+    track: 'ES',
+    level: 'A2',
+    exam: 'Informal message (A2 practice)',
+    prompt:
+      'Write a message to your friend Carla: you cannot come to her party on Saturday. Apologise, explain why and suggest another day to meet. Use tú.',
+    minimumWords: 25,
+  },
+  'es-email': {
+    track: 'ES',
+    level: 'A2',
+    exam: 'Formal email (A2 practice)',
+    prompt:
+      'Write a formal email to a language school: you have a Spanish class on Tuesdays but your work schedule changed. Explain the problem, ask for another class time and ask how to change your enrolment. Use usted.',
+    minimumWords: 35,
   },
 };

@@ -14,6 +14,7 @@ import { Palette, VokaFonts } from '@/constants/theme';
 import { learningRecommendation } from '@/features/coaching/recommendation';
 import { useCoachingStore, type StartingAbility, type StudyGoal } from '@/features/coaching/store';
 import { useSelectedLanguage } from '@/features/language/selection';
+import { languageDetails, languageTracks } from '@/features/language/config';
 
 const abilities: [StartingAbility, string][] = [
   ['new', 'I am starting from zero'],
@@ -66,7 +67,7 @@ export default function LearningPlanScreen() {
         </Text>
 
         <View accessibilityRole="tablist" style={styles.segment}>
-          {(['DE', 'EN'] as const).map((value) => (
+          {languageTracks.map((value) => (
             <Pressable
               key={value}
               accessibilityRole="button"
@@ -76,17 +77,19 @@ export default function LearningPlanScreen() {
               style={[styles.segmentItem, track === value && styles.segmentActive]}
             >
               <Text style={[styles.segmentText, track === value && styles.segmentTextActive]}>
-                {value === 'DE' ? 'German' : 'English'}
+                {languageDetails[value].name}
               </Text>
             </Pressable>
           ))}
         </View>
 
-        <ActionRow
-          icon="compass-outline"
-          title="Not sure? Take the 5-minute placement check"
-          onPress={() => router.push('/placement' as Href)}
-        />
+        {track !== 'ES' ? (
+          <ActionRow
+            icon="compass-outline"
+            title="Not sure? Take the 5-minute placement check"
+            onPress={() => router.push('/placement' as Href)}
+          />
+        ) : null}
 
         <SectionLabel>How much do you know?</SectionLabel>
         <View style={styles.group}>
@@ -116,8 +119,8 @@ export default function LearningPlanScreen() {
           {next.why}
         </InfoCard>
         <Text style={lessonText.small}>
-          Practice supports learning, not a certified CEFR level or IELTS result. IELTS goals
-          include a four-skill practice guide in Learn.
+          Practice supports learning, not a certified CEFR level or exam result.
+          {track === 'EN' ? ' IELTS goals include a four-skill practice guide in Learn.' : ''}
         </Text>
       </View>
     </AppScreen>

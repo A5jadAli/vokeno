@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { LanguageTrack } from '@/features/listening/scenarios';
+import { isLanguageTrack } from './config';
 
 // Interface preference only; private learning data remains account-scoped.
 export const useLanguageSelection = create<{
@@ -34,7 +35,7 @@ export function useSelectedLanguage() {
   const { track, hydrated, choose } = useLanguageSelection();
   useFocusEffect(
     useCallback(() => {
-      if (hydrated && (requested === 'DE' || requested === 'EN')) choose(requested);
+      if (hydrated && isLanguageTrack(requested)) choose(requested);
     }, [choose, hydrated, requested]),
   );
   const select = useCallback(

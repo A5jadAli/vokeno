@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import type { ComponentProps, PropsWithChildren } from 'react';
+import { createContext, useContext, type ComponentProps, type PropsWithChildren } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 
@@ -22,6 +22,7 @@ export const Feedback = {
 
 /** Close control, a thin progress bar and an optional label, as in modern lesson players. */
 export function LessonTopBar({ progress, label }: { progress: number; label?: string }) {
+  const accent = useContext(PrimaryAccentContext);
   const router = useRouter();
   const value = Math.max(0, Math.min(1, progress));
   return (
@@ -40,10 +41,32 @@ export function LessonTopBar({ progress, label }: { progress: number; label?: st
         accessibilityValue={{ min: 0, max: 100, now: Math.round(value * 100) }}
         style={styles.track}
       >
-        <ProgressFill value={value} color={Palette.yellow} track="rgba(19,18,17,0.1)" />
+        <ProgressFill
+          value={value}
+          color={accent?.background ?? Palette.yellow}
+          track="rgba(19,18,17,0.1)"
+        />
       </View>
       {label ? <Text style={styles.topLabel}>{label}</Text> : null}
     </View>
+  );
+}
+
+/**
+ * The colours of the main action on a screen. A screen about one language wraps its content in
+ * `PrimaryAccent` with that language's colours; elsewhere the main action stays yellow.
+ */
+const PrimaryAccentContext = createContext<{ background: string; text: string } | null>(null);
+
+export function PrimaryAccent({
+  background,
+  text,
+  children,
+}: PropsWithChildren<{ background: string; text: string }>) {
+  return (
+    <PrimaryAccentContext.Provider value={{ background, text }}>
+      {children}
+    </PrimaryAccentContext.Provider>
   );
 }
 
@@ -66,8 +89,13 @@ export function PrimaryButton({
   accessibilityRole?: 'button' | 'link';
   busy?: boolean;
 }) {
+  const accent = useContext(PrimaryAccentContext);
   const look = {
-    yellow: { face: Palette.yellow, lip: '#C99600', ink: Palette.ink },
+    yellow: {
+      face: accent?.background ?? Palette.yellow,
+      lip: '#C99600',
+      ink: accent?.text ?? Palette.ink,
+    },
     green: { face: '#2F7A47', lip: '#1C4D2C', ink: Palette.white },
     red: { face: '#B44931', lip: '#7E2716', ink: Palette.white },
     ink: { face: Palette.ink, lip: '#000000', ink: Palette.cream },
@@ -311,13 +339,12 @@ export function SectionLabel({ children }: { children: string }) {
 export const lessonText = StyleSheet.create({
   title: {
     color: Palette.ink,
-    fontFamily: VokaFonts.displayExtraBold,
+    fontFamily: VokaFonts.bodyBold,
     fontSize: 28,
-    letterSpacing: -0.6,
-    lineHeight: 33,
+    lineHeight: 34,
   },
   lead: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 16, lineHeight: 24 },
-  prompt: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 23, lineHeight: 30 },
+  prompt: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22, lineHeight: 29 },
   meta: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 13, lineHeight: 18 },
   small: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 19 },
 });
@@ -332,7 +359,7 @@ const styles = StyleSheet.create({
   },
   close: { alignItems: 'center', height: 44, justifyContent: 'center', width: 36 },
   track: { flex: 1, flexDirection: 'row' },
-  topLabel: { color: Palette.secondary, fontFamily: VokaFonts.monoMedium, fontSize: 12 },
+  topLabel: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   primary: {
     alignItems: 'center',
     borderRadius: 16,
@@ -342,7 +369,7 @@ const styles = StyleSheet.create({
     minHeight: 56,
     paddingHorizontal: 20,
   },
-  primaryText: { fontFamily: VokaFonts.displayBold, fontSize: 17 },
+  primaryText: { fontFamily: VokaFonts.bodyBold, fontSize: 16 },
   textButton: {
     alignItems: 'center',
     backgroundColor: 'rgba(19,18,17,0.06)',
@@ -365,12 +392,12 @@ const styles = StyleSheet.create({
   actionBorder: { borderTopColor: Palette.line, borderTopWidth: 1 },
   feedbackCopy: { gap: 6 },
   feedbackHeading: { alignItems: 'center', flexDirection: 'row', gap: 8 },
-  feedbackTitle: { fontFamily: VokaFonts.displayBold, fontSize: 20 },
+  feedbackTitle: { fontFamily: VokaFonts.bodyBold, fontSize: 18 },
   feedbackMessage: { fontFamily: VokaFonts.bodyMedium, fontSize: 15, lineHeight: 22 },
   info: { backgroundColor: Palette.white, borderRadius: 20, gap: 8, padding: 16 },
   infoHeading: { alignItems: 'center', flexDirection: 'row', gap: 8 },
   infoTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
-  infoText: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 15, lineHeight: 23 },
+  infoText: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 15, lineHeight: 22 },
   phrase: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
@@ -384,8 +411,8 @@ const styles = StyleSheet.create({
   phraseTarget: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 19,
-    lineHeight: 26,
+    fontSize: 18,
+    lineHeight: 25,
   },
   phraseMeaning: {
     color: Palette.ink,
@@ -395,7 +422,7 @@ const styles = StyleSheet.create({
   },
   phraseAudio: { flexDirection: 'row', gap: 8 },
   phraseUse: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 19 },
-  section: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 17, marginTop: 8 },
+  section: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16, marginTop: 8 },
   row: {
     alignItems: 'center',
     backgroundColor: Palette.white,

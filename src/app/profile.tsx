@@ -12,6 +12,8 @@ import { useAuthSession } from '@/features/auth/use-auth-session';
 import { getProfileDisplayName, getProfileInitials } from '@/features/profile/name';
 import { formatTestDate } from '@/features/profile/test-date';
 import { useCoachingStore } from '@/features/coaching/store';
+import { useLanguageSelection } from '@/features/language/selection';
+import { languageDetails, languageTracks, trackColors } from '@/features/language/config';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -25,6 +27,7 @@ export default function ProfileScreen() {
   });
   const initials = getProfileInitials(displayName);
   const assessments = useAssessmentStore((state) => state.assessments);
+  const track = useLanguageSelection((state) => state.track);
   const testDate = useCoachingStore((state) => state.testDate);
 
   const handleAccount = () => {
@@ -98,12 +101,18 @@ export default function ProfileScreen() {
             {loading ? 'Loading…' : displayName}
           </Text>
           <View style={styles.badges}>
-            <Text style={styles.badge}>
-              EN · {assessments.EN?.estimatedLevel ?? 'Not assessed'}
-            </Text>
-            <Text style={[styles.badge, styles.germanBadge]}>
-              DE · {assessments.DE?.estimatedLevel ?? 'Not assessed'}
-            </Text>
+            {languageTracks.map((item) => {
+              const level = assessments[item]?.estimatedLevel;
+              return (
+                <Text
+                  key={item}
+                  accessibilityLabel={`${languageDetails[item].name}: ${level ?? 'not assessed'}`}
+                  style={[styles.badge, { backgroundColor: trackColors[item].tint }]}
+                >
+                  {item} · {level ?? '–'}
+                </Text>
+              );
+            })}
           </View>
         </View>
       </View>
@@ -206,13 +215,19 @@ export default function ProfileScreen() {
         <Pressable
           accessibilityLabel="Open spoken level check"
           onPress={() =>
-            router.push((assessments.EN ? '/assessment-result?track=EN' : '/level-check') as Href)
+            router.push(
+              (assessments[track]
+                ? `/assessment-result?track=${track}`
+                : `/level-check?track=${track}`) as Href,
+            )
           }
           style={({ pressed }) => [styles.settingRow, pressed && styles.pressed]}
         >
           <MaterialCommunityIcons color={Palette.ink} name="account-voice" size={20} />
           <Text style={styles.settingLabel}>
-            {assessments.EN ? 'Latest English assessment' : 'Spoken level check'}
+            {assessments[track]
+              ? `Latest ${languageDetails[track].name} assessment`
+              : 'Spoken level check'}
           </Text>
           <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
         </Pressable>
@@ -282,22 +297,20 @@ const styles = StyleSheet.create({
   },
   avatarText: {
     color: Palette.cream,
-    fontFamily: VokaFonts.displayExtraBold,
+    fontFamily: VokaFonts.bodyBold,
     fontSize: 18,
-    letterSpacing: 0.5,
   },
-  name: { color: Palette.ink, fontFamily: VokaFonts.displayExtraBold, fontSize: 24 },
-  badges: { flexDirection: 'row', gap: 6, marginTop: 8 },
+  name: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22 },
+  badges: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 8 },
   badge: {
     backgroundColor: 'rgba(255,74,23,.2)',
     borderRadius: 99,
     color: Palette.ink,
-    fontFamily: VokaFonts.monoMedium,
-    fontSize: 11,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: 12,
     paddingHorizontal: 11,
     paddingVertical: 5,
   },
-  germanBadge: { backgroundColor: 'rgba(242,183,5,.28)' },
   planCard: {
     backgroundColor: Palette.ink,
     borderRadius: 28,
@@ -317,10 +330,9 @@ const styles = StyleSheet.create({
   },
   planTitle: {
     color: Palette.cream,
-    fontFamily: VokaFonts.displayExtraBold,
+    fontFamily: VokaFonts.bodyBold,
     fontSize: 28,
-    letterSpacing: -1,
-    lineHeight: 31,
+    lineHeight: 34,
     marginBottom: 12,
     marginTop: 10,
   },
@@ -337,7 +349,7 @@ const styles = StyleSheet.create({
   price: {
     color: 'rgba(241,237,227,.45)',
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 11,
+    fontSize: 12,
     marginTop: 10,
     textAlign: 'center',
   },
@@ -359,7 +371,7 @@ const styles = StyleSheet.create({
   accountDescription: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
-    fontSize: 10,
+    fontSize: 12,
     marginTop: 3,
   },
   settings: {
@@ -405,8 +417,8 @@ const styles = StyleSheet.create({
   identityText: {
     color: Palette.secondary,
     fontFamily: VokaFonts.body,
-    fontSize: 10,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 4,
   },
   pressed: { opacity: 0.7, transform: [{ scale: 0.99 }] },

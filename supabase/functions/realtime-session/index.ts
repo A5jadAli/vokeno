@@ -15,6 +15,10 @@ const trackSettings = {
     language: 'de',
     scenario: 'a realistic everyday conversation with a friendly local in Germany',
   },
+  ES: {
+    language: 'es',
+    scenario: 'a realistic everyday exchange with a friendly local in Mexico',
+  },
 } as const;
 
 type Track = keyof typeof trackSettings;
@@ -67,6 +71,46 @@ const unitSettings = {
     focus: 'consonant clusters, reductions and question intonation',
     phrases: ['Ich meld mich wegen …', 'Kommt drauf an.'],
     track: 'DE',
+  },
+  'es-a1-meet': {
+    level: 'A1',
+    focus: 'steady vowels and the ll sound',
+    phrases: ['Me llamo …', 'Soy de …', '¿Y tú?'],
+    track: 'ES',
+  },
+  'es-a1-cafe': {
+    level: 'A1',
+    focus: 'polite requests and clear vowels',
+    phrases: ['Quisiera un café con leche.', 'Para llevar.', '¿Puedo pagar con tarjeta?'],
+    track: 'ES',
+  },
+  'es-a1-directions': {
+    level: 'A1',
+    focus: 'question rhythm and left-right contrasts',
+    phrases: ['¿Dónde está la estación?', 'Siga derecho.', '¿Está cerca?'],
+    track: 'ES',
+  },
+  'es-a2-weekend': {
+    level: 'A2',
+    focus: 'final stress in past forms',
+    phrases: ['¿Qué hiciste el fin de semana?', 'Fui a …', 'Estuvo muy bien.'],
+    track: 'ES',
+  },
+  'es-a2-appointment': {
+    level: 'A2',
+    focus: 'clear numbers, days and times',
+    phrases: [
+      '¿Podemos cambiar la cita?',
+      '¿Le queda bien el viernes?',
+      'Perfecto, nos vemos el viernes.',
+    ],
+    track: 'ES',
+  },
+  'es-a2-restaurant': {
+    level: 'A2',
+    focus: 'the rolled initial r and the ll sound',
+    phrases: ['Para mí, …', 'Sin cebolla, por favor.', '¿Podemos pagar por separado?'],
+    track: 'ES',
   },
   'de-b2-discussion': {
     level: 'B2',
@@ -137,9 +181,9 @@ Speak naturally, with connected speech and current everyday expressions, but nev
 
 If the learner interrupts, stop immediately and listen. Understand imperfect grammar and pronunciation from context. When they hesitate, repeat a word, search for a phrase, or misunderstand, keep the conversation flowing first. Prefer a natural recast (repeat their idea correctly inside your reply) over an explicit correction; give an explicit, kind correction only for an error that blocks meaning or keeps recurring. Recycle a difficult word later to check learning.
 
-Adapt delivery to the demonstrated level: at A1–A2 speak slowly and clearly in short sentences and offer a model answer when they are stuck; from B1 use natural speed, connected speech and the reductions real speakers use. If the learner switches to English, answer briefly in the target language with simpler words rather than switching languages with them. ${settings.language === 'de' ? 'Sound like a real person in Germany, not a textbook: use modal particles (doch, mal, ja, halt), common spoken forms (hab, gibt’s, ’ne) and reactions (echt?, genau, na ja) at the learner’s level, and briefly name one when the learner seems confused by it. Choose du or Sie as a local would for the scenario, and practise switching when a scenario changes.' : 'Use expressions current speakers actually use; avoid dated textbook idioms. Label strongly informal or regional items (such as innit or quid) when you first use them, and help the learner understand British understatement and politeness conventions.'}
+Adapt delivery to the demonstrated level: at A1–A2 speak slowly and clearly in short sentences and offer a model answer when they are stuck; from B1 use natural speed, connected speech and the reductions real speakers use. If the learner switches to English: at A1–A2, give a brief English meaning when it unblocks them, then invite a short answer in the target language; from B1, stay in the target language and rephrase with simpler words instead. ${settings.language === 'de' ? 'Sound like a real person in Germany, not a textbook: use modal particles (doch, mal, ja, halt), common spoken forms (hab, gibt’s, ’ne) and reactions (echt?, genau, na ja) at the learner’s level, and briefly name one when the learner seems confused by it. Choose du or Sie as a local would for the scenario, and practise switching when a scenario changes.' : settings.language === 'es' ? 'Use broadly understandable everyday Mexican Spanish as the speaking reference. Keep vowels clear, distinguish polite usted from informal tú in context, and explain useful Spain or other Latin American variants when relevant. Avoid claiming one accent is universal. With beginners, model one short phrase at a time and let them repeat it before moving on.' : 'Use expressions current speakers actually use; avoid dated textbook idioms. Label strongly informal or regional items (such as innit or quid) when you first use them, and help the learner understand British understatement and politeness conventions.'}
 
-Coach intelligibility and comprehensibility, not accent erasure. Consider both articulation and prosody: sound contrasts, word stress, sentence prominence, rhythm, chunking, and intonation. Give at most one high-impact delivery tip at a time, using qualitative language. Never invent a pronunciation percentage or claim phoneme-level certainty from ordinary conversation audio. Use ${settings.language === 'de' ? 'German by default, with brief English help only when needed; accept standard and intelligible regional variation' : 'contemporary, broadly understood British English, explaining advanced wording plainly when needed'}.
+Coach intelligibility and comprehensibility, not accent erasure. Consider both articulation and prosody: sound contrasts, word stress, sentence prominence, rhythm, chunking, and intonation. Give at most one high-impact delivery tip at a time, using qualitative language. Never invent a pronunciation percentage or claim phoneme-level certainty from ordinary conversation audio. Use ${settings.language === 'de' ? 'German by default, with brief English help only when needed; accept standard and intelligible regional variation' : settings.language === 'es' ? 'Spanish by default, with brief English help only when needed; accept intelligible Spanish regional variation' : 'contemporary, broadly understood British English, explaining advanced wording plainly when needed'}.
 
 ${goalBrief} ${unitBrief} ${diagnosticBrief} ${toneBrief}
 
@@ -179,7 +223,7 @@ async function assessTranscript(
         input: [
           {
             content:
-              `Assess this ${track === 'DE' ? 'German' : 'English'} learner transcript against CEFR A1-C1. ` +
+              `Assess this ${{ DE: 'German', EN: 'English', ES: 'Spanish' }[track]} learner transcript against CEFR A1-C1. ` +
               'Use only demonstrated vocabulary, grammar, fluency of expression, comprehension, and task response. ' +
               'Do not infer pronunciation, accent, audio quality, identity, or a numeric score from text. ' +
               'This is a broad, non-certified estimate. Keep each strength and priority concrete and under 100 characters. ' +
@@ -316,7 +360,14 @@ export default {
       return Response.json({ error: 'Invalid action.' }, { status: 400 });
     }
 
-    const track = body.track === 'DE' ? 'DE' : body.track === 'EN' ? 'EN' : undefined;
+    const track =
+      body.track === 'DE'
+        ? 'DE'
+        : body.track === 'EN'
+          ? 'EN'
+          : body.track === 'ES'
+            ? 'ES'
+            : undefined;
     const toughCoach = body.coachTone === 'tough';
     const userId = context.userClaims?.id ?? context.jwtClaims?.sub;
     if (typeof userId !== 'string' || !userId) {

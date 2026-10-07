@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Animated, { ZoomIn } from 'react-native-reanimated';
 
 import { AnswerChoice } from '@/components/answer-choice';
@@ -14,6 +14,7 @@ import {
   PrimaryButton,
   SectionLabel,
   TextButton,
+  PrimaryAccent,
 } from '@/components/lesson-ui';
 import { AppScreen } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
@@ -26,21 +27,27 @@ import {
   STAGE_PASS_MARK,
   stagePassed,
 } from '@/features/placement/items';
+import { LanguageSwitch } from '@/components/language-switch';
+import { languageDetails, type LanguageTrack, trackColors } from '@/features/language/config';
 
 export default function PlacementScreen() {
   const [track, setTrack] = useSelectedLanguage();
-  return <PlacementCheck key={track} track={track} onTrack={setTrack} />;
+  return (
+    <PrimaryAccent background={trackColors[track].accent} text={trackColors[track].onAccent}>
+      <PlacementCheck key={track} track={track} onTrack={setTrack} />
+    </PrimaryAccent>
+  );
 }
 
 function PlacementCheck({
   track,
   onTrack,
 }: {
-  track: 'DE' | 'EN';
-  onTrack: (track: 'DE' | 'EN') => void;
+  track: LanguageTrack;
+  onTrack: (track: LanguageTrack) => void;
 }) {
   const router = useRouter();
-  const speech = useLessonSpeech(track === 'EN' ? 'en-GB' : 'de-DE');
+  const speech = useLessonSpeech(languageDetails[track].speechLocale);
   const stages = placementStages(track);
   const [started, setStarted] = useState(false);
   const [stageIndex, setStageIndex] = useState(0);
@@ -50,7 +57,7 @@ function PlacementCheck({
   const [finished, setFinished] = useState(false);
   const stage = stages[stageIndex];
   const item = stage[itemIndex];
-  const language = track === 'EN' ? 'English' : 'German';
+  const language = languageDetails[track].name;
   const totalItems = stages.reduce((sum, value) => sum + value.length, 0);
   const answeredCount = Object.keys(answers).length;
 
@@ -100,19 +107,12 @@ function PlacementCheck({
             at the right level. You will see your answers at the end, so choose what you really
             think rather than guessing.
           </Text>
-          <View accessibilityRole="radiogroup" style={styles.trackRow}>
-            {(['DE', 'EN'] as const).map((value) => (
-              <Pressable
-                key={value}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: track === value }}
-                onPress={() => onTrack(value)}
-                style={[styles.trackButton, track === value && styles.trackSelected]}
-              >
-                <Text style={styles.trackText}>{value === 'DE' ? 'German' : 'English'}</Text>
-              </Pressable>
-            ))}
-          </View>
+          <LanguageSwitch
+            groupLabel="Placement language"
+            onChange={onTrack}
+            role="radio"
+            track={track}
+          />
           <InfoCard icon="format-list-checks" title="What it covers">
             Grammar, vocabulary, listening and real-world phrasing, five questions per level.
             Listening questions use your device voice; turn your sound on.
@@ -258,20 +258,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 96,
   },
-  badgeText: { color: Palette.ink, fontFamily: VokaFonts.displayExtraBold, fontSize: 32 },
-  trackRow: { flexDirection: 'row', gap: 8 },
-  trackButton: {
-    alignItems: 'center',
-    backgroundColor: Palette.white,
-    borderColor: Palette.line,
-    borderRadius: 16,
-    borderWidth: 2,
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 52,
-  },
-  trackSelected: { backgroundColor: '#FFF1BC', borderColor: Palette.yellow },
-  trackText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
+  badgeText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 28 },
   listen: { alignItems: 'center', flexDirection: 'row', gap: 16 },
   missed: { backgroundColor: Palette.white, borderRadius: 18, gap: 8, padding: 16 },
   missedPrompt: {

@@ -14,6 +14,7 @@ import { foundationReviewDue, type FoundationProgress } from '@/features/foundat
 import { useCoachingStore } from '@/features/coaching/store';
 import { reviewSummary } from '@/features/review/schedule';
 import { nextLesson } from '@/features/foundations/next';
+import { trackColors } from '@/features/language/config';
 
 const copy = {
   DE: {
@@ -25,6 +26,11 @@ const copy = {
     eyebrow: 'Modern English and IELTS skills',
     heading: 'English guided lessons',
     note: 'IELTS lessons are preparatory practice. They do not award or predict a band score.',
+  },
+  ES: {
+    eyebrow: 'Spanish for everyday travel',
+    heading: 'Spanish guided lessons',
+    note: 'Start with useful A1 situations. These lessons are practice, not a certified course.',
   },
 } as const;
 
@@ -48,6 +54,7 @@ export function FoundationPath({
   const router = useRouter();
   const progress = useCoachingStore((state) => state.foundations);
   const lessons = getTrackLessons(track);
+  const colors = trackColors[track];
   const done = (lesson: FoundationLesson) => Boolean(progress[lesson.id]?.attempts.length);
   const next = nextLesson(progress, track);
   const levels = [...new Set(lessons.map((lesson) => lesson.level))];
@@ -92,13 +99,16 @@ export function FoundationPath({
             <View
               style={[
                 styles.heroFill,
-                { width: `${Math.max(3, (completed / lessons.length) * 100)}%` },
+                {
+                  backgroundColor: colors.onDark,
+                  width: `${Math.max(3, (completed / lessons.length) * 100)}%`,
+                },
               ]}
             />
           </View>
-          <View style={styles.heroButton}>
-            <Text style={styles.heroButtonText}>{action}</Text>
-            <MaterialCommunityIcons name="arrow-right" size={20} color={Palette.ink} />
+          <View style={[styles.heroButton, { backgroundColor: colors.accent }]}>
+            <Text style={[styles.heroButtonText, { color: colors.onAccent }]}>{action}</Text>
+            <MaterialCommunityIcons name="arrow-right" size={20} color={colors.onAccent} />
           </View>
         </Pressable>
       ) : null}
@@ -114,8 +124,12 @@ export function FoundationPath({
           onPress={() => router.push(`/review?track=${track}` as Href)}
           style={({ pressed }) => [styles.review, pressed && styles.pressed]}
         >
-          <View style={[styles.reviewIcon, review.due ? styles.reviewIconDue : null]}>
-            <MaterialCommunityIcons name="cards-outline" size={22} color={Palette.ink} />
+          <View style={[styles.reviewIcon, review.due > 0 && { backgroundColor: colors.accent }]}>
+            <MaterialCommunityIcons
+              name="cards-outline"
+              size={22}
+              color={review.due > 0 ? colors.onAccent : Palette.ink}
+            />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.rowTitle}>
@@ -180,19 +194,19 @@ export function FoundationPath({
                   onPress={() => router.push(`/foundation/${lesson.id}` as Href)}
                   style={({ pressed }) => [
                     styles.row,
-                    isNext && styles.rowNext,
+                    isNext && { borderColor: colors.accent },
                     pressed && styles.pressed,
                   ]}
                 >
                   <View
                     style={[
                       styles.number,
-                      isDone && styles.numberDone,
+                      isDone && { backgroundColor: colors.accent },
                       isNext && !isDone && styles.numberNext,
                     ]}
                   >
                     {isDone ? (
-                      <MaterialCommunityIcons name="check" size={18} color={Palette.ink} />
+                      <MaterialCommunityIcons name="check" size={18} color={colors.onAccent} />
                     ) : (
                       <Text style={[styles.numberText, isNext && { color: Palette.cream }]}>
                         {lessons.indexOf(lesson) + 1}
@@ -221,16 +235,15 @@ export function FoundationPath({
 
 const styles = StyleSheet.create({
   section: { gap: 12, marginHorizontal: 18, marginTop: 16 },
-  heading: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 25 },
+  heading: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22 },
   hero: { backgroundColor: Palette.ink, borderRadius: 26, gap: 10, padding: 20 },
   heroTop: { flexDirection: 'row', justifyContent: 'space-between' },
   heroMeta: { color: 'rgba(241,237,227,.65)', fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
   heroTitle: {
     color: Palette.cream,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: 24,
-    letterSpacing: -0.4,
-    lineHeight: 29,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 22,
+    lineHeight: 27,
   },
   heroCopy: {
     color: 'rgba(241,237,227,.72)',
@@ -245,11 +258,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
     overflow: 'hidden',
   },
-  heroFill: { backgroundColor: Palette.yellow, height: '100%' },
+  heroFill: { height: '100%' },
   heroButton: {
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: Palette.yellow,
     borderRadius: 99,
     flexDirection: 'row',
     gap: 6,
@@ -257,7 +269,7 @@ const styles = StyleSheet.create({
     minHeight: 44,
     paddingHorizontal: 18,
   },
-  heroButtonText: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 16 },
+  heroButtonText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
   review: {
     alignItems: 'center',
     backgroundColor: Palette.white,
@@ -275,7 +287,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 44,
   },
-  reviewIconDue: { backgroundColor: Palette.yellow },
   tabs: {
     backgroundColor: Palette.soft,
     borderRadius: 16,
@@ -292,8 +303,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   tabActive: { backgroundColor: Palette.white },
-  tabText: { color: Palette.ink, fontFamily: VokaFonts.displayBold, fontSize: 16 },
-  tabCount: { color: Palette.muted, fontFamily: VokaFonts.monoMedium, fontSize: 11 },
+  tabText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
+  tabCount: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   list: { gap: 8 },
   row: {
     alignItems: 'center',
@@ -306,7 +317,6 @@ const styles = StyleSheet.create({
     minHeight: 72,
     padding: 12,
   },
-  rowNext: { borderColor: Palette.yellow },
   number: {
     alignItems: 'center',
     backgroundColor: Palette.soft,
@@ -315,9 +325,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 36,
   },
-  numberDone: { backgroundColor: Palette.yellow },
   numberNext: { backgroundColor: Palette.ink },
-  numberText: { color: Palette.ink, fontFamily: VokaFonts.monoMedium, fontSize: 13 },
+  numberText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
   rowTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16, lineHeight: 22 },
   rowCopy: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 19 },
   link: {

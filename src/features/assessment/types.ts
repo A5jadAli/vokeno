@@ -41,7 +41,7 @@ export function parseSpokenAssessment(value: unknown): SpokenAssessment | null {
     candidate.evidenceTurnCount < 1 ||
     typeof candidate.summary !== 'string' ||
     !candidate.summary.trim() ||
-    (candidate.track !== 'EN' && candidate.track !== 'DE') ||
+    (candidate.track !== 'EN' && candidate.track !== 'DE' && candidate.track !== 'ES') ||
     !strengths?.length ||
     !priorities?.length
   ) {
