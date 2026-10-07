@@ -13,6 +13,7 @@ import { remindersSupported } from '@/features/habits/reminder-scheduler';
 import { useReminderStore } from '@/features/habits/reminders';
 import { useHabits } from '@/features/habits/use-habits';
 import { languageDetails, trackColors, type LanguageTrack } from '@/features/language/config';
+import { levelLabel, levelNote } from '@/features/foundations/level-status';
 
 /** Home's "Today" card: one to three small steps, then the streak for this week. */
 export function LearningRecommendation({ track }: { track: LanguageTrack }) {
@@ -34,7 +35,7 @@ export function LearningRecommendation({ track }: { track: LanguageTrack }) {
             <MaterialCommunityIcons color={colors.onAccent} name="trophy-outline" size={26} />
           </View>
           <Text accessibilityRole="header" style={styles.title}>
-            {languageDetails[track].name} {milestone.level} complete
+            {languageDetails[track].name} {levelLabel(track, milestone.level)} done
           </Text>
           <Text style={styles.footnote}>You can now:</Text>
           {milestone.canDo.map((item) => (
@@ -43,6 +44,9 @@ export function LearningRecommendation({ track }: { track: LanguageTrack }) {
               <Text style={styles.canDoText}>{item}</Text>
             </View>
           ))}
+          {levelNote(track, milestone.level) ? (
+            <Text style={styles.footnote}>{levelNote(track, milestone.level)}</Text>
+          ) : null}
           {nextLevelStart ? (
             <PrimaryAccent background={colors.accent} text={colors.onAccent}>
               <PrimaryButton

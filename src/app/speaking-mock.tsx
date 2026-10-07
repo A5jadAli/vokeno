@@ -101,6 +101,10 @@ function SpeakingMock({ track }: { track: 'DE' | 'EN' }) {
         <Text accessibilityRole="header" style={lessonText.title}>
           Speaking mock
         </Text>
+        <Text style={lessonText.small}>
+          Practice for the speaking part only. It does not show that you are ready for the whole
+          exam.
+        </Text>
         {parts.length > 1 && !preparing ? (
           <View accessibilityRole="tablist" style={styles.tabs}>
             {parts.map((value) => (

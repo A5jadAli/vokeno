@@ -202,7 +202,9 @@ function WritingPractice({ track }: { track: LanguageTrack }) {
             {showHelp ? <Text style={lessonText.small}>{task.promptHelp}</Text> : null}
           </>
         ) : null}
-        <Text style={lessonText.small}>{task.target}</Text>
+        <Text style={lessonText.small}>
+          {task.target} Practice for one task: it does not show that you are ready for a whole exam.
+        </Text>
 
         {taskId === 'chart' ? <CoffeeChart /> : null}
 

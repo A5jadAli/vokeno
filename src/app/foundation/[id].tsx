@@ -38,6 +38,7 @@ import { languageDetails, trackColors } from '@/features/language/config';
 import { useLessonSpeech, type LessonSpeech } from '@/features/listening/use-lesson-speech';
 import { REVIEW_INTERVALS, seedCards } from '@/features/review/schedule';
 import { haptic } from '@/features/feedback/haptics';
+import { levelLabel } from '@/features/foundations/level-status';
 
 const closeHint = {
   DE: 'Check endings, umlauts and spelling.',
@@ -288,7 +289,10 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
       text={trackColors[lesson.track].onAccent}
     >
       <AppScreen showNav={false} keyboardAware footer={footer}>
-        <LessonTopBar progress={position / segments} label={`${lesson.level}`} />
+        <LessonTopBar
+          progress={position / segments}
+          label={levelLabel(lesson.track, lesson.level)}
+        />
         <View style={styles.body}>
           {speech.error ? (
             <Text accessibilityRole="alert" style={styles.alert}>
@@ -299,7 +303,8 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
           {entry.step === 0 ? (
             <>
               <Text style={lessonText.meta}>
-                {languageName} · {lesson.level} · {lesson.phrases.length} phrases
+                {languageName} · {levelLabel(lesson.track, lesson.level)} · {lesson.phrases.length}{' '}
+                phrases
               </Text>
               <Text accessibilityRole="header" style={lessonText.title}>
                 {lesson.title}

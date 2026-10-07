@@ -15,12 +15,13 @@ import { useCoachingStore } from '@/features/coaching/store';
 import { reviewSummary } from '@/features/review/schedule';
 import { nextLesson } from '@/features/foundations/next';
 import { trackColors } from '@/features/language/config';
+import { levelLabel, levelNote } from '@/features/foundations/level-status';
 
 const copy = {
   DE: {
     eyebrow: 'From first words to B1 conversations',
     heading: 'German guided lessons',
-    note: 'Lessons build towards selected A1, A2 and B1 skills. They are practice, not a certificate.',
+    note: 'Starter sets for A1, A2 and B1 while the full levels are being built. Practice, not a certificate.',
   },
   EN: {
     eyebrow: 'Modern English and IELTS skills',
@@ -30,7 +31,7 @@ const copy = {
   ES: {
     eyebrow: 'Spanish for everyday travel',
     heading: 'Spanish guided lessons',
-    note: 'Start with useful A1 situations. These lessons are practice, not a certified course.',
+    note: 'Starter sets for A1 and A2 while the full levels are being built. Practice, not a certificate.',
   },
 } as const;
 
@@ -85,7 +86,8 @@ export function FoundationPath({
         >
           <View style={styles.heroTop}>
             <Text style={styles.heroMeta}>
-              {next.level} · Lesson {lessons.indexOf(next) + 1} of {lessons.length}
+              {levelLabel(track, next.level)} · Lesson {lessons.indexOf(next) + 1} of{' '}
+              {lessons.length}
             </Text>
             <Text style={styles.heroMeta}>
               {completed}/{lessons.length} done
@@ -168,11 +170,11 @@ export function FoundationPath({
                   key={value}
                   accessibilityRole="tab"
                   accessibilityState={{ selected: level === value }}
-                  accessibilityLabel={`${value} lessons, ${inTab.filter(done).length} of ${inTab.length} practised`}
+                  accessibilityLabel={`${levelLabel(track, value)} lessons, ${inTab.filter(done).length} of ${inTab.length} practised`}
                   onPress={() => setLevel(value)}
                   style={[styles.tab, level === value && styles.tabActive]}
                 >
-                  <Text style={styles.tabText}>{value}</Text>
+                  <Text style={styles.tabText}>{levelLabel(track, value)}</Text>
                   <Text style={styles.tabCount}>
                     {inTab.filter(done).length}/{inTab.length}
                   </Text>
@@ -180,6 +182,11 @@ export function FoundationPath({
               );
             })}
           </View>
+          {levelNote(track, level) ? (
+            <Text accessibilityRole="text" style={styles.levelNote}>
+              {levelNote(track, level)}
+            </Text>
+          ) : null}
           <View style={styles.list}>
             {inLevel.map((lesson) => {
               const isDone = done(lesson);
@@ -234,6 +241,7 @@ export function FoundationPath({
 }
 
 const styles = StyleSheet.create({
+  levelNote: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 19 },
   section: { gap: 12, marginHorizontal: 18, marginTop: 16 },
   heading: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22 },
   hero: { backgroundColor: Palette.ink, borderRadius: 26, gap: 10, padding: 20 },
