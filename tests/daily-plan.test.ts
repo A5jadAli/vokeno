@@ -4,12 +4,13 @@ import { buildTodayPlan, type TodayPlanInput } from '@/features/coaching/daily-p
 import { getTrackLessons } from '@/features/foundations/catalog';
 import { freshFoundationEntry, type FoundationProgress } from '@/features/foundations/progress';
 import { dayFromNumber, dayNumberOf, type PracticeLog } from '@/features/habits/practice-log';
+import type { LanguageTrack } from '@/features/language/config';
 import { listeningScenarios } from '@/features/listening/scenarios';
 
 const NOON = new Date(2026, 9, 7, 12).getTime(); // Wednesday 7 October 2026, local time
 const TODAY = '2026-10-07';
 const ago = (days: number) => dayFromNumber(dayNumberOf(TODAY) - days);
-const activeDays = (count: number, offset = 1, track = 'ES'): PracticeLog =>
+const activeDays = (count: number, offset = 1, track: LanguageTrack = 'ES'): PracticeLog =>
   Object.fromEntries(
     Array.from({ length: count }, (_, i) => [ago(i + offset), [`lesson:${track}` as const]]),
   );
