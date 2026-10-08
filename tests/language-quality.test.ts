@@ -3,17 +3,17 @@ import { describe, expect, it } from '@jest/globals';
 import { Palette } from '@/constants/theme';
 import {
   checkFoundationWriting,
-  foundationLessons,
+  classicLessons,
   gradeFoundationWriting,
   normaliseFoundationAnswer,
   optionOrder,
-  type FoundationLesson,
+  type ClassicLesson,
 } from '@/features/foundations/catalog';
 import { languageTracks, trackColors } from '@/features/language/config';
 import { listeningScenarios } from '@/features/listening/scenarios';
 
-function lesson(track: FoundationLesson['track'], accepted: string[]): FoundationLesson {
-  const base = foundationLessons.find((item) => item.track === track);
+function lesson(track: ClassicLesson['track'], accepted: string[]): ClassicLesson {
+  const base = classicLessons.find((item) => item.track === track);
   if (!base) throw new Error(`No ${track} lesson`);
   return { ...base, writing: { ...base.writing, accepted } };
 }
@@ -103,7 +103,7 @@ describe('writing grades', () => {
   });
 
   it('accepts every authored Spanish answer typed without accents or punctuation', () => {
-    for (const item of foundationLessons.filter((entry) => entry.track === 'ES')) {
+    for (const item of classicLessons.filter((entry) => entry.track === 'ES')) {
       for (const accepted of item.writing.accepted) {
         const plain = accepted
           .normalize('NFD')

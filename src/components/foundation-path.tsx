@@ -16,6 +16,7 @@ import { reviewSummary } from '@/features/review/schedule';
 import { nextLesson } from '@/features/foundations/next';
 import { trackColors } from '@/features/language/config';
 import { levelLabel, levelNote } from '@/features/foundations/level-status';
+import { finalStep, gradedCount } from '@/features/foundations/types';
 
 const copy = {
   DE: {
@@ -37,7 +38,7 @@ const copy = {
 
 function lessonAction(progress: FoundationProgress, lesson: FoundationLesson) {
   const saved = progress[lesson.id];
-  if (saved && saved.step > 0 && saved.step < 4) return 'Continue';
+  if (saved && saved.step > 0 && saved.step < finalStep(lesson)) return 'Continue';
   if (foundationReviewDue(saved)) return 'Review due';
   return saved?.attempts.length ? 'Practise again' : 'Start';
 }
@@ -86,8 +87,10 @@ export function FoundationPath({
         >
           <View style={styles.heroTop}>
             <Text style={styles.heroMeta}>
-              {levelLabel(track, next.level)} · Lesson {lessons.indexOf(next) + 1} of{' '}
-              {lessons.length}
+              {levelLabel(track, next.level)} ·{' '}
+              {next.format === 'steps'
+                ? `Unit ${next.unit.number} · ${next.session}`
+                : `Lesson ${lessons.indexOf(next) + 1} of ${lessons.length}`}
             </Text>
             <Text style={styles.heroMeta}>
               {completed}/{lessons.length} done
@@ -188,48 +191,77 @@ export function FoundationPath({
             </Text>
           ) : null}
           <View style={styles.list}>
-            {inLevel.map((lesson) => {
+            {inLevel.map((lesson, position) => {
+              const previous = inLevel[position - 1];
+              const header =
+                lesson.format === 'steps'
+                  ? previous?.format === 'steps' && previous.unit.id === lesson.unit.id
+                    ? null
+                    : {
+                        title: `Unit ${lesson.unit.number} · ${lesson.unit.title}`,
+                        copy: lesson.unit.canDo,
+                      }
+                  : previous?.format === 'steps'
+                    ? {
+                        title: 'Starter lessons',
+                        copy: 'Shorter lessons from the starter set, until the next units are ready.',
+                      }
+                    : null;
               const isDone = done(lesson);
               const isNext = lesson.id === next.id;
               const rowAction = lessonAction(progress, lesson);
               const latest = progress[lesson.id]?.attempts.at(-1);
               return (
-                <Pressable
-                  key={lesson.id}
-                  accessibilityRole="button"
-                  accessibilityLabel={`${rowAction}: ${lesson.title}`}
-                  onPress={() => router.push(`/foundation/${lesson.id}` as Href)}
-                  style={({ pressed }) => [
-                    styles.row,
-                    isNext && { borderColor: colors.accent },
-                    pressed && styles.pressed,
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.number,
-                      isDone && { backgroundColor: colors.accent },
-                      isNext && !isDone && styles.numberNext,
+                <View key={lesson.id} style={styles.list}>
+                  {header ? (
+                    <View style={styles.unitHeader}>
+                      <Text accessibilityRole="header" style={styles.unitTitle}>
+                        {header.title}
+                      </Text>
+                      <Text style={styles.rowCopy}>{header.copy}</Text>
+                    </View>
+                  ) : null}
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`${rowAction}: ${lesson.title}`}
+                    onPress={() => router.push(`/foundation/${lesson.id}` as Href)}
+                    style={({ pressed }) => [
+                      styles.row,
+                      isNext && { borderColor: colors.accent },
+                      pressed && styles.pressed,
                     ]}
                   >
-                    {isDone ? (
-                      <MaterialCommunityIcons name="check" size={18} color={colors.onAccent} />
-                    ) : (
-                      <Text style={[styles.numberText, isNext && { color: Palette.cream }]}>
-                        {lessons.indexOf(lesson) + 1}
+                    <View
+                      style={[
+                        styles.number,
+                        isDone && { backgroundColor: colors.accent },
+                        isNext && !isDone && styles.numberNext,
+                      ]}
+                    >
+                      {isDone ? (
+                        <MaterialCommunityIcons name="check" size={18} color={colors.onAccent} />
+                      ) : (
+                        <Text style={[styles.numberText, isNext && { color: Palette.cream }]}>
+                          {lessons.indexOf(lesson) + 1}
+                        </Text>
+                      )}
+                    </View>
+                    <View style={{ flex: 1, gap: 2 }}>
+                      {lesson.format === 'steps' ? (
+                        <Text style={styles.rowMeta}>
+                          {lesson.session} · {lesson.minutes} min
+                        </Text>
+                      ) : null}
+                      <Text style={styles.rowTitle}>{lesson.title}</Text>
+                      <Text style={styles.rowCopy} numberOfLines={2}>
+                        {latest
+                          ? `${latest.correctFirstTry}/${gradedCount(lesson)} right first time · ${rowAction}`
+                          : lesson.outcome}
                       </Text>
-                    )}
-                  </View>
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={styles.rowTitle}>{lesson.title}</Text>
-                    <Text style={styles.rowCopy} numberOfLines={2}>
-                      {latest
-                        ? `${latest.correctFirstTry}/${lesson.checks.length + 1} right first time · ${rowAction}`
-                        : lesson.outcome}
-                    </Text>
-                  </View>
-                  <MaterialCommunityIcons name="chevron-right" size={22} color={Palette.muted} />
-                </Pressable>
+                    </View>
+                    <MaterialCommunityIcons name="chevron-right" size={22} color={Palette.muted} />
+                  </Pressable>
+                </View>
               );
             })}
           </View>
@@ -337,6 +369,9 @@ const styles = StyleSheet.create({
   numberText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
   rowTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16, lineHeight: 22 },
   rowCopy: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 19 },
+  rowMeta: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
+  unitHeader: { gap: 2, marginTop: 10, paddingHorizontal: 4 },
+  unitTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18, lineHeight: 24 },
   link: {
     alignItems: 'center',
     backgroundColor: Palette.white,

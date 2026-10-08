@@ -44,7 +44,7 @@ describe('placement check', () => {
   it('sends a complete beginner to the first German lesson', () => {
     const result = evaluatePlacement('DE', answerAll('DE', 1, 0));
     expect(result.secure).toBeNull();
-    expect(result.recommendation.href).toBe('/foundation/greetings');
+    expect(result.recommendation.href).toBe('/foundation/de-a1-u1-hallo');
   });
 
   it('starts a learner at the first lesson of the level they did not secure', () => {

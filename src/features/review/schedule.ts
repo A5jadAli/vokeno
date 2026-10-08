@@ -1,5 +1,5 @@
 import {
-  getTrackLessons,
+  allTrackLessons,
   optionOrder,
   type FoundationLesson,
   type LessonTrack,
@@ -54,7 +54,7 @@ export function dueCards(
   track: LessonTrack,
   today = dayNumber(),
 ): DueCard[] {
-  return getTrackLessons(track)
+  return allTrackLessons(track)
     .flatMap((lesson) =>
       (progress[lesson.id]?.cards ?? []).map(([box, dueDay], phraseIndex) => ({
         lesson,
@@ -72,7 +72,7 @@ export function reviewSummary(
   track: LessonTrack,
   today = dayNumber(),
 ) {
-  const lessons = getTrackLessons(track);
+  const lessons = allTrackLessons(track);
   const all = lessons.flatMap((lesson) => progress[lesson.id]?.cards ?? []);
   return {
     due: dueCards(progress, track, today).length,
@@ -89,7 +89,7 @@ export function buildReviewSession(
   today = dayNumber(),
   size = REVIEW_SESSION_SIZE,
 ): ReviewItem[] {
-  const pool = getTrackLessons(track).flatMap((lesson) =>
+  const pool = allTrackLessons(track).flatMap((lesson) =>
     lesson.phrases.map((phrase) => ({ ...phrase, level: lesson.level })),
   );
   return dueCards(progress, track, today)

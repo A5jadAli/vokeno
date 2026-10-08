@@ -5,6 +5,8 @@ export const germanA1Lessons = defineLessons('DE', [
   {
     id: 'greetings',
     level: 'A1',
+    // Replaced by German A1 Units 1–3.
+    retired: true,
     title: 'Hello, please and thank you',
     outcome: 'Greet people, thank them and say goodbye in formal and casual situations.',
     phrases: [
@@ -73,6 +75,8 @@ export const germanA1Lessons = defineLessons('DE', [
   {
     id: 'introductions',
     level: 'A1',
+    // Replaced by German A1 Units 1–3.
+    retired: true,
     title: 'Say your name',
     outcome: 'Introduce yourself naturally and ask someone’s name in the right register.',
     phrases: [
@@ -302,6 +306,8 @@ export const germanA1Lessons = defineLessons('DE', [
   {
     id: 'origin',
     level: 'A1',
+    // Replaced by German A1 Units 1–3.
+    retired: true,
     title: 'Where you are from and what you speak',
     outcome: 'Say where you come from, where you live and which languages you speak.',
     phrases: [
@@ -361,6 +367,8 @@ export const germanA1Lessons = defineLessons('DE', [
   {
     id: 'numbers',
     level: 'A1',
+    // Replaced by German A1 Units 1–3.
+    retired: true,
     title: 'Numbers and prices',
     outcome: 'Understand prices at the till and ask what something costs.',
     phrases: [

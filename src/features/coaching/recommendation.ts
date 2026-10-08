@@ -30,9 +30,9 @@ export function learningRecommendation(
   if (track === 'DE') {
     if (ability === 'new')
       return {
-        title: 'Start with your first German words',
-        why: 'Build confidence with English explanations before a live conversation.',
-        href: '/foundation/greetings',
+        title: 'Start Unit 1: Hallo!',
+        why: 'Short sessions with real scenes, the words people use, and clear English explanations.',
+        href: '/foundation/de-a1-u1-hallo',
       };
     if (ability === 'basics')
       return goal === 'work-study'

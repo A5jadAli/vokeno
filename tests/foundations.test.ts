@@ -1,6 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import {
   checkFoundationWriting,
+  classicLessons,
   foundationLessons,
   getTrackLessons,
   isNearMiss,
@@ -14,7 +15,11 @@ import {
   mergeFoundationProgress,
   parseFoundationProgress,
 } from '@/features/foundations/progress';
-import { MAX_LESSON_CHECKS } from '@/features/foundations/types';
+import { gradedCount, MAX_LESSON_CHECKS, type LessonTrack } from '@/features/foundations/types';
+
+/** Lessons in the original format on a language's path. */
+const classicPath = (track: LessonTrack) =>
+  classicLessons.filter((lesson) => lesson.track === track && !lesson.retired);
 
 const levelRank = { A1: 0, A2: 1, B1: 2, B2: 3 } as const;
 
@@ -23,7 +28,7 @@ describe('guided lesson content', () => {
     expect(new Set(foundationLessons.map((lesson) => lesson.id)).size).toBe(
       foundationLessons.length,
     );
-    for (const lesson of foundationLessons) {
+    for (const lesson of classicLessons) {
       expect(lesson.checks.length).toBeGreaterThanOrEqual(2);
       expect(lesson.checks.length).toBeLessThanOrEqual(MAX_LESSON_CHECKS);
       expect(lesson.phrases.length).toBeGreaterThanOrEqual(4);
@@ -62,14 +67,16 @@ describe('guided lesson content', () => {
     expect(english.slice(3).every((lesson) => lesson.level !== 'A1' && lesson.level !== 'A2')).toBe(
       true,
     );
-    expect(german[0].id).toBe('greetings');
+    expect(german[0].id).toBe('de-a1-u1-hallo');
+    expect(german.some((lesson) => lesson.retired)).toBe(false);
     expect(german.map((lesson) => lesson.level)).toEqual(
       [...german.map((lesson) => lesson.level)].sort((a, b) => levelRank[a] - levelRank[b]),
     );
   });
 
   it('builds Spanish from A1 to A2 in level order with audio-checked tasks', () => {
-    const spanish = getTrackLessons('ES');
+    const spanish = classicPath('ES');
+    expect(spanish).toHaveLength(getTrackLessons('ES').length);
     expect(spanish[0].id).toBe('es-first-words');
     for (const level of ['A1', 'A2'] as const)
       expect(spanish.filter((lesson) => lesson.level === level).length).toBeGreaterThanOrEqual(12);
@@ -85,15 +92,15 @@ describe('guided lesson content', () => {
 
   it('trains listening in most lessons and gives pronunciation guidance for speech', () => {
     for (const track of ['DE', 'EN'] as const) {
-      const lessons = getTrackLessons(track);
+      const lessons = classicPath(track);
       const withAudio = lessons.filter((lesson) => lesson.checks.some((check) => check.audio));
       expect(withAudio.length / lessons.length).toBeGreaterThanOrEqual(0.75);
     }
-    for (const lesson of getTrackLessons('DE')) expect(lesson.pronunciation).toBeTruthy();
+    for (const lesson of classicPath('DE')) expect(lesson.pronunciation).toBeTruthy();
   });
 
   it('shuffles displayed options stably so answers are not predictable by position', () => {
-    const shown = foundationLessons.flatMap((lesson) =>
+    const shown = classicLessons.flatMap((lesson) =>
       lesson.checks.map((check, index) =>
         optionOrder(`${lesson.id}:${index}`, check.options.length).indexOf(check.answer),
       ),
@@ -108,17 +115,17 @@ describe('guided lesson content', () => {
 });
 
 describe('writing checks', () => {
-  const introductions = foundationLessons.find((lesson) => lesson.id === 'introductions')!;
+  const introductions = classicLessons.find((lesson) => lesson.id === 'introductions')!;
 
   it('allows punctuation, case, keyboard ss and umlaut spellings without accepting wrong meaning', () => {
     expect(checkFoundationWriting(introductions, '  ich heisse   Sara! ')).toBe(true);
     expect(checkFoundationWriting(introductions, 'Ich bin Sara.')).toBe(true);
     expect(checkFoundationWriting(introductions, 'Ich heiße nicht Sara.')).toBe(false);
     expect(checkFoundationWriting(introductions, 'Ich heißen Sara')).toBe(false);
-    const sounds = foundationLessons.find((lesson) => lesson.id === 'de-sounds')!;
+    const sounds = classicLessons.find((lesson) => lesson.id === 'de-sounds')!;
     expect(checkFoundationWriting(sounds, 'schoen')).toBe(true);
     expect(checkFoundationWriting(sounds, 'schon')).toBe(false);
-    const repair = foundationLessons.find((lesson) => lesson.id === 'en-repair')!;
+    const repair = classicLessons.find((lesson) => lesson.id === 'en-repair')!;
     expect(checkFoundationWriting(repair, "Sorry, I didn't catch that")).toBe(true);
   });
 
@@ -155,14 +162,14 @@ describe('lesson progress', () => {
         {
           ...freshFoundationEntry(),
           step: 2,
-          answers: lesson.checks.map((check) => check.answer),
-          firstTry: lesson.checks.map(() => true),
+          answers: lesson.format === 'steps' ? [1] : lesson.checks.map((check) => check.answer),
+          firstTry: Array.from({ length: gradedCount(lesson) }, () => true),
           draft: 'ü'.repeat(256),
           cards: lesson.phrases.map(() => [5, 99999] as [number, number]),
           writingMistakes: 999,
           attempts: Array.from({ length: 20 }, (_, day) => ({
             at: new Date(Date.parse(at) + day * 86400000).toISOString(),
-            correctFirstTry: lesson.checks.length + 1,
+            correctFirstTry: gradedCount(lesson),
             spoken: true,
           })),
         },
@@ -209,7 +216,7 @@ describe('lesson progress', () => {
 
 describe('reading questions', () => {
   it('ask about the reading in every lesson that has one, and only there', () => {
-    for (const lesson of foundationLessons) {
+    for (const lesson of classicLessons) {
       const usesReading = lesson.checks.filter((check) => check.useReading);
       if (lesson.reading) expect([lesson.id, usesReading.length > 0]).toEqual([lesson.id, true]);
       else expect([lesson.id, usesReading.length]).toEqual([lesson.id, 0]);

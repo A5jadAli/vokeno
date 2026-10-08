@@ -17,6 +17,7 @@ import {
   TextButton,
   PrimaryAccent,
 } from '@/components/lesson-ui';
+import { StepLessonPlayer } from '@/components/step-lesson';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
@@ -25,7 +26,7 @@ import {
   gradeFoundationWriting,
   getTrackLessons,
   optionOrder,
-  type FoundationLesson,
+  type ClassicLesson,
 } from '@/features/foundations/catalog';
 import {
   freshFoundationEntry,
@@ -59,12 +60,16 @@ export default function FoundationScreen() {
         </View>
       </AppScreen>
     );
-  return <GuidedLesson key={lesson.id} lesson={lesson} />;
+  return lesson.format === 'steps' ? (
+    <StepLessonPlayer key={lesson.id} lesson={lesson} />
+  ) : (
+    <GuidedLesson key={lesson.id} lesson={lesson} />
+  );
 }
 
 type Result = { tone: 'correct' | 'wrong' | 'close'; title: string; message?: string };
 
-function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
+function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
   const router = useRouter();
   useFocusEffect(
     useCallback(() => {
@@ -543,7 +548,7 @@ function ReadingCard({
   showTranslation,
   onToggle,
 }: {
-  lesson: FoundationLesson;
+  lesson: ClassicLesson;
   speech: LessonSpeech;
   showTranslation: boolean;
   onToggle: () => void;
@@ -577,7 +582,7 @@ function ReadingCard({
   );
 }
 
-function PhraseList({ lesson, speech }: { lesson: FoundationLesson; speech: LessonSpeech }) {
+function PhraseList({ lesson, speech }: { lesson: ClassicLesson; speech: LessonSpeech }) {
   return (
     <View style={{ gap: 10 }}>
       {lesson.phrases.map((phrase) => (

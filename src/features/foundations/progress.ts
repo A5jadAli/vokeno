@@ -1,5 +1,5 @@
 import { foundationLessons } from './catalog';
-import { MAX_LESSON_CHECKS } from './types';
+import { finalStep, gradedCount, MAX_LESSON_CHECKS } from './types';
 
 // Keep the per-lesson history short: cloud state for every lesson must stay under 256 KB
 // (about 1 KB per lesson in the worst case).
@@ -39,10 +39,12 @@ export function parseFoundationProgress(value: unknown): FoundationProgress {
     const raw = (value as Record<string, unknown>)[lesson.id];
     if (!raw || typeof raw !== 'object') continue;
     const entry = raw as FoundationEntry;
+    const last = finalStep(lesson);
+    const marked = lesson.format === 'steps' ? gradedCount(lesson) : MAX_LESSON_CHECKS;
     if (
       !Number.isInteger(entry.step) ||
       entry.step < 0 ||
-      entry.step > 4 ||
+      entry.step > last ||
       !Array.isArray(entry.answers) ||
       !entry.answers.every((v) => Number.isInteger(v) && v >= -1 && v < 3) ||
       !Array.isArray(entry.firstTry) ||
@@ -63,7 +65,7 @@ export function parseFoundationProgress(value: unknown): FoundationProgress {
               Number.isFinite(Date.parse(a.at)) &&
               Number.isInteger(a.correctFirstTry) &&
               a.correctFirstTry >= 0 &&
-              a.correctFirstTry <= MAX_LESSON_CHECKS + 1 &&
+              a.correctFirstTry <= gradedCount(lesson) &&
               typeof a.spoken === 'boolean',
           )
           .slice(-MAX_FOUNDATION_ATTEMPTS)
@@ -86,11 +88,15 @@ export function parseFoundationProgress(value: unknown): FoundationProgress {
         : undefined;
     result[lesson.id] = {
       ...(cards?.length ? { cards } : {}),
-      step: entry.step === 4 && !attempts.length ? 0 : entry.step,
-      answers: entry.answers.slice(0, MAX_LESSON_CHECKS),
-      firstTry: entry.firstTry.slice(0, MAX_LESSON_CHECKS),
-      // Drafts are only needed until the writing step is passed; keep cloud state small.
-      draft: entry.step >= 3 ? '' : entry.draft.slice(0, MAX_DRAFT_LENGTH),
+      step: entry.step === last && !attempts.length ? 0 : entry.step,
+      // Step lessons keep one marker here: [1] once a speaking step was done aloud.
+      answers: entry.answers.slice(0, lesson.format === 'steps' ? 1 : MAX_LESSON_CHECKS),
+      firstTry: entry.firstTry.slice(0, marked),
+      // Drafts are only needed until the writing is passed; keep cloud state small.
+      draft:
+        entry.step >= (lesson.format === 'steps' ? last : 3)
+          ? ''
+          : entry.draft.slice(0, MAX_DRAFT_LENGTH),
       writingMistakes: Math.min(entry.writingMistakes, 1000),
       updatedAt: entry.updatedAt,
       attempts,

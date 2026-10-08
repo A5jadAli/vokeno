@@ -4,13 +4,29 @@ import { germanA2Lessons } from './german-a2';
 import { germanB1Lessons } from './german-b1';
 import { spanishA1Lessons } from './spanish-a1';
 import { spanishA2Lessons } from './spanish-a2';
-import type { FoundationLesson, LessonTrack } from './types';
+import { germanA1Units } from './german-a1-units';
+import type { ClassicLesson, FoundationLesson, LessonTrack } from './types';
 
-export type { FoundationLesson, LessonCheck, LessonLevel, LessonTrack } from './types';
+export type {
+  ClassicLesson,
+  FoundationLesson,
+  LessonCheck,
+  LessonLevel,
+  LessonStep,
+  LessonTrack,
+  StepLesson,
+} from './types';
 
 // Original guided lessons. German runs from first words to selected B1 tasks; English covers
 // modern everyday communication and optional IELTS skills. Neither is a certified course.
-export const germanLessons = [...germanA1Lessons, ...germanA2Lessons, ...germanB1Lessons];
+// German A1 is being rebuilt as full units (docs/german-curriculum-blueprint.md); they come
+// first, and the starter lessons they replace are retired.
+export const germanLessons = [
+  ...germanA1Units,
+  ...germanA1Lessons,
+  ...germanA2Lessons,
+  ...germanB1Lessons,
+];
 export const foundationLessons: FoundationLesson[] = [
   ...germanLessons,
   ...englishLessons,
@@ -18,9 +34,22 @@ export const foundationLessons: FoundationLesson[] = [
   ...spanishA2Lessons,
 ];
 
+/** The learning path: every lesson of a language in order, without retired ones. */
 export function getTrackLessons(track: LessonTrack) {
+  return foundationLessons.filter((lesson) => lesson.track === track && !lesson.retired);
+}
+
+/** Every lesson of a language, retired ones included: for review cards and history. */
+export function allTrackLessons(track: LessonTrack) {
   return foundationLessons.filter((lesson) => lesson.track === track);
 }
+
+export const classicLessons = foundationLessons.filter(
+  (lesson): lesson is ClassicLesson => lesson.format === 'classic',
+);
+
+/** Anything graded like a written phrase: a classic lesson, or a typing step. */
+type WritingTarget = { track: LessonTrack; writing: { accepted: readonly string[] } };
 
 /**
  * Lower-cases and strips punctuation (including Spanish ¿ ¡) so only the words are compared.
@@ -54,7 +83,7 @@ export type WritingGrade =
   | { status: 'close' }
   | { status: 'wrong' };
 
-export function gradeFoundationWriting(lesson: FoundationLesson, value: string): WritingGrade {
+export function gradeFoundationWriting(lesson: WritingTarget, value: string): WritingGrade {
   const answer = normaliseFoundationAnswer(value);
   if (!answer) return { status: 'wrong' };
   if (lesson.writing.accepted.some((item) => normaliseFoundationAnswer(item) === answer))
@@ -70,13 +99,13 @@ export function gradeFoundationWriting(lesson: FoundationLesson, value: string):
   return isNearMiss(lesson, value) ? { status: 'close' } : { status: 'wrong' };
 }
 
-export function checkFoundationWriting(lesson: FoundationLesson, value: string) {
+export function checkFoundationWriting(lesson: WritingTarget, value: string) {
   const grade = gradeFoundationWriting(lesson, value).status;
   return grade === 'correct' || grade === 'accents';
 }
 
 /** True when an answer is not accepted but is within two letters of an accepted one. */
-export function isNearMiss(lesson: FoundationLesson, value: string) {
+export function isNearMiss(lesson: WritingTarget, value: string) {
   // Spanish accents are graded separately, so they should not count as typos here.
   const options = { ignoreAccents: lesson.track === 'ES' };
   const answer = normaliseFoundationAnswer(value, options);

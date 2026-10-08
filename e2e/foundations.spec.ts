@@ -1,6 +1,46 @@
-import { expect, test } from '@playwright/test';
-import { foundationLessons } from '../src/features/foundations/catalog';
+import { expect, test, type Page } from '@playwright/test';
+import {
+  classicLessons,
+  foundationLessons,
+  type LessonStep,
+  type StepLesson,
+} from '../src/features/foundations/catalog';
 import { placementStages } from '../src/features/placement/items';
+
+const unitSessions = foundationLessons.filter(
+  (lesson): lesson is StepLesson => lesson.format === 'steps',
+);
+const markedSteps = (lesson: StepLesson) =>
+  lesson.steps.filter((step) => ['choose', 'build', 'type', 'match'].includes(step.kind)).length;
+
+/** Answers one unit step correctly and moves on. */
+async function playStep(page: Page, step: LessonStep, spoke = true) {
+  const next = page.getByRole('button', { name: 'Continue', exact: true });
+  if (step.kind === 'speak')
+    return page
+      .getByRole('button', { name: spoke ? 'I said it aloud' : 'Skip speaking for now' })
+      .click();
+  if (step.kind === 'scene' || step.kind === 'teach') return next.click();
+  if (step.kind === 'rule')
+    return page.getByRole('button', { name: 'Got it', exact: true }).click();
+  if (step.kind === 'choose')
+    await page.getByRole('radio', { name: step.options[step.answer], exact: true }).click();
+  if (step.kind === 'build')
+    for (const word of step.answer)
+      await page
+        .getByRole('button', { name: `Add ${word}`, exact: true })
+        .first()
+        .click();
+  if (step.kind === 'type')
+    await page.getByRole('textbox', { name: 'Your German answer' }).fill(step.accepted[0]);
+  if (step.kind === 'match')
+    for (const [left, right] of step.pairs) {
+      await page.getByRole('button', { name: left, exact: true }).click();
+      await page.getByRole('button', { name: right, exact: true }).click();
+    }
+  else await page.getByRole('button', { name: 'Check', exact: true }).click();
+  await next.click();
+}
 
 test.beforeEach(async ({ page }) => {
   // These lessons must not require an account, provider calls or a microphone.
@@ -14,57 +54,58 @@ test.beforeEach(async ({ page }) => {
 test('a complete beginner gets correction, a persistent draft, evidence and a next lesson', async ({
   page,
 }) => {
+  const [first, second] = unitSessions;
   await page.goto('/');
   await page.getByRole('button', { name: 'German', exact: true }).click();
-  await page
-    .getByRole('button', { name: 'Start lesson: Start with your first German words' })
-    .click();
-  await expect(page.getByText('Hello! / Good day!', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Practise these phrases' }).click();
-  await page.getByRole('radio', { name: 'Auf Wiedersehen!', exact: true }).click();
+  await page.getByRole('button', { name: 'Start lesson: Start Unit 1: Hallo!' }).click();
+  await expect(page).toHaveURL(new RegExp(`/foundation/${first.id}$`));
+  await expect(page.getByRole('heading', { name: first.title })).toBeVisible();
+  const steps = [...first.steps];
+  // Scene and words, then a wrong answer is corrected before moving on.
+  await playStep(page, steps.shift()!);
+  await expect(page.getByText('Hello! / Hi!', { exact: true })).toBeVisible();
+  await playStep(page, steps.shift()!);
+  const question = steps.shift()!;
+  if (question.kind !== 'choose') throw new Error('Expected a question third');
+  const wrong = question.options.find((_, index) => index !== question.answer)!;
+  await page.getByRole('radio', { name: wrong, exact: true }).click();
   await page.getByRole('button', { name: 'Check', exact: true }).click();
   await expect(page.getByText('Not quite', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Try again' }).click();
-  await page.getByRole('radio', { name: 'Guten Tag!', exact: true }).click();
-  await page.getByRole('button', { name: 'Check', exact: true }).click();
-  await expect(page.getByText('Correct', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Next question' }).click();
-  await page.getByRole('radio', { name: 'Bitte.', exact: true }).click();
-  await page.getByRole('button', { name: 'Check', exact: true }).click();
-  await page.getByRole('button', { name: 'Next question' }).click();
-  await expect(
-    page.getByRole('button', { name: 'Play the listening question', exact: true }),
-  ).toBeVisible();
-  await page.getByRole('radio', { name: 'Saying goodbye until tomorrow', exact: true }).click();
-  await page.getByRole('button', { name: 'Check', exact: true }).click();
-  await expect(page.getByText(/You heard “Tschüss, bis morgen!”/)).toBeVisible();
-  await page.getByRole('button', { name: 'Continue to writing' }).click();
-  await page.getByLabel('Your German answer').fill('wrong words');
+  await playStep(page, question);
+  // The typed draft survives a reload, and a wrong answer gets a hint.
+  while (steps[0].kind !== 'type') await playStep(page, steps.shift()!);
+  const typing = steps.shift()!;
+  if (typing.kind !== 'type') throw new Error('Expected a typing step');
+  await page.getByRole('textbox', { name: 'Your German answer' }).fill('wrong words');
   await page.reload();
-  await expect(page.getByLabel('Your German answer')).toHaveValue('wrong words');
-  await page.getByRole('button', { name: 'Check my phrase' }).click();
+  await expect(page.getByRole('textbox', { name: 'Your German answer' })).toHaveValue(
+    'wrong words',
+  );
+  await page.getByRole('button', { name: 'Check', exact: true }).click();
   await expect(page.getByText('Not yet', { exact: true })).toBeVisible();
-  await page.getByLabel('Your German answer').fill('Danke!');
-  await page.getByRole('button', { name: 'Check my phrase' }).click();
-  await page.getByRole('button', { name: 'Continue to speaking practice' }).click();
-  await page.getByRole('button', { name: 'Skip speaking for now' }).click();
-  await expect(page.getByText('2/4 answers right first time')).toBeVisible();
+  await playStep(page, typing);
+  for (const step of steps) await playStep(page, step, false);
+  const marked = markedSteps(first);
+  await expect(page.getByText(`${marked - 2}/${marked} right first time`)).toBeVisible();
+  await expect(page.getByText('Skipped', { exact: true })).toBeVisible();
   await page.reload();
-  await expect(page.getByText('2/4 answers right first time')).toBeVisible();
-  await page.getByRole('button', { name: 'Next lesson: Say your name' }).click();
-  await expect(page).toHaveURL(/\/foundation\/introductions$/);
-  await expect(page.getByText('My name is Sara.', { exact: true })).toBeVisible();
-  // Home now points at the next lesson in the path instead of the onboarding suggestion.
+  await expect(page.getByText(`${marked - 2}/${marked} right first time`)).toBeVisible();
+  await page.getByRole('button', { name: `Next lesson: ${second.title}` }).click();
+  await expect(page).toHaveURL(new RegExp(`/foundation/${second.id}$`));
+  // Home now points at the next session, and the new words wait in review.
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Optional extra: Say your name' })).toBeVisible();
-  await expect(page.getByText('7 phrases · next review tomorrow')).toBeVisible();
+  await expect(page.getByRole('button', { name: `Optional extra: ${second.title}` })).toBeVisible();
+  await expect(
+    page.getByText(`${first.phrases.length} phrases · next review tomorrow`),
+  ).toBeVisible();
 });
 
 test('all lessons can be completed without audio and without false speaking credit', async ({
   page,
 }) => {
   test.setTimeout(600_000);
-  const lessons = foundationLessons.map((lesson) => ({
+  const lessons = classicLessons.map((lesson) => ({
     id: lesson.id,
     language: lesson.track === 'EN' ? 'English' : lesson.track === 'ES' ? 'Spanish' : 'German',
     choices: lesson.checks.map((check) => check.options[check.answer]),
@@ -136,7 +177,7 @@ test('placement advances only on secure stages and recommends a real starting le
 
 test('finished lesson phrases come back for spaced review the next day', async ({ page }) => {
   await page.clock.install({ time: new Date('2026-09-28T09:00:00Z') });
-  const lesson = foundationLessons.find((item) => item.id === 'greetings')!;
+  const lesson = classicLessons.find((item) => item.id === 'greetings')!;
   await page.goto('/foundation/greetings');
   await page.getByRole('button', { name: 'Practise these phrases' }).click();
   for (const [index, check] of lesson.checks.entries()) {
@@ -174,4 +215,16 @@ test('finished lesson phrases come back for spaced review the next day', async (
   }
   await expect(page.getByText('Review complete')).toBeVisible();
   await expect(page.getByText(/You remembered \d+ of 7 phrases/)).toBeVisible();
+});
+
+test('every unit session can be finished through its steps, with full marks', async ({ page }) => {
+  test.setTimeout(600_000);
+  expect(unitSessions.length).toBeGreaterThanOrEqual(12);
+  for (const lesson of unitSessions) {
+    await page.goto(`/foundation/${lesson.id}`);
+    await expect(page.getByRole('heading', { name: lesson.title })).toBeVisible();
+    for (const step of lesson.steps) await playStep(page, step);
+    const marked = markedSteps(lesson);
+    await expect(page.getByText(`${marked}/${marked} right first time`)).toBeVisible();
+  }
 });
