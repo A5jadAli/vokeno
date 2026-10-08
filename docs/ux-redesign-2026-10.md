@@ -47,3 +47,24 @@ There is no confetti, no looping animation and no motion on screens where nothin
 3. The shared completion pattern for lessons, review, listening and conversation.
 4. First run, copy fixes (F11), contrast and touch targets (F12), and English labelling (F7, decision 11).
 5. Usability round with six to eight beginners (owner to arrange), using the targets in section 8 of the review.
+
+## Status (8 October 2026)
+
+Phases 1–4 are built. Phase 5, the beginner usability round, is for the owner to arrange.
+
+| Finding                          | What changed                                                                                                                                                                                                              |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| F1 practice shown as completion  | Completion is recorded per activity (`src/features/journey/activity-log.ts`); only that ticks plan items. Any step still counts for the streak, whose copy now says "You practised today".                                |
+| F2 "what next" differs by screen | One journey module (`src/features/journey/course.ts`) feeds Today, Course, Progress, the language picker and completion screens. The starting point from setup or an accepted placement is saved per language and synced. |
+| F3 ticked items open other work  | Today's session is stored per day and language as activity IDs; a ticked item opens what it names.                                                                                                                        |
+| F4 separate activity endings     | `SessionFooter` ends lessons, review and listening: session status, then the next item by name or Done for today with one named extra. Conversations lead back to Today.                                                  |
+| F5 unlabelled icons              | Four labelled tabs: Today, Course, Practice, Progress. Profile is the header's account button.                                                                                                                            |
+| F6 Learn exposes the catalogue   | Course shows units with the current one open; practice tools moved to Practice; every conversation is still reachable via Show all.                                                                                       |
+| F7 entry difficulty              | English is labelled "for learners who know the basics (A2 and up)" in the picker, first run and setup, with an explicit note for "I am new". Practice offers conversations at the learner's level first.                  |
+| F8 inherited workload            | Session size comes from practice in that language; nobody gets other work before their first lesson.                                                                                                                      |
+| F9 competing progress models     | Progress leads with the selected language's course, phrases, dialogues and conversations; other languages are summarised.                                                                                                 |
+| F10 growth                       | Retired lessons keep history; resume ignores replays; a finished course says so (G8). Stable review-item IDs and content versions are still to do.                                                                        |
+| F11 copy                         | All caught up versus Nothing to review yet; no "just before you forget" claims; milestones say "You practised"; per-lesson minutes; placement for every language.                                                         |
+| F12 contrast                     | Unselected tabs use the secondary ink; the Spanish start button uses white on violet.                                                                                                                                     |
+
+Still open: stable review-item IDs and content versioning (F10), native screen-reader and large-text checks, and the usability round.
