@@ -12,6 +12,7 @@ import { downloadAvailableUpdate, restartWithDownloadedUpdate } from '@/features
 import appConfig from '../../app.json';
 import { ReminderPicker } from '@/components/reminder-picker';
 import { remindersSupported } from '@/features/habits/reminder-scheduler';
+import { RadioRow } from '@/components/radio-row';
 
 const toneOptions: { description: string; label: string; value: CoachTone }[] = [
   {
@@ -83,35 +84,26 @@ export default function SettingsScreen() {
         </Text>
 
         <View style={styles.card}>
-          {toneOptions.map((option) => {
-            const selected = coachTone === option.value;
-            return (
-              <Pressable
-                accessibilityLabel={`${option.label} coaching${selected ? ', selected' : ''}`}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: selected }}
-                key={option.value}
-                onPress={() => setCoachTone(option.value)}
-                style={({ pressed }) => [styles.option, pressed && styles.pressed]}
-              >
-                <View style={[styles.radio, selected && styles.radioSelected]}>
-                  {selected ? <View style={styles.radioDot} /> : null}
-                </View>
-                <View style={styles.optionCopy}>
-                  <Text style={styles.optionLabel}>{option.label}</Text>
-                  <Text style={styles.optionDescription}>{option.description}</Text>
-                </View>
-              </Pressable>
-            );
-          })}
+          {toneOptions.map((option, index) => (
+            <RadioRow
+              key={option.value}
+              accessibilityLabel={`${option.label} coaching`}
+              description={option.description}
+              label={option.label}
+              last={index === toneOptions.length - 1}
+              onPress={() => setCoachTone(option.value)}
+              selected={coachTone === option.value}
+            />
+          ))}
         </View>
 
         {remindersSupported ? (
           <>
             <Eyebrow color={Palette.orange}>Daily reminder</Eyebrow>
             <Text style={styles.description}>
-              One reminder at the time you choose, skipped on days you have already practised. If
-              you are away for a week, reminders pause until you come back.
+              One reminder around the time you choose (your phone may send it a little later to save
+              battery), skipped on days you have already practised. If you are away for a week,
+              reminders pause until you come back.
             </Text>
             <View style={styles.card}>
               <ReminderPicker variant="list" />
@@ -227,35 +219,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     overflow: 'hidden',
   },
-  option: {
-    alignItems: 'center',
-    borderBottomColor: Palette.line,
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    gap: 13,
-    minHeight: 76,
-    paddingHorizontal: 16,
-  },
-  optionCopy: { flex: 1 },
-  optionLabel: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
-  optionDescription: {
-    color: Palette.muted,
-    fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 17,
-    marginTop: 3,
-  },
-  radio: {
-    alignItems: 'center',
-    borderColor: Palette.muted,
-    borderRadius: 99,
-    borderWidth: 1.5,
-    height: 22,
-    justifyContent: 'center',
-    width: 22,
-  },
-  radioSelected: { borderColor: Palette.orange },
-  radioDot: { backgroundColor: Palette.orange, borderRadius: 99, height: 12, width: 12 },
   row: {
     alignItems: 'center',
     borderBottomColor: Palette.line,

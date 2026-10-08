@@ -86,9 +86,14 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
     if (pathDone) return null;
     const started = hasStartedPath(progress, track);
     const resuming = (progress[upcoming.id]?.step ?? 0) > 0;
-    const recommendation = started
-      ? { title: upcoming.title, why: upcoming.outcome, href: `/foundation/${upcoming.id}` }
-      : learningRecommendation(track, input.ability, input.goal);
+    const fromNext = {
+      title: upcoming.title,
+      why: upcoming.outcome,
+      href: `/foundation/${upcoming.id}`,
+    };
+    // The onboarding suggestion can point at writing or speaking; this step is always a lesson.
+    const suggested = started ? null : learningRecommendation(track, input.ability, input.goal);
+    const recommendation = suggested?.href.startsWith('/foundation/') ? suggested : fromNext;
     return {
       kind: 'lesson',
       title: resuming ? `Finish ${upcoming.title}` : recommendation.title,

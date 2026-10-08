@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { RadioRow } from '@/components/radio-row';
 import { Palette, VokaFonts } from '@/constants/theme';
 import {
   remindersSupported,
@@ -41,13 +42,47 @@ export function ReminderPicker({ variant }: { variant: 'chips' | 'list' }) {
     }
   };
 
+  const message = blocked ? (
+    <Text
+      accessibilityRole="alert"
+      style={[styles.blocked, variant === 'list' && styles.blockedInCard]}
+    >
+      Notifications are turned off for Vokeno.{' '}
+      <Text
+        accessibilityRole="link"
+        onPress={() => void Linking.openSettings()}
+        style={styles.link}
+      >
+        Open phone settings
+      </Text>{' '}
+      to allow them, then choose a time again.
+    </Text>
+  ) : null;
+
+  if (variant === 'list')
+    return (
+      <View accessibilityRole="radiogroup">
+        {choices.map((option, index) => (
+          <RadioRow
+            key={option.value}
+            label={option.label}
+            value={option.time}
+            selected={choice === option.value}
+            last={index === choices.length - 1 && !blocked}
+            onPress={() => void pick(option.value)}
+          />
+        ))}
+        {message}
+      </View>
+    );
+
   return (
     <View style={styles.wrap}>
-      <View accessibilityRole="radiogroup" style={variant === 'chips' ? styles.chips : styles.list}>
+      <View accessibilityRole="radiogroup" style={styles.chips}>
         {choices.map((option) => {
           const selected = choice === option.value;
           const label =
-            variant === 'chips' && option.value === 'off'
+            option.value === 'off'
               ? 'Not now'
               : option.time
                 ? `${option.label} · ${option.time}`
@@ -57,44 +92,21 @@ export function ReminderPicker({ variant }: { variant: 'chips' | 'list' }) {
               key={option.value}
               accessibilityRole="radio"
               accessibilityState={{ checked: selected }}
+              aria-checked={selected}
               accessibilityLabel={label}
               onPress={() => void pick(option.value)}
               style={({ pressed }) => [
-                variant === 'chips' ? styles.chip : styles.row,
-                variant === 'chips' && selected && styles.chipSelected,
+                styles.chip,
+                selected && styles.chipSelected,
                 pressed && styles.pressed,
               ]}
             >
-              {variant === 'list' ? (
-                <View style={[styles.radio, selected && styles.radioSelected]}>
-                  {selected ? <View style={styles.radioDot} /> : null}
-                </View>
-              ) : null}
-              <Text
-                style={[
-                  variant === 'chips' ? styles.chipText : styles.rowText,
-                  variant === 'chips' && selected && styles.chipTextSelected,
-                ]}
-              >
-                {label}
-              </Text>
+              <Text style={[styles.chipText, selected && styles.chipTextSelected]}>{label}</Text>
             </Pressable>
           );
         })}
       </View>
-      {blocked ? (
-        <Text accessibilityRole="alert" style={styles.blocked}>
-          Notifications are turned off for Vokeno.{' '}
-          <Text
-            accessibilityRole="link"
-            onPress={() => void Linking.openSettings()}
-            style={styles.link}
-          >
-            Open phone settings
-          </Text>{' '}
-          to allow them, then choose a time again.
-        </Text>
-      ) : null}
+      {message}
     </View>
   );
 }
@@ -113,21 +125,8 @@ const styles = StyleSheet.create({
   chipSelected: { backgroundColor: Palette.ink, borderColor: Palette.ink },
   chipText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   chipTextSelected: { color: Palette.cream },
-  list: { gap: 2 },
-  row: { alignItems: 'center', flexDirection: 'row', gap: 12, minHeight: 48 },
-  rowText: { color: Palette.ink, flex: 1, fontFamily: VokaFonts.bodyMedium, fontSize: 16 },
-  radio: {
-    alignItems: 'center',
-    borderColor: Palette.muted,
-    borderRadius: 99,
-    borderWidth: 2,
-    height: 22,
-    justifyContent: 'center',
-    width: 22,
-  },
-  radioSelected: { borderColor: Palette.ink },
-  radioDot: { backgroundColor: Palette.ink, borderRadius: 99, height: 10, width: 10 },
-  blocked: { color: '#8E2D1B', fontFamily: VokaFonts.bodyMedium, fontSize: 13, lineHeight: 19 },
+  blocked: { color: '#8E2D1B', fontFamily: VokaFonts.bodyMedium, fontSize: 14, lineHeight: 20 },
+  blockedInCard: { padding: 16 },
   link: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, textDecorationLine: 'underline' },
   pressed: { opacity: 0.7 },
 });

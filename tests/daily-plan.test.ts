@@ -213,3 +213,16 @@ describe('level matching', () => {
     if (speaking) expect(speaking.href).toMatch(/unit=es-a1-/);
   });
 });
+
+describe('the lesson step', () => {
+  it('always opens a guided lesson, whatever the starting point and goal', () => {
+    for (const track of ['EN', 'DE', 'ES'] as const)
+      for (const ability of ['new', 'basics', 'conversational'] as const)
+        for (const goal of ['everyday', 'work-study', 'ielts-academic', 'ielts-general'] as const) {
+          const lesson = plan({ track, ability, goal }).steps.find(
+            (step) => step.kind === 'lesson',
+          );
+          expect(lesson?.href).toMatch(/^\/foundation\//);
+        }
+  });
+});

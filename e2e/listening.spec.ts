@@ -160,7 +160,7 @@ test('exposes profile initials, coaching settings, version and password recovery
 
   await expect(page.getByText('Choose how Vokeno pushes you')).toBeVisible();
   await page.getByRole('radio', { name: 'Tough coach coaching' }).click();
-  await expect(page.getByRole('radio', { name: 'Tough coach coaching, selected' })).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Tough coach coaching' })).toBeChecked();
   await expect(page.getByText('Vokeno version')).toBeVisible();
   await expect(page.getByText(new RegExp(`^${appVersion.replaceAll('.', '\\.')}`))).toBeVisible();
 
