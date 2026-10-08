@@ -38,6 +38,20 @@ export type ParsedRealtimeEvent =
 
 const FALLBACK_ITEM_ID = 'current';
 
+/** Shown instead of a learner caption that cannot be the learner speaking the course language. */
+export const UNCLEAR_CAPTION = '(Couldn’t catch that. Other voices nearby?)';
+
+/**
+ * Scripts none of the course languages use (Cyrillic, Hebrew, Arabic, Indic, Thai, CJK, Hangul).
+ * A caption in one of them is background speech or noise picked up by the microphone.
+ */
+const FOREIGN_SCRIPT =
+  /[\u0370-\u03ff\u0400-\u052f\u0590-\u08ff\u0900-\u0dff\u0e00-\u0fff\u1100-\u11ff\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]/;
+
+export function isForeignScript(text: string) {
+  return FOREIGN_SCRIPT.test(text);
+}
+
 export function parseRealtimeEvent(event: RealtimeEvent): ParsedRealtimeEvent | undefined {
   const id = event.item_id ?? FALLBACK_ITEM_ID;
 
@@ -60,13 +74,18 @@ export function parseRealtimeEvent(event: RealtimeEvent): ParsedRealtimeEvent | 
     case 'output_audio_buffer.cleared':
       return { kind: 'coach-audio-stop' };
     case 'conversation.item.input_audio_transcription.delta':
-      return event.delta
+      return event.delta && !isForeignScript(event.delta)
         ? { id, kind: 'user-delta', text: normalizeUiText(event.delta) }
         : undefined;
     case 'conversation.item.input_audio_transcription.completed':
-      return event.transcript
-        ? { id, kind: 'user-final', text: normalizeUiText(event.transcript) }
-        : undefined;
+      if (!event.transcript) return undefined;
+      return {
+        id,
+        kind: 'user-final',
+        text: isForeignScript(event.transcript)
+          ? UNCLEAR_CAPTION
+          : normalizeUiText(event.transcript),
+      };
     case 'response.output_audio_transcript.delta':
       return event.delta
         ? { id, kind: 'assistant-delta', text: normalizeUiText(event.delta) }

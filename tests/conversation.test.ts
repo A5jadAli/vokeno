@@ -3,6 +3,7 @@ import { describe, expect, it } from '@jest/globals';
 import {
   detectStruggleSignals,
   parseRealtimeEvent,
+  UNCLEAR_CAPTION,
   upsertTranscriptTurn,
 } from '@/features/conversation/events';
 import { getConversationMode } from '@/features/conversation/modes';
@@ -32,6 +33,33 @@ describe('realtime conversation helpers', () => {
     expect(parseRealtimeEvent({ type: 'output_audio_buffer.cleared' })).toEqual({
       kind: 'coach-audio-stop',
     });
+  });
+
+  it('never shows background speech in another script as the learner’s words', () => {
+    const final = (transcript: string) =>
+      parseRealtimeEvent({
+        item_id: 'u1',
+        transcript,
+        type: 'conversation.item.input_audio_transcription.completed',
+      });
+    expect(final('है তোমারা মান')).toEqual({ id: 'u1', kind: 'user-final', text: UNCLEAR_CAPTION });
+    expect(final('リアルで responder ya')).toEqual({
+      id: 'u1',
+      kind: 'user-final',
+      text: UNCLEAR_CAPTION,
+    });
+    expect(final('¿Qué onda? Me llamo Zoë, Grüße aus Köln.')).toEqual({
+      id: 'u1',
+      kind: 'user-final',
+      text: '¿Qué onda? Me llamo Zoë, Grüße aus Köln.',
+    });
+    expect(
+      parseRealtimeEvent({
+        delta: 'मान',
+        item_id: 'u1',
+        type: 'conversation.item.input_audio_transcription.delta',
+      }),
+    ).toBeUndefined();
   });
 
   it('reconciles partial and corrected final transcripts', () => {

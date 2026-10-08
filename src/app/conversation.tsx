@@ -36,6 +36,7 @@ import {
   type StruggleSignal,
   type TranscriptTurn,
   upsertTranscriptTurn,
+  UNCLEAR_CAPTION,
 } from '@/features/conversation/events';
 import { getConversationMode } from '@/features/conversation/modes';
 import { startRealtimeSession } from '@/features/conversation/realtime-session';
@@ -260,7 +261,12 @@ export default function ConversationScreen() {
           }),
         );
         if (parsed.kind === 'user-final') {
-          if (userTurnIdsRef.current.has(parsed.id) || !parsed.text.trim()) return;
+          if (
+            userTurnIdsRef.current.has(parsed.id) ||
+            !parsed.text.trim() ||
+            parsed.text === UNCLEAR_CAPTION
+          )
+            return;
           userTurnIdsRef.current.add(parsed.id);
           const detected = detectStruggleSignals(parsed.text);
           if (detected.length) {
