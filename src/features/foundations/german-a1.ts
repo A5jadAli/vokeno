@@ -399,6 +399,7 @@ export const germanA1Lessons = defineLessons('DE', [
       },
       {
         prompt: 'Read the menu. What costs less than a tea?',
+        useReading: true,
         options: ['A coffee', 'A water', 'Coffee and water together'],
         answer: 1,
         explanation: 'Water costs one euro and tea two euros.',
@@ -469,6 +470,7 @@ export const germanA1Lessons = defineLessons('DE', [
       },
       {
         prompt: 'Can Mira pay by card today?',
+        useReading: true,
         options: ['Yes', 'No, only cash', 'The text does not say'],
         answer: 1,
         explanation: 'Nur bar means cash only. Leider means unfortunately.',
@@ -740,6 +742,7 @@ export const germanA1Lessons = defineLessons('DE', [
       },
       {
         prompt: 'Which platform is mentioned in the short text?',
+        useReading: true,
         options: ['Ten', 'One', 'Two'],
         answer: 2,
         explanation: 'Gleis zwei means platform two. Zehn Uhr is the time, not the platform.',

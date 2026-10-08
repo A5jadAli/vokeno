@@ -205,8 +205,8 @@ describe('stages', () => {
   it('starts small and grows with active days', () => {
     expect(practiceStage({}, TODAY).stage).toBe('warm-up');
     expect(practiceStage(logOf(1, 2, 3), TODAY).stage).toBe('warm-up');
-    expect(practiceStage(logOf(0, 1, 2, 3), TODAY).stage).toBe('building');
-    const twoWeeks = logOf(...Array.from({ length: 14 }, (_, day) => day));
+    expect(practiceStage(logOf(1, 2, 3, 4), TODAY).stage).toBe('building');
+    const twoWeeks = logOf(...Array.from({ length: 14 }, (_, day) => day + 1));
     expect(practiceStage(twoWeeks, TODAY).stage).toBe('momentum');
   });
 
@@ -219,6 +219,20 @@ describe('stages', () => {
     });
     const shortBreak = logOf(...Array.from({ length: 20 }, (_, day) => day + 3));
     expect(practiceStage(shortBreak, TODAY).stage).toBe('momentum');
+  });
+});
+
+describe('a stable plan for the day', () => {
+  it('does not grow after practising today', () => {
+    const before = logOf(1, 2, 3); // three earlier days: warm-up
+    expect(practiceStage(before, TODAY).stage).toBe('warm-up');
+    expect(practiceStage({ ...before, ...logOf(0) }, TODAY).stage).toBe('warm-up');
+  });
+
+  it('stays a gentle restart for the whole day after coming back', () => {
+    const regular = logOf(...Array.from({ length: 20 }, (_, day) => day + 6));
+    expect(practiceStage(regular, TODAY).returning).toBe(true);
+    expect(practiceStage({ ...regular, ...logOf(0) }, TODAY).returning).toBe(true);
   });
 });
 

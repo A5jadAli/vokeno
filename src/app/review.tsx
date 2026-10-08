@@ -12,7 +12,6 @@ import {
   LessonTopBar,
   lessonText,
   PrimaryButton,
-  TextButton,
   PrimaryAccent,
 } from '@/components/lesson-ui';
 import { AppScreen } from '@/components/voka-ui';
@@ -129,8 +128,16 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
       feedback={
         outcome
           ? outcome === 'correct'
-            ? { tone: 'correct', title: 'Correct', message: `${item.target}: ${item.meaning}` }
-            : { tone: 'wrong', title: 'Not quite', message: `${item.target}: ${item.meaning}` }
+            ? {
+                tone: 'correct',
+                title: 'Correct',
+                message: `${item.target} means “${item.meaning}”`,
+              }
+            : {
+                tone: 'wrong',
+                title: 'Not quite',
+                message: `${item.target} means “${item.meaning}”`,
+              }
           : undefined
       }
     >
@@ -267,7 +274,6 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
             {speech.error}
           </Text>
         ) : null}
-        <TextButton title="End review" onPress={() => router.back()} />
       </View>
     </AppScreen>
   );

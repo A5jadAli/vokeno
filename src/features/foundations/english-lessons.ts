@@ -932,12 +932,14 @@ export const englishLessons = defineLessons('EN', [
     checks: [
       {
         prompt: 'The number of hives in London approximately doubled between 2008 and 2013.',
+        useReading: true,
         options: ['True', 'False', 'Not Given'],
         answer: 0,
         explanation: '“Roughly doubled” is paraphrased as “approximately doubled”.',
       },
       {
         prompt: 'All researchers support urban beekeeping.',
+        useReading: true,
         options: ['True', 'False', 'Not Given'],
         answer: 1,
         explanation:
@@ -945,6 +947,7 @@ export const englishLessons = defineLessons('EN', [
       },
       {
         prompt: 'Urban honey is more expensive than rural honey.',
+        useReading: true,
         options: ['True', 'False', 'Not Given'],
         answer: 2,
         explanation: 'The text says nothing about price.',
@@ -990,6 +993,7 @@ export const englishLessons = defineLessons('EN', [
     checks: [
       {
         prompt: 'Which is the best overview for this data?',
+        useReading: true,
         options: [
           'Overall, visitor numbers increased over the period despite a sharp drop in 2020.',
           'In 2016 there were 25,000 visitors.',
@@ -1000,12 +1004,14 @@ export const englishLessons = defineLessons('EN', [
       },
       {
         prompt: 'Which verb phrase describes 2020?',
+        useReading: true,
         options: ['fell sharply', 'levelled off', 'peaked'],
         answer: 0,
         explanation: 'From 45,000 to 8,000 is a sharp fall.',
       },
       {
         prompt: 'Should you explain why visitor numbers fell in 2020?',
+        useReading: true,
         options: [
           'Yes, always give reasons',
           'No, describe only what the data shows',

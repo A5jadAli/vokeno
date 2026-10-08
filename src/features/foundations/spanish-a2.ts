@@ -59,6 +59,13 @@ export const spanishA2Lessons = defineLessons('ES', [
         answer: 0,
         explanation: 'El domingo descansé: on Sunday I rested.',
       },
+      {
+        prompt: 'What happened on Sunday?',
+        useReading: true,
+        options: ['A meal with the family', 'The cinema', 'Work'],
+        answer: 0,
+        explanation: 'Domingo: comida con la familia.',
+      },
     ],
     writing: {
       prompt: 'Write “I rested at home” in Spanish.',
@@ -91,6 +98,7 @@ export const spanishA2Lessons = defineLessons('ES', [
     reading: [
       'Ayer: médico 9:00, trabajo 11:00–19:00',
       'Yesterday: doctor at 9:00, work from 11:00 to 19:00',
+      'Ayer: médico a las nueve, y trabajo de once a siete.',
     ],
     checks: [
       {
@@ -111,6 +119,13 @@ export const spanishA2Lessons = defineLessons('ES', [
         options: ['To the bank', 'To the cinema', 'To the doctor'],
         answer: 0,
         explanation: 'Primero fui al banco: first I went to the bank.',
+      },
+      {
+        prompt: 'What did the person do first yesterday?',
+        useReading: true,
+        options: ['Went to the doctor', 'Went to work', 'Had dinner out'],
+        answer: 0,
+        explanation: 'The doctor was at 9:00, before work at 11:00.',
       },
     ],
     writing: {
@@ -146,7 +161,11 @@ export const spanishA2Lessons = defineLessons('ES', [
       'Use el with a day for one occasion (el jueves, on Thursday) and los for a habit (los jueves, on Thursdays). Days are written in lower case: lunes, martes.',
     pronunciation:
       'Jueves starts with the breathy j: JWE-ves. In cita, the c sounds like s in Mexico.',
-    reading: ['Cita: jueves 14 de octubre, 16:00', 'Appointment: Thursday 14 October, 4 p.m.'],
+    reading: [
+      'Cita: jueves 14 de octubre, 16:00',
+      'Appointment: Thursday 14 October, 4 p.m.',
+      'Cita: jueves catorce de octubre, a las cuatro de la tarde.',
+    ],
     checks: [
       {
         prompt: 'What does “los jueves” mean?',
@@ -166,6 +185,17 @@ export const spanishA2Lessons = defineLessons('ES', [
         options: ['Friday at ten', 'Thursday at ten', 'Friday at two'],
         answer: 0,
         explanation: 'El viernes a las diez is Friday at ten.',
+      },
+      {
+        prompt: 'When is the appointment?',
+        useReading: true,
+        options: [
+          'Thursday 14 October, 4 p.m.',
+          'Tuesday 14 October, 6 p.m.',
+          'Thursday 16 October, 2 p.m.',
+        ],
+        answer: 0,
+        explanation: 'Jueves 14 de octubre at 16:00, which is 4 p.m.',
       },
     ],
     writing: {
@@ -208,6 +238,7 @@ export const spanishA2Lessons = defineLessons('ES', [
     reading: [
       'Se renta cuarto amueblado · $4,500/mes',
       'Furnished room for rent · 4,500 pesos a month',
+      'Se renta cuarto amueblado: cuatro mil quinientos pesos al mes.',
     ],
     checks: [
       {
@@ -232,6 +263,13 @@ export const spanishA2Lessons = defineLessons('ES', [
         ],
         answer: 0,
         explanation: 'La luz no funciona desde el lunes: the light has not worked since Monday.',
+      },
+      {
+        prompt: 'What does the advert offer?',
+        useReading: true,
+        options: ['A furnished room to rent', 'A flat for sale', 'A free room'],
+        answer: 0,
+        explanation: 'Se renta means for rent; amueblado means furnished.',
       },
     ],
     writing: {
@@ -291,6 +329,13 @@ export const spanishA2Lessons = defineLessons('ES', [
         answer: 0,
         explanation: 'Entre … y … means between.',
       },
+      {
+        prompt: 'Where is the pharmacy?',
+        useReading: true,
+        options: ['Opposite the park', 'Inside the park', 'Behind the park'],
+        answer: 0,
+        explanation: 'Enfrente del parque means opposite the park.',
+      },
     ],
     writing: {
       prompt: 'Write “It is next to the bank” in Spanish.',
@@ -328,7 +373,11 @@ export const spanishA2Lessons = defineLessons('ES', [
     notice:
       'This lesson helps you communicate; it is not medical advice. In an emergency, call the local number: 911 in Mexico, 112 in Spain. Labels often say cada ocho horas (every eight hours) or en ayunas (on an empty stomach).',
     pronunciation: 'Duele: DWE-le. Fiebre: FYE-bre, with a quick tapped r.',
-    reading: ['1 tableta cada 8 horas, después de comer', '1 tablet every 8 hours, after eating'],
+    reading: [
+      '1 tableta cada 8 horas, después de comer',
+      '1 tablet every 8 hours, after eating',
+      'Una tableta cada ocho horas, después de comer.',
+    ],
     checks: [
       {
         prompt: 'How do you say “my head hurts”?',
@@ -348,6 +397,13 @@ export const spanishA2Lessons = defineLessons('ES', [
         options: ['Since Monday', 'Since yesterday', 'For a week'],
         answer: 0,
         explanation: 'Desde el lunes means since Monday.',
+      },
+      {
+        prompt: 'When should you take the tablet?',
+        useReading: true,
+        options: ['After eating, every 8 hours', 'Before eating, once a day', 'Every 4 hours'],
+        answer: 0,
+        explanation: 'Cada 8 horas, después de comer.',
       },
     ],
     writing: {
@@ -382,6 +438,7 @@ export const spanishA2Lessons = defineLessons('ES', [
     reading: [
       'Tacos al pastor (3) · $75 · Propina no incluida',
       'Three tacos al pastor · 75 pesos · Tip not included',
+      'Tres tacos al pastor, setenta y cinco pesos. Propina no incluida.',
     ],
     checks: [
       {
@@ -402,6 +459,13 @@ export const spanishA2Lessons = defineLessons('ES', [
         options: ['Onion', 'Cheese', 'Tacos'],
         answer: 0,
         explanation: 'Sin cebolla: without onion.',
+      },
+      {
+        prompt: 'Is the tip included in the price?',
+        useReading: true,
+        options: ['No', 'Yes', 'Only for groups'],
+        answer: 0,
+        explanation: 'Propina no incluida means the tip is not included.',
       },
     ],
     writing: {
@@ -433,7 +497,11 @@ export const spanishA2Lessons = defineLessons('ES', [
       'For quality, say mejor (better) and peor (worse), not más bueno or más malo. Este (this) is near you; ese (that) is near the other person.',
     pronunciation:
       'Barato has one tapped r: ba-RA-to. Mejor ends in a tapped r after the breathy j: me-JOR.',
-    reading: ['Modelo A: $1,200 · Modelo B: $950', 'Model A: 1,200 pesos · Model B: 950 pesos'],
+    reading: [
+      'Modelo A: $1,200 · Modelo B: $950',
+      'Model A: 1,200 pesos · Model B: 950 pesos',
+      'Modelo A: mil doscientos pesos. Modelo B: novecientos cincuenta pesos.',
+    ],
     checks: [
       {
         prompt: 'Which word means “better”?',
@@ -443,6 +511,7 @@ export const spanishA2Lessons = defineLessons('ES', [
       },
       {
         prompt: 'Model A costs 1,200 pesos and Model B costs 950. Which is true?',
+        useReading: true,
         options: ['El modelo B es más barato.', 'El modelo A es más barato.', 'Cuestan lo mismo.'],
         answer: 0,
         explanation: 'B costs less, so it is más barato.',
@@ -516,6 +585,13 @@ export const spanishA2Lessons = defineLessons('ES', [
         answer: 0,
         explanation: 'Porque tengo que trabajar: because I have to work.',
       },
+      {
+        prompt: 'What happens if it rains?',
+        useReading: true,
+        options: ['The class is online', 'The class is cancelled', 'The class starts later'],
+        answer: 0,
+        explanation: 'Si llueve means if it rains; en línea means online.',
+      },
     ],
     writing: {
       prompt: 'Write “I think it is a good idea” in Spanish.',
@@ -565,6 +641,13 @@ export const spanishA2Lessons = defineLessons('ES', [
         options: ['She has an interview tomorrow', 'She lost her job', 'She is ill'],
         answer: 0,
         explanation: 'Mañana tengo una entrevista: tomorrow I have an interview.',
+      },
+      {
+        prompt: 'How does the writer probably feel?',
+        useReading: true,
+        options: ['Happy', 'Worried', 'Bored'],
+        answer: 0,
+        explanation: 'Aprobé el examen means I passed the exam.',
       },
     ],
     writing: {
@@ -621,6 +704,13 @@ export const spanishA2Lessons = defineLessons('ES', [
         answer: 0,
         explanation: '¡Qué padre! is enthusiastic.',
       },
+      {
+        prompt: 'Has the second person left yet?',
+        useReading: true,
+        options: ['Not yet, but soon', 'Yes, an hour ago', 'No, they are not coming'],
+        answer: 0,
+        explanation: 'Ahorita voy: I’m coming in a moment.',
+      },
     ],
     writing: {
       prompt: 'Write the polite Mexican way to say “Pardon?”',
@@ -668,6 +758,13 @@ export const spanishA2Lessons = defineLessons('ES', [
         answer: 0,
         explanation: 'Voy para allá: I’m going over there.',
       },
+      {
+        prompt: 'What does the speaker mean?',
+        useReading: true,
+        options: ['I’m going home', 'I’m buying a house', 'I’m at home'],
+        answer: 0,
+        explanation: 'Voy para la casa means I’m going home.',
+      },
     ],
     writing: {
       prompt: 'Write the full form of “’Tá bien”.',
@@ -709,6 +806,7 @@ export const spanishA2Lessons = defineLessons('ES', [
     reading: [
       'AM 405 · CANCÚN · RETRASADO · PUERTA 12',
       'Flight AM 405 to Cancún · Delayed · Gate 12',
+      'Vuelo cuatrocientos cinco a Cancún: retrasado. Puerta doce.',
     ],
     checks: [
       {
@@ -729,6 +827,13 @@ export const spanishA2Lessons = defineLessons('ES', [
         options: ['Eight', 'Six', 'Eleven'],
         answer: 0,
         explanation: 'A las ocho: at eight.',
+      },
+      {
+        prompt: 'What is happening with the flight to Cancún?',
+        useReading: true,
+        options: ['It is delayed', 'It is cancelled', 'It is boarding'],
+        answer: 0,
+        explanation: 'Retrasado means delayed.',
       },
     ],
     writing: {
@@ -795,6 +900,13 @@ export const spanishA2Lessons = defineLessons('ES', [
         options: ['Swim', 'Work', 'Study'],
         answer: 0,
         explanation: 'Nadaba todos los días: she swam every day.',
+      },
+      {
+        prompt: 'Where does the person work now?',
+        useReading: true,
+        options: ['From home', 'In an office', 'In a shop'],
+        answer: 0,
+        explanation: 'Ahora: trabajo desde casa, I work from home now.',
       },
     ],
     writing: {

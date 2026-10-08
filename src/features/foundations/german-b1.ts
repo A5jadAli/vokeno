@@ -51,6 +51,7 @@ export const germanB1Lessons = defineLessons('DE', [
       },
       {
         prompt: 'What is Jana’s stated reason for usually taking the train?',
+        useReading: true,
         options: ['Free parking', 'She can read on the way', 'There are never strikes'],
         answer: 1,
         explanation:
@@ -206,6 +207,7 @@ export const germanB1Lessons = defineLessons('DE', [
       },
       {
         prompt: 'What will Sami send today?',
+        useReading: true,
         options: ['Nothing', 'The completed sections', 'Only the missing figures'],
         answer: 1,
         explanation: 'Die fertigen Abschnitte means the completed sections. The rest comes later.',
@@ -506,6 +508,7 @@ export const germanB1Lessons = defineLessons('DE', [
       },
       {
         prompt: 'What solution does Eva request?',
+        useReading: true,
         options: ['The correct colour', 'Two bags for free', 'A different delivery address'],
         answer: 0,
         explanation: 'She asks for die richtige Farbe. The other requests are not in the text.',
@@ -926,6 +929,7 @@ export const germanB1Lessons = defineLessons('DE', [
     checks: [
       {
         prompt: 'Read the letter. What must Mr Novak do?',
+        useReading: true,
         options: [
           'Send his last three payslips by 30 June',
           'Pay a fee by 30 June',
@@ -936,6 +940,7 @@ export const germanB1Lessons = defineLessons('DE', [
       },
       {
         prompt: 'Ihr Antrag wird bearbeitet means:',
+        useReading: true,
         options: [
           'Your application is being processed',
           'Your application was rejected',

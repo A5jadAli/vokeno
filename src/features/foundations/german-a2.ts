@@ -124,6 +124,7 @@ export const germanA2Lessons = defineLessons('DE', [
       },
       {
         prompt: 'Why did Lea miss the train?',
+        useReading: true,
         options: ['Her bus was late', 'She forgot her ticket', 'She worked until midnight'],
         answer: 0,
         explanation:
@@ -178,6 +179,7 @@ export const germanA2Lessons = defineLessons('DE', [
       },
       {
         prompt: 'Why does Amir need another appointment?',
+        useReading: true,
         options: ['He works on Monday', 'The practice is closed on Tuesday', 'He is travelling'],
         answer: 0,
         explanation: 'The text states that Amir works on Monday. It gives no travel reason.',
@@ -247,6 +249,7 @@ export const germanA2Lessons = defineLessons('DE', [
       },
       {
         prompt: 'Does the listed rent include electricity?',
+        useReading: true,
         options: ['Yes', 'The text does not say', 'No'],
         answer: 2,
         explanation: 'Strom kostet extra says electricity is extra.',
@@ -385,6 +388,7 @@ export const germanA2Lessons = defineLessons('DE', [
       },
       {
         prompt: 'When is Noah offered an appointment?',
+        useReading: true,
         options: ['In the morning', 'At night', 'In the afternoon'],
         answer: 2,
         explanation: 'Am Nachmittag means in the afternoon.',
@@ -961,6 +965,7 @@ export const germanA2Lessons = defineLessons('DE', [
       },
       {
         prompt: 'Read the notice. Where do the replacement buses leave from?',
+        useReading: true,
         options: ['Platform 5', 'In front of the station', 'The airport'],
         answer: 1,
         explanation: 'Bahnhofsvorplatz is the square in front of the station.',

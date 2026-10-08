@@ -206,3 +206,14 @@ describe('lesson progress', () => {
     expect(foundationReviewDue(undefined)).toBe(false);
   });
 });
+
+describe('reading questions', () => {
+  it('ask about the reading in every lesson that has one, and only there', () => {
+    for (const lesson of foundationLessons) {
+      const usesReading = lesson.checks.filter((check) => check.useReading);
+      if (lesson.reading) expect([lesson.id, usesReading.length > 0]).toEqual([lesson.id, true]);
+      else expect([lesson.id, usesReading.length]).toEqual([lesson.id, 0]);
+      for (const check of usesReading) expect(check.audio).toBeUndefined();
+    }
+  });
+});

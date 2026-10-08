@@ -337,7 +337,7 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
                 <Text style={lessonText.meta}>
                   Question {index + 1} of {checks.length}
                 </Text>
-                {lesson.reading && !question.audio ? (
+                {lesson.reading && question.useReading && !question.audio ? (
                   <ReadingCard
                     lesson={lesson}
                     speech={speech}
@@ -558,7 +558,7 @@ function ReadingCard({
         </Text>
         <AudioIconButton
           speech={speech}
-          text={lesson.reading.target}
+          text={lesson.reading.spoken ?? lesson.reading.target}
           label="Listen to the short text"
           rate={0.82}
         />

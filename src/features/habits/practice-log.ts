@@ -203,8 +203,9 @@ export type PracticeStage = 'warm-up' | 'building' | 'momentum';
  * routine forms, three after two weeks of practice. A return after a break starts small again.
  */
 export function practiceStage(log: PracticeLog, today: string) {
+  // Decided from days before today, so practising today never changes today's plan size.
   const days = Object.keys(log)
-    .filter((day) => log[day].length > 0 && dayNumberOf(day) <= dayNumberOf(today))
+    .filter((day) => log[day].length > 0 && dayNumberOf(day) < dayNumberOf(today))
     .sort();
   const activeDays = days.length;
   const last = days.at(-1);

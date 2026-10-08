@@ -19,7 +19,11 @@ export const spanishA1Lessons = defineLessons('ES', [
       'Start with complete little exchanges, not a long word list. Greet, ask, thank and leave. Spanish uses ¿ at the start of a question and ¡ at the start of an exclamation.',
     pronunciation:
       'Spanish has five short, steady vowels. Say every one fully: GRA-sias, not “grassy-us”. In Mexico and most of Latin America the c in gracias sounds like s.',
-    reading: ['HORARIO: 9:00–18:00', 'Opening hours: 9 a.m. to 6 p.m.'],
+    reading: [
+      'HORARIO: 9:00–18:00',
+      'Opening hours: 9 a.m. to 6 p.m.',
+      'Horario: de nueve de la mañana a seis de la tarde.',
+    ],
     checks: [
       {
         prompt: 'You enter a shop in the morning. What can you say?',
@@ -39,6 +43,13 @@ export const spanishA1Lessons = defineLessons('ES', [
         options: ['Leaving politely', 'Arriving', 'Asking the price'],
         answer: 0,
         explanation: 'Hasta luego is a goodbye.',
+      },
+      {
+        prompt: 'The shop sign says HORARIO: 9:00–18:00. When can you go in?',
+        useReading: true,
+        options: ['Between 9 a.m. and 6 p.m.', 'Only at 9 a.m.', 'After 6 p.m.'],
+        answer: 0,
+        explanation: 'Horario means opening hours: from 9:00 to 18:00.',
       },
     ],
     writing: {
@@ -87,6 +98,13 @@ export const spanishA1Lessons = defineLessons('ES', [
         answer: 0,
         explanation: 'Soy de Pakistán means I am from Pakistan.',
       },
+      {
+        prompt: 'Read the form. What does it tell you about Sara?',
+        useReading: true,
+        options: ['Her country', 'Her age', 'Her phone number'],
+        answer: 0,
+        explanation: 'País means country.',
+      },
     ],
     writing: {
       prompt: 'Introduce Sara. Write “My name is Sara” in Spanish.',
@@ -117,7 +135,11 @@ export const spanishA1Lessons = defineLessons('ES', [
       'You do not need perfect grammar to recover a conversation. A short request plus a friendly tone is enough. With a friend, ¿Puedes repetir? uses informal tú.',
     pronunciation:
       'The c in despacio sounds like s in most of Latin America. In much of Spain it sounds like th in think.',
-    reading: ['Dirección: Calle Reforma 20', 'Address: 20 Reforma Street'],
+    reading: [
+      'Dirección: Calle Reforma 20',
+      'Address: 20 Reforma Street',
+      'Dirección: calle Reforma, número veinte.',
+    ],
     checks: [
       {
         prompt: 'Someone speaks too fast. What can you say?',
@@ -137,6 +159,13 @@ export const spanishA1Lessons = defineLessons('ES', [
         options: ['A repetition', 'A bill', 'A ticket'],
         answer: 0,
         explanation: '¿Puede repetir? asks the other person to repeat.',
+      },
+      {
+        prompt: 'What does the card show?',
+        useReading: true,
+        options: ['An address', 'A price', 'An opening time'],
+        answer: 0,
+        explanation: 'Dirección means address, and calle means street.',
       },
     ],
     writing: {
@@ -176,7 +205,11 @@ export const spanishA1Lessons = defineLessons('ES', [
       'Spanish spelling is very regular: once you know the sounds, you can read any word aloud. H is always silent, and qu sounds like k, as in queso.',
     pronunciation:
       'For rr, rest the tongue tip behind your top teeth and let it flutter. If you cannot roll it yet, keep practising the pair pero and perro; a clear tap still keeps you understood in most other words.',
-    reading: ['JUGO DE NARANJA · $25', 'Orange juice, 25 pesos'],
+    reading: [
+      'JUGO DE NARANJA · $25',
+      'Orange juice, 25 pesos',
+      'Jugo de naranja, veinticinco pesos.',
+    ],
     checks: [
       {
         prompt: 'Which word means dog?',
@@ -196,6 +229,13 @@ export const spanishA1Lessons = defineLessons('ES', [
         options: ['A red car', 'An expensive car', 'A red dog'],
         answer: 0,
         explanation: 'Carro is car and rojo is red.',
+      },
+      {
+        prompt: 'What is for sale?',
+        useReading: true,
+        options: ['Orange juice', 'Orange cake', 'A glass of water'],
+        answer: 0,
+        explanation: 'Jugo de naranja is orange juice.',
       },
     ],
     writing: {
@@ -235,7 +275,11 @@ export const spanishA1Lessons = defineLessons('ES', [
       'Hear the tens first: veinte is 20, treinta is 30. Treinta y cinco is 35. Do not assume every Spanish-speaking country uses pesos; ask and check the currency symbol.',
     pronunciation:
       'In veinte, the vowels stay clear: vein-te. Treinta y cinco links smoothly, but keep the final o in cinco audible.',
-    reading: ['$35.00 · agua', 'Water costs 35 pesos on this Mexican price label.'],
+    reading: [
+      '$35.00 · agua',
+      'Water costs 35 pesos on this Mexican price label.',
+      'Agua, treinta y cinco pesos.',
+    ],
     checks: [
       {
         prompt: 'How do you ask the price of one item?',
@@ -255,6 +299,13 @@ export const spanishA1Lessons = defineLessons('ES', [
         options: ['35 pesos', '25 pesos', '53 pesos'],
         answer: 0,
         explanation: 'Treinta y cinco is thirty-five.',
+      },
+      {
+        prompt: 'How much is the water?',
+        useReading: true,
+        options: ['35 pesos', '53 pesos', '3.50 pesos'],
+        answer: 0,
+        explanation: 'In Mexico the $ sign marks pesos: $35.00 is 35 pesos.',
       },
     ],
     writing: {
@@ -314,6 +365,13 @@ export const spanishA1Lessons = defineLessons('ES', [
         answer: 0,
         explanation: 'Un hermano y una hermana: one brother and one sister.',
       },
+      {
+        prompt: 'How many children do Ana and Luis have?',
+        useReading: true,
+        options: ['Two', 'One', 'Four'],
+        answer: 0,
+        explanation: 'Sus dos hijos means their two children.',
+      },
     ],
     writing: {
       prompt: 'Write “Do you have children?” using the informal tú form.',
@@ -348,7 +406,11 @@ export const spanishA1Lessons = defineLessons('ES', [
       'In many cafés you order and pay at the counter, so you may not need la cuenta. Café con leche is widely understood, though coffee styles vary by place.',
     pronunciation:
       'The stress in quisiera falls on the e: qui-SIE-ra. The accent in café marks stress on the last syllable: ca-FÉ. Leche has two clear e sounds: LE-che.',
-    reading: ['PARA LLEVAR · café con leche', 'Takeaway · coffee with milk'],
+    reading: [
+      'PARA LLEVAR · café con leche',
+      'Takeaway · coffee with milk',
+      'Para llevar: café con leche.',
+    ],
     checks: [
       {
         prompt: 'You do not want sugar. What do you add?',
@@ -368,6 +430,17 @@ export const spanishA1Lessons = defineLessons('ES', [
         options: ['To take away', 'For here', 'The speaker has not said'],
         answer: 0,
         explanation: 'Para llevar means to take away.',
+      },
+      {
+        prompt: 'What does the label on the cup tell you?',
+        useReading: true,
+        options: [
+          'A coffee with milk, to take away',
+          'A black coffee, to drink here',
+          'A tea with milk',
+        ],
+        answer: 0,
+        explanation: 'Para llevar means to take away; café con leche is coffee with milk.',
       },
     ],
     writing: {
@@ -406,7 +479,11 @@ export const spanishA1Lessons = defineLessons('ES', [
     notice:
       'Parts of the day: de la mañana (morning), de la tarde (afternoon and early evening), de la noche (night). Timetables often use the 24-hour clock: 18:00 is las dieciocho horas.',
     pronunciation: 'Link the words: son_las_tres. In media, stress the first syllable: ME-dia.',
-    reading: ['Clase de yoga: 7:30 p. m.', 'Yoga class: 7:30 in the evening'],
+    reading: [
+      'Clase de yoga: 7:30 p. m.',
+      'Yoga class: 7:30 in the evening',
+      'Clase de yoga a las siete y media de la noche.',
+    ],
     checks: [
       {
         prompt: 'How do you say “It is one o’clock”?',
@@ -427,6 +504,13 @@ export const spanishA1Lessons = defineLessons('ES', [
         options: ['6:30', '7:30', '6:15'],
         answer: 0,
         explanation: 'Seis y media is half past six.',
+      },
+      {
+        prompt: 'When is the yoga class?',
+        useReading: true,
+        options: ['In the evening', 'In the morning', 'At midday'],
+        answer: 0,
+        explanation: '7:30 p. m. is half past seven in the evening.',
       },
     ],
     writing: {
@@ -458,7 +542,11 @@ export const spanishA1Lessons = defineLessons('ES', [
       'Markets in Mexico are mercados or tianguis (open-air street markets). Sellers may call out ¿Qué le damos? (What can we get you?) or address you as joven; it is friendly. In Spain, shoppers often say ¿Me pone…?',
     pronunciation:
       'Kilo and queso both start with a k sound. Jitomates has a breathy j and stress on MA: ji-to-MA-tes.',
-    reading: ['Aguacate · $60 el kilo', 'Avocados, 60 pesos per kilo'],
+    reading: [
+      'Aguacate · $60 el kilo',
+      'Avocados, 60 pesos per kilo',
+      'Aguacate, a sesenta pesos el kilo.',
+    ],
     checks: [
       {
         prompt: 'The seller asks ¿Algo más? and you have everything. What do you say?',
@@ -478,6 +566,17 @@ export const spanishA1Lessons = defineLessons('ES', [
         options: ['Half a kilo', 'One kilo', 'Two kilos'],
         answer: 0,
         explanation: 'Medio kilo is half a kilo.',
+      },
+      {
+        prompt: 'What does the sign tell you?',
+        useReading: true,
+        options: [
+          'Avocados cost 60 pesos a kilo',
+          'One avocado costs 60 pesos',
+          'Avocados are free today',
+        ],
+        answer: 0,
+        explanation: 'El kilo means per kilo.',
       },
     ],
     writing: {
@@ -509,7 +608,11 @@ export const spanishA1Lessons = defineLessons('ES', [
       'Careful with one pair: derecho means straight ahead, but a la derecha means to the right. In Mexico you may also hear ¿Dónde queda la estación? Listen for landmarks as well as left and right.',
     pronunciation:
       'The single r in derecho is one quick tap of the tongue, like the tt in American “butter”. In izquierda, the z sounds like s in Mexico and like th in much of Spain.',
-    reading: ['ESTACIÓN → 200 m', 'Station, 200 metres to the right'],
+    reading: [
+      'ESTACIÓN → 200 m',
+      'Station, 200 metres to the right',
+      'Estación, a doscientos metros.',
+    ],
     checks: [
       {
         prompt: 'Which phrase asks if a place is nearby?',
@@ -529,6 +632,13 @@ export const spanishA1Lessons = defineLessons('ES', [
         options: ['Go straight, then right', 'Go straight, then left', 'Turn around'],
         answer: 0,
         explanation: 'Derecha means right; luego means then.',
+      },
+      {
+        prompt: 'How far away is the station?',
+        useReading: true,
+        options: ['200 metres', '2 kilometres', '20 minutes'],
+        answer: 0,
+        explanation: 'The sign shows 200 m to the station.',
       },
     ],
     writing: {
@@ -564,7 +674,7 @@ export const spanishA1Lessons = defineLessons('ES', [
       'In Mexico a city bus is often called camión; in Argentina, colectivo. Autobús is understood everywhere, so start with it. Check the destination shown on the front of the bus.',
     pronunciation:
       'Stress in autobús falls on the last syllable. In boleto, each vowel is clear: bo-le-to.',
-    reading: ['CENTRO · SALIDA 9:00', 'Downtown · departure 9:00'],
+    reading: ['CENTRO · SALIDA 9:00', 'Downtown · departure 9:00', 'Centro. Salida a las nueve.'],
     checks: [
       {
         prompt: 'How do you check if a bus goes downtown?',
@@ -574,6 +684,7 @@ export const spanishA1Lessons = defineLessons('ES', [
       },
       {
         prompt: 'A sign says SALIDA 9:00. What does it tell you?',
+        useReading: true,
         options: ['Departure at 9', 'Arrival at 9', 'Ticket price 9'],
         answer: 0,
         explanation: 'Salida means departure or exit; with a time it indicates departure.',
@@ -636,6 +747,13 @@ export const spanishA1Lessons = defineLessons('ES', [
         answer: 0,
         explanation: 'No me gusta correr: they do not like running.',
       },
+      {
+        prompt: 'Which activity is on the list?',
+        useReading: true,
+        options: ['Reading', 'Cooking', 'Football'],
+        answer: 0,
+        explanation: 'Leer means to read.',
+      },
     ],
     writing: {
       prompt: 'Write “I like cooking” in Spanish.',
@@ -665,7 +783,11 @@ export const spanishA1Lessons = defineLessons('ES', [
     notice:
       'When checking in, staff may ask for su nombre (your name), su pasaporte (your passport) or a confirmation number. Do not recite personal details in the app’s practice exercises.',
     pronunciation: 'The h in habitación is silent. Llave often starts with a y sound in Mexico.',
-    reading: ['HABITACIÓN 204 · SALIDA 11:00', 'Room 204 · check-out 11:00'],
+    reading: [
+      'HABITACIÓN 204 · SALIDA 11:00',
+      'Room 204 · check-out 11:00',
+      'Habitación doscientos cuatro. Salida a las once.',
+    ],
     checks: [
       {
         prompt: 'How do you say the booking is in Sara’s name?',
@@ -685,6 +807,13 @@ export const spanishA1Lessons = defineLessons('ES', [
         options: ['The key does not work', 'The room is too cold', 'The booking is missing'],
         answer: 0,
         explanation: 'La llave no funciona means the key does not work.',
+      },
+      {
+        prompt: 'By what time must the guest check out?',
+        useReading: true,
+        options: ['11:00', '2:00 p.m.', '4:00 p.m.'],
+        answer: 0,
+        explanation: 'Salida here means check-out, at 11:00.',
       },
     ],
     writing: {
@@ -715,7 +844,7 @@ export const spanishA1Lessons = defineLessons('ES', [
     notice:
       'These phrases help you ask for assistance; the app does not give medical advice. Emergency numbers differ by country: 911 in Mexico, 112 in Spain. Check the local number before you travel.',
     pronunciation: 'The h in hay is silent. Duele has two vowel sounds together: DWE-le.',
-    reading: ['FARMACIA · ABIERTO', 'Pharmacy · open'],
+    reading: ['FARMACIA · ABIERTO', 'Pharmacy · open', 'Farmacia. Abierto.'],
     checks: [
       {
         prompt: 'You need a pharmacy. Which question asks for one?',
@@ -735,6 +864,13 @@ export const spanishA1Lessons = defineLessons('ES', [
         options: ['Help finding a pharmacy', 'A hotel room', 'Change for a bill'],
         answer: 0,
         explanation: 'The speaker asks for help and for a pharmacy.',
+      },
+      {
+        prompt: 'Can you go in now?',
+        useReading: true,
+        options: ['Yes, it is open', 'No, it is closed', 'Only in an emergency'],
+        answer: 0,
+        explanation: 'Abierto means open.',
       },
     ],
     writing: {
@@ -778,7 +914,11 @@ export const spanishA1Lessons = defineLessons('ES', [
       'Text shortcuts you will see: q for que, xq for porque, tmb for también, and jaja for laughter. Read them, but write in full until you are confident.',
     pronunciation:
       'Onda has a clear o and a soft d: ON-da. In llego, the ll sounds like y in Mexico: YE-go.',
-    reading: ['¿Nos vemos a las 6 en el café?', 'Shall we meet at 6 at the café?'],
+    reading: [
+      '¿Nos vemos a las 6 en el café?',
+      'Shall we meet at 6 at the café?',
+      '¿Nos vemos a las seis en el café?',
+    ],
     checks: [
       {
         prompt: 'Which greeting is informal and typically Mexican?',
@@ -798,6 +938,13 @@ export const spanishA1Lessons = defineLessons('ES', [
         options: ['They are running late', 'They cannot come', 'They are lost'],
         answer: 0,
         explanation: 'Voy tarde means they are running late.',
+      },
+      {
+        prompt: 'What is your friend suggesting?',
+        useReading: true,
+        options: ['Meeting at the café at 6', 'Calling you at 6', 'Cancelling the plan'],
+        answer: 0,
+        explanation: '¿Nos vemos…? suggests meeting.',
       },
     ],
     writing: {

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from '@jest/globals';
 
 import { curriculumUnits, examMockUnitIds } from '@/features/curriculum/catalog';
-import { getTrackLessons } from '@/features/foundations/catalog';
+import { foundationLessons, getTrackLessons } from '@/features/foundations/catalog';
 import { listeningScenarios } from '@/features/listening/scenarios';
 import {
   evaluatePlacement,
@@ -150,7 +150,7 @@ describe('Spanish orthography', () => {
     for (const lesson of getTrackLessons('ES')) {
       lesson.phrases.forEach((phrase) => texts.push(phrase.target));
       lesson.checks.forEach((check) => check.audio && texts.push(check.audio));
-      if (lesson.reading) texts.push(lesson.reading.target);
+      if (lesson.reading) texts.push(lesson.reading.target, lesson.reading.spoken ?? '');
       texts.push(...lesson.writing.accepted);
     }
     for (const scenario of listeningScenarios.filter((item) => item.track === 'ES')) {
@@ -164,5 +164,16 @@ describe('Spanish orthography', () => {
       (text) => count(text, '?') !== count(text, '¿') || count(text, '!') !== count(text, '¡'),
     );
     expect(unbalanced).toEqual([]);
+  });
+});
+
+describe('reading aloud', () => {
+  it('gives every sign-style reading a spoken version, so audio never reads symbols', () => {
+    const needsSpoken = /[$·→]|\d{1,2}:\d{2}/;
+    for (const lesson of foundationLessons) {
+      if (!lesson.reading || !needsSpoken.test(lesson.reading.target)) continue;
+      expect([lesson.id, lesson.reading.spoken]).toEqual([lesson.id, expect.any(String)]);
+      expect(lesson.reading.spoken).not.toMatch(needsSpoken);
+    }
   });
 });
