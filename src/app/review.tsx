@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { ZoomIn } from 'react-native-reanimated';
 
@@ -55,6 +55,11 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
   const graded = useRef(new Set<string>());
   const [remembered, setRemembered] = useState(0);
   const item = queue[position];
+  // Today's review is done when the session is finished, not when the first card is answered.
+  const finished = total > 0 && !item;
+  useEffect(() => {
+    if (finished) useCoachingStore.getState().recordActivity(`review:${track}`, track);
+  }, [finished, track]);
 
   const grade = (correct: boolean) => {
     // Only the first attempt in a session moves the card; retries are for learning.

@@ -38,9 +38,10 @@ export function useReminderSync() {
         progress: coaching.foundations,
         completedScenarioIds: useProgressStore.getState().completedScenarioIds,
         completedUnitIds: coaching.completedUnitIds,
-        ability: choices.ability ?? 'new',
-        goal: choices.studyGoal ?? 'everyday',
         log: fullLog,
+        activities: coaching.activityLog,
+        session: coaching.sessions[track],
+        startAt: choices.startAt,
         now,
       });
       plan = planReminders({

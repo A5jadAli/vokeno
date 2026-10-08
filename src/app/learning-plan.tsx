@@ -12,6 +12,7 @@ import {
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { learningRecommendation } from '@/features/coaching/recommendation';
+import { lessonIdFromHref } from '@/features/journey/course';
 import { useCoachingStore, type StartingAbility, type StudyGoal } from '@/features/coaching/store';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { languageDetails, languageTracks } from '@/features/language/config';
@@ -49,7 +50,11 @@ export default function LearningPlanScreen() {
             title="Start practice"
             accessibilityLabel="Start recommended practice"
             icon="arrow-right"
-            onPress={() => router.replace(next.href as Href)}
+            onPress={() => {
+              // Confirming the plan saves the starting point, so Today and Course agree on it.
+              useCoachingStore.getState().setStartAt(track, lessonIdFromHref(next.href));
+              router.replace(next.href as Href);
+            }}
           />
         </ActionBar>
       }

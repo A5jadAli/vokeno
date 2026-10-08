@@ -1,5 +1,5 @@
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { buildTodayPlan } from '@/features/coaching/daily-plan';
 import { useCoachingStore } from '@/features/coaching/store';
@@ -21,7 +21,9 @@ export function useHabits(track: LanguageTrack) {
   const speakingPracticeDates = useCoachingStore((state) => state.speakingPracticeDates);
   const writingPracticeDates = useCoachingStore((state) => state.writingPracticeDates);
   const completedScenarioIds = useProgressStore((state) => state.completedScenarioIds);
-  return useMemo(() => {
+  const activities = useCoachingStore((state) => state.activityLog);
+  const session = useCoachingStore((state) => state.sessions[track]);
+  const habits = useMemo(() => {
     const today = localDay(clock);
     const log = fullPracticeLog(
       { practiceLog, foundations: progress, speakingPracticeDates, writingPracticeDates },
@@ -33,9 +35,10 @@ export function useHabits(track: LanguageTrack) {
         progress,
         completedScenarioIds,
         completedUnitIds,
-        ability: choices.ability ?? 'new',
-        goal: choices.studyGoal ?? 'everyday',
         log,
+        activities,
+        session,
+        startAt: choices.startAt,
         now: clock,
       }),
       streak: practiceStreak(log, today),
@@ -43,6 +46,8 @@ export function useHabits(track: LanguageTrack) {
       milestone: levelMilestone(track, progress, clock),
     };
   }, [
+    activities,
+    session,
     choices,
     clock,
     completedScenarioIds,
@@ -53,4 +58,12 @@ export function useHabits(track: LanguageTrack) {
     track,
     writingPracticeDates,
   ]);
+  // Keep today's session once it is built, so its items stay the same all day. Never before the
+  // saved progress has loaded: a plan built from empty progress would be the wrong one.
+  const hydrated = useCoachingStore((state) => state.hasHydrated);
+  const { snapshot } = habits.plan;
+  useEffect(() => {
+    if (hydrated) useCoachingStore.getState().saveSession(track, snapshot);
+  }, [hydrated, snapshot, track]);
+  return habits;
 }

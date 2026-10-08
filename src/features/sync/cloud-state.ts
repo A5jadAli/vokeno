@@ -14,7 +14,8 @@ import { parseFoundationProgress } from '@/features/foundations/progress';
 import { parseWritingProgress } from '@/features/writing/progress';
 import { parsePracticeLog, serializePracticeLog } from '@/features/habits/practice-log';
 
-export type LearningCloudState = PersistedCoachingState & {
+/** The completion log and today's session stay on the device; streak and progress sync. */
+export type LearningCloudState = Omit<PersistedCoachingState, 'activityLog' | 'sessions'> & {
   assessments: AssessmentsByTrack;
   completedScenarioIds: string[];
 };
@@ -80,6 +81,9 @@ function parseLearningChoices(value: Record<string, unknown>) {
       : 'everyday') as StudyGoal,
     ...(typeof value.testDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value.testDate)
       ? { testDate: value.testDate }
+      : {}),
+    ...(typeof value.startAt === 'string' && /^[a-z0-9-]{1,80}$/.test(value.startAt)
+      ? { startAt: value.startAt }
       : {}),
   };
 }

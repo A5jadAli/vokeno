@@ -28,6 +28,8 @@ import {
   stagePassed,
 } from '@/features/placement/items';
 import { LanguageSwitch } from '@/components/language-switch';
+import { useCoachingStore } from '@/features/coaching/store';
+import { lessonIdFromHref } from '@/features/journey/course';
 import { languageDetails, type LanguageTrack, trackColors } from '@/features/language/config';
 
 export default function PlacementScreen() {
@@ -135,7 +137,12 @@ function PlacementCheck({
               title="Start practice"
               accessibilityLabel="Start recommended practice"
               icon="arrow-right"
-              onPress={() => router.replace(result.recommendation.href as Href)}
+              onPress={() => {
+                // Accepting the result is the learner's choice of where to start; keep it.
+                const lessonId = lessonIdFromHref(result.recommendation.href);
+                if (lessonId) useCoachingStore.getState().setStartAt(track, lessonId);
+                router.replace(result.recommendation.href as Href);
+              }}
             />
           </ActionBar>
         }

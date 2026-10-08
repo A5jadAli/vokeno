@@ -27,6 +27,13 @@ import {
   type PracticeKind,
   type PracticeLog,
 } from '@/features/habits/practice-log';
+import type { SessionSnapshot } from '@/features/coaching/daily-plan';
+import {
+  addActivity,
+  parseActivityLog,
+  type ActivityKey,
+  type ActivityLog,
+} from '@/features/journey/activity-log';
 
 export type { CoachingSignal } from './store-types';
 
@@ -34,8 +41,16 @@ export type SpeakingGoal = 'everyday' | 'interviews' | 'work-study';
 export type CoachTone = 'adaptive' | 'supportive' | 'tough';
 export type StartingAbility = 'new' | 'basics' | 'conversational';
 export type StudyGoal = 'everyday' | 'work-study' | 'ielts-academic' | 'ielts-general';
-/** `testDate` (YYYY-MM-DD) is this language's exam date, e.g. IELTS or Goethe. */
-type LearningChoices = { ability?: StartingAbility; studyGoal?: StudyGoal; testDate?: string };
+/**
+ * `testDate` (YYYY-MM-DD) is this language's exam date, e.g. IELTS or Goethe. `startAt` is the
+ * lesson the learner chose to start from (their answer in setup, or an accepted placement).
+ */
+type LearningChoices = {
+  ability?: StartingAbility;
+  studyGoal?: StudyGoal;
+  testDate?: string;
+  startAt?: string;
+};
 
 export type SpeakingPreferences = {
   DE: { goal: SpeakingGoal; reference: 'de-DE' } & LearningChoices;
@@ -80,9 +95,16 @@ type CoachingState = {
   saveFoundation: (id: string, entry: FoundationEntry) => void;
   completeUnit: (unitId: string) => void;
   mergeCloudState: (state: Partial<PersistedCoachingState>) => void;
-  /** What was practised today, for the honest streak and today's plan. */
+  /** What was practised today, for the honest streak. Any step counts. */
   practiceLog: PracticeLog;
   recordPractice: (kind: PracticeKind, track: LanguageTrack) => void;
+  /** What was finished, by activity. Only this ticks today's session and the course. */
+  activityLog: ActivityLog;
+  recordActivity: (key: ActivityKey, track: LanguageTrack) => void;
+  /** Today's session per language, fixed once built so items never change under the learner. */
+  sessions: Partial<Record<LanguageTrack, SessionSnapshot>>;
+  saveSession: (track: LanguageTrack, session: SessionSnapshot) => void;
+  setStartAt: (track: LanguageTrack, lessonId: string | undefined) => void;
   recordSpeakingPractice: (track: LanguageTrack) => void;
   recordWritingPractice: (track: LanguageTrack) => void;
   recordSignal: (signal: Omit<CoachingSignal, 'count' | 'lastSeenAt'>) => void;
@@ -101,6 +123,8 @@ export type PersistedCoachingState = Pick<
   | 'signals'
   | 'speakingPracticeDates'
   | 'practiceLog'
+  | 'activityLog'
+  | 'sessions'
   | 'testDate'
   | 'writingPracticeDates'
   | 'foundations'
@@ -183,6 +207,8 @@ export const useCoachingStore = create<CoachingState>()(
       signals: [],
       speakingPracticeDates: [],
       practiceLog: {},
+      activityLog: {},
+      sessions: {},
       testDate: null,
       writingPracticeDates: [],
       foundations: {},
@@ -235,6 +261,34 @@ export const useCoachingStore = create<CoachingState>()(
           const practiceLog = addPractice(state.practiceLog, kind, Date.now(), track);
           return practiceLog === state.practiceLog ? state : { practiceLog };
         }),
+      recordActivity: (key, track) =>
+        set((state) => {
+          const kind = key.slice(0, key.indexOf(':')) as PracticeKind;
+          const now = Date.now();
+          return {
+            activityLog: addActivity(state.activityLog, key, localDay(now)),
+            practiceLog: addPractice(state.practiceLog, kind, now, track),
+          };
+        }),
+      saveSession: (track, session) =>
+        set((state) =>
+          state.sessions[track]?.day === session.day &&
+          state.sessions[track]?.keys.join() === session.keys.join()
+            ? state
+            : { sessions: { ...state.sessions, [track]: session } },
+        ),
+      setStartAt: (track, lessonId) =>
+        set((state) => {
+          const { [track]: _dropped, ...sessions } = state.sessions;
+          return {
+            // A new starting point changes what today's lesson should be.
+            sessions,
+            preferences: {
+              ...state.preferences,
+              [track]: { ...state.preferences[track], startAt: lessonId },
+            },
+          };
+        }),
       recordSpeakingPractice: (track) =>
         set((state) => {
           const today = new Date().toISOString().slice(0, 10);
@@ -267,6 +321,8 @@ export const useCoachingStore = create<CoachingState>()(
           signals: [],
           speakingPracticeDates: [],
           practiceLog: {},
+          activityLog: {},
+          sessions: {},
           testDate: null,
           writingPracticeDates: [],
         }),
@@ -301,6 +357,9 @@ export const useCoachingStore = create<CoachingState>()(
           signals: state.signals ?? [],
           speakingPracticeDates: state.speakingPracticeDates ?? [],
           practiceLog: parsePracticeLog(serializePracticeLog(state.practiceLog ?? {})),
+          activityLog: parseActivityLog(state.activityLog),
+          // Sessions are rebuilt each day; an older stored one is never needed.
+          sessions: {},
           testDate: state.testDate ?? null,
           writingPracticeDates: state.writingPracticeDates ?? [],
         };
@@ -316,12 +375,14 @@ export const useCoachingStore = create<CoachingState>()(
         signals: state.signals,
         speakingPracticeDates: state.speakingPracticeDates,
         practiceLog: state.practiceLog,
+        activityLog: state.activityLog,
+        sessions: state.sessions,
         testDate: state.testDate,
         writingPracticeDates: state.writingPracticeDates,
       }),
       skipHydration: true,
       storage: createJSONStorage(() => scopedLearningStorage.storage),
-      version: 7,
+      version: 8,
     },
   ),
 );

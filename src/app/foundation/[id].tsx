@@ -177,7 +177,7 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
   };
   const complete = (spoken: boolean) => {
     resetTransient();
-    useCoachingStore.getState().recordPractice('lesson', lesson.track);
+    useCoachingStore.getState().recordActivity(`lesson:${lesson.id}`, lesson.track);
     haptic.complete();
     update({
       step: 4,

@@ -128,7 +128,8 @@ export function LearningRecommendation({ track }: { track: LanguageTrack }) {
           </View>
         ) : null}
         <Text style={styles.footnote}>
-          {plan.footnote} {plan.completedLessons} of {plan.totalLessons} guided lessons done.
+          {plan.footnote} {plan.position.finishedLessons} of {plan.position.totalLessons} guided
+          lessons done.
         </Text>
         <Pressable
           accessibilityRole="button"

@@ -138,6 +138,7 @@ export default function ConversationScreen() {
   const goal = useCoachingStore((state) => state.preferences[track].goal);
   const practiceDates = useCoachingStore((state) => state.speakingPracticeDates);
   const recordSpeakingPractice = useCoachingStore((state) => state.recordSpeakingPractice);
+  const recordActivity = useCoachingStore((state) => state.recordActivity);
   const recordSignal = useCoachingStore((state) => state.recordSignal);
   const mergeAssessment = useAssessmentStore((state) => state.mergeAssessment);
   const storedSignals = useCoachingStore((state) => state.signals);
@@ -363,6 +364,7 @@ export default function ConversationScreen() {
             releaseSession();
             if (userTurnIdsRef.current.size >= 2) {
               recordSpeakingPractice(track);
+              recordActivity(`speaking:${unit?.id ?? track}`, track);
               if (unit) completeUnit(unit.id);
             }
           }
@@ -427,7 +429,10 @@ export default function ConversationScreen() {
     releaseSession();
     setStatus('ended');
     if (unit && userTurnIdsRef.current.size >= 2) completeUnit(unit.id);
-    if (userTurnIdsRef.current.size >= 2) recordSpeakingPractice(track);
+    if (userTurnIdsRef.current.size >= 2) {
+      recordSpeakingPractice(track);
+      recordActivity(`speaking:${unit?.id ?? track}`, track);
+    }
     if (diagnostic) await calculateAssessment();
   };
 

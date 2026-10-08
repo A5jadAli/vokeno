@@ -97,7 +97,7 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
   };
   const finish = (spoken: boolean) => {
     resetTransient();
-    useCoachingStore.getState().recordPractice('lesson', lesson.track);
+    useCoachingStore.getState().recordActivity(`lesson:${lesson.id}`, lesson.track);
     haptic.complete();
     update({
       step: steps.length,

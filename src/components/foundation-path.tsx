@@ -58,7 +58,8 @@ export function FoundationPath({
   const lessons = getTrackLessons(track);
   const colors = trackColors[track];
   const done = (lesson: FoundationLesson) => Boolean(progress[lesson.id]?.attempts.length);
-  const next = nextLesson(progress, track);
+  const startAt = useCoachingStore((state) => state.preferences[track].startAt);
+  const next = nextLesson(progress, track, startAt);
   const levels = [...new Set(lessons.map((lesson) => lesson.level))];
   // Derived, so a late language or progress hydration still opens the right level.
   const [picked, setLevel] = useState<LessonLevel | null>(null);
