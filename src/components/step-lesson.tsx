@@ -192,7 +192,9 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
               setAttemptKey((key) => key + 1);
             }}
           />
-        ) : step.kind === 'match' ? null : (
+        ) : step.kind === 'match' ? (
+          <Text style={styles.footerHint}>Match every pair to continue.</Text>
+        ) : (
           <PrimaryButton title="Check" disabled={!ready} onPress={() => ready?.check()} />
         )}
       </ActionBar>
@@ -369,7 +371,8 @@ function SceneStep({ step, speech }: StepProps & { step: Of<'scene'> }) {
             <Pressable
               key={`${line.speaker}-${lineIndex}`}
               accessibilityRole="button"
-              accessibilityLabel={`${line.speaker}: ${texts[lineIndex]}. Play this line`}
+              accessibilityLabel={`${line.speaker}: ${texts[lineIndex]}`}
+              accessibilityHint="Plays this line"
               onPress={() => {
                 setActiveLine(lineIndex);
                 void speech.play(texts[lineIndex], real ? 0.92 : 0.8);
@@ -387,7 +390,11 @@ function SceneStep({ step, speech }: StepProps & { step: Of<'scene'> }) {
                 <Text style={[styles.bubbleText, changed && styles.bubbleChanged]}>
                   {texts[lineIndex]}
                 </Text>
-                {english ? <Text style={styles.bubbleMeaning}>{line.meaning}</Text> : null}
+                {english ? (
+                  <Text style={styles.bubbleMeaning}>
+                    {changed && line.realMeaning ? line.realMeaning : line.meaning}
+                  </Text>
+                ) : null}
               </View>
             </Pressable>
           );
@@ -496,7 +503,9 @@ function ChooseStep({
             ? step.explanation
             : step.audio
               ? 'Listen again, slowly if you like, then try another answer.'
-              : 'Read it again, then try another answer.',
+              : step.context
+                ? 'Read the text again, then try another answer.'
+                : 'Think about who you are talking to and when, then try another answer.',
         ),
     });
   };
@@ -945,6 +954,13 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  footerHint: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: 14,
+    paddingVertical: 8,
+    textAlign: 'center',
+  },
   body: { gap: 16, paddingBottom: 32, paddingHorizontal: 20, paddingTop: 8 },
   intro: { gap: 6, marginBottom: 4 },
   stack: { gap: 14 },

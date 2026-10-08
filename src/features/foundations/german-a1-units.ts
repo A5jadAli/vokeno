@@ -45,8 +45,9 @@ const unit1 = defineUnit(
             {
               speaker: 'Lena',
               text: 'Gut, danke. Und dir?',
-              real: 'Gut, und dir?',
+              real: 'Gut, und selbst?',
               meaning: 'Good, thanks. And you?',
+              realMeaning: 'Good, and yourself?',
             },
             {
               speaker: 'Jonas',

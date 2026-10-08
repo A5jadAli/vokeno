@@ -60,3 +60,21 @@ Each level ends with two full Goethe-format mock exams (Hören, Lesen, Schreiben
 2. Write A1 units 1–3 as a pilot and have a native German teacher review them. Adjust the template.
 3. Write the remaining A1 units in batches with review, then the two A1 mocks. Mark A1 complete only when every gate passes.
 4. Repeat for A2 and B1, then Spanish, then English (B1–C1 and IELTS).
+
+## Status (8 October 2026)
+
+**Built:** the unit format (`StepLesson` in `src/features/foundations/types.ts`, player in `src/components/step-lesson.tsx`) and A1 Units 1–3 as a pilot (`german-a1-units.ts`): 12 sessions of 5–7 minutes, each with 10–14 varied steps (scene, words, rule, choose, listen, word-order tiles, typing, matching, speaking).
+
+| Unit                   | Sessions                             | Grammar                                                         | Goethe A1 tasks                                                                                              |
+| ---------------------- | ------------------------------------ | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 1 Hallo!               | Words, Grammar, Real talk, Exam task | _sein_, _heißen_, W- and yes/no questions, _du_/_Sie_           | Hören Teil 1 (names), form words, Sprechen Teil 1 (name)                                                     |
+| 2 Woher kommst du?     | Words, Grammar, Real talk, Exam task | Present tense of regular verbs, _-est/-et_, _heißt_, _sprechen_ | Lesen Teil 1 (richtig/falsch), Sprechen Teil 1 (Land, Wohnort, Sprachen)                                     |
+| 3 Zahlen, Alter, Namen | Words, Grammar, Real talk, Exam task | Numbers 0–100 (units first), age with _sein_, prices            | Hören Teil 1 and 3 (corrected numbers), Schreiben Teil 1 (form), full Sprechen Teil 1 except Beruf and Hobby |
+
+Native-first content, beyond the Goethe list, includes high-frequency spoken words that are not on it (OpenSubtitles rank in brackets): _genau_ (171), _echt_ (362), _sorry_ (1,521), _nee_ (1,725). It also covers _Moin_/_Servus_/_Grüß Gott_, _Wo kommst du her?_, merged forms (_willste_, _kommste_), _zwo_, numbers as feminine nouns (_die Zwölf_), phone numbers in pairs, spelling with words, _alles klein_ in email addresses, Saxon dialect in Leipzig, and when not to ask "where are you really from?".
+
+The starter lessons these units replace (`greetings`, `introductions`, `origin`, `numbers`) are retired: off the path, with history and review cards kept.
+
+**Quality gates in place:** `tests/units.test.ts` (structure, variety, every exercise solvable, unique review cards, no digits or keyboard spellings in German audio and model lines) and the e2e walkthrough that finishes every session through the UI.
+
+**Not yet done:** native-teacher review of the pilot; Units 4–20; the two A1 mock exams; human-recorded audio (scenes currently use the device voice, one voice for all speakers). German A1 stays labelled a starter set until all of these pass.

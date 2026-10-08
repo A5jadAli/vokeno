@@ -42,8 +42,17 @@ export type ClassicLesson = LessonBase & {
   speaking: string;
 };
 
-/** One line of a scene. `real` is how people actually say it when it differs from the careful form. */
-export type SceneLine = { speaker: string; text: string; meaning: string; real?: string };
+/**
+ * One line of a scene. `real` is how people actually say it when it differs from the careful
+ * form; `realMeaning` translates it when the English differs too.
+ */
+export type SceneLine = {
+  speaker: string;
+  text: string;
+  meaning: string;
+  real?: string;
+  realMeaning?: string;
+};
 
 /**
  * One screen of a unit session. Teaching steps (scene, teach, rule, speak) are not marked;

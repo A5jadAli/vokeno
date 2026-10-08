@@ -108,6 +108,7 @@ describe('German A1 units: every exercise works', () => {
           for (const line of step.lines) {
             expect(line.meaning.trim()).toBeTruthy();
             if (line.real) expect(line.real).not.toBe(line.text);
+            if (line.realMeaning) expect(line.real).toBeTruthy();
           }
         }
         if (step.kind === 'teach') {
