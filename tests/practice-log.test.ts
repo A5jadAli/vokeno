@@ -4,6 +4,7 @@ import {
   addPractice,
   dayFromNumber,
   dayNumberOf,
+  historyLog,
   localDay,
   mergePracticeLogs,
   parsePracticeLog,
@@ -179,8 +180,18 @@ describe('week view', () => {
     ]);
   });
 
-  it('shows a missed day that ended a run as missed, not rest', () => {
-    const week = weekView(logOf(0), TODAY); // Monday and Tuesday missed
+  it('shows days before the first practice as before, not missed', () => {
+    const week = weekView(logOf(0), TODAY); // first ever practice is today, Wednesday
+    expect(week.slice(0, 3).map((day) => day.state)).toEqual(['before', 'before', 'done']);
+    expect(
+      weekView({}, TODAY)
+        .slice(0, 3)
+        .map((day) => day.state),
+    ).toEqual(['before', 'before', 'today']);
+  });
+
+  it('shows a missed day after earlier practice as missed', () => {
+    const week = weekView(logOf(0, 7), TODAY); // practised last Wednesday, then a gap
     expect(week.slice(0, 3).map((day) => day.state)).toEqual(['missed', 'missed', 'done']);
   });
 
@@ -208,5 +219,29 @@ describe('stages', () => {
     });
     const shortBreak = logOf(...Array.from({ length: 20 }, (_, day) => day + 3));
     expect(practiceStage(shortBreak, TODAY).stage).toBe('momentum');
+  });
+});
+
+describe('history from before the practice log', () => {
+  it('turns lesson attempts and speaking or writing days into practice days', () => {
+    const lessonAt = new Date(2026, 9, 6, 21, 0).toISOString();
+    expect(historyLog([lessonAt, lessonAt], ['2026-10-05'], ['2026-10-05'])).toEqual({
+      '2026-10-06': ['lesson'],
+      '2026-10-05': ['speaking', 'writing'],
+    });
+  });
+
+  it('ignores malformed timestamps and dates', () => {
+    expect(historyLog(['not a time', ''], ['2026-02-30', 'yesterday'], [])).toEqual({});
+  });
+
+  it('lets an existing learner keep a streak earned before the update', () => {
+    const history = historyLog(
+      [ago(1), ago(2)].map((day) => `${day}T12:00:00`),
+      [ago(3)],
+      [],
+    );
+    expect(practiceStreak(history, TODAY)).toMatchObject({ current: 3, atRisk: true });
+    expect(practiceStage(history, TODAY).stage).toBe('warm-up');
   });
 });

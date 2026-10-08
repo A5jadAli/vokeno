@@ -6,6 +6,7 @@ import { useCoachingStore } from '@/features/coaching/store';
 import type { LanguageTrack } from '@/features/language/config';
 import { useProgressStore } from '@/features/progress/store';
 
+import { fullPracticeLog } from './full-log';
 import { levelMilestone } from './milestones';
 import { localDay, practiceStreak, weekView } from './practice-log';
 
@@ -16,10 +17,16 @@ export function useHabits(track: LanguageTrack) {
   const choices = useCoachingStore((state) => state.preferences[track]);
   const progress = useCoachingStore((state) => state.foundations);
   const completedUnitIds = useCoachingStore((state) => state.completedUnitIds);
-  const log = useCoachingStore((state) => state.practiceLog);
+  const practiceLog = useCoachingStore((state) => state.practiceLog);
+  const speakingPracticeDates = useCoachingStore((state) => state.speakingPracticeDates);
+  const writingPracticeDates = useCoachingStore((state) => state.writingPracticeDates);
   const completedScenarioIds = useProgressStore((state) => state.completedScenarioIds);
   return useMemo(() => {
     const today = localDay(clock);
+    const log = fullPracticeLog(
+      { practiceLog, foundations: progress, speakingPracticeDates, writingPracticeDates },
+      today,
+    );
     return {
       plan: buildTodayPlan({
         track,
@@ -35,5 +42,15 @@ export function useHabits(track: LanguageTrack) {
       week: weekView(log, today),
       milestone: levelMilestone(track, progress, clock),
     };
-  }, [choices, clock, completedScenarioIds, completedUnitIds, log, progress, track]);
+  }, [
+    choices,
+    clock,
+    completedScenarioIds,
+    completedUnitIds,
+    practiceLog,
+    progress,
+    speakingPracticeDates,
+    track,
+    writingPracticeDates,
+  ]);
 }

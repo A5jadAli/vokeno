@@ -172,7 +172,8 @@ export function practiceStreak(log: PracticeLog, today: string): StreakSummary {
   };
 }
 
-export type WeekDayState = 'done' | 'rest' | 'missed' | 'today' | 'future';
+/** `before` is a day before the learner's first practice: not missed, just not started. */
+export type WeekDayState = 'done' | 'rest' | 'missed' | 'today' | 'future' | 'before';
 
 /** Monday to Sunday of the current week, for the small row of day dots. */
 export function weekView(log: PracticeLog, today: string) {
@@ -181,6 +182,7 @@ export function weekView(log: PracticeLog, today: string) {
   const monday = todayNumber - ((todayNumber + 3) % 7);
   const run = currentRun(log, today);
   const rests = new Set(run.count > 0 ? run.rests : []);
+  const firstPractice = Math.min(...[...run.practised]);
   return Array.from({ length: 7 }, (_, index) => {
     const number = monday + index;
     const day = dayFromNumber(number);
@@ -188,6 +190,7 @@ export function weekView(log: PracticeLog, today: string) {
     if ((log[day] ?? []).length > 0) state = 'done';
     else if (number > todayNumber) state = 'future';
     else if (number === todayNumber) state = 'today';
+    else if (!Number.isFinite(firstPractice) || number < firstPractice) state = 'before';
     else state = rests.has(number) ? 'rest' : 'missed';
     return { day, label: 'MTWTFSS'[index], state };
   });
@@ -217,3 +220,27 @@ export const stageSteps: Record<PracticeStage, number> = {
   building: 2,
   momentum: 3,
 };
+
+/**
+ * Practice days the app already knew about before the practice log existed, or that arrive with
+ * an account on a new phone: finished lesson attempts and recorded speaking or writing days.
+ * Merging these keeps an existing learner's streak and stage honest instead of starting at zero.
+ */
+export function historyLog(
+  lessonAttemptTimes: string[],
+  speakingDays: string[],
+  writingDays: string[],
+): PracticeLog {
+  const log: PracticeLog = {};
+  const add = (day: string, kind: PracticeKind) => {
+    if (!Number.isFinite(dayNumberOf(day))) return;
+    log[day] = log[day]?.includes(kind) ? log[day] : [...(log[day] ?? []), kind];
+  };
+  for (const at of lessonAttemptTimes) {
+    const time = Date.parse(at);
+    if (Number.isFinite(time)) add(localDay(time), 'lesson');
+  }
+  for (const day of speakingDays) add(day, 'speaking');
+  for (const day of writingDays) add(day, 'writing');
+  return log;
+}

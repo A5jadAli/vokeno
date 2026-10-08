@@ -7,6 +7,7 @@ import { languageDetails } from '@/features/language/config';
 import { useLanguageSelection } from '@/features/language/selection';
 import { useProgressStore } from '@/features/progress/store';
 
+import { fullPracticeLog } from './full-log';
 import { localDay } from './practice-log';
 import { applyReminderPlan } from './reminder-scheduler';
 import { planReminders, useReminderStore } from './reminders';
@@ -30,6 +31,7 @@ export function useReminderSync() {
     let plan: ReturnType<typeof planReminders> = [];
     if (choice !== 'off') {
       const coaching = useCoachingStore.getState();
+      const fullLog = fullPracticeLog(coaching, localDay(now));
       const choices = coaching.preferences[track];
       const today = buildTodayPlan({
         track,
@@ -38,13 +40,13 @@ export function useReminderSync() {
         completedUnitIds: coaching.completedUnitIds,
         ability: choices.ability ?? 'new',
         goal: choices.studyGoal ?? 'everyday',
-        log,
+        log: fullLog,
         now,
       });
       plan = planReminders({
         slot: choice,
         now,
-        practisedToday: (log[localDay(now)] ?? []).length > 0,
+        practisedToday: (fullLog[localDay(now)] ?? []).length > 0,
         language: languageDetails[track].name,
         nextStep: today.steps.find((step) => !step.done)?.title,
       });

@@ -11,6 +11,7 @@ const stateNames: Record<WeekDayState, string> = {
   missed: 'no practice',
   today: 'today, not yet practised',
   future: 'coming up',
+  before: 'before you started',
 };
 
 function caption(streak: StreakSummary) {
@@ -69,7 +70,7 @@ export function StreakStrip({
                 day.state === 'done' && { backgroundColor: colors.accent },
                 day.state === 'today' && { borderColor: colors.accent, borderWidth: 2 },
                 day.state === 'rest' && styles.rest,
-                day.state === 'future' && styles.future,
+                (day.state === 'future' || day.state === 'before') && styles.future,
               ]}
             >
               {day.state === 'done' ? (

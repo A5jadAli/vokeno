@@ -76,7 +76,7 @@ function EnglishHome() {
         <View style={styles.deadlineCopy}>
           <Text style={styles.deadlineTitle}>Build real-world listening</Text>
           <Text style={styles.deadlineMeta}>
-            {completedEnglish} of {englishScenarios.length} English lessons complete
+            {completedEnglish} of {englishScenarios.length} listening dialogues done
           </Text>
         </View>
       </Pressable>
@@ -118,13 +118,6 @@ function EnglishHome() {
           subtitle="Everyday speech · subtitles available"
           title="Listen"
         />
-      </View>
-
-      <View style={styles.streakStrip}>
-        <Text style={styles.streakText}>
-          {completedEnglish} of {englishScenarios.length} listening dialogues practised. Repeat any
-          one when you want.
-        </Text>
       </View>
     </>
   );
@@ -396,19 +389,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 2,
   },
-  streakStrip: {
-    alignItems: 'center',
-    borderColor: 'rgba(19,18,17,.18)',
-    borderRadius: 22,
-    borderStyle: 'dashed',
-    borderWidth: 1.5,
-    flexDirection: 'row',
-    gap: 14,
-    margin: 18,
-    paddingHorizontal: 18,
-    paddingVertical: 16,
-  },
-  streakText: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   germanHero: { paddingHorizontal: 22, paddingTop: 1 },
   spanishHero: {
     backgroundColor: Palette.violet,

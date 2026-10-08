@@ -101,9 +101,7 @@ export function LearningRecommendation({ track }: { track: LanguageTrack }) {
                 <Text style={[styles.stepTitle, step.done && styles.stepTitleDone]}>
                   {step.title}
                 </Text>
-                <Text numberOfLines={2} style={styles.stepWhy}>
-                  {step.why}
-                </Text>
+                <Text style={styles.stepWhy}>{step.why}</Text>
               </View>
               <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
             </Pressable>
