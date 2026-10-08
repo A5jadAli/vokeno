@@ -69,6 +69,14 @@ describe('writing grades', () => {
     expect(checkFoundationWriting(spanish, 'donde esta la estacion')).toBe(true);
   });
 
+  it('shows the fully punctuated form when several spellings are accepted', () => {
+    const prices = lesson('ES', ['Cuánto cuesta', '¿Cuánto cuesta?']);
+    expect(gradeFoundationWriting(prices, 'cuanto cuesta')).toEqual({
+      status: 'accents',
+      expected: '¿Cuánto cuesta?',
+    });
+  });
+
   it('does not treat a missing ñ as an accent slip', () => {
     const year = lesson('ES', ['Tengo un año']);
     expect(gradeFoundationWriting(year, 'Tengo un ano').status).not.toBe('accents');

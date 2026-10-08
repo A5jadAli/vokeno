@@ -61,9 +61,10 @@ export function gradeFoundationWriting(lesson: FoundationLesson, value: string):
     return { status: 'correct' };
   if (lesson.track === 'ES') {
     const loose = normaliseFoundationAnswer(value, { ignoreAccents: true });
-    const match = lesson.writing.accepted.find(
-      (item) => normaliseFoundationAnswer(item, { ignoreAccents: true }) === loose,
-    );
+    // Show the fully punctuated form (¿Cuánto cuesta?) when the lesson accepts several.
+    const match = lesson.writing.accepted
+      .filter((item) => normaliseFoundationAnswer(item, { ignoreAccents: true }) === loose)
+      .sort((a, b) => Number(/[¿¡]/.test(b)) - Number(/[¿¡]/.test(a)))[0];
     if (match) return { status: 'accents', expected: match };
   }
   return isNearMiss(lesson, value) ? { status: 'close' } : { status: 'wrong' };

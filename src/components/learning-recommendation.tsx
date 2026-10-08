@@ -48,7 +48,7 @@ export function LearningRecommendation({ track }: { track: LanguageTrack }) {
             <Text style={styles.footnote}>{levelNote(track, milestone.level)}</Text>
           ) : null}
           {nextLevelStart ? (
-            <PrimaryAccent background={colors.accent} text={colors.onAccent}>
+            <PrimaryAccent colors={colors}>
               <PrimaryButton
                 title={`Start ${milestone.nextLevel}`}
                 icon="arrow-right"
@@ -108,7 +108,7 @@ export function LearningRecommendation({ track }: { track: LanguageTrack }) {
           ))}
         </View>
         {next ? (
-          <PrimaryAccent background={colors.accent} text={colors.onAccent}>
+          <PrimaryAccent colors={colors}>
             <PrimaryButton
               title={allDone ? 'One more, if you like' : next.action}
               icon="arrow-right"

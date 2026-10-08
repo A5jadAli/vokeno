@@ -137,7 +137,9 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
         title: 'Not quite',
         message: question.audio
           ? 'Listen again, slowly if you like, then try another answer.'
-          : 'Look at the phrases again if you need to, then try another answer.',
+          : question.useReading
+            ? 'Read the text again, then try another answer.'
+            : 'Look at the phrases again if you need to, then try another answer.',
       });
     }
   };
@@ -284,10 +286,7 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
     );
 
   return (
-    <PrimaryAccent
-      background={trackColors[lesson.track].accent}
-      text={trackColors[lesson.track].onAccent}
-    >
+    <PrimaryAccent colors={trackColors[lesson.track]}>
       <AppScreen showNav={false} keyboardAware footer={footer}>
         <LessonTopBar
           progress={position / segments}
@@ -441,7 +440,7 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
                 {lesson.track === 'DE'
                   ? 'Punctuation and capital letters are not marked. No ß or umlaut key? Type ss, ae, oe or ue, or add German to your keyboard languages so autocorrect leaves German words alone.'
                   : lesson.track === 'ES'
-                    ? 'Punctuation, capital letters and missing vowel accents are not marked here. Keep ñ distinct, and use the written accents when you can.'
+                    ? 'Punctuation and capital letters do not count. A missing accent is accepted, and you will see where it goes. Ñ always counts.'
                     : 'Punctuation and capital letters are not marked. Your draft is saved.'}
               </Text>
               {entry.writingMistakes >= 2 && !correctNow ? (
@@ -505,7 +504,7 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
                   Lesson complete
                 </Text>
                 <Text style={styles.score}>
-                  {lastAttempt.correctFirstTry}/{totalChecks} checks right first time
+                  {lastAttempt.correctFirstTry}/{totalChecks} answers right first time
                 </Text>
               </View>
               <Animated.View entering={FadeInDown.delay(180).springify()} style={styles.stats}>

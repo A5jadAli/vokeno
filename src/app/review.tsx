@@ -33,7 +33,7 @@ import {
 export default function ReviewScreen() {
   const [track] = useSelectedLanguage();
   return (
-    <PrimaryAccent background={trackColors[track].accent} text={trackColors[track].onAccent}>
+    <PrimaryAccent colors={trackColors[track]}>
       <ReviewSession key={track} track={track} />
     </PrimaryAccent>
   );

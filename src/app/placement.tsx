@@ -33,7 +33,7 @@ import { languageDetails, type LanguageTrack, trackColors } from '@/features/lan
 export default function PlacementScreen() {
   const [track, setTrack] = useSelectedLanguage();
   return (
-    <PrimaryAccent background={trackColors[track].accent} text={trackColors[track].onAccent}>
+    <PrimaryAccent colors={trackColors[track]}>
       <PlacementCheck key={track} track={track} onTrack={setTrack} />
     </PrimaryAccent>
   );

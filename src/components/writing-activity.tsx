@@ -50,7 +50,7 @@ const keyboardTip = {
 export function WritingActivity() {
   const [track] = useSelectedLanguage();
   return (
-    <PrimaryAccent background={trackColors[track].accent} text={trackColors[track].onAccent}>
+    <PrimaryAccent colors={trackColors[track]}>
       <WritingPractice key={track} track={track} />
     </PrimaryAccent>
   );

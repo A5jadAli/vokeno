@@ -43,7 +43,7 @@ export function LessonTopBar({ progress, label }: { progress: number; label?: st
       >
         <ProgressFill
           value={value}
-          color={accent?.background ?? Palette.yellow}
+          color={accent?.accent ?? Palette.yellow}
           track="rgba(19,18,17,0.1)"
         />
       </View>
@@ -52,22 +52,17 @@ export function LessonTopBar({ progress, label }: { progress: number; label?: st
   );
 }
 
-/**
- * The colours of the main action on a screen. A screen about one language wraps its content in
- * `PrimaryAccent` with that language's colours; elsewhere the main action stays yellow.
- */
-const PrimaryAccentContext = createContext<{ background: string; text: string } | null>(null);
+type AccentColors = { accent: string; onAccent: string; onDark: string; tint: string };
 
-export function PrimaryAccent({
-  background,
-  text,
-  children,
-}: PropsWithChildren<{ background: string; text: string }>) {
-  return (
-    <PrimaryAccentContext.Provider value={{ background, text }}>
-      {children}
-    </PrimaryAccentContext.Provider>
-  );
+/**
+ * A language screen's colours. A screen about one language wraps its content in `PrimaryAccent`
+ * with that language's colours: main buttons, the progress bar and highlighted cards follow
+ * them. Outside a wrapper, the brand yellow is used.
+ */
+const PrimaryAccentContext = createContext<AccentColors | null>(null);
+
+export function PrimaryAccent({ colors, children }: PropsWithChildren<{ colors: AccentColors }>) {
+  return <PrimaryAccentContext.Provider value={colors}>{children}</PrimaryAccentContext.Provider>;
 }
 
 export function PrimaryButton({
@@ -92,9 +87,9 @@ export function PrimaryButton({
   const accent = useContext(PrimaryAccentContext);
   const look = {
     yellow: {
-      face: accent?.background ?? Palette.yellow,
+      face: accent?.accent ?? Palette.yellow,
       lip: '#C99600',
-      ink: accent?.text ?? Palette.ink,
+      ink: accent?.onAccent ?? Palette.ink,
     },
     green: { face: '#2F7A47', lip: '#1C4D2C', ink: Palette.white },
     red: { face: '#B44931', lip: '#7E2716', ink: Palette.white },
@@ -281,16 +276,21 @@ export function InfoCard({
   tone = 'white',
 }: PropsWithChildren<{ icon: IconName; title: string; tone?: 'white' | 'yellow' | 'ink' }>) {
   const dark = tone === 'ink';
+  const accent = useContext(PrimaryAccentContext);
   return (
     <View
       style={[
         styles.info,
-        tone === 'yellow' && { backgroundColor: '#FFF4CC' },
+        tone === 'yellow' && { backgroundColor: accent?.tint ?? '#FFF4CC' },
         dark && { backgroundColor: Palette.ink },
       ]}
     >
       <View style={styles.infoHeading}>
-        <MaterialCommunityIcons name={icon} size={20} color={dark ? Palette.yellow : Palette.ink} />
+        <MaterialCommunityIcons
+          name={icon}
+          size={20}
+          color={dark ? (accent?.onDark ?? Palette.yellow) : Palette.ink}
+        />
         <Text style={[styles.infoTitle, dark && { color: Palette.cream }]}>{title}</Text>
       </View>
       {typeof children === 'string' ? (
@@ -370,15 +370,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   primaryText: { fontFamily: VokaFonts.bodyBold, fontSize: 16 },
+  // A plain text action, like secondary actions in WhatsApp or Instagram: no fill, so it never
+  // looks like an answer option or a second primary button.
   textButton: {
     alignItems: 'center',
-    backgroundColor: 'rgba(19,18,17,0.06)',
-    borderRadius: 14,
     flexDirection: 'row',
     gap: 6,
     justifyContent: 'center',
-    minHeight: 48,
-    paddingHorizontal: 16,
+    borderRadius: 12,
+    minHeight: 44,
+    paddingHorizontal: 12,
   },
   textButtonLabel: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
   softPressed: { backgroundColor: 'rgba(19,18,17,0.12)' },

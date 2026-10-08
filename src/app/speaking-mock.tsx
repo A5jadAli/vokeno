@@ -27,7 +27,7 @@ export default function SpeakingMockScreen() {
   const [track] = useSelectedLanguage();
   if (track === 'ES') return <Redirect href="/sprint?track=ES" />;
   return (
-    <PrimaryAccent background={trackColors[track].accent} text={trackColors[track].onAccent}>
+    <PrimaryAccent colors={trackColors[track]}>
       <SpeakingMock key={track} track={track} />
     </PrimaryAccent>
   );
