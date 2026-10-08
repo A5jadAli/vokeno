@@ -48,9 +48,9 @@ test('a complete beginner gets correction, a persistent draft, evidence and a ne
   await page.getByRole('button', { name: 'Check my phrase' }).click();
   await page.getByRole('button', { name: 'Continue to speaking practice' }).click();
   await page.getByRole('button', { name: 'Skip speaking for now' }).click();
-  await expect(page.getByText('2/4 checks right first time')).toBeVisible();
+  await expect(page.getByText('2/4 answers right first time')).toBeVisible();
   await page.reload();
-  await expect(page.getByText('2/4 checks right first time')).toBeVisible();
+  await expect(page.getByText('2/4 answers right first time')).toBeVisible();
   await page.getByRole('button', { name: 'Next lesson: Say your name' }).click();
   await expect(page).toHaveURL(/\/foundation\/introductions$/);
   await expect(page.getByText('My name is Sara.', { exact: true })).toBeVisible();
@@ -87,7 +87,7 @@ test('all lessons can be completed without audio and without false speaking cred
     await page.getByRole('button', { name: 'Continue to speaking practice' }).click();
     await page.getByRole('button', { name: 'Skip speaking for now' }).click();
     const total = lesson.choices.length + 1;
-    await expect(page.getByText(`${total}/${total} checks right first time`)).toBeVisible();
+    await expect(page.getByText(`${total}/${total} answers right first time`)).toBeVisible();
     await expect(page.getByText(/You skipped the speaking practice/)).toBeVisible();
   }
   await page.getByRole('button', { name: 'Try Spanish listening' }).click();

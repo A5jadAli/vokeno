@@ -106,7 +106,7 @@ test('runs the listening warm-up and continues to the detailed lesson', async ({
   await page.getByText('Continue', { exact: true }).click();
 
   await expect(page).toHaveURL(/\/lesson\/coffee-run$/);
-  await expect(page.getByText('What natives compress')).toBeVisible();
+  await expect(page.getByText('Listen for these')).toBeVisible();
   await page.getByRole('radio', { name: 'An extra espresso shot' }).click();
   await page.getByText('Check answer', { exact: true }).click();
   await page.getByText('More listening practice', { exact: true }).click();
