@@ -21,7 +21,7 @@ export default function AccentScreen() {
 
   if (!hasHydrated) {
     return (
-      <AppScreen activeNav="profile">
+      <AppScreen>
         <View style={styles.header}>
           <HeaderBack />
           <Eyebrow>Speaking profile</Eyebrow>
@@ -34,7 +34,7 @@ export default function AccentScreen() {
   }
 
   return (
-    <AppScreen activeNav="profile">
+    <AppScreen>
       <View style={styles.header}>
         <HeaderBack />
         <Eyebrow>Speaking profile</Eyebrow>

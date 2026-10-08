@@ -124,6 +124,19 @@ export function coursePosition(
   };
 }
 
+/** The unit a lesson belongs to, and its 1-based place in it. */
+export function lessonContext(
+  track: LanguageTrack,
+  progress: FoundationProgress,
+  lessonId: string,
+) {
+  const unit = courseUnits(track, progress).find((item) =>
+    item.lessons.some((lesson) => lesson.id === lessonId),
+  );
+  if (!unit) return undefined;
+  return { unit, number: unit.lessons.findIndex((lesson) => lesson.id === lessonId) + 1 };
+}
+
 /** The lesson an href opens, if it is a guided lesson: '/foundation/de-a1-u5-order' → its id. */
 export function lessonIdFromHref(href: string) {
   const match = /^\/foundation\/([a-z0-9-]+)$/.exec(href);

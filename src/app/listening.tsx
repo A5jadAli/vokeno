@@ -15,7 +15,7 @@ export default function ListeningLibrary() {
   const completed = useProgressStore((state) => state.completedScenarioIds);
   const scenarios = getScenarios(track);
   return (
-    <AppScreen activeNav="plan">
+    <AppScreen activeNav="practice">
       <View style={styles.header}>
         <HeaderBack />
         <Eyebrow>Listening practice</Eyebrow>

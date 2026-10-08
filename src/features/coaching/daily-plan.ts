@@ -1,4 +1,4 @@
-import { examMockUnitIds, getCurriculumUnits } from '@/features/curriculum/catalog';
+import { getCurriculumUnits } from '@/features/curriculum/catalog';
 import { foundationLessons } from '@/features/foundations/catalog';
 import type { FoundationProgress } from '@/features/foundations/progress';
 import {
@@ -11,6 +11,7 @@ import {
 } from '@/features/habits/practice-log';
 import { finishedOn, type ActivityKey, type ActivityLog } from '@/features/journey/activity-log';
 import { coursePosition, lessonMinutes, type CoursePosition } from '@/features/journey/course';
+import { suggestedConversation, suggestedScenario } from '@/features/journey/practice';
 import type { LanguageTrack } from '@/features/language/config';
 import { listeningScenarios } from '@/features/listening/scenarios';
 import { reviewSummary, REVIEW_SESSION_SIZE } from '@/features/review/schedule';
@@ -63,9 +64,6 @@ export type TodayPlanInput = {
   now: number;
 };
 
-const levels = ['A1', 'A2', 'B1', 'B2', 'C1'] as const;
-const rank = (level: string) => levels.indexOf(level as (typeof levels)[number]);
-
 /** Days practised in one language. The streak is app-wide; the workload is per language. */
 function languageLog(log: PracticeLog, track: LanguageTrack): PracticeLog {
   return Object.fromEntries(
@@ -100,7 +98,6 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
     const key: ActivityKey = `lesson:${id}`;
     const finished = done(key);
     const resuming = !finished && (progress[id]?.step ?? 0) > 0;
-    const unit = lesson.format === 'steps' ? `Unit ${lesson.unit.number} · ` : '';
     return {
       kind: 'lesson',
       key,
@@ -108,8 +105,8 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
       why: finished
         ? 'Finished today. Its words are in your review.'
         : resuming
-          ? `${unit}Pick up where you left off.`
-          : `${unit}${lesson.outcome}`,
+          ? `Pick up where you left off. ${lesson.outcome}`
+          : lesson.outcome,
       href: `/foundation/${id}`,
       action: finished ? 'Open lesson' : resuming ? 'Continue lesson' : 'Start lesson',
       minutes: lessonMinutes(lesson),
@@ -184,23 +181,8 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
   };
 
   // Candidates for a fresh session, chosen once and then kept for the rest of the day.
-  const fittingScenarios = listeningScenarios.filter(
-    (scenario) => scenario.track === track && rank(scenario.level) <= Math.max(0, rank(level)),
-  );
-  const scenarioPool = fittingScenarios.length
-    ? fittingScenarios
-    : listeningScenarios.filter((scenario) => scenario.track === track);
-  const scenario =
-    scenarioPool.find((item) => !input.completedScenarioIds.includes(item.id)) ??
-    scenarioPool[day % Math.max(1, scenarioPool.length)];
-  const speakingUnits = getCurriculumUnits(track).filter(
-    (unit) => !examMockUnitIds.includes(unit.id),
-  );
-  const fittingUnits = speakingUnits.filter((unit) => rank(unit.level) <= Math.max(0, rank(level)));
-  const unitPool = fittingUnits.length ? fittingUnits : speakingUnits;
-  const speakingUnit =
-    unitPool.find((unit) => !input.completedUnitIds.includes(unit.id)) ??
-    unitPool[day % Math.max(1, unitPool.length)];
+  const scenario = suggestedScenario(track, level, input.completedScenarioIds, day);
+  const speakingUnit = suggestedConversation(track, level, input.completedUnitIds, day);
   const nextLessonKey: ActivityKey | null = position.next
     ? `lesson:${position.next.lesson.id}`
     : null;

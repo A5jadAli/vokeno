@@ -444,7 +444,7 @@ export default function ConversationScreen() {
   };
 
   return (
-    <AppScreen activeNav="speak" backgroundColor={Palette.ink} dark>
+    <AppScreen activeNav="practice" backgroundColor={Palette.ink} dark>
       <View style={styles.header}>
         <HeaderBack dark />
         <Text style={styles.logo}>VOKENO LIVE</Text>

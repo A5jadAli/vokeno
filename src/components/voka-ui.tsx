@@ -28,26 +28,28 @@ import { focusedInputScrollOffset } from './keyboard-scroll';
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
-const navItems: {
-  href: Href;
-  icon: IconName;
-  label: string;
-  key: 'home' | 'plan' | 'speak' | 'progress' | 'profile';
-}[] = [
-  { key: 'home', href: '/', icon: 'home-variant', label: 'Home' },
-  { key: 'plan', href: '/sprint', icon: 'calendar-blank-outline', label: 'Learning path' },
-  {
-    key: 'speak',
-    href: '/conversation?track=EN',
-    icon: 'microphone-outline',
-    label: 'Live speaking coach',
-  },
-  { key: 'progress', href: '/progress', icon: 'cards-outline', label: 'Progress' },
-  { key: 'profile', href: '/profile', icon: 'account-outline', label: 'Profile' },
+export type NavKey = 'today' | 'course' | 'practice' | 'progress';
+
+/**
+ * Four destinations, each answering one question: what now, where am I going, what can I
+ * practise, what have I learned. Profile and settings sit behind the header's account button.
+ */
+const navItems: { icon: IconName; activeIcon: IconName; label: string; key: NavKey }[] = [
+  { key: 'today', icon: 'home-outline', activeIcon: 'home', label: 'Today' },
+  { key: 'course', icon: 'map-outline', activeIcon: 'map', label: 'Course' },
+  { key: 'practice', icon: 'dumbbell', activeIcon: 'dumbbell', label: 'Practice' },
+  { key: 'progress', icon: 'chart-box-outline', activeIcon: 'chart-box', label: 'Progress' },
 ];
 
+const navHref: Record<NavKey, string> = {
+  today: '/',
+  course: '/sprint',
+  practice: '/practice',
+  progress: '/progress',
+};
+
 type AppScreenProps = PropsWithChildren<{
-  activeNav?: string;
+  activeNav?: NavKey;
   backgroundColor?: string;
   dark?: boolean;
   footer?: ReactNode;
@@ -140,11 +142,12 @@ export function AppScreen({
   );
 }
 
-export function BottomNav({ active, dark = false }: { active?: string; dark?: boolean }) {
+export function BottomNav({ active, dark = false }: { active?: NavKey; dark?: boolean }) {
   const router = useRouter();
   const track = useLanguageSelection((state) => state.track);
   const foreground = dark ? Palette.cream : Palette.ink;
-  const muted = dark ? 'rgba(241, 237, 227, 0.42)' : 'rgba(19, 18, 17, 0.35)';
+  // At least 3:1 against the bar, so unselected destinations stay readable.
+  const muted = dark ? 'rgba(241, 237, 227, 0.7)' : Palette.secondary;
 
   return (
     <SafeAreaView
@@ -157,35 +160,36 @@ export function BottomNav({ active, dark = false }: { active?: string; dark?: bo
         },
       ]}
     >
-      <View style={styles.navRow}>
+      <View accessibilityRole="tablist" style={styles.navRow}>
         {navItems.map((item) => {
           const selected = item.key === active;
           return (
             <Pressable
               accessibilityLabel={item.label}
-              accessibilityRole="button"
+              accessibilityRole="tab"
               accessibilityState={{ selected }}
+              aria-selected={selected}
               key={item.key}
-              onPress={() =>
-                router.navigate(
-                  (item.key === 'speak'
-                    ? `/conversation?track=${track}`
-                    : item.key === 'plan'
-                      ? `/sprint?track=${track}`
-                      : item.key === 'home'
-                        ? `/?track=${track}`
-                        : item.href) as Href,
-                )
-              }
+              onPress={() => router.navigate(`${navHref[item.key]}?track=${track}` as Href)}
               style={({ pressed }) => [styles.navButton, pressed && styles.pressed]}
             >
               <View style={[styles.navIconWrap, selected && { backgroundColor: foreground }]}>
                 <MaterialCommunityIcons
                   color={selected ? (dark ? Palette.ink : Palette.cream) : muted}
-                  name={item.icon}
-                  size={21}
+                  name={selected ? item.activeIcon : item.icon}
+                  size={20}
                 />
               </View>
+              <Text
+                numberOfLines={1}
+                style={[
+                  styles.navLabel,
+                  { color: selected ? foreground : muted },
+                  selected && styles.navLabelSelected,
+                ]}
+              >
+                {item.label}
+              </Text>
             </Pressable>
           );
         })}
@@ -261,18 +265,20 @@ const styles = StyleSheet.create({
   navRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    height: 66,
+    height: 68,
     justifyContent: 'space-around',
-    paddingHorizontal: 24,
+    paddingHorizontal: 8,
   },
-  navButton: { alignItems: 'center', flex: 1, justifyContent: 'center', minHeight: 48 },
+  navButton: { alignItems: 'center', flex: 1, gap: 2, justifyContent: 'center', minHeight: 56 },
   navIconWrap: {
     alignItems: 'center',
     borderRadius: 99,
-    height: 44,
+    height: 32,
     justifyContent: 'center',
-    width: 44,
+    width: 56,
   },
+  navLabel: { fontFamily: VokaFonts.bodyMedium, fontSize: 12 },
+  navLabelSelected: { fontFamily: VokaFonts.bodySemiBold },
   roundIcon: { alignItems: 'center', justifyContent: 'center' },
   pressed: { opacity: 0.66, transform: [{ scale: 0.97 }] },
   eyebrow: { fontFamily: VokaFonts.bodySemiBold, fontSize: 13, lineHeight: 18 },

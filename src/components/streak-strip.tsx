@@ -21,9 +21,10 @@ function caption(streak: StreakSummary) {
       : 'Practise today to start a streak.';
   if (!streak.practisedToday) return 'Practise today to keep it going.';
   if (streak.current >= streak.best && streak.current > 1) return 'Your best run yet. Nice.';
+  // The streak only knows that you practised; whether today's session is done is shown above.
   return streak.restDays > 0
-    ? 'Done for today. A missed day was covered as a rest day.'
-    : 'Done for today.';
+    ? 'You practised today. A missed day was covered as a rest day.'
+    : 'You practised today.';
 }
 
 /** The honest streak: practice days in a row, with at most one rest day a week. */

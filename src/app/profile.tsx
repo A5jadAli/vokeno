@@ -86,7 +86,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <AppScreen activeNav="profile">
+    <AppScreen>
       <View style={styles.profileHeader}>
         <View
           accessibilityLabel={`${displayName} profile initials`}

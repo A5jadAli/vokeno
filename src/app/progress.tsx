@@ -1,404 +1,286 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { AppScreen, Eyebrow } from '@/components/voka-ui';
+import { ProgressFill } from '@/components/motion';
+import { StreakStrip } from '@/components/streak-strip';
 import { SyncStatusNotice } from '@/components/sync-status';
+import { TabHeader } from '@/components/tab-header';
+import { AppScreen } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
-import { useCoachingStore, testDateFor } from '@/features/coaching/store';
+import { testDateFor, useCoachingStore } from '@/features/coaching/store';
 import { curriculumUnits } from '@/features/curriculum/catalog';
-import { listeningScenarios, type LanguageTrack } from '@/features/listening/scenarios';
+import { useHabits } from '@/features/habits/use-habits';
+import { courseUnits, coursePosition } from '@/features/journey/course';
+import {
+  languageDetails,
+  languageTracks,
+  trackColors,
+  type LanguageTrack,
+} from '@/features/language/config';
+import { useSelectedLanguage } from '@/features/language/selection';
+import { listeningScenarios } from '@/features/listening/scenarios';
 import { daysUntilTest, formatTestDate } from '@/features/profile/test-date';
 import { useProgressStore } from '@/features/progress/store';
-import { useLanguageSelection } from '@/features/language/selection';
-import { FoundationPath } from '@/components/foundation-path';
-import { StreakStrip } from '@/components/streak-strip';
-import { useHabits } from '@/features/habits/use-habits';
-import { trackColors } from '@/features/language/config';
+import { reviewSummary } from '@/features/review/schedule';
 
+/** Progress: what you have learned in this language, then this week, then the rest. */
 export default function ProgressScreen() {
   const router = useRouter();
-  const track = useLanguageSelection((state) => state.track);
-  const trackUnits = curriculumUnits.filter((unit) => unit.track === track);
-  const completedIds = useProgressStore((state) => state.completedScenarioIds);
-  const completedUnitIds = useCoachingStore((state) => state.completedUnitIds);
-  const coachingSignals = useCoachingStore((state) => state.signals).filter(
+  const [track, setTrack] = useSelectedLanguage();
+  const progress = useCoachingStore((state) => state.foundations);
+  const preferences = useCoachingStore((state) => state.preferences);
+  const practisedUnits = useCoachingStore((state) => state.completedUnitIds);
+  const signals = useCoachingStore((state) => state.signals).filter(
     (signal) => signal.track === track,
   );
-  const speakingPracticeDates = useCoachingStore((state) => state.speakingPracticeDates);
+  const writingDays = useCoachingStore((state) => state.writingPracticeDates.length);
   const testDate = useCoachingStore((state) => testDateFor(state, track));
-  const writingPracticeDates = useCoachingStore((state) => state.writingPracticeDates);
-  const daysRemaining = daysUntilTest(testDate);
+  const heard = useProgressStore((state) => state.completedScenarioIds);
   const habits = useHabits(track);
-  const next =
-    habits.plan.steps.find((step) => !step.done) ?? habits.plan.bonus ?? habits.plan.steps[0];
-  const completedFor = (track: LanguageTrack) =>
-    listeningScenarios.filter(
-      (scenario) => scenario.track === track && completedIds.includes(scenario.id),
-    ).length;
-  const totalFor = (track: LanguageTrack) =>
-    listeningScenarios.filter((scenario) => scenario.track === track).length;
+  const colors = trackColors[track];
+  const language = languageDetails[track].name;
+  const position = coursePosition(progress, track, preferences[track].startAt);
+  const units = courseUnits(track, progress);
+  const words = reviewSummary(progress, track);
+  const dialogues = listeningScenarios.filter((scenario) => scenario.track === track);
+  const conversations = curriculumUnits.filter((unit) => unit.track === track);
+  const daysLeft = daysUntilTest(testDate);
+  const unitsDone = units.filter((unit) => unit.done === unit.lessons.length).length;
 
   return (
     <AppScreen activeNav="progress">
-      <Text style={styles.title}>Your progress</Text>
+      <TabHeader title="Progress" track={track} onTrack={setTrack} />
       <SyncStatusNotice />
+
+      <Animated.View entering={FadeInDown.duration(220)} style={styles.card}>
+        <Text style={styles.eyebrow}>{language} course</Text>
+        <Text style={styles.big}>
+          {position.finishedLessons} of {position.totalLessons} lessons
+        </Text>
+        <ProgressFill
+          value={position.finishedLessons / Math.max(1, position.totalLessons)}
+          color={colors.accent}
+          track="rgba(19,18,17,0.08)"
+          height={10}
+        />
+        <Text style={styles.meta}>
+          {unitsDone} of {units.length} {units.length === 1 ? 'section' : 'sections'} complete
+          {position.next ? ` · now in ${position.unit?.label ?? position.next.lesson.level}` : ''}
+        </Text>
+        <View style={styles.unitList}>
+          {units.map((unit) => (
+            <View key={unit.id} style={styles.unitRow}>
+              <Text style={styles.unitName} numberOfLines={1}>
+                {unit.label}
+              </Text>
+              <View style={styles.unitBar}>
+                <ProgressFill
+                  value={unit.done / unit.lessons.length}
+                  color={colors.accent}
+                  track="rgba(19,18,17,0.06)"
+                  height={6}
+                />
+              </View>
+              <Text style={styles.unitCount}>
+                {unit.done}/{unit.lessons.length}
+              </Text>
+            </View>
+          ))}
+        </View>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push(`/sprint?track=${track}` as Href)}
+          style={({ pressed }) => [styles.link, pressed && styles.pressed]}
+        >
+          <Text style={styles.linkText}>Open the course</Text>
+          <MaterialCommunityIcons color={Palette.ink} name="chevron-right" size={20} />
+        </Pressable>
+      </Animated.View>
+
+      <View style={styles.stats}>
+        <Stat
+          value={words.learning}
+          label="phrases learned"
+          detail={words.strong ? `${words.strong} well remembered` : 'in your review queue'}
+        />
+        <Stat
+          value={heard.filter((id) => dialogues.some((item) => item.id === id)).length}
+          label="dialogues heard"
+          detail={`of ${dialogues.length}`}
+        />
+        <Stat
+          value={conversations.filter((unit) => practisedUnits.includes(unit.id)).length}
+          label="conversations"
+          detail={`of ${conversations.length}`}
+        />
+      </View>
+
+      <Text accessibilityRole="header" style={styles.sectionTitle}>
+        This week
+      </Text>
       <StreakStrip streak={habits.streak} track={track} week={habits.week} />
+      <Text style={styles.note}>
+        The streak counts days you practise any language. One missed day a week is covered as a rest
+        day, and nothing you have learned is lost when a run ends. Writing days so far:{' '}
+        {writingDays}.
+      </Text>
 
       {testDate ? (
         <Pressable
-          accessibilityLabel="Change test date"
           accessibilityRole="button"
+          accessibilityLabel="Change test date"
           onPress={() => router.push('/test-date' as Href)}
-          style={({ pressed }) => [styles.testDateCard, pressed && styles.pressed]}
+          style={({ pressed }) => [styles.card, styles.row, pressed && styles.pressed]}
         >
-          <MaterialCommunityIcons color={Palette.orange} name="calendar-clock" size={28} />
-          <View style={styles.testDateCopy}>
-            <Eyebrow>Test target · {formatTestDate(testDate)}</Eyebrow>
-            <Text style={styles.testDateTitle}>
-              {daysRemaining !== null && daysRemaining < 0
+          <MaterialCommunityIcons color={Palette.ink} name="calendar-clock" size={24} />
+          <View style={styles.rowCopy}>
+            <Text style={styles.eyebrow}>Test date · {formatTestDate(testDate)}</Text>
+            <Text style={styles.rowTitle}>
+              {daysLeft !== null && daysLeft < 0
                 ? 'This date has passed · tap to update'
-                : daysRemaining === 0
+                : daysLeft === 0
                   ? 'Your test is today'
-                  : daysRemaining === 1
-                    ? '1 day to go'
-                    : `${daysRemaining} days to go`}
+                  : `${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} to go`}
             </Text>
           </View>
-          <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={22} />
+          <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
         </Pressable>
       ) : null}
 
-      <View style={styles.activitySection}>
-        <Eyebrow>Learning activity</Eyebrow>
-        <Text style={styles.activityHint}>
-          Your streak counts the days you practise. One missed day a week is covered as a rest day,
-          and nothing you have learned is lost when a run ends.
-        </Text>
-      </View>
-
-      <View style={styles.practiceCards}>
-        <PracticeCard
-          count={writingPracticeDates.length}
-          icon="format-letter-case"
-          label="Writing days"
-        />
-        <PracticeCard
-          count={speakingPracticeDates.length}
-          icon="microphone-outline"
-          label="Speaking days"
-        />
-      </View>
-
-      <View style={styles.trackCards}>
-        <TrackCard
-          color={Palette.orange}
-          completed={completedFor('EN')}
-          label="English listening"
-          total={totalFor('EN')}
-          track="EN"
-        />
-        <TrackCard
-          color={Palette.yellow}
-          completed={completedFor('DE')}
-          label="German listening"
-          total={totalFor('DE')}
-          track="DE"
-        />
-        <TrackCard
-          color={trackColors.ES.accent}
-          completed={completedFor('ES')}
-          label="Spanish listening"
-          total={totalFor('ES')}
-          track="ES"
-        />
-      </View>
-
-      <FoundationPath compact showHero={false} track={track} />
-
-      <View style={styles.speakingCard}>
-        <View style={styles.speakingHeader}>
-          <View style={{ flex: 1 }}>
-            <Eyebrow color={Palette.orange}>Speaking practice</Eyebrow>
-            <Text style={styles.speakingValue}>
-              {trackUnits.filter((unit) => completedUnitIds.includes(unit.id)).length}/
-              {trackUnits.length} speaking scenarios practised
-            </Text>
-          </View>
-          <Pressable
-            accessibilityLabel="Open learning path from progress"
-            onPress={() => router.push(`/sprint?track=${track}`)}
-            style={({ pressed }) => [styles.pathButton, pressed && styles.pressed]}
-          >
-            <Text style={styles.pathButtonText}>Open path</Text>
-          </Pressable>
+      {signals.length ? (
+        <View style={styles.card}>
+          <Text style={styles.eyebrow}>What Vokeno noticed when you spoke</Text>
+          {signals.slice(0, 3).map((signal) => (
+            <View key={signal.label} style={styles.signal}>
+              <Text style={styles.rowTitle}>
+                {signal.label} · {signal.count}×
+              </Text>
+              <Text style={styles.meta}>{signal.reason}</Text>
+            </View>
+          ))}
         </View>
-        {coachingSignals.length ? (
-          <View style={styles.signalList}>
-            <Eyebrow>What VOKENO has noticed</Eyebrow>
-            {coachingSignals.slice(0, 3).map((signal) => (
-              <View key={`${signal.track}-${signal.label}`} style={styles.signalRow}>
-                <Text style={styles.signalTrack}>{signal.track}</Text>
-                <View style={styles.signalCopy}>
-                  <Text style={styles.signalTitle}>
-                    {signal.label} · noticed {signal.count}×
-                  </Text>
-                  <Text style={styles.signalReason}>{signal.reason}</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        ) : (
-          <Text style={styles.noSignals}>
-            Complete live speaking turns and Vokeno will record repeated hesitation or word-search
-            patterns here, without making up a score.
-          </Text>
-        )}
-      </View>
+      ) : null}
 
-      <View style={styles.nextCard}>
-        <View style={styles.nextCopy}>
-          <Eyebrow color={Palette.orange}>Next step</Eyebrow>
-          <Text style={styles.nextTitle}>{next.title}</Text>
-          <Text style={styles.nextDescription}>{next.why}</Text>
-        </View>
-        <Pressable
-          accessibilityLabel={`${next.action}: ${next.title}`}
-          accessibilityRole="button"
-          onPress={() => router.push(next.href as Href)}
-          style={({ pressed }) => [styles.nextButton, pressed && styles.pressed]}
-        >
-          <MaterialCommunityIcons color={Palette.ink} name="microphone" size={20} />
-          <Text style={styles.nextButtonText}>{next.action}</Text>
-        </Pressable>
+      <Text accessibilityRole="header" style={styles.sectionTitle}>
+        Your other languages
+      </Text>
+      <View style={styles.others}>
+        {languageTracks
+          .filter((item) => item !== track)
+          .map((item) => (
+            <OtherLanguage key={item} track={item} onOpen={() => setTrack(item)} />
+          ))}
       </View>
     </AppScreen>
   );
 }
 
-function PracticeCard({
-  count,
-  icon,
-  label,
-}: {
-  count: number;
-  icon: 'format-letter-case' | 'microphone-outline';
-  label: string;
-}) {
+function OtherLanguage({ track, onOpen }: { track: LanguageTrack; onOpen: () => void }) {
+  const progress = useCoachingStore((state) => state.foundations);
+  const startAt = useCoachingStore((state) => state.preferences[track].startAt);
+  const position = coursePosition(progress, track, startAt);
   return (
-    <View style={styles.practiceCard}>
-      <MaterialCommunityIcons color={Palette.orange} name={icon} size={24} />
-      <Text style={styles.practiceCount}>{count}</Text>
-      <Text style={styles.practiceLabel}>{label}</Text>
-    </View>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`Show ${languageDetails[track].name} progress`}
+      onPress={onOpen}
+      style={({ pressed }) => [styles.other, pressed && styles.pressed]}
+    >
+      <View style={[styles.badge, { backgroundColor: trackColors[track].accent }]}>
+        <Text style={[styles.badgeText, { color: trackColors[track].onAccent }]}>{track}</Text>
+      </View>
+      <View style={styles.rowCopy}>
+        <Text style={styles.rowTitle}>{languageDetails[track].name}</Text>
+        <Text style={styles.meta}>
+          {position.started
+            ? `${position.finishedLessons} of ${position.totalLessons} lessons done`
+            : 'Not started'}
+        </Text>
+      </View>
+      <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
+    </Pressable>
   );
 }
 
-function TrackCard({
-  color,
-  completed,
-  label,
-  total,
-  track,
-}: {
-  color: string;
-  completed: number;
-  label: string;
-  total: number;
-  track: LanguageTrack;
-}) {
+function Stat({ value, label, detail }: { value: number; label: string; detail: string }) {
   return (
-    <View style={styles.trackCard}>
-      <View style={[styles.trackBadge, { backgroundColor: color }]}>
-        <Text style={[styles.trackValue, { color: trackColors[track].onAccent }]}>{track}</Text>
-      </View>
-      <Text style={styles.trackCount}>
-        {completed}/{total}
-      </Text>
-      <Text style={styles.trackLabel}>{label}</Text>
+    <View style={styles.stat}>
+      <Text style={styles.statValue}>{value}</Text>
+      <Text style={styles.statLabel}>{label}</Text>
+      <Text style={styles.statDetail}>{detail}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  title: {
-    color: Palette.ink,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
-    paddingHorizontal: 22,
-    paddingTop: 14,
-  },
-  activitySection: { paddingHorizontal: 22, paddingTop: 24 },
-  testDateCard: {
-    alignItems: 'center',
+  card: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
     borderRadius: 22,
     borderWidth: 1,
-    flexDirection: 'row',
-    gap: 13,
+    gap: 10,
     marginHorizontal: 18,
-    marginTop: 18,
-    padding: 17,
-  },
-  testDateCopy: { flex: 1 },
-  testDateTitle: {
-    color: Palette.ink,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: 18,
-    marginTop: 4,
-  },
-  activityHint: {
-    color: Palette.muted,
-    fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
     marginTop: 10,
-  },
-  trackCards: { flexDirection: 'row', gap: 12, paddingHorizontal: 18, paddingTop: 18 },
-  practiceCards: { flexDirection: 'row', gap: 12, paddingHorizontal: 18, paddingTop: 12 },
-  practiceCard: {
-    alignItems: 'center',
-    backgroundColor: Palette.white,
-    borderColor: Palette.line,
-    borderRadius: 20,
-    borderWidth: 1,
-    flex: 1,
-    padding: 16,
-  },
-  practiceCount: {
-    color: Palette.ink,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: 22,
-    marginTop: 5,
-  },
-  practiceLabel: {
-    color: Palette.muted,
-    fontFamily: VokaFonts.bodyMedium,
-    fontSize: 12,
-    marginTop: 2,
-  },
-  trackCard: {
-    alignItems: 'center',
-    backgroundColor: Palette.white,
-    borderColor: Palette.line,
-    borderRadius: 24,
-    borderWidth: 1,
-    flex: 1,
     padding: 18,
   },
-  trackBadge: {
-    alignItems: 'center',
-    borderRadius: 18,
-    height: 52,
-    justifyContent: 'center',
-    width: 52,
-  },
-  trackValue: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
-  trackCount: {
-    color: Palette.ink,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: 18,
-    marginTop: 10,
-  },
-  trackLabel: {
+  eyebrow: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
+  big: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22, lineHeight: 28 },
+  meta: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, lineHeight: 20 },
+  unitList: { gap: 8, marginTop: 4 },
+  unitRow: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  unitName: { color: Palette.ink, flex: 1.4, fontFamily: VokaFonts.bodyMedium, fontSize: 13 },
+  unitBar: { flex: 1, flexDirection: 'row' },
+  unitCount: {
     color: Palette.secondary,
     fontFamily: VokaFonts.bodySemiBold,
     fontSize: 12,
-    marginTop: 2,
-    textAlign: 'center',
+    minWidth: 28,
+    textAlign: 'right',
   },
-  speakingCard: {
-    backgroundColor: Palette.white,
-    borderColor: Palette.line,
-    borderRadius: 24,
-    borderWidth: 1,
-    marginHorizontal: 18,
-    marginTop: 18,
-    padding: 19,
-  },
-  speakingHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
-  speakingValue: {
+  link: { alignItems: 'center', flexDirection: 'row', gap: 4, minHeight: 44 },
+  linkText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
+  stats: { flexDirection: 'row', gap: 10, marginHorizontal: 18, marginTop: 12 },
+  stat: { backgroundColor: Palette.white, borderRadius: 18, flex: 1, gap: 2, padding: 14 },
+  statValue: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22 },
+  statLabel: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
+  statDetail: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 12 },
+  sectionTitle: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
     fontSize: 18,
-    marginTop: 4,
+    marginHorizontal: 20,
+    marginTop: 24,
   },
-  pathButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: Palette.ink,
-    borderRadius: 99,
-    minHeight: 40,
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-  },
-  pathButtonText: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
-  signalList: { gap: 10, marginTop: 18 },
-  signalRow: {
-    alignItems: 'flex-start',
-    borderTopColor: Palette.line,
-    borderTopWidth: 1,
-    flexDirection: 'row',
-    gap: 10,
-    paddingTop: 10,
-  },
-  signalTrack: {
-    backgroundColor: Palette.soft,
-    borderRadius: 8,
-    color: Palette.ink,
-    fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
-    paddingHorizontal: 7,
-    paddingVertical: 5,
-  },
-  signalCopy: { flex: 1 },
-  signalTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
-  signalReason: {
-    color: Palette.muted,
+  note: {
+    color: Palette.secondary,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 2,
+    fontSize: 13,
+    lineHeight: 19,
+    marginHorizontal: 22,
   },
-  noSignals: {
-    color: Palette.muted,
-    fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 14,
-  },
-  nextCard: {
-    backgroundColor: Palette.white,
-    borderColor: Palette.line,
-    borderRadius: 24,
-    borderWidth: 1,
-    margin: 18,
-    padding: 20,
-  },
-  nextCopy: { gap: 7 },
-  nextTitle: {
-    color: Palette.ink,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: 22,
-    lineHeight: 27,
-  },
-  nextDescription: {
-    color: Palette.muted,
-    fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
-  },
-  nextButton: {
+  row: { alignItems: 'center', flexDirection: 'row' },
+  rowCopy: { flex: 1, gap: 2 },
+  rowTitle: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 16 },
+  signal: { borderTopColor: Palette.line, borderTopWidth: 1, gap: 2, paddingTop: 10 },
+  others: { gap: 8, marginHorizontal: 18, marginTop: 10, marginBottom: 18 },
+  other: {
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: Palette.orange,
-    borderRadius: 99,
+    backgroundColor: Palette.white,
+    borderRadius: 18,
     flexDirection: 'row',
-    gap: 7,
-    marginTop: 16,
-    paddingHorizontal: 17,
-    paddingVertical: 11,
+    gap: 12,
+    minHeight: 64,
+    padding: 12,
   },
-  nextButtonText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
-  pressed: { opacity: 0.72, transform: [{ scale: 0.99 }] },
+  badge: {
+    alignItems: 'center',
+    borderRadius: 12,
+    height: 40,
+    justifyContent: 'center',
+    width: 40,
+  },
+  badgeText: { fontFamily: VokaFonts.bodyBold, fontSize: 13 },
+  pressed: { opacity: 0.7 },
 });
