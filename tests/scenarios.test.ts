@@ -30,6 +30,28 @@ describe('listening scenario catalogue', () => {
     });
   });
 
+  it('only lists phrases the learner actually hears, with a real plainer form', () => {
+    const englishWords = /\b(the|you|my|with|is|and|I)\b/;
+    for (const scenario of listeningScenarios) {
+      const heardText = scenario.lines.map((line) => line.text.toLowerCase()).join(' ');
+      expect([scenario.id, scenario.phrases.length >= 3 && scenario.phrases.length <= 4]).toEqual([
+        scenario.id,
+        true,
+      ]);
+      for (const phrase of scenario.phrases) {
+        expect([scenario.id, heardText.includes(phrase.heard.toLowerCase())]).toEqual([
+          scenario.id,
+          true,
+        ]);
+        expect(phrase.meaning.trim()).toBeTruthy();
+        if (phrase.plain === undefined) continue;
+        expect(phrase.plain).not.toBe(phrase.heard);
+        if (scenario.track !== 'EN')
+          expect([phrase.plain, englishWords.test(phrase.plain)]).toEqual([phrase.plain, false]);
+      }
+    }
+  });
+
   it('falls back safely for missing or invalid lesson ids', () => {
     expect(getScenario()).toBe(listeningScenarios[0]);
     expect(getScenario('not-real')).toBe(listeningScenarios[0]);

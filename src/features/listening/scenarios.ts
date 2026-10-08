@@ -36,7 +36,8 @@ export type ListeningScenario = {
     | 'stethoscope'
     | 'train';
   lines: DialogueLine[];
-  phrases: { heard: string; full: string; meaning: string }[];
+  /** What to listen for: as heard in a line, the plainer form when it differs, and a note. */
+  phrases: { heard: string; plain?: string; meaning: string }[];
   question: {
     prompt: string;
     options: string[];
@@ -79,16 +80,16 @@ export const listeningScenarios: ListeningScenario[] = [
       },
     ],
     phrases: [
-      { heard: 'Hiya', full: 'Hi / hello', meaning: 'A friendly, informal greeting.' },
+      { heard: 'Hiya', meaning: 'A friendly, informal hello, very common in Britain.' },
       {
-        heard: 'D’you want…?',
-        full: 'Do you want…?',
+        heard: 'D’you want',
+        plain: 'Do you want',
         meaning: '“Do” and “you” blend together in fast speech.',
       },
       {
-        heard: 'I’m all right',
-        full: 'No, thank you',
-        meaning: 'In this context it politely declines the offer.',
+        heard: 'No, I’m all right, thanks.',
+        plain: 'No, thank you.',
+        meaning: 'A polite British way to say no to an offer. It is not about how you feel.',
       },
     ],
     question: {
@@ -122,19 +123,18 @@ export const listeningScenarios: ListeningScenario[] = [
     ],
     phrases: [
       {
-        heard: 'twelve-ten service',
-        full: 'the train scheduled for 12:10',
-        meaning: 'Announcements often replace “train” with “service.”',
+        heard: 'the twelve-ten service',
+        plain: 'the 12:10 train',
+        meaning: 'Announcements call trains “services”.',
       },
       {
-        heard: 'running late',
-        full: 'delayed',
-        meaning: 'A common phrase for transport that is behind schedule.',
+        heard: 'running approximately fifteen minutes late',
+        plain: 'about 15 minutes late',
+        meaning: 'Announcements use long, formal phrasing. Listen for the number.',
       },
       {
         heard: 'instead of',
-        full: 'in place of',
-        meaning: 'Signals that the original platform has changed.',
+        meaning: 'The new platform comes first; the old one comes after “instead of”.',
       },
     ],
     question: {
@@ -174,18 +174,19 @@ export const listeningScenarios: ListeningScenario[] = [
     phrases: [
       {
         heard: 'You all right?',
-        full: 'Hello, how are you?',
-        meaning: 'Usually a casual greeting, not a concern about a problem.',
+        plain: 'Hello, how are you?',
+        meaning:
+          'A casual British greeting, not a question about a problem. “Yeah, not bad” is a normal answer.',
       },
       {
-        heard: 'didn’t get up to much',
-        full: 'did not do very much',
+        heard: 'Didn’t get up to much',
+        plain: 'I did not do very much.',
         meaning: 'A natural way to say the weekend was quiet.',
       },
       {
-        heard: 'we’d better head in',
-        full: 'we should go inside now',
-        meaning: 'Suggests it is time to leave or move somewhere.',
+        heard: 'We’d better head in.',
+        plain: 'We should go inside now.',
+        meaning: 'Suggests it is time to go somewhere.',
       },
     ],
     question: {
@@ -235,17 +236,16 @@ export const listeningScenarios: ListeningScenario[] = [
     phrases: [
       {
         heard: 'Can I take your surname?',
-        full: 'What is your surname?',
+        plain: 'What is your surname?',
         meaning: 'A polite service phrase for asking for details.',
       },
       {
         heard: 'Sorry, no, the sixteenth',
-        full: 'a self-correction',
-        meaning: 'The corrected detail is the answer; the first one is a distractor.',
+        meaning:
+          'A self-correction. The corrected detail is the answer; the first one is a distractor.',
       },
       {
-        heard: 'forty',
-        full: '40, not 14',
+        heard: 'forty pounds',
         meaning: 'Tens stress the first syllable (FORty); teens stress the end (fourTEEN).',
       },
     ],
@@ -287,13 +287,17 @@ export const listeningScenarios: ListeningScenario[] = [
     phrases: [
       {
         heard: 'have you got a sec?',
-        full: 'do you have a second?',
+        plain: 'do you have a second?',
         meaning: 'A casual way to ask for a moment of someone’s time.',
       },
-      { heard: 'quid', full: 'pounds', meaning: 'Informal British word for pounds (£).' },
+      {
+        heard: 'quid',
+        plain: 'pounds',
+        meaning: 'Informal British word for pounds (£). It never takes an s: sixty quid.',
+      },
       {
         heard: 'to be fair',
-        full: 'honestly / in fairness',
+        plain: 'honestly',
         meaning: 'Softens or balances what you are saying.',
       },
     ],
@@ -338,18 +342,16 @@ export const listeningScenarios: ListeningScenario[] = [
     ],
     phrases: [
       {
-        heard: 'game changer',
-        full: 'something that transforms a situation',
-        meaning: 'A modern, widely used idiom.',
+        heard: 'Game changer',
+        meaning: 'Something that transforms a situation. A modern, widely used idiom.',
       },
       {
         heard: 'overhyped',
-        full: 'praised more than it deserves',
-        meaning: 'Common in tech and media conversation.',
+        meaning: 'Praised more than it deserves. Common in tech and media conversation.',
       },
       {
-        heard: 'I wouldn’t go so far as to say …',
-        full: 'I don’t fully agree that …',
+        heard: 'I wouldn’t go so far as to say',
+        plain: 'I don’t fully agree that',
         meaning: 'Politely limits an extreme claim.',
       },
     ],
@@ -403,12 +405,20 @@ export const listeningScenarios: ListeningScenario[] = [
     ],
     phrases: [
       {
-        heard: 'It’s under Ahmed',
-        full: 'It is booked in the name Ahmed',
-        meaning: 'A common way to give the name on a booking.',
+        heard: 'It’s under Ahmed.',
+        plain: 'It is booked in the name Ahmed.',
+        meaning: 'The usual way to give the name a booking is under.',
       },
-      { heard: 'running … behind', full: 'late', meaning: 'Behind schedule.' },
-      { heard: 'take a seat', full: 'please sit down', meaning: 'A polite instruction.' },
+      {
+        heard: 'running about ten minutes behind',
+        plain: 'about ten minutes late',
+        meaning: 'Behind schedule. You will hear it about doctors, trains and meetings.',
+      },
+      {
+        heard: 'take a seat',
+        plain: 'please sit down',
+        meaning: 'A polite instruction in waiting rooms and offices.',
+      },
     ],
     question: {
       prompt: 'How late is the doctor?',
@@ -447,16 +457,20 @@ export const listeningScenarios: ListeningScenario[] = [
       },
     ],
     phrases: [
-      { heard: 'full-on', full: 'intense, very busy', meaning: 'Informal and very common.' },
       {
-        heard: 'get my head round',
-        full: 'understand something complicated',
-        meaning: 'Informal British English.',
+        heard: 'full-on',
+        plain: 'very intense',
+        meaning: 'Informal and very common: intense, very busy.',
       },
       {
-        heard: 'it’ll click',
-        full: 'you will suddenly understand',
-        meaning: 'Something becomes clear.',
+        heard: 'getting my head round',
+        plain: 'learning to understand',
+        meaning: 'Informal British English for slowly understanding something complicated.',
+      },
+      {
+        heard: 'it’ll all click',
+        plain: 'you will suddenly understand it',
+        meaning: 'Something suddenly becomes clear.',
       },
     ],
     question: {
@@ -505,16 +519,18 @@ export const listeningScenarios: ListeningScenario[] = [
     ],
     phrases: [
       {
-        heard: 'The first reason … Secondly …',
-        full: 'signposting',
+        heard: 'The first reason is',
         meaning:
-          'Lecturers signal their structure; use it to follow the argument and the questions.',
+          'Signposting: lecturers announce their structure. Listen for “Secondly” and “However” next.',
       },
-      { heard: 'noticeably cooler', full: 'clearly cooler', meaning: 'A careful but clear claim.' },
       {
-        heard: 'However, …',
-        full: 'a contrast is coming',
-        meaning: 'Exam answers often follow a contrast word.',
+        heard: 'noticeably cooler',
+        plain: 'clearly cooler',
+        meaning: 'A careful but clear claim: the difference is easy to notice.',
+      },
+      {
+        heard: 'However,',
+        meaning: 'A contrast is coming. Exam answers often follow a contrast word.',
       },
     ],
     question: {
@@ -562,15 +578,20 @@ export const listeningScenarios: ListeningScenario[] = [
       },
     ],
     phrases: [
-      { heard: 'Morgen!', full: 'Guten Morgen!', meaning: 'The everyday shortened greeting.' },
+      { heard: 'Morgen!', plain: 'Guten Morgen!', meaning: 'The everyday short greeting.' },
+      {
+        heard: 'Was darf’s sein?',
+        plain: 'Was darf es sein?',
+        meaning: 'What can I get you? The standard question at a bakery counter.',
+      },
       {
         heard: 'Sonst noch was?',
-        full: 'Möchten Sie sonst noch etwas?',
-        meaning: 'A natural, less formal “anything else?”',
+        plain: 'Sonst noch etwas?',
+        meaning: 'Anything else? In speech, etwas is usually just was.',
       },
       {
         heard: 'Nee, das war’s.',
-        full: 'Nein, das war alles.',
+        plain: 'Nein, das war alles.',
         meaning: 'Common spoken German for “no, that’s it.”',
       },
     ],
@@ -610,19 +631,18 @@ export const listeningScenarios: ListeningScenario[] = [
     ],
     phrases: [
       {
+        heard: 'zehn Minuten Verspätung',
+        meaning: 'Verspätung means delay. You will hear it in almost every announcement.',
+      },
+      {
         heard: 'circa zehn Minuten',
-        full: 'ungefähr zehn Minuten',
-        meaning: 'Approximately ten minutes.',
+        plain: 'ungefähr zehn Minuten',
+        meaning: 'Announcements say circa; people usually say ungefähr.',
       },
       {
-        heard: 'abweichend von',
-        full: 'anders als geplant',
-        meaning: 'Different from what was scheduled.',
-      },
-      {
-        heard: 'erfolgt von Gleis neun',
-        full: 'findet auf Gleis neun statt',
-        meaning: 'Formal announcement language for “will be from platform nine.”',
+        heard: 'Die Abfahrt erfolgt abweichend von Gleis neun.',
+        plain: 'Der Zug fährt heute von Gleis neun ab.',
+        meaning: 'Typical station language: the train leaves from a different platform, nine.',
       },
     ],
     question: {
@@ -662,18 +682,19 @@ export const listeningScenarios: ListeningScenario[] = [
     phrases: [
       {
         heard: 'ich meld mich',
-        full: 'ich melde mich',
-        meaning: 'The final “e” is often dropped in casual speech.',
+        plain: 'ich melde mich',
+        meaning: 'The final e is often dropped in casual speech.',
       },
       {
-        heard: 'die wär frei',
-        full: 'die Wohnung wäre frei',
-        meaning: 'The subject and ending are shortened when context is clear.',
+        heard: 'Die wär ab nächstem Monat frei.',
+        plain: 'Die Wohnung wäre ab nächstem Monat frei.',
+        meaning:
+          'Die means the flat; the subject and ending are shortened because the context is clear.',
       },
       {
-        heard: 'einfach kurz zurückrufen',
-        full: 'bitte kurz zurückrufen',
-        meaning: '“Einfach” softens a casual request here.',
+        heard: 'rufen Sie mich einfach kurz zurück',
+        meaning:
+          'Einfach and kurz make the request light and easy: just give me a quick call back.',
       },
     ],
     question: {
@@ -723,13 +744,22 @@ export const listeningScenarios: ListeningScenario[] = [
       },
     ],
     phrases: [
-      { heard: 'am Apparat', full: 'am Telefon', meaning: '“Speaking”, when answering the phone.' },
+      { heard: 'am Apparat', meaning: '“Speaking”, when someone answers the phone at work.' },
       {
-        heard: 'Ich bräuchte …',
-        full: 'Ich brauche …',
-        meaning: 'The Konjunktiv II form makes a need sound polite.',
+        heard: 'Ich bräuchte einen Termin',
+        plain: 'Ich brauche einen Termin',
+        meaning: 'The Konjunktiv II form makes a request sound polite.',
       },
-      { heard: 'ginge noch', full: 'wäre noch möglich', meaning: 'Would still be possible.' },
+      {
+        heard: 'ich hab seit Montag Fieber',
+        plain: 'ich habe seit Montag Fieber',
+        meaning: 'Hab is habe without the final e, normal in speech.',
+      },
+      {
+        heard: 'ginge noch',
+        plain: 'wäre noch möglich',
+        meaning: 'Would still be possible: the receptionist offers a free slot.',
+      },
     ],
     question: {
       prompt: 'When is the appointment?',
@@ -776,17 +806,22 @@ export const listeningScenarios: ListeningScenario[] = [
       },
     ],
     phrases: [
-      { heard: 'haste, kannste', full: 'hast du, kannst du', meaning: 'Du merges into the verb.' },
       {
-        heard: 'Ich mach grad …',
-        full: 'Ich mache gerade …',
-        meaning: 'I’m just in the middle of …',
+        heard: 'haste',
+        plain: 'hast du',
+        meaning: 'Du merges into the verb in fast, casual speech.',
       },
       {
-        heard: 'Da sag ich nicht nein.',
-        full: 'Das nehme ich gern an.',
-        meaning: 'A warm, casual yes.',
+        heard: 'Ich mach grad Nudeln.',
+        plain: 'Ich mache gerade Nudeln.',
+        meaning: 'I’m just making pasta. Mach and grad are shortened.',
       },
+      {
+        heard: 'Kannste mal',
+        plain: 'Kannst du mal',
+        meaning: 'Mal makes a request softer and more casual.',
+      },
+      { heard: 'Da sag ich nicht nein.', meaning: 'A warm, casual yes: I won’t say no.' },
     ],
     question: {
       prompt: 'What does Jonas remind Lena about?',
@@ -829,16 +864,17 @@ export const listeningScenarios: ListeningScenario[] = [
     ],
     phrases: [
       {
-        heard: 'Hast du noch was vor?',
-        full: 'Hast du noch etwas geplant?',
-        meaning: 'Do you have any plans for later?',
+        heard: 'Hast du heute noch was vor?',
+        plain: 'Hast du heute noch etwas vor?',
+        meaning: 'Any plans for later? Was is short for etwas.',
       },
       {
-        heard: 'Komm doch mit!',
-        full: 'Komm bitte mit!',
-        meaning: 'Doch makes it a friendly nudge.',
+        heard: 'geh ich noch kurz zum Sport',
+        plain: 'gehe ich noch kurz zum Sport',
+        meaning: 'Geh is gehe without the final e; zum Sport often means the gym.',
       },
-      { heard: 'Na gut', full: 'Also gut', meaning: 'Reluctant agreement: oh, all right.' },
+      { heard: 'Komm doch mit!', meaning: 'Doch makes it a friendly nudge: come on, join us!' },
+      { heard: 'Na gut', meaning: 'Reluctant agreement: oh, all right.' },
     ],
     question: {
       prompt: 'What does Tim decide?',
@@ -890,12 +926,17 @@ export const listeningScenarios: ListeningScenario[] = [
       },
     ],
     phrases: [
-      { heard: 'Ich wohne jetzt in …', full: 'I live in … now', meaning: 'Jetzt means now.' },
-      { heard: 'beginnt um neun Uhr', full: 'fängt um neun Uhr an', meaning: 'Starts at nine.' },
       {
-        heard: 'Die Lehrerin heißt …',
-        full: 'Der Name der Lehrerin ist …',
-        meaning: 'The teacher is called …',
+        heard: 'Ich wohne jetzt in Leipzig.',
+        meaning: 'Jetzt means now: she has moved to Leipzig.',
+      },
+      {
+        heard: 'Der Kurs beginnt um neun Uhr.',
+        meaning: 'Um + time means at. In everyday speech you also hear: Der Kurs fängt um neun an.',
+      },
+      {
+        heard: 'Sie spricht langsam',
+        meaning: 'Sie with a singular verb (spricht) means she. With a plural verb it means they.',
       },
     ],
     question: {
@@ -948,13 +989,15 @@ export const listeningScenarios: ListeningScenario[] = [
       },
     ],
     phrases: [
-      { heard: 'Sonst noch etwas?', full: 'Möchten Sie noch etwas?', meaning: 'Anything else?' },
       {
-        heard: 'Was kostet das zusammen?',
-        full: 'Wie viel kostet alles?',
-        meaning: 'How much is it altogether?',
+        heard: 'Was möchten Sie?',
+        meaning: 'The polite question at a stall or counter: what would you like?',
       },
-      { heard: 'Das macht …', full: 'Das kostet …', meaning: 'That comes to …' },
+      { heard: 'Ich hätte gern', meaning: 'The most common polite way to order: I would like …' },
+      {
+        heard: 'Das macht vier Euro zwanzig.',
+        meaning: 'That comes to €4.20. Prices are said as euros, then cents.',
+      },
     ],
     question: {
       prompt: 'How much does the customer pay?',
@@ -1002,20 +1045,16 @@ export const listeningScenarios: ListeningScenario[] = [
     ],
     phrases: [
       {
-        heard: 'Am Samstag schlafe ich …',
-        full: 'Samstags schlafe ich …',
-        meaning: 'Time first, then the verb.',
+        heard: 'Am Samstag schlafe ich lange.',
+        meaning:
+          'Lange schlafen means to sleep in. The time comes first, so the verb comes second: schlafe ich.',
       },
       {
         heard: 'mit meiner Freundin',
-        full: 'with my girlfriend',
-        meaning: 'Meine Freundin usually means girlfriend.',
+        meaning:
+          'Meine Freundin usually means my girlfriend. For a friend, people often say eine Freundin von mir.',
       },
-      {
-        heard: 'Sie wohnen in …',
-        full: 'They live in …',
-        meaning: 'Sie with a plural verb means they.',
-      },
+      { heard: 'Sie wohnen in Hamburg.', meaning: 'Sie with a plural verb (wohnen) means they.' },
     ],
     question: {
       prompt: 'What does Tom do on Sunday?',
@@ -1062,9 +1101,16 @@ export const listeningScenarios: ListeningScenario[] = [
       },
     ],
     phrases: [
-      { heard: 'ist ausgefallen', full: 'fuhr nicht', meaning: 'Was cancelled.' },
-      { heard: 'auch noch', full: 'zusätzlich', meaning: 'On top of that.' },
-      { heard: 'Zum Glück', full: 'Glücklicherweise', meaning: 'Luckily.' },
+      {
+        heard: 'Mein Wecker hat nicht geklingelt',
+        meaning: 'My alarm didn’t go off. In speech, the past is usually the perfect tense.',
+      },
+      { heard: 'auch noch', meaning: 'On top of that: something else went wrong too.' },
+      {
+        heard: 'ausgefallen',
+        meaning: 'Cancelled. You will hear it for trains, classes and meetings.',
+      },
+      { heard: 'Zum Glück', meaning: 'Luckily. Much more common in speech than glücklicherweise.' },
     ],
     question: {
       prompt: 'What happened to the S-Bahn?',
@@ -1114,18 +1160,16 @@ export const listeningScenarios: ListeningScenario[] = [
     phrases: [
       {
         heard: 'Entschuldigen Sie die Störung.',
-        full: 'Sorry, dass ich störe.',
-        meaning: 'Sorry to bother you.',
+        meaning: 'Sorry to bother you. A polite opener with people you do not know well.',
       },
       {
-        heard: 'Es ist nur so, dass …',
-        full: 'Das Problem ist, dass …',
-        meaning: 'A soft way to start a complaint.',
+        heard: 'Es ist nur so, dass',
+        meaning: 'A soft way to start a complaint: it’s just that …',
       },
       {
         heard: 'das war mir nicht bewusst',
-        full: 'das wusste ich nicht',
-        meaning: 'I wasn’t aware of that.',
+        plain: 'das wusste ich nicht',
+        meaning: 'I wasn’t aware of that. A polite way to admit a problem.',
       },
     ],
     question: {
@@ -1140,7 +1184,7 @@ export const listeningScenarios: ListeningScenario[] = [
     language: 'es-MX',
     languageName: 'Spanish',
     title: 'A first meeting',
-    context: 'A short introduction and a question back',
+    context: 'Introduce yourself and ask a question back',
     level: 'A1',
     duration: '25 sec',
     accent: 'Everyday Mexican Spanish',
@@ -1148,45 +1192,51 @@ export const listeningScenarios: ListeningScenario[] = [
     lines: [
       {
         speaker: 'Ana',
-        text: 'Hola, me llamo Ana. ¿Y tú?',
-        translation: 'Hi, my name is Ana. And you?',
+        text: '¡Hola! Soy Ana. ¿Cómo te llamas?',
+        translation: 'Hi! I’m Ana. What’s your name?',
+      },
+      { speaker: 'Omar', text: 'Omar. Mucho gusto.', translation: 'Omar. Nice to meet you.' },
+      {
+        speaker: 'Ana',
+        text: 'Igualmente. ¿Y de dónde eres?',
+        translation: 'Likewise. And where are you from?',
       },
       {
         speaker: 'Omar',
-        text: 'Soy Omar. Mucho gusto.',
-        translation: 'I am Omar. Nice to meet you.',
+        text: 'De Pakistán, pero vivo aquí, en la Ciudad de México.',
+        translation: 'From Pakistan, but I live here, in Mexico City.',
       },
       {
         speaker: 'Ana',
-        text: 'Mucho gusto. ¿De dónde eres?',
-        translation: 'Nice to meet you. Where are you from?',
+        text: '¡Ah, mira! ¿Y te gusta?',
+        translation: 'Oh, nice! And do you like it?',
       },
       {
         speaker: 'Omar',
-        text: 'Soy de Pakistán. ¿Y tú?',
-        translation: 'I am from Pakistan. And you?',
+        text: 'Sí, me encanta. Bueno, menos el tráfico.',
+        translation: 'Yes, I love it. Well, except the traffic.',
       },
     ],
     phrases: [
       {
-        heard: '¿Y tú?',
-        full: '¿Y tú?',
-        meaning: 'And you? A quick way to pass the question back.',
+        heard: 'Soy Ana.',
+        plain: 'Me llamo Ana.',
+        meaning: 'The quickest everyday way to say your name. Me llamo Ana is also correct.',
       },
       {
-        heard: 'Mucho gusto.',
-        full: 'Mucho gusto.',
-        meaning: 'A common nice to meet you in Mexico.',
+        heard: 'Omar.',
+        plain: 'Me llamo Omar.',
+        meaning: 'A one-word answer is normal: the question already says what it is about.',
       },
       {
-        heard: '¿De dónde eres?',
-        full: '¿De dónde eres?',
-        meaning: 'Where are you from? Informal tú form.',
+        heard: '¡Ah, mira!',
+        meaning: 'Oh, nice! A reaction to something interesting. Here mira does not mean “look”.',
       },
+      { heard: 'menos el tráfico', meaning: 'Menos here means except.' },
     ],
     question: {
-      prompt: 'Where is Omar from?',
-      options: ['Mexico', 'Pakistan', 'Spain'],
+      prompt: 'Where does Omar live now?',
+      options: ['In Pakistan', 'In Mexico City', 'In Spain'],
       correctIndex: 1,
     },
   },
@@ -1196,7 +1246,7 @@ export const listeningScenarios: ListeningScenario[] = [
     language: 'es-MX',
     languageName: 'Spanish',
     title: 'A quick café order',
-    context: 'Order a drink, make a change and pay',
+    context: 'Order a drink, change your mind and pay',
     level: 'A1',
     duration: '35 sec',
     accent: 'Everyday Mexican Spanish',
@@ -1204,33 +1254,50 @@ export const listeningScenarios: ListeningScenario[] = [
     lines: [
       {
         speaker: 'Barista',
-        text: 'Buenos días. ¿Qué le sirvo?',
-        translation: 'Good morning. What can I get you?',
+        text: 'Buenos días. ¿Qué le preparo?',
+        translation: 'Good morning. What can I make you?',
       },
       {
         speaker: 'Cliente',
-        text: 'Un café con leche, sin azúcar, por favor.',
-        translation: 'A coffee with milk, without sugar, please.',
+        text: 'Un americano, por favor. Bueno, no, mejor un capuchino.',
+        translation: 'An americano, please. Well, no, a cappuccino instead.',
       },
-      { speaker: 'Barista', text: 'Claro. ¿Para llevar?', translation: 'Of course. To take away?' },
+      {
+        speaker: 'Barista',
+        text: 'Claro. ¿Para aquí o pa’ llevar?',
+        translation: 'Sure. For here or to take away?',
+      },
       {
         speaker: 'Cliente',
-        text: 'Sí, gracias. ¿Puedo pagar con tarjeta?',
-        translation: 'Yes, thank you. Can I pay by card?',
+        text: 'Para llevar. ¿Cuánto es?',
+        translation: 'To take away. How much is it?',
       },
+      {
+        speaker: 'Barista',
+        text: 'Son sesenta y cinco pesos. ¿Con tarjeta o en efectivo?',
+        translation: 'It’s sixty-five pesos. Card or cash?',
+      },
+      { speaker: 'Cliente', text: 'Con tarjeta, por favor.', translation: 'By card, please.' },
     ],
     phrases: [
       {
-        heard: '¿Qué le sirvo?',
-        full: '¿Qué le puedo servir?',
-        meaning: 'A natural, polite “what can I get you?”',
+        heard: 'mejor un capuchino',
+        meaning: 'Mejor + what you want is how you change your mind: actually, make it a …',
       },
-      { heard: 'Sin azúcar.', full: 'Sin azúcar.', meaning: 'Without sugar.' },
-      { heard: '¿Para llevar?', full: '¿Es para llevar?', meaning: 'Is it to take away?' },
+      {
+        heard: '¿Para aquí o pa’ llevar?',
+        plain: '¿Para comer aquí o para llevar?',
+        meaning: 'For here or to take away? In fast speech para often shrinks to pa’.',
+      },
+      {
+        heard: '¿Con tarjeta o en efectivo?',
+        plain: '¿Va a pagar con tarjeta o en efectivo?',
+        meaning: 'Card or cash? The verb is dropped because the situation makes it clear.',
+      },
     ],
     question: {
-      prompt: 'How does the customer want to pay?',
-      options: ['With cash', 'By card', 'They do not say'],
+      prompt: 'What does the customer order in the end?',
+      options: ['An americano', 'A cappuccino', 'A coffee with milk'],
       correctIndex: 1,
     },
   },
@@ -1240,7 +1307,7 @@ export const listeningScenarios: ListeningScenario[] = [
     language: 'es-MX',
     languageName: 'Spanish',
     title: 'Find the right bus',
-    context: 'Check the destination and departure time',
+    context: 'Check where a bus goes and when the next one comes',
     level: 'A1',
     duration: '30 sec',
     accent: 'Everyday Mexican Spanish',
@@ -1248,29 +1315,40 @@ export const listeningScenarios: ListeningScenario[] = [
     lines: [
       {
         speaker: 'Viajera',
-        text: 'Disculpe, ¿este autobús va al centro?',
+        text: 'Disculpe, ¿este camión va al centro?',
         translation: 'Excuse me, does this bus go downtown?',
       },
-      { speaker: 'Conductor', text: 'Sí, va al centro.', translation: 'Yes, it goes downtown.' },
-      { speaker: 'Viajera', text: '¿A qué hora sale?', translation: 'What time does it leave?' },
+      { speaker: 'Chofer', text: '¿Mande?', translation: 'Sorry?' },
+      { speaker: 'Viajera', text: '¿Va al centro?', translation: 'Does it go downtown?' },
       {
-        speaker: 'Conductor',
-        text: 'Sale a las nueve. Puede subir ahora.',
-        translation: 'It leaves at nine. You can board now.',
+        speaker: 'Chofer',
+        text: 'No, este no. Tome el siguiente, el azul.',
+        translation: 'No, not this one. Take the next one, the blue one.',
+      },
+      { speaker: 'Viajera', text: '¿Y tarda mucho?', translation: 'And will it be long?' },
+      {
+        speaker: 'Chofer',
+        text: 'No, ahorita pasa. Pasa cada diez minutos.',
+        translation: 'No, it’ll be here any minute. It comes every ten minutes.',
       },
     ],
     phrases: [
       {
-        heard: '¿Este autobús va al centro?',
-        full: '¿Va al centro?',
-        meaning: 'Check the destination before boarding.',
+        heard: 'camión',
+        meaning: 'In Mexico a city bus is usually el camión. Autobús is understood everywhere.',
       },
-      { heard: '¿A qué hora sale?', full: '¿A qué hora sale?', meaning: 'Ask the departure time.' },
-      { heard: 'Puede subir ahora.', full: 'Puede subir ahora.', meaning: 'You can board now.' },
+      {
+        heard: '¿Mande?',
+        meaning: 'Sorry? The polite Mexican way to ask someone to repeat. It is not rude at all.',
+      },
+      {
+        heard: 'ahorita pasa',
+        meaning: 'Ahorita can mean right now, in a moment or much later. Here: any minute.',
+      },
     ],
     question: {
-      prompt: 'When does the bus leave?',
-      options: ['At eight', 'At nine', 'At ten'],
+      prompt: 'Which bus should she take?',
+      options: ['This one', 'The next one, the blue one', 'The one in an hour'],
       correctIndex: 1,
     },
   },
@@ -1280,7 +1358,7 @@ export const listeningScenarios: ListeningScenario[] = [
     language: 'es-MX',
     languageName: 'Spanish',
     title: 'The hotel key',
-    context: 'Report a problem and ask for help',
+    context: 'Report a problem and get help',
     level: 'A1',
     duration: '30 sec',
     accent: 'Everyday Mexican Spanish',
@@ -1288,41 +1366,47 @@ export const listeningScenarios: ListeningScenario[] = [
     lines: [
       {
         speaker: 'Huésped',
-        text: 'Disculpe, la llave de mi habitación no funciona.',
-        translation: 'Excuse me, my room key does not work.',
+        text: 'Buenas noches. Disculpe, mi llave no funciona.',
+        translation: 'Good evening. Excuse me, my key does not work.',
       },
       {
         speaker: 'Recepcionista',
-        text: 'Lo siento. ¿Qué número de habitación tiene?',
-        translation: 'I am sorry. What room number do you have?',
+        text: '¡Ay, perdón! ¿Qué habitación es?',
+        translation: 'Oh, sorry! Which room is it?',
       },
-      {
-        speaker: 'Huésped',
-        text: 'La doscientos cuatro. ¿Me puede ayudar?',
-        translation: 'Room 204. Can you help me?',
-      },
+      { speaker: 'Huésped', text: 'La doscientos cuatro.', translation: 'Two hundred and four.' },
       {
         speaker: 'Recepcionista',
-        text: 'Claro. Le doy otra llave.',
-        translation: 'Of course. I will give you another key.',
+        text: 'A ver… Listo. Aquí tiene una nueva.',
+        translation: 'Let’s see… Done. Here is a new one.',
+      },
+      { speaker: 'Huésped', text: 'Muchas gracias.', translation: 'Thank you very much.' },
+      {
+        speaker: 'Recepcionista',
+        text: 'De nada. Que descanse.',
+        translation: 'You’re welcome. Sleep well.',
       },
     ],
     phrases: [
-      { heard: 'No funciona.', full: 'No funciona.', meaning: 'It does not work.' },
       {
-        heard: '¿Me puede ayudar?',
-        full: '¿Me puede ayudar?',
-        meaning: 'Can you help me? Polite.',
+        heard: 'La doscientos cuatro.',
+        plain: 'Es la habitación doscientos cuatro.',
+        meaning: 'Room numbers are feminine, like habitación: la doscientos cuatro.',
       },
       {
-        heard: 'Le doy otra llave.',
-        full: 'Le doy otra llave.',
-        meaning: 'I will give you another key.',
+        heard: 'A ver…',
+        plain: 'Vamos a ver.',
+        meaning: 'Let’s see… What people say while they check something.',
+      },
+      { heard: 'Listo.', meaning: 'Done, ready. Very common when a task is finished.' },
+      {
+        heard: 'Que descanse.',
+        meaning: 'Sleep well. A warm goodbye in the evening; with tú it is que descanses.',
       },
     ],
     question: {
-      prompt: 'What does the receptionist offer?',
-      options: ['A new room', 'Another key', 'A refund'],
+      prompt: 'What does the receptionist give the guest?',
+      options: ['A new room', 'A new key', 'A free breakfast'],
       correctIndex: 1,
     },
   },
@@ -1341,29 +1425,36 @@ export const listeningScenarios: ListeningScenario[] = [
       { speaker: 'Vendedor', text: '¿Qué le damos, joven?', translation: 'What can we get you?' },
       {
         speaker: 'Cliente',
-        text: '¿Me da un kilo de jitomates y dos aguacates?',
+        text: '¿Me da un kilo de jitomate y dos aguacates?',
         translation: 'Can I have a kilo of tomatoes and two avocados?',
       },
-      { speaker: 'Vendedor', text: 'Claro. ¿Algo más?', translation: 'Of course. Anything else?' },
+      {
+        speaker: 'Vendedor',
+        text: '¿Los aguacates para hoy o para mañana?',
+        translation: 'Are the avocados for today or for tomorrow?',
+      },
       {
         speaker: 'Cliente',
-        text: 'Nada más, gracias. ¿Cuánto es?',
-        translation: 'That’s all, thanks. How much is it?',
+        text: 'Para hoy, por favor. Es todo. ¿Cuánto le debo?',
+        translation: 'For today, please. That’s all. How much do I owe you?',
       },
       { speaker: 'Vendedor', text: 'Son ochenta pesos.', translation: 'That’s eighty pesos.' },
     ],
     phrases: [
       {
-        heard: '¿Qué le damos?',
-        full: '¿Qué le damos?',
-        meaning: 'What can we get you? A friendly market call.',
+        heard: '¿Qué le damos, joven?',
+        meaning:
+          'What can we get you? Market sellers call customers joven (young one), whatever their age.',
       },
       {
-        heard: '¿Me da…?',
-        full: '¿Me da…?',
-        meaning: 'Can I have…? Polite and very common in Mexico.',
+        heard: 'para hoy o para mañana',
+        meaning:
+          'Sellers ask when you will eat avocados, so they can give you ripe ones or firmer ones.',
       },
-      { heard: '¿Cuánto es?', full: '¿Cuánto es?', meaning: 'How much is it all together?' },
+      {
+        heard: '¿Cuánto le debo?',
+        meaning: 'Literally “how much do I owe you?”: the usual way to ask for the total.',
+      },
     ],
     question: {
       prompt: 'How much does the customer pay?',
@@ -1377,42 +1468,44 @@ export const listeningScenarios: ListeningScenario[] = [
     language: 'es-MX',
     languageName: 'Spanish',
     title: 'Making weekend plans',
-    context: 'Two friends agree a time and place',
+    context: 'Two friends agree on a time and place',
     level: 'A1',
     duration: '30 sec',
     accent: 'Everyday Mexican Spanish',
     icon: 'phone-outline',
     lines: [
-      { speaker: 'Diego', text: '¿Bueno? ¡Qué onda, Lucía!', translation: 'Hello? Hey, Lucía!' },
+      { speaker: 'Diego', text: '¿Bueno?', translation: 'Hello?' },
+      { speaker: 'Lucía', text: '¡Hola, Diego! ¿Qué onda?', translation: 'Hi, Diego! What’s up?' },
+      { speaker: 'Diego', text: '¡Qué onda, Lucía!', translation: 'Hey, Lucía!' },
       {
         speaker: 'Lucía',
-        text: 'Hola, Diego. ¿Nos vemos el sábado?',
-        translation: 'Hi, Diego. Shall we meet on Saturday?',
+        text: 'Oye, ¿nos vemos el sábado?',
+        translation: 'Hey, shall we meet on Saturday?',
       },
-      {
-        speaker: 'Diego',
-        text: 'Va. ¿A qué hora?',
-        translation: 'Sounds good. What time?',
-      },
+      { speaker: 'Diego', text: 'Va. ¿A qué hora?', translation: 'Sure. What time?' },
       {
         speaker: 'Lucía',
-        text: 'A las cinco, en el café del parque.',
-        translation: 'At five, at the café in the park.',
+        text: '¿Como a las cinco, en el café del parque?',
+        translation: 'Around five, at the café in the park?',
       },
-      { speaker: 'Diego', text: 'Sale, nos vemos.', translation: 'OK, see you.' },
+      { speaker: 'Diego', text: 'Sale, ahí nos vemos.', translation: 'Deal, see you there.' },
     ],
     phrases: [
+      { heard: '¿Bueno?', meaning: 'Hello? How many people in Mexico answer the phone.' },
       {
-        heard: '¿Bueno?',
-        full: '¿Bueno?',
-        meaning: 'Hello? How many people answer the phone in Mexico.',
+        heard: '¿Qué onda?',
+        meaning: 'What’s up? A very common greeting between friends in Mexico.',
       },
-      { heard: 'Va.', full: 'Va.', meaning: 'OK, sounds good. Informal.' },
-      { heard: 'Sale.', full: 'Sale.', meaning: 'Deal, OK. Informal and Mexican.' },
+      {
+        heard: 'Como a las cinco',
+        plain: 'Más o menos a las cinco',
+        meaning: 'Como before a time means around.',
+      },
+      { heard: 'Sale', meaning: 'Deal, OK. Like va, it closes a plan between friends.' },
     ],
     question: {
-      prompt: 'Where will they meet?',
-      options: ['At the café in the park', 'At Diego’s house', 'At the cinema'],
+      prompt: 'When will they meet?',
+      options: ['On Saturday, around five', 'On Sunday, around five', 'On Saturday, around nine'],
       correctIndex: 0,
     },
   },
@@ -1426,17 +1519,17 @@ export const listeningScenarios: ListeningScenario[] = [
     level: 'A2',
     duration: '35 sec',
     accent: 'Everyday Mexican Spanish',
-    icon: 'account-group-outline',
+    icon: 'office-building-outline',
     lines: [
       {
         speaker: 'Mariana',
-        text: '¿Qué hiciste el fin de semana?',
-        translation: 'What did you do at the weekend?',
+        text: '¿Qué onda, Raúl? ¿Qué hiciste el fin?',
+        translation: 'Hey, Raúl. What did you do at the weekend?',
       },
       {
         speaker: 'Raúl',
-        text: 'El sábado fui a Puebla con mi familia. Comimos mole.',
-        translation: 'On Saturday I went to Puebla with my family. We ate mole.',
+        text: 'Me fui a Puebla con mi familia. Comimos un mole buenísimo.',
+        translation: 'I went to Puebla with my family. We had amazing mole.',
       },
       {
         speaker: 'Mariana',
@@ -1445,35 +1538,39 @@ export const listeningScenarios: ListeningScenario[] = [
       },
       {
         speaker: 'Raúl',
-        text: 'Descansé. Estaba muy cansado. ¿Y tú?',
-        translation: 'I rested. I was really tired. And you?',
+        text: 'Nada, me quedé en casa. Estaba muerto. ¿Y tú?',
+        translation: 'Nothing, I stayed at home. I was exhausted. And you?',
       },
       {
         speaker: 'Mariana',
-        text: 'Yo vi una peli en casa. Estuvo bien.',
-        translation: 'I watched a film at home. It was good.',
+        text: 'Yo vi una peli. Nada especial, pero estuvo bien.',
+        translation: 'I watched a film. Nothing special, but it was nice.',
       },
     ],
     phrases: [
       {
-        heard: '¿Qué hiciste?',
-        full: '¿Qué hiciste?',
-        meaning: 'What did you do? Past of hacer for tú.',
+        heard: 'el fin',
+        plain: 'el fin de semana',
+        meaning: 'The weekend. Friends often shorten it.',
       },
       {
         heard: '¡Qué padre!',
-        full: '¡Qué padre!',
-        meaning: 'How cool! Informal Mexican reaction.',
+        meaning: 'How cool! Informal Mexican reaction; padre here has nothing to do with fathers.',
+      },
+      {
+        heard: 'Estaba muerto.',
+        plain: 'Estaba muy cansado.',
+        meaning: 'I was exhausted. Muerto means very tired in casual speech.',
       },
       {
         heard: 'una peli',
-        full: 'una película',
+        plain: 'una película',
         meaning: 'A film. Peli is the casual short form.',
       },
     ],
     question: {
       prompt: 'What did Raúl do on Sunday?',
-      options: ['He went to Puebla', 'He rested', 'He watched a film'],
+      options: ['He went to Puebla', 'He stayed at home', 'He watched a film'],
       correctIndex: 1,
     },
   },
@@ -1483,7 +1580,7 @@ export const listeningScenarios: ListeningScenario[] = [
     language: 'es-MX',
     languageName: 'Spanish',
     title: 'At the pharmacy',
-    context: 'Describe symptoms and check the dose',
+    context: 'Describe symptoms and understand the advice',
     level: 'A2',
     duration: '35 sec',
     accent: 'Everyday Mexican Spanish',
@@ -1496,33 +1593,42 @@ export const listeningScenarios: ListeningScenario[] = [
       },
       {
         speaker: 'Cliente',
-        text: 'Tengo tos y me duele la garganta desde ayer.',
-        translation: 'I have a cough and my throat has hurt since yesterday.',
+        text: 'Buenas. Fíjese que desde ayer tengo tos y me duele la garganta.',
+        translation: 'Hello. The thing is, I have had a cough and a sore throat since yesterday.',
       },
-      { speaker: 'Farmacéutica', text: '¿Tiene fiebre?', translation: 'Do you have a fever?' },
-      { speaker: 'Cliente', text: 'No, fiebre no.', translation: 'No, no fever.' },
       {
         speaker: 'Farmacéutica',
-        text: 'Tome este jarabe cada ocho horas. Si no mejora, vaya al médico.',
-        translation: 'Take this syrup every eight hours. If it does not get better, see a doctor.',
+        text: '¿Y tiene fiebre?',
+        translation: 'And do you have a temperature?',
+      },
+      { speaker: 'Cliente', text: 'No, fiebre no.', translation: 'No, no temperature.' },
+      {
+        speaker: 'Farmacéutica',
+        text: 'Mire, tómese este jarabe cada ocho horas. Si en tres días no se le quita, vaya al médico.',
+        translation:
+          'Look, take this syrup every eight hours. If it has not gone away in three days, see a doctor.',
       },
     ],
     phrases: [
       {
         heard: '¿En qué le ayudo?',
-        full: '¿En qué le puedo ayudar?',
-        meaning: 'How can I help you? Polite usted.',
+        plain: '¿En qué le puedo ayudar?',
+        meaning: 'How can I help you? Shop staff usually drop puedo.',
+      },
+      { heard: 'Buenas.', plain: 'Buenas tardes.', meaning: 'A short hello at any time of day.' },
+      {
+        heard: 'Fíjese que',
+        meaning:
+          'A polite Mexican way to start explaining a problem: the thing is … With tú: fíjate que.',
       },
       {
-        heard: 'Me duele la garganta.',
-        full: 'Me duele la garganta.',
-        meaning: 'My throat hurts.',
+        heard: 'no se le quita',
+        meaning: 'Quitarse is how people talk about pain or a cold going away.',
       },
-      { heard: 'cada ocho horas', full: 'cada ocho horas', meaning: 'Every eight hours.' },
     ],
     question: {
-      prompt: 'How often should the customer take the syrup?',
-      options: ['Every eight hours', 'Once a day', 'Every four hours'],
+      prompt: 'When should the customer see a doctor?',
+      options: ['If it has not gone away in three days', 'Straight away', 'After eight hours'],
       correctIndex: 0,
     },
   },
@@ -1534,23 +1640,29 @@ export const listeningScenarios: ListeningScenario[] = [
     title: 'Tacos with friends',
     context: 'Order, change a dish and split the bill',
     level: 'A2',
-    duration: '40 sec',
+    duration: '45 sec',
     accent: 'Everyday Mexican Spanish',
     icon: 'food',
     lines: [
       {
         speaker: 'Mesero',
-        text: '¿Ya saben qué van a pedir?',
-        translation: 'Do you know what you will order?',
+        text: '¿Ya saben qué van a querer?',
+        translation: 'Do you know what you would like?',
       },
       {
         speaker: 'Sofía',
-        text: 'Para mí, tres tacos al pastor, pero sin cebolla.',
-        translation: 'For me, three tacos al pastor, but without onion.',
+        text: 'Sí. Para mí, tres de pastor, pero sin cebolla, porfa.',
+        translation: 'Yes. For me, three al pastor tacos, but without onion, please.',
       },
       {
+        speaker: 'Mesero',
+        text: '¿Nomás con cilantro, entonces?',
+        translation: 'Just with coriander, then?',
+      },
+      { speaker: 'Sofía', text: 'Ándale, sí.', translation: 'That’s it, yes.' },
+      {
         speaker: 'Andrés',
-        text: 'Y para mí una quesadilla. ¿Qué nos recomienda para tomar?',
+        text: 'Y para mí una quesadilla. ¿Qué nos recomienda de tomar?',
         translation: 'And a quesadilla for me. What do you recommend to drink?',
       },
       {
@@ -1559,23 +1671,31 @@ export const listeningScenarios: ListeningScenario[] = [
         translation: 'The horchata is really good.',
       },
       {
-        speaker: 'Sofía',
-        text: 'Perfecto. Y al final, ¿podemos pagar por separado?',
-        translation: 'Perfect. And at the end, can we pay separately?',
+        speaker: 'Andrés',
+        text: 'Va, dos de horchata. Y al final, ¿nos trae la cuenta por separado?',
+        translation: 'OK, two horchatas. And at the end, could you bring us separate bills?',
       },
     ],
     phrases: [
       {
-        heard: '¿Ya saben qué van a pedir?',
-        full: '¿Ya saben qué van a pedir?',
-        meaning: 'Are you ready to order?',
+        heard: 'tres de pastor',
+        plain: 'tres tacos al pastor',
+        meaning: 'Tacos is dropped because the place makes it obvious.',
       },
-      { heard: 'sin cebolla', full: 'sin cebolla', meaning: 'Without onion.' },
-      { heard: 'por separado', full: 'pagar por separado', meaning: 'Pay separately.' },
+      { heard: 'porfa', plain: 'por favor', meaning: 'Please. Casual and very common.' },
+      {
+        heard: 'Nomás con cilantro',
+        plain: 'Solo con cilantro',
+        meaning: 'Nomás means only, just. Very common in Mexico.',
+      },
+      {
+        heard: 'Ándale, sí.',
+        meaning: 'That’s it, exactly. Agrees with what the other person just said.',
+      },
     ],
     question: {
       prompt: 'What does Sofía not want in her tacos?',
-      options: ['Cheese', 'Onion', 'Salsa'],
+      options: ['Coriander', 'Onion', 'Salsa'],
       correctIndex: 1,
     },
   },
@@ -1593,13 +1713,13 @@ export const listeningScenarios: ListeningScenario[] = [
     lines: [
       {
         speaker: 'Pasajero',
-        text: 'Disculpe, mi vuelo a Guadalajara está cancelado.',
-        translation: 'Excuse me, my flight to Guadalajara is cancelled.',
+        text: 'Disculpe, me acaban de cancelar el vuelo a Guadalajara.',
+        translation: 'Excuse me, my flight to Guadalajara has just been cancelled.',
       },
       {
         speaker: 'Agente',
-        text: 'Lo siento mucho. ¿Me permite su pase de abordar?',
-        translation: 'I am very sorry. May I see your boarding pass?',
+        text: 'Sí, una disculpa. ¿Me permite su pase de abordar?',
+        translation: 'Yes, we apologise. May I see your boarding pass?',
       },
       {
         speaker: 'Pasajero',
@@ -1608,27 +1728,38 @@ export const listeningScenarios: ListeningScenario[] = [
       },
       {
         speaker: 'Agente',
-        text: 'Hay uno a las nueve de la noche. Le cambio el boleto sin costo.',
-        translation: 'There is one at nine in the evening. I will change your ticket at no cost.',
+        text: 'Déjeme checar… Hay uno a las nueve de la noche. Le cambio el boleto sin costo.',
+        translation:
+          'Let me check… There is one at nine in the evening. I will change your ticket at no cost.',
       },
       {
         speaker: 'Pasajero',
-        text: 'Muchas gracias. ¿Me da un comprobante, por favor?',
-        translation: 'Thank you very much. Could I have written confirmation, please?',
+        text: 'Perfecto. ¿Me da un comprobante, por favor?',
+        translation: 'Perfect. Could I have written confirmation, please?',
+      },
+      {
+        speaker: 'Agente',
+        text: 'Claro, ahorita se lo imprimo.',
+        translation: 'Of course, I will print it for you right away.',
       },
     ],
     phrases: [
       {
+        heard: 'Una disculpa.',
+        plain: 'Le pido una disculpa.',
+        meaning: 'Sorry. The standard apology in Mexican customer service.',
+      },
+      {
         heard: 'pase de abordar',
-        full: 'el pase de abordar',
         meaning: 'Boarding pass, in Mexico. Spain says tarjeta de embarque.',
       },
-      { heard: 'sin costo', full: 'sin costo', meaning: 'At no cost, free of charge.' },
       {
-        heard: 'un comprobante',
-        full: 'un comprobante',
-        meaning: 'A written confirmation or receipt.',
+        heard: 'Déjeme checar',
+        plain: 'Déjeme revisar',
+        meaning:
+          'Let me check. Checar is everyday Mexican Spanish; in Spain people say mirar or comprobar.',
       },
+      { heard: 'ahorita se lo imprimo', meaning: 'Here ahorita means right away.' },
     ],
     question: {
       prompt: 'When is the new flight?',

@@ -155,7 +155,7 @@ describe('Spanish orthography', () => {
     }
     for (const scenario of listeningScenarios.filter((item) => item.track === 'ES')) {
       scenario.lines.forEach((line) => texts.push(line.text));
-      scenario.phrases.forEach((phrase) => texts.push(phrase.heard, phrase.full));
+      scenario.phrases.forEach((phrase) => texts.push(phrase.heard, phrase.plain ?? ''));
     }
     placementItems.ES.forEach((item) => item.audio && texts.push(item.audio));
     texts.push(writingTasks['es-message'].example, writingTasks['es-email'].example);

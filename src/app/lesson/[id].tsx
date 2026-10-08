@@ -172,15 +172,17 @@ export default function ListeningLessonScreen() {
       </View>
 
       <View style={styles.lightPanel}>
-        <Eyebrow>What natives compress</Eyebrow>
+        <Eyebrow>Listen for these</Eyebrow>
         <View style={styles.phraseList}>
-          {scenario.phrases.slice(0, 3).map((phrase) => (
+          {scenario.phrases.map((phrase) => (
             <View key={phrase.heard} style={styles.phraseRow}>
               <View style={[styles.heardPill, { backgroundColor: colors.accent }]}>
                 <Text style={[styles.heardText, { color: colors.onAccent }]}>{phrase.heard}</Text>
               </View>
               <View style={styles.phraseCopy}>
-                <Text style={styles.fullPhrase}>{phrase.full}</Text>
+                {phrase.plain ? (
+                  <Text style={styles.fullPhrase}>Same as: {phrase.plain}</Text>
+                ) : null}
                 <Text style={styles.meaning}>{phrase.meaning}</Text>
               </View>
             </View>
@@ -325,24 +327,23 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     padding: 22,
   },
-  phraseList: { gap: 14, marginTop: 16 },
-  phraseRow: { alignItems: 'flex-start', flexDirection: 'row', gap: 12 },
+  phraseList: { gap: 18, marginTop: 16 },
+  phraseRow: { alignItems: 'flex-start', gap: 6 },
   heardPill: {
     backgroundColor: Palette.orange,
-    borderRadius: 99,
-    paddingHorizontal: 11,
+    borderRadius: 16,
+    paddingHorizontal: 12,
     paddingVertical: 7,
   },
-  heardText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
-  phraseCopy: { flex: 1 },
-  fullPhrase: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 13 },
-  meaning: {
-    color: Palette.secondary,
-    fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 17,
-    marginTop: 2,
+  heardText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15, lineHeight: 21 },
+  phraseCopy: { alignSelf: 'stretch', gap: 2 },
+  fullPhrase: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: 14,
+    lineHeight: 20,
   },
+  meaning: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, lineHeight: 20 },
   questionBlock: { borderTopColor: Palette.line, borderTopWidth: 1, marginTop: 24, paddingTop: 22 },
   question: {
     color: Palette.ink,
