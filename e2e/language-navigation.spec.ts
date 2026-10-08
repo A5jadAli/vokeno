@@ -16,12 +16,12 @@ test('German remains selected across navigation and a reload', async ({ page }) 
   await page.getByLabel('Progress', { exact: true }).last().click();
   await page
     .getByRole('button', {
-      name: 'Start lesson: Start with your first German words',
+      name: 'Start lesson: Start Unit 1: Hallo!',
       exact: true,
     })
     .last()
     .click();
-  await expect(page).toHaveURL(/\/foundation\/greetings$/);
+  await expect(page).toHaveURL(/\/foundation\/de-a1-u1-hallo$/);
 });
 
 test('Spanish shows a first step, persists across reload, and has its own placement check', async ({
