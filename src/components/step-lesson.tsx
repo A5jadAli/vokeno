@@ -29,7 +29,6 @@ import {
   type LessonStep,
   type StepLesson,
 } from '@/features/foundations/catalog';
-import { levelLabel } from '@/features/foundations/level-status';
 import {
   freshFoundationEntry,
   MAX_DRAFT_LENGTH,
@@ -187,7 +186,7 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
   return (
     <PrimaryAccent colors={colors}>
       <AppScreen showNav={false} keyboardAware footer={footer}>
-        <LessonTopBar progress={progress} label={levelLabel(lesson.track, lesson.level)} />
+        <LessonTopBar progress={progress} label={`Unit ${lesson.unit.number}`} />
         <View style={styles.body}>
           {speech.error ? (
             <Text accessibilityRole="alert" style={styles.alert}>

@@ -12,17 +12,13 @@ import {
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { learningRecommendation } from '@/features/coaching/recommendation';
-import { lessonIdFromHref } from '@/features/journey/course';
 import { useCoachingStore, type StartingAbility, type StudyGoal } from '@/features/coaching/store';
+import { foundationLessons } from '@/features/foundations/catalog';
+import { lessonIdFromHref } from '@/features/journey/course';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { languageDetails, languageTracks } from '@/features/language/config';
 
-const abilities: [StartingAbility, string][] = [
-  ['new', 'I am starting from zero'],
-  ['basics', 'I know some words and short phrases'],
-  ['conversational', 'I can already have a simple conversation'],
-];
-
+/** Choose where to start: how much you know decides your first lesson. */
 export default function LearningPlanScreen() {
   const router = useRouter();
   const [track, setTrack] = useSelectedLanguage();
@@ -30,7 +26,15 @@ export default function LearningPlanScreen() {
   const setChoices = useCoachingStore((state) => state.setLearningChoices);
   const ability = preferences.ability ?? 'new';
   const goal = preferences.studyGoal ?? 'everyday';
+  const language = languageDetails[track].name;
   const next = learningRecommendation(track, ability, goal);
+  const lessonId = lessonIdFromHref(next.href);
+  const isLesson = foundationLessons.some((item) => item.id === lessonId);
+  const abilities: [StartingAbility, string][] = [
+    ['new', `I am new to ${language}`],
+    ['basics', 'I know some words and short phrases'],
+    ['conversational', 'I can already have a simple conversation'],
+  ];
   const goals: [StudyGoal, string][] = [
     ['everyday', 'Everyday life'],
     ['work-study', 'Work and study'],
@@ -41,20 +45,21 @@ export default function LearningPlanScreen() {
         ] as [StudyGoal, string][])
       : []),
   ];
+  const start = () => {
+    // Confirming saves the starting point, so Today and Course agree on it.
+    useCoachingStore.getState().setStartAt(track, lessonId);
+    router.replace(next.href as Href);
+  };
   return (
     <AppScreen
       showNav={false}
       footer={
         <ActionBar>
           <PrimaryButton
-            title="Start practice"
-            accessibilityLabel="Start recommended practice"
+            title={isLesson ? 'Start this lesson' : 'Start practice'}
+            accessibilityLabel={`Start: ${next.title}`}
             icon="arrow-right"
-            onPress={() => {
-              // Confirming the plan saves the starting point, so Today and Course agree on it.
-              useCoachingStore.getState().setStartAt(track, lessonIdFromHref(next.href));
-              router.replace(next.href as Href);
-            }}
+            onPress={start}
           />
         </ActionBar>
       }
@@ -63,21 +68,20 @@ export default function LearningPlanScreen() {
         <HeaderBack />
       </View>
       <View style={styles.body}>
-        <Text style={lessonText.meta}>Your learning plan</Text>
         <Text accessibilityRole="header" style={lessonText.title}>
-          A useful place to start
+          How much {language} do you know?
         </Text>
         <Text style={lessonText.lead}>
-          Choose what fits today. You can change it any time from Home.
+          This sets your first lesson. You can change it any time from Course.
         </Text>
 
         <View accessibilityRole="tablist" style={styles.segment}>
           {languageTracks.map((value) => (
             <Pressable
               key={value}
-              accessibilityRole="button"
+              accessibilityRole="tab"
               accessibilityState={{ selected: track === value }}
-              aria-pressed={track === value}
+              aria-selected={track === value}
               onPress={() => setTrack(value)}
               style={[styles.segmentItem, track === value && styles.segmentActive]}
             >
@@ -88,44 +92,53 @@ export default function LearningPlanScreen() {
           ))}
         </View>
 
-        {track !== 'ES' ? (
-          <ActionRow
-            icon="compass-outline"
-            title="Not sure? Take the 5-minute placement check"
-            onPress={() => router.push('/placement' as Href)}
-          />
-        ) : null}
-
-        <SectionLabel>How much do you know?</SectionLabel>
         <View style={styles.group}>
           {abilities.map(([value, label]) => (
             <ActionRow
               key={value}
               title={label}
+              choice
               selected={ability === value}
               onPress={() => setChoices(track, value, goal)}
             />
           ))}
         </View>
+        <ActionRow
+          icon="compass-outline"
+          title="Not sure? Take the 5-minute check"
+          onPress={() => router.push(`/placement?track=${track}` as Href)}
+        />
 
-        <SectionLabel>What would you like to use it for?</SectionLabel>
+        {track === 'EN' && ability === 'new' ? (
+          <InfoCard icon="information-outline" title="English here starts at A2">
+            The English lessons are for learners who already know basic words and phrases. A course
+            for complete beginners is not available yet. If English is new to you, go slowly and use
+            the slow audio.
+          </InfoCard>
+        ) : null}
+
+        <InfoCard
+          icon="arrow-right-circle-outline"
+          title={`You will start with: ${next.title}`}
+          tone="yellow"
+        >
+          {next.why}
+        </InfoCard>
+
+        <SectionLabel>What is it for? (optional)</SectionLabel>
         <View style={styles.group}>
           {goals.map(([value, label]) => (
             <ActionRow
               key={value}
               title={label}
+              choice
               selected={goal === value}
               onPress={() => setChoices(track, ability, value)}
             />
           ))}
         </View>
-
-        <InfoCard icon="arrow-right-circle-outline" title={next.title} tone="yellow">
-          {next.why}
-        </InfoCard>
         <Text style={lessonText.small}>
-          Practice supports learning, not a certified CEFR level or exam result.
-          {track === 'EN' ? ' IELTS goals include a four-skill practice guide in Learn.' : ''}
+          Practice supports learning; it is not a certified CEFR level or exam result.
         </Text>
       </View>
     </AppScreen>

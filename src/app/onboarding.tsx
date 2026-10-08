@@ -1,246 +1,164 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
-import { useState } from 'react';
+import type { ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { AppScreen, Eyebrow } from '@/components/voka-ui';
+import { ActionBar, PrimaryButton, TextButton } from '@/components/lesson-ui';
+import { languageAudience } from '@/components/tab-header';
+import { AppScreen } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { completeOnboarding } from '@/features/onboarding/storage';
 import { useLanguageSelection } from '@/features/language/selection';
 import { languageDetails, languageTracks, trackColors } from '@/features/language/config';
 
-const slides = [
-  {
-    eyebrow: 'Real conversation',
-    icon: 'account-voice' as const,
-    title: 'Train your ear for how people really speak.',
-    copy: 'Practise natural English, German or Spanish. Interrupt the coach, slow down and keep captions on when you need them.',
-    accent: Palette.orange,
-  },
-  {
-    eyebrow: 'A clear daily path',
-    icon: 'calendar-check-outline' as const,
-    title: 'Know exactly what to practise next.',
-    copy: 'Start with one useful exchange. Each short lesson adds listening, reading and a chance to speak. Your next step is always on Home.',
-    accent: Palette.yellow,
-  },
-  {
-    eyebrow: 'You stay in control',
-    icon: 'shield-check-outline' as const,
-    title: 'Start as a guest. Sign in when you are ready.',
-    copy: 'Signed-in learning syncs across your devices. Guest practice stays separate on this device and is not automatically moved into an account. You can replay this tour any time.',
-    accent: Palette.orange,
-  },
+type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
+
+const promises: [IconName, string][] = [
+  ['timer-outline', 'Short lessons: about 5 minutes a day'],
+  ['account-voice', 'The language people really speak, not just textbook phrases'],
+  ['microphone-outline', 'Speak with a live coach when you are ready'],
 ];
 
+/** First run: one screen, one choice, then straight on to a first lesson. */
 export default function OnboardingScreen() {
   const router = useRouter();
   const track = useLanguageSelection((state) => state.track);
   const choose = useLanguageSelection((state) => state.choose);
-  const [index, setIndex] = useState(0);
-  const slide = slides[index];
-  const isLast = index === slides.length - 1;
 
-  const finish = async (destination: '/' | '/auth?mode=sign-up' = '/') => {
+  const finish = async (destination: string) => {
     await completeOnboarding();
-    router.replace((destination === '/' ? '/learning-plan' : destination) as Href);
+    router.replace(destination as Href);
   };
 
   return (
-    <AppScreen showNav={false}>
-      <View style={styles.screen}>
-        <View style={styles.topRow}>
-          <Text style={styles.logo}>VOKENO</Text>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => void finish()}
-            style={({ pressed }) => [styles.skipButton, pressed && styles.pressed]}
-          >
-            <Text style={styles.skipText}>Skip</Text>
-          </Pressable>
-        </View>
+    <AppScreen
+      showNav={false}
+      footer={
+        <ActionBar>
+          <PrimaryButton
+            title={`Continue with ${languageDetails[track].name}`}
+            icon="arrow-right"
+            onPress={() => void finish('/learning-plan')}
+          />
+          <TextButton
+            title="I already have an account"
+            onPress={() => void finish('/auth?mode=sign-in')}
+          />
+        </ActionBar>
+      }
+    >
+      <View style={styles.body}>
+        <Text style={styles.logo}>VOKENO</Text>
+        <Animated.Text
+          entering={FadeInDown.duration(260)}
+          accessibilityRole="header"
+          style={styles.title}
+        >
+          Which language do you want to learn?
+        </Animated.Text>
 
-        <View style={styles.progress}>
-          {slides.map((item, itemIndex) => (
-            <View
-              key={item.eyebrow}
-              style={[styles.progressBar, itemIndex <= index && styles.progressBarActive]}
-            />
-          ))}
-        </View>
-
-        <View style={[styles.artCard, { backgroundColor: slide.accent }]}>
-          <View style={styles.speechBubbleOne} />
-          <View style={styles.speechBubbleTwo} />
-          <View style={styles.artIcon}>
-            <MaterialCommunityIcons color={Palette.cream} name={slide.icon} size={58} />
-          </View>
-          <Text style={styles.artCaption}>
-            {index === 0
-              ? 'Listen · interrupt · respond'
-              : index === 1
-                ? '5 to 10 focused minutes'
-                : 'Your pace · your choice'}
-          </Text>
-        </View>
-
-        <View style={styles.copyBlock}>
-          <Eyebrow color={slide.accent}>{slide.eyebrow}</Eyebrow>
-          <Text style={styles.title}>{slide.title}</Text>
-          <Text style={styles.copy}>{slide.copy}</Text>
-        </View>
-
-        {isLast ? (
-          <View style={{ gap: 10, marginTop: 18 }}>
-            <Eyebrow>What would you like to practise first?</Eyebrow>
-            {languageTracks.map((language) => (
-              <Pressable
+        <View accessibilityRole="radiogroup" style={styles.options}>
+          {languageTracks.map((language, index) => {
+            const selected = language === track;
+            const colors = trackColors[language];
+            return (
+              <Animated.View
                 key={language}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: track === language }}
-                aria-checked={track === language}
-                onPress={() => choose(language)}
-                style={[
-                  styles.secondaryButton,
-                  {
-                    padding: 14,
-                    backgroundColor:
-                      track === language ? trackColors[language].accent : Palette.soft,
-                  },
-                ]}
+                entering={FadeInDown.delay(80 + index * 60).duration(240)}
               >
-                <Text
-                  style={[
-                    styles.secondaryText,
-                    track === language && { color: trackColors[language].onAccent },
+                <Pressable
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: selected }}
+                  aria-checked={selected}
+                  accessibilityLabel={`${languageDetails[language].name}. ${languageAudience[language]}`}
+                  onPress={() => choose(language)}
+                  style={({ pressed }) => [
+                    styles.option,
+                    selected && { borderColor: colors.accent },
+                    pressed && styles.pressed,
                   ]}
                 >
-                  {languageDetails[language].name}:{' '}
-                  {language === 'EN' ? 'everyday practice' : 'start with the basics'}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-        ) : null}
-        <View style={styles.actions}>
-          {isLast ? (
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => void finish('/auth?mode=sign-up')}
-              style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
-            >
-              <Text style={styles.secondaryText}>Create account</Text>
-            </Pressable>
-          ) : null}
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => {
-              if (isLast) void finish();
-              else setIndex((value) => value + 1);
-            }}
-            style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-          >
-            <Text style={styles.primaryText}>{isLast ? 'Start learning' : 'Next'}</Text>
-            <MaterialCommunityIcons color={Palette.ink} name="arrow-right" size={21} />
-          </Pressable>
+                  <View style={[styles.badge, { backgroundColor: colors.accent }]}>
+                    <Text style={[styles.badgeText, { color: colors.onAccent }]}>{language}</Text>
+                  </View>
+                  <View style={styles.optionCopy}>
+                    <Text style={styles.optionTitle}>
+                      {languageDetails[language].name}
+                      <Text style={styles.native}> · {languageDetails[language].nativeName}</Text>
+                    </Text>
+                    <Text style={styles.optionMeta}>{languageAudience[language]}</Text>
+                  </View>
+                  <MaterialCommunityIcons
+                    color={selected ? Palette.ink : Palette.muted}
+                    name={selected ? 'check-circle' : 'circle-outline'}
+                    size={24}
+                  />
+                </Pressable>
+              </Animated.View>
+            );
+          })}
         </View>
+
+        <View style={styles.promises}>
+          {promises.map(([icon, text]) => (
+            <View key={text} style={styles.promise}>
+              <MaterialCommunityIcons color={Palette.ink} name={icon} size={20} />
+              <Text style={styles.promiseText}>{text}</Text>
+            </View>
+          ))}
+        </View>
+        <Text style={styles.note}>
+          No account needed to start. Explanations are in English. Guest progress stays on this
+          device; create an account later to keep it in sync.
+        </Text>
       </View>
     </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, paddingBottom: 18, paddingHorizontal: 20 },
-  topRow: {
+  body: { gap: 16, paddingBottom: 24, paddingHorizontal: 20, paddingTop: 12 },
+  logo: { color: Palette.ink, fontFamily: VokaFonts.displayExtraBold, fontSize: 22 },
+  title: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 28, lineHeight: 34 },
+  options: { gap: 10 },
+  option: {
     alignItems: 'center',
+    backgroundColor: Palette.white,
+    borderColor: 'transparent',
+    borderRadius: 20,
+    borderWidth: 2,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingTop: 12,
+    gap: 12,
+    minHeight: 76,
+    padding: 14,
   },
-  logo: { color: Palette.ink, fontFamily: VokaFonts.displayExtraBold, fontSize: 23 },
-  skipButton: { paddingHorizontal: 10, paddingVertical: 8 },
-  skipText: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  progress: { flexDirection: 'row', gap: 6, marginTop: 18 },
-  progressBar: { backgroundColor: 'rgba(19,18,17,.12)', borderRadius: 99, flex: 1, height: 5 },
-  progressBarActive: { backgroundColor: Palette.ink },
-  artCard: {
+  badge: {
     alignItems: 'center',
-    borderRadius: 30,
-    flex: 1,
+    borderRadius: 14,
+    height: 44,
     justifyContent: 'center',
-    marginTop: 22,
-    maxHeight: 310,
-    minHeight: 210,
-    overflow: 'hidden',
+    width: 44,
   },
-  artIcon: {
-    alignItems: 'center',
-    backgroundColor: Palette.ink,
-    borderRadius: 99,
-    height: 116,
-    justifyContent: 'center',
-    width: 116,
-  },
-  speechBubbleOne: {
-    backgroundColor: 'rgba(241,237,227,.22)',
-    borderRadius: 99,
-    height: 145,
-    position: 'absolute',
-    right: -38,
-    top: -35,
-    width: 145,
-  },
-  speechBubbleTwo: {
-    backgroundColor: 'rgba(19,18,17,.09)',
-    borderRadius: 99,
-    bottom: -55,
-    height: 170,
-    left: -55,
-    position: 'absolute',
-    width: 170,
-  },
-  artCaption: {
-    color: Palette.ink,
-    fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
-    marginTop: 18,
-  },
-  copyBlock: { marginTop: 25 },
-  title: {
-    color: Palette.ink,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
-    lineHeight: 34,
-    marginTop: 8,
-  },
-  copy: {
-    color: Palette.muted,
-    fontFamily: VokaFonts.bodyMedium,
-    fontSize: 13,
+  badgeText: { fontFamily: VokaFonts.bodyBold, fontSize: 14 },
+  optionCopy: { flex: 1, gap: 2 },
+  optionTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 17 },
+  native: { color: Palette.secondary, fontFamily: VokaFonts.bodyMedium },
+  optionMeta: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: 14,
     lineHeight: 20,
-    marginTop: 11,
   },
-  actions: { flexDirection: 'row', gap: 9, marginTop: 20 },
-  primaryButton: {
-    alignItems: 'center',
-    backgroundColor: Palette.orange,
-    borderRadius: 18,
+  promises: { gap: 10, marginTop: 4 },
+  promise: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  promiseText: {
+    color: Palette.ink,
     flex: 1,
-    flexDirection: 'row',
-    gap: 8,
-    justifyContent: 'center',
-    minHeight: 58,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: 15,
+    lineHeight: 21,
   },
-  primaryText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
-  secondaryButton: {
-    alignItems: 'center',
-    borderColor: 'rgba(19,18,17,.16)',
-    borderRadius: 18,
-    borderWidth: 1,
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 58,
-  },
-  secondaryText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
-  pressed: { opacity: 0.7, transform: [{ scale: 0.98 }] },
+  note: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 19 },
+  pressed: { opacity: 0.7 },
 });
