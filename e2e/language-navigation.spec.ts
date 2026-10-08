@@ -1,26 +1,23 @@
 import { expect, test } from '@playwright/test';
 import { listeningScenarios } from '../src/features/listening/scenarios';
+import { chooseLanguage, openTab } from './nav';
 
-test('German remains selected across navigation and a reload', async ({ page }) => {
+test('German stays selected across every tab and a reload', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'German', exact: true }).click();
-  await page.getByLabel('Live speaking coach', { exact: true }).click();
-  await expect(page).toHaveURL(/\/conversation\?track=DE$/);
-  await expect(page.getByText('Everyday German', { exact: true }).last()).toBeVisible();
-  await page.getByRole('button', { name: 'Learning path', exact: true }).last().click();
+  await chooseLanguage(page, 'German');
+  await openTab(page, 'Practice');
+  await expect(page).toHaveURL(/\/practice\?track=DE$/);
+  await expect(page.getByRole('button', { name: /^Speaking · A1/ })).toBeVisible();
+  await openTab(page, 'Course');
   await expect(page).toHaveURL(/\/sprint\?track=DE$/);
-  await expect(page.getByLabel('Open A1 Erster Kontakt')).toBeVisible();
-  await page.getByRole('button', { name: 'Home', exact: true }).last().click();
+  await expect(page.getByRole('button', { name: /^Unit 1 · Hallo!/ })).toBeVisible();
+  await openTab(page, 'Today');
   await page.reload();
-  await expect(page.getByText('Everyday German', { exact: true })).toBeVisible();
-  await page.getByLabel('Progress', { exact: true }).last().click();
-  await page
-    .getByRole('button', {
-      name: 'Start lesson: Start Unit 1: Hallo!',
-      exact: true,
-    })
-    .last()
-    .click();
+  await expect(page.getByRole('button', { name: /^Learning German\./ })).toBeVisible();
+  await openTab(page, 'Progress');
+  await expect(page.getByText('German course')).toBeVisible();
+  await openTab(page, 'Today');
+  await page.getByRole('button', { name: /^Start lesson: Hallo, Tschüss/ }).click();
   await expect(page).toHaveURL(/\/foundation\/de-a1-u1-hallo$/);
 });
 
@@ -28,24 +25,21 @@ test('Spanish shows a first step, persists across reload, and has its own placem
   page,
 }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Spanish', exact: true }).click();
-  await expect(page.getByText('Español for real life')).toBeVisible();
+  await chooseLanguage(page, 'Spanish');
   await page.reload();
-  await expect(
-    page.getByRole('button', { name: 'Start lesson: Your first useful Spanish exchange' }),
-  ).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Learning Spanish\./ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Start lesson: / })).toBeVisible();
   await page.goto('/placement?track=ES');
   await expect(page).toHaveURL(/\/placement\?track=ES$/);
   await expect(page.getByRole('heading', { name: 'Spanish placement check' })).toBeVisible();
   await expect(page.getByRole('radio', { name: 'Spanish' })).toBeChecked();
 });
 
-test('a first practice starts the streak and ticks today, and both survive a reload', async ({
+test('a first practice starts the streak without claiming today’s lesson is done', async ({
   page,
 }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Spanish', exact: true }).click();
-  await expect(page.getByText('One small step', { exact: true })).toBeVisible();
+  await chooseLanguage(page, 'Spanish');
   await expect(page.getByText('Practise today to start a streak.')).toBeVisible();
   await expect(page.getByLabel('0-day streak. Best 0 days.')).toBeVisible();
 
@@ -58,7 +52,9 @@ test('a first practice starts the streak and ticks today, and both survive a rel
 
   await page.goto('/');
   await expect(page.getByLabel('1-day streak. Best 1 days.')).toBeVisible();
-  await expect(page.getByText('Done for today.')).toBeVisible();
+  await expect(page.getByText('You practised today.')).toBeVisible();
+  // Listening is not today's lesson: the lesson is still the next thing to do.
+  await expect(page.getByRole('button', { name: /^Start lesson: / })).toBeVisible();
   await page.reload();
   await expect(page.getByLabel('1-day streak. Best 1 days.')).toBeVisible();
   await expect(page.getByLabel(/: practised$/)).toHaveCount(1);
@@ -68,18 +64,8 @@ test('all authored listening lessons are discoverable and open in the correct la
   page,
 }) => {
   for (const track of ['EN', 'DE', 'ES'] as const) {
-    await page.goto('/');
-    await page
-      .getByRole('button', {
-        name: track === 'DE' ? 'German' : track === 'ES' ? 'Spanish' : 'English',
-        exact: true,
-      })
-      .click();
-    await page
-      .getByLabel(
-        `Open ${track === 'DE' ? 'German' : track === 'ES' ? 'Spanish' : 'English'} listening lessons`,
-      )
-      .click();
+    await page.goto(`/practice?track=${track}`);
+    await page.getByRole('button', { name: /^Listening\. / }).click();
     await expect(page).toHaveURL(new RegExp(`/listening\\?track=${track}$`));
     for (const scenario of listeningScenarios.filter((entry) => entry.track === track)) {
       await page

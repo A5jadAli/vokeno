@@ -148,7 +148,7 @@ test('dialogue replay restarts, speed takes effect and listening does not erase 
     'rgb(227, 242, 229)',
   );
   await page.getByRole('button', { name: 'Replay audio', exact: true }).click();
-  await expect(page.getByText('More listening practice', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'More listening', exact: true })).toBeVisible();
   await expect(correct).toBeChecked();
 });
 

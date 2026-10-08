@@ -2,6 +2,8 @@ import { readFileSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
 
+import { chooseLanguage, openTab } from './nav';
+
 const appVersion = (JSON.parse(readFileSync('app.json', 'utf8')) as { expo: { version: string } })
   .expo.version;
 
@@ -9,46 +11,41 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/');
 });
 
-test('matches the three-track home and has no horizontal overflow', async ({ page }) => {
-  await expect(page.getByText('Build real-world listening')).toBeVisible();
-  await expect(page.getByText('Choose your next practice')).toBeVisible();
-  await expect(page.getByLabel('Open live English conversation')).toBeVisible();
+test('Today has the same layout in every language and no horizontal overflow', async ({ page }) => {
+  const overflow = () =>
+    page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    );
+  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Profile and settings' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Start lesson: / })).toBeVisible();
+  expect(await overflow()).toBe(false);
 
-  const hasHorizontalOverflow = await page.evaluate(
-    () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
-  );
-  expect(hasHorizontalOverflow).toBe(false);
-
-  await page.getByRole('button', { name: 'German' }).click();
-  await expect(page.getByText('Everyday German').first()).toBeVisible();
-  await expect(page.getByText('A1 · Erster Kontakt')).toBeVisible();
-  await expect(page.getByLabel('Open German vocabulary')).toBeVisible();
-  await page.getByRole('button', { name: 'Spanish', exact: true }).click();
-  await expect(page.getByText('Español for real life')).toBeVisible();
-  await expect(page.getByLabel('Open live Spanish conversation')).toBeVisible();
-  const spanishOverflow = await page.evaluate(
-    () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
-  );
-  expect(spanishOverflow).toBe(false);
+  await chooseLanguage(page, 'German');
+  await expect(page.getByText('Unit 1 · Hallo! · Lesson 1 of 4')).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Start lesson: Hallo, Tschüss/ })).toBeVisible();
+  await chooseLanguage(page, 'Spanish');
+  await expect(page.getByRole('button', { name: /^Start lesson: / })).toBeVisible();
+  expect(await overflow()).toBe(false);
 });
 
-test('connects all five primary navigation destinations', async ({ page }) => {
-  await expect(page.getByLabel('Home')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Learning path', exact: true })).toBeVisible();
-  await expect(page.getByLabel('Live speaking coach')).toBeVisible();
-  await expect(page.getByLabel('Progress')).toBeVisible();
-  await expect(page.getByLabel('Profile')).toBeVisible();
+test('connects the four labelled destinations and the account button', async ({ page }) => {
+  for (const name of ['Today', 'Course', 'Practice', 'Progress'])
+    await expect(page.getByRole('tab', { name, exact: true })).toBeVisible();
 
-  await page.getByRole('button', { name: 'Learning path', exact: true }).click();
+  await openTab(page, 'Course');
   await expect(page).toHaveURL(/\/sprint\?track=EN$/);
-  await expect(page.getByText('Practice tools', { exact: true })).toBeVisible();
-  await expect(page.getByLabel('Open B1 Interview flow')).toBeVisible();
+  await expect(page.getByText('You are here')).toBeVisible();
 
-  await page.getByLabel('Progress').last().click();
-  await expect(page).toHaveURL(/\/progress$/);
-  await expect(page.getByText('Your progress')).toBeVisible();
+  await openTab(page, 'Practice');
+  await expect(page).toHaveURL(/\/practice\?track=EN$/);
+  await expect(page.getByRole('heading', { name: 'Skills' })).toBeVisible();
 
-  await page.getByLabel('Profile').last().click();
+  await openTab(page, 'Progress');
+  await expect(page).toHaveURL(/\/progress\?track=EN$/);
+  await expect(page.getByText('English course')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Profile and settings' }).click();
   await expect(page).toHaveURL(/\/profile$/);
   await expect(page.getByLabel('Guest learner profile initials')).toBeVisible();
   await expect(page.getByRole('button', { name: 'View Vokeno Plus' })).toContainText(
@@ -59,28 +56,24 @@ test('connects all five primary navigation destinations', async ({ page }) => {
 test('keeps primary navigation visible in the live coach and supports both back paths', async ({
   page,
 }) => {
-  await page.getByLabel('Live speaking coach').click();
-  await expect(page).toHaveURL(/\/conversation\?track=EN$/);
-  await expect(page.getByLabel('Home').last()).toBeVisible();
-  await expect(
-    page.getByRole('button', { name: 'Learning path', exact: true }).last(),
-  ).toBeVisible();
-  await expect(page.getByLabel('Progress').last()).toBeVisible();
-  await expect(page.getByLabel('Profile').last()).toBeVisible();
+  await openTab(page, 'Practice');
+  await page.getByRole('button', { name: /^Speaking · / }).click();
+  await expect(page).toHaveURL(/\/conversation\?track=EN/);
+  for (const name of ['Today', 'Course', 'Practice', 'Progress'])
+    await expect(page.getByRole('tab', { name, exact: true }).last()).toBeVisible();
 
   await page.goBack();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/practice\?track=EN$/);
 
-  await page.getByLabel('Live speaking coach').last().click();
+  await page.getByRole('button', { name: /^Speaking · / }).click();
   await page.getByLabel('Go back').click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/practice\?track=EN$/);
 });
 
 test('opens the live coach and recovers safely when live audio is unavailable', async ({
   page,
 }) => {
-  await page.getByLabel('Open live English conversation').click();
-  await expect(page).toHaveURL(/\/conversation\?track=EN$/);
+  await page.goto('/conversation?track=EN');
   await expect(page.getByText('Modern interview English')).toBeVisible();
   await expect(page.getByText('Live captions', { exact: true })).toBeVisible();
 
@@ -93,8 +86,7 @@ test('opens the live coach and recovers safely when live audio is unavailable', 
 });
 
 test('runs the listening warm-up and continues to the detailed lesson', async ({ page }) => {
-  await page.getByLabel('Open Listen').click();
-  await expect(page).toHaveURL(/\/listening\?track=EN$/);
+  await page.goto('/listening?track=EN');
   await page.getByText('Start with a short warm-up', { exact: true }).click();
   await expect(page).toHaveURL(/\/activity\/listen$/);
   await page.getByLabel('Show transcript').click();
@@ -109,7 +101,8 @@ test('runs the listening warm-up and continues to the detailed lesson', async ({
   await expect(page.getByText('Listen for these')).toBeVisible();
   await page.getByRole('radio', { name: 'An extra espresso shot' }).click();
   await page.getByText('Check answer', { exact: true }).click();
-  await page.getByText('More listening practice', { exact: true }).click();
+  await expect(page.getByText(/^Today’s session: /)).toBeVisible();
+  await page.getByRole('button', { name: 'More listening', exact: true }).click();
   await expect(page).toHaveURL(/\/listening\?track=EN$/);
 });
 
@@ -181,9 +174,10 @@ test('sets, displays and removes a test date', async ({ page }) => {
   await expect(page).toHaveURL(/\/profile$/);
   await expect(page.getByLabel(/^Set test date, currently (?!Not set)/)).toBeVisible();
 
-  await page.goto('/sprint');
-  await expect(page.getByLabel(/^Test-date practice plan for /)).toBeVisible();
-  await expect(page.getByText('4 focused sessions this week')).toBeVisible();
+  await page.goto('/practice');
+  await expect(
+    page.getByRole('button', { name: /^Test date: .*4 focused sessions this week/ }),
+  ).toBeVisible();
 
   await page.goto('/profile');
   await page.getByLabel(/^Set test date, currently (?!Not set)/).click();
@@ -207,14 +201,12 @@ test('configures a speaking goal and opens a focused German curriculum unit', as
   await page.getByLabel('Work & study speaking goal').click();
   await expect(page.getByLabel('Work & study speaking goal')).toBeChecked();
 
-  await page.goto('/sprint?track=DE');
-  await expect(page.getByText('Your goal · Work & study')).toBeVisible();
-  await page.getByLabel('Open B1 Am Telefon').click();
+  await page.goto('/practice?track=DE');
+  await page.getByRole('button', { name: /^Show all \d+ conversations$/ }).click();
+  await page.getByRole('button', { name: /^B1 · .*Am Telefon/ }).click();
   await expect(page.getByText('Am Telefon').last()).toBeVisible();
   await expect(page.getByText('Kommt drauf an.')).toBeVisible();
-  await expect(
-    page.getByRole('button', { name: 'Learning path', exact: true }).last(),
-  ).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Practice', exact: true }).last()).toBeVisible();
 });
 
 test('uses a safe fallback when a lesson id is unknown', async ({ page }) => {
@@ -223,14 +215,17 @@ test('uses a safe fallback when a lesson id is unknown', async ({ page }) => {
   await expect(page.getByText('What extra does the barista offer?')).toBeVisible();
 });
 
-test('explains the app with a skippable first-run tour', async ({ page }) => {
+test('first run asks for a language, then how much you know', async ({ page }) => {
   await page.goto('/onboarding');
-  await expect(page.getByText('Train your ear for how people really speak.')).toBeVisible();
-  await page.getByText('Next', { exact: true }).click();
-  await expect(page.getByText('Know exactly what to practise next.')).toBeVisible();
-  await page.getByText('Skip', { exact: true }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Which language do you want to learn?' }),
+  ).toBeVisible();
+  await expect(page.getByText('For learners who know the basics (A2 and up)')).toBeVisible();
+  await page.getByRole('radio', { name: /^German\./ }).click();
+  await page.getByRole('button', { name: 'Continue with German' }).click();
   await expect(page).toHaveURL(/\/learning-plan$/);
-  await expect(page.getByText('A useful place to start')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'How much German do you know?' })).toBeVisible();
+  await expect(page.getByText(/^You will start with: /)).toBeVisible();
 });
 
 test('validates writing, records completion and gives a clear next action', async ({ page }) => {

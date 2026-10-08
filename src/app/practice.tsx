@@ -8,6 +8,7 @@ import { TabHeader } from '@/components/tab-header';
 import { AppScreen } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { testDateFor, useCoachingStore } from '@/features/coaching/store';
+import { examMockUnitIds, getCurriculumUnits } from '@/features/curriculum/catalog';
 import { getTrackLessons } from '@/features/foundations/catalog';
 import { dayNumberOf, localDay } from '@/features/habits/practice-log';
 import { coursePosition } from '@/features/journey/course';
@@ -19,7 +20,7 @@ import {
 } from '@/features/journey/practice';
 import { languageDetails, trackColors } from '@/features/language/config';
 import { useSelectedLanguage } from '@/features/language/selection';
-import { formatTestDate } from '@/features/profile/test-date';
+import { formatTestDate, getTestDatePlan } from '@/features/profile/test-date';
 import { useProgressStore } from '@/features/progress/store';
 import { reviewSummary } from '@/features/review/schedule';
 
@@ -33,6 +34,7 @@ export default function PracticeScreen() {
   const startAt = useCoachingStore((state) => state.preferences[track].startAt);
   const practisedUnits = useCoachingStore((state) => state.completedUnitIds);
   const testDate = useCoachingStore((state) => testDateFor(state, track));
+  const testPlan = getTestDatePlan(testDate);
   const heard = useProgressStore((state) => state.completedScenarioIds);
   const colors = trackColors[track];
   const language = languageDetails[track].name;
@@ -44,6 +46,10 @@ export default function PracticeScreen() {
   const conversation = suggestedConversation(track, level, practisedUnits, day);
   const scenarios = fittingScenarios(track, level);
   const conversations = fittingConversations(track, level);
+  const allConversations = getCurriculumUnits(track).filter(
+    (unit) => !examMockUnitIds.includes(unit.id),
+  );
+  const [showAll, setShowAll] = useState(false);
   const go = (href: string) => router.push(href as Href);
 
   return (
@@ -160,8 +166,8 @@ export default function PracticeScreen() {
         ) : null}
       </Section>
 
-      <Section title="Conversations at your level">
-        {conversations.slice(0, 4).map((unit) => (
+      <Section title={showAll ? 'All conversations' : 'Conversations at your level'}>
+        {(showAll ? allConversations : conversations.slice(0, 4)).map((unit) => (
           <Row
             key={unit.id}
             icon={practisedUnits.includes(unit.id) ? 'check-circle-outline' : 'account-voice'}
@@ -171,6 +177,31 @@ export default function PracticeScreen() {
             onPress={() => go(`/conversation?track=${track}&unit=${unit.id}`)}
           />
         ))}
+        {allConversations.length > Math.min(4, conversations.length) ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={
+              showAll
+                ? 'Show conversations at your level'
+                : `Show all ${allConversations.length} conversations`
+            }
+            accessibilityState={{ expanded: showAll }}
+            aria-expanded={showAll}
+            onPress={() => setShowAll(!showAll)}
+            style={({ pressed }) => [styles.more, pressed && styles.pressed]}
+          >
+            <Text style={styles.moreText}>
+              {showAll
+                ? 'Show conversations at your level'
+                : `Show all ${allConversations.length} conversations`}
+            </Text>
+            <MaterialCommunityIcons
+              color={Palette.ink}
+              name={showAll ? 'chevron-up' : 'chevron-down'}
+              size={20}
+            />
+          </Pressable>
+        ) : null}
       </Section>
 
       <Section title="Exams and level checks">
@@ -207,7 +238,9 @@ export default function PracticeScreen() {
           icon="calendar-clock"
           title={testDate ? `Test date: ${formatTestDate(testDate)}` : 'Add a test date'}
           meta={
-            testDate ? 'See your practice suggestions' : 'Only if you are preparing for an exam'
+            testPlan
+              ? `${testPlan.cadence}. ${testPlan.recommendation}`
+              : 'Only if you are preparing for an exam'
           }
           onPress={() => go('/test-date')}
         />
@@ -317,5 +350,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22,
   },
+  more: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 6,
+    justifyContent: 'center',
+    minHeight: 52,
+  },
+  moreText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
   pressed: { opacity: 0.7 },
 });

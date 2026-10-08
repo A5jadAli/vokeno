@@ -6,15 +6,20 @@ test.beforeEach(async ({ page }) => {
       : route.abort(),
   );
 });
-test('Home actions are distinct and icon navigation keeps accessible names', async ({ page }) => {
+test('Today has one main action and every destination is labelled', async ({ page }) => {
   await page.goto('/');
-  const home = page.getByRole('button', { name: 'Home', exact: true });
-  await expect(home).toBeVisible();
-  await expect(home.getByText('Home', { exact: true })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: /^Start lesson:/ })).toBeVisible();
-  await page
-    .getByRole('button', { name: 'Change my starting point and goal', exact: true })
-    .click();
+  for (const name of ['Today', 'Course', 'Practice', 'Progress']) {
+    const tab = page.getByRole('tab', { name, exact: true });
+    await expect(tab).toBeVisible();
+    await expect(tab.getByText(name, { exact: true })).toBeVisible();
+  }
+  await expect(page.getByRole('tab', { name: 'Today', exact: true })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await expect(page.getByRole('button', { name: /^Start lesson:/ })).toHaveCount(1);
+  await page.getByRole('tab', { name: 'Course', exact: true }).click();
+  await page.getByRole('button', { name: 'Change where I start', exact: true }).click();
   await expect(page).toHaveURL(/\/learning-plan$/);
 });
 test('writing draft survives reload and submitted text can be revised', async ({ page }) => {
@@ -113,14 +118,14 @@ test('AI writing feedback shows criteria, corrections and an improved version', 
 
 test('starting ability and exam goal change the recommended practice', async ({ page }) => {
   await page.goto('/learning-plan');
-  await page.getByRole('button', { name: 'English', exact: true }).click();
-  await page.getByRole('button', { name: 'I know some words and short phrases' }).click();
-  await page.getByRole('button', { name: 'IELTS General Training', exact: true }).click();
+  await page.getByRole('tab', { name: 'English', exact: true }).click();
+  await page.getByRole('radio', { name: 'I know some words and short phrases' }).click();
+  await page.getByRole('radio', { name: 'IELTS General Training', exact: true }).click();
   await page.reload();
   await expect(
-    page.getByRole('button', { name: 'IELTS General Training', exact: true }),
-  ).toHaveAttribute('aria-pressed', 'true');
-  await page.getByRole('button', { name: 'Start recommended practice' }).click();
+    page.getByRole('radio', { name: 'IELTS General Training', exact: true }),
+  ).toBeChecked();
+  await page.getByRole('button', { name: /^Start: / }).click();
   await expect(page).toHaveURL(/\/activity\/write\?task=letter$/);
 });
 test('reading gives correction, records completion and offers the next text', async ({ page }) => {

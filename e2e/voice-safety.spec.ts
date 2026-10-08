@@ -146,7 +146,7 @@ test('voice failure releases the microphone, retry reconnects, navigation stops 
   await expect(page.getByText('Your turn. Speak anytime', { exact: true })).toBeVisible();
   expect(requests()).toBe(2);
   await page.getByLabel('Progress', { exact: true }).last().click();
-  await expect(page.getByText('Your progress', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Progress', exact: true })).toBeVisible();
   await expect.poll(() => page.evaluate(() => window.vokaVoiceTest.stops)).toBe(2);
   expect(await page.evaluate(() => window.vokaVoiceTest.closes)).toBe(2);
 });
@@ -162,7 +162,7 @@ test('leaving during microphone permission closes the late microphone without st
   await page.getByLabel('Start live conversation', { exact: true }).click();
   await expect(page.getByText('Connecting to your coach…', { exact: true })).toBeVisible();
   await page.getByLabel('Progress', { exact: true }).last().click();
-  await expect(page.getByText('Your progress', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Progress', exact: true })).toBeVisible();
   await page.evaluate(() => window.vokaVoiceTest.grant?.());
   await expect.poll(() => page.evaluate(() => window.vokaVoiceTest.stops)).toBe(1);
   expect(requests()).toBe(0);

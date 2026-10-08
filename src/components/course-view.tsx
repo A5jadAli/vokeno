@@ -102,6 +102,7 @@ export function CourseView({ track }: { track: LanguageTrack }) {
       <View style={styles.links}>
         <Pressable
           accessibilityRole="button"
+          accessibilityLabel="Change where I start"
           onPress={() => router.push('/learning-plan' as Href)}
           style={({ pressed }) => [styles.link, pressed && styles.pressed]}
         >
@@ -111,6 +112,7 @@ export function CourseView({ track }: { track: LanguageTrack }) {
         </Pressable>
         <Pressable
           accessibilityRole="button"
+          accessibilityLabel="Find my level with a short check"
           onPress={() => router.push(`/placement?track=${track}` as Href)}
           style={({ pressed }) => [styles.link, pressed && styles.pressed]}
         >

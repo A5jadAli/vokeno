@@ -6,6 +6,7 @@ import {
   type StepLesson,
 } from '../src/features/foundations/catalog';
 import { placementStages } from '../src/features/placement/items';
+import { chooseLanguage } from './nav';
 
 const unitSessions = foundationLessons.filter(
   (lesson): lesson is StepLesson => lesson.format === 'steps',
@@ -56,8 +57,8 @@ test('a complete beginner gets correction, a persistent draft, evidence and a ne
 }) => {
   const [first, second] = unitSessions;
   await page.goto('/');
-  await page.getByRole('button', { name: 'German', exact: true }).click();
-  await page.getByRole('button', { name: 'Start lesson: Start Unit 1: Hallo!' }).click();
+  await chooseLanguage(page, 'German');
+  await page.getByRole('button', { name: `Start lesson: ${first.title}` }).click();
   await expect(page).toHaveURL(new RegExp(`/foundation/${first.id}$`));
   await expect(page.getByRole('heading', { name: first.title })).toBeVisible();
   const steps = [...first.steps];
@@ -91,13 +92,18 @@ test('a complete beginner gets correction, a persistent draft, evidence and a ne
   await expect(page.getByText('Skipped', { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByText(`${marked - 2}/${marked} right first time`)).toBeVisible();
-  await page.getByRole('button', { name: `Next lesson: ${second.title}` }).click();
+  // The first day's session is one lesson: it is done, with the next lesson as an optional extra.
+  await expect(page.getByText('Today’s session is done')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Done for today' })).toBeVisible();
+  await page.getByRole('button', { name: `One more: ${second.title}` }).click();
   await expect(page).toHaveURL(new RegExp(`/foundation/${second.id}$`));
-  // Home now points at the next session, and the new words wait in review.
+  // Today keeps the finished lesson ticked and offers the next one, and the words wait in review.
   await page.goto('/');
-  await expect(page.getByRole('button', { name: `Optional extra: ${second.title}` })).toBeVisible();
+  await expect(page.getByRole('button', { name: `Done: ${first.title}` })).toBeVisible();
+  await expect(page.getByRole('button', { name: `Optional: ${second.title}` })).toBeVisible();
+  await page.goto('/practice?track=DE');
   await expect(
-    page.getByText(`${first.phrases.length} phrases · next review tomorrow`),
+    page.getByText(`${first.phrases.length} phrases scheduled. Next review tomorrow.`),
   ).toBeVisible();
 });
 
@@ -131,8 +137,7 @@ test('all lessons can be completed without audio and without false speaking cred
     await expect(page.getByText(`${total}/${total} answers right first time`)).toBeVisible();
     await expect(page.getByText(/You skipped the speaking practice/)).toBeVisible();
   }
-  await page.getByRole('button', { name: 'Try Spanish listening' }).click();
-  await expect(page).toHaveURL(/\/listening\?track=ES$/);
+  await expect(page.getByRole('button', { name: 'Open the course' })).toBeVisible();
 });
 
 test('unavailable German audio explains the fallback and does not block learning', async ({
@@ -197,7 +202,7 @@ test('finished lesson phrases come back for spaced review the next day', async (
 
   await page.goto('/review?track=DE');
   await expect(page.getByText('Nothing to review yet')).toHaveCount(0);
-  await expect(page.getByText('You are up to date', { exact: false })).toBeVisible();
+  await expect(page.getByText('All caught up')).toBeVisible();
 
   await page.clock.setFixedTime(new Date('2026-09-29T10:00:00Z'));
   await page.goto('/review?track=DE');

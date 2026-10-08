@@ -242,6 +242,7 @@ export function ActionRow({
       accessibilityRole={choice ? 'radio' : 'button'}
       accessibilityLabel={subtitle ? `${title}: ${subtitle}` : title}
       accessibilityState={choice ? { checked: selected } : { selected }}
+      aria-checked={choice ? selected : undefined}
       aria-pressed={choice ? undefined : selected}
       onPress={onPress}
       style={({ pressed }) => [

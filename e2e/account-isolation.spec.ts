@@ -47,7 +47,8 @@ test('sign-in clears private form state in navigation history without breaking a
     .getByLabel('Writing response')
     .fill('A private guest draft that must not appear in the signed-in account.');
   await page.getByLabel('Answer by speaking instead').click();
-  await page.getByRole('button', { name: 'Profile', exact: true }).click();
+  await page.getByRole('tab', { name: 'Today', exact: true }).last().click();
+  await page.getByRole('button', { name: 'Profile and settings' }).click();
   await page.getByRole('button', { name: 'Sign in or create account' }).click();
   await page.getByPlaceholder('you@example.com').fill(user.email);
   await page.getByPlaceholder('Your password').fill('synthetic test password');
@@ -56,6 +57,8 @@ test('sign-in clears private form state in navigation history without breaking a
   await expect(page.getByRole('img', { name: 'Test Learner profile initials' })).toBeVisible();
   // Sign-in replaces Auth with Profile; the earlier Profile entry is also in history.
   await page.goBack();
+  await page.goBack();
+  await expect(page).toHaveURL(/\/\?track=EN$/);
   await page.goBack();
   await expect(page).toHaveURL(/\/conversation\?track=EN$/);
   await page.goBack();
