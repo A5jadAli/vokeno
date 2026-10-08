@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   },
   accountCopy: { flex: 1 },
   accountButtonDisabled: { opacity: 0.55 },
-  accountTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 13 },
+  accountTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
   accountDescription: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,

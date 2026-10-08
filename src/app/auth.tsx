@@ -571,7 +571,7 @@ const styles = StyleSheet.create({
   dividerLine: { backgroundColor: Palette.line, flex: 1, height: 1 },
   dividerText: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   form: { gap: 7, marginTop: 8 },
-  label: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 12, marginTop: 4 },
+  label: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14, marginTop: 4 },
   input: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
@@ -618,7 +618,7 @@ const styles = StyleSheet.create({
   forgotText: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
+    fontSize: 14,
     textDecorationLine: 'underline',
   },
   primary: {
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   switchButton: { alignItems: 'center', minHeight: 50, paddingTop: 18 },
-  switchText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
+  switchText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   switchAction: { textDecorationLine: 'underline' },
   linkPressed: { opacity: 0.55 },
   availabilityNote: {

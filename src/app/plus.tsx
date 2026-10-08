@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   legalText: {
     color: Palette.cream,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
+    fontSize: 14,
     textDecorationLine: 'underline',
   },
   primaryWrap: { alignSelf: 'stretch', gap: 10, marginTop: 28 },

@@ -198,14 +198,14 @@ const styles = StyleSheet.create({
   title: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
-    lineHeight: 34,
+    fontSize: 22,
+    lineHeight: 28,
     marginTop: 8,
   },
   description: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
-    fontSize: 13,
+    fontSize: 14,
     lineHeight: 20,
     marginBottom: 14,
     marginTop: 8,
@@ -235,8 +235,8 @@ const styles = StyleSheet.create({
     minHeight: 60,
     paddingHorizontal: 17,
   },
-  rowLabel: { color: Palette.ink, flex: 1, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
-  rowValue: { color: Palette.muted, fontFamily: VokaFonts.bodyMedium, fontSize: 12 },
+  rowLabel: { color: Palette.ink, flex: 1, fontFamily: VokaFonts.bodyMedium, fontSize: 16 },
+  rowValue: { color: Palette.secondary, fontFamily: VokaFonts.bodyMedium, fontSize: 14 },
   privacyNote: {
     backgroundColor: Palette.ink,
     borderRadius: 20,

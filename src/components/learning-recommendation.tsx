@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     color: Palette.secondary,
     flex: 1,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 13,
+    fontSize: 14,
   },
   milestone: { borderRadius: 22, gap: 8, marginHorizontal: 18, marginTop: 18, padding: 18 },
   trophy: {

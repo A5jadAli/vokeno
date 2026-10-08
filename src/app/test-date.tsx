@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   removeText: {
     color: '#FFB49E',
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 13,
+    fontSize: 14,
     paddingVertical: 18,
     textAlign: 'center',
   },

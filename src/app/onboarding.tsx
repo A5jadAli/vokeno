@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   },
   logo: { color: Palette.ink, fontFamily: VokaFonts.displayExtraBold, fontSize: 23 },
   skipButton: { paddingHorizontal: 10, paddingVertical: 8 },
-  skipText: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
+  skipText: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   progress: { flexDirection: 'row', gap: 6, marginTop: 18 },
   progressBar: { backgroundColor: 'rgba(19,18,17,.12)', borderRadius: 99, flex: 1, height: 5 },
   progressBarActive: { backgroundColor: Palette.ink },
@@ -241,6 +241,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: 58,
   },
-  secondaryText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 13 },
+  secondaryText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
   pressed: { opacity: 0.7, transform: [{ scale: 0.98 }] },
 });

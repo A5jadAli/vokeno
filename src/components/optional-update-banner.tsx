@@ -114,5 +114,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 8,
   },
-  updateText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 12 },
+  updateText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
 });

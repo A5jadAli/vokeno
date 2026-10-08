@@ -153,7 +153,7 @@ export function ReportContent({
 
 const styles = StyleSheet.create({
   trigger: { alignItems: 'center', flexDirection: 'row', gap: 4, minHeight: 32 },
-  triggerText: { fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
+  triggerText: { fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   scrim: { backgroundColor: 'rgba(0,0,0,0.45)', flex: 1 },
   sheet: {
     backgroundColor: Palette.cream,

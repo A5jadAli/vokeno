@@ -891,7 +891,7 @@ const styles = StyleSheet.create({
     marginTop: 11,
     paddingTop: 10,
   },
-  signalLabel: { fontFamily: VokaFonts.bodyBold, fontSize: 12 },
+  signalLabel: { fontFamily: VokaFonts.bodyBold, fontSize: 13 },
   signalReason: {
     color: 'rgba(241,237,227,0.58)',
     fontFamily: VokaFonts.body,

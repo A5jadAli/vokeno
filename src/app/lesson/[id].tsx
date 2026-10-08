@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 13,
     paddingVertical: 9,
   },
-  controlText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
+  controlText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   subtitleArea: { justifyContent: 'center', minHeight: 150, paddingVertical: 22 },
   speaker: {
     color: Palette.orange,
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 11,
     paddingVertical: 7,
   },
-  heardText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 12 },
+  heardText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
   phraseCopy: { flex: 1 },
   fullPhrase: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 13 },
   meaning: {

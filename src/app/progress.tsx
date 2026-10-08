@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   signalCopy: { flex: 1 },
-  signalTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 12 },
+  signalTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
   signalReason: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
@@ -399,6 +399,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 17,
     paddingVertical: 11,
   },
-  nextButtonText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 13 },
+  nextButtonText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
   pressed: { opacity: 0.72, transform: [{ scale: 0.99 }] },
 });
