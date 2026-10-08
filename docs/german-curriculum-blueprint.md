@@ -63,18 +63,23 @@ Each level ends with two full Goethe-format mock exams (Hören, Lesen, Schreiben
 
 ## Status (8 October 2026)
 
-**Built:** the unit format (`StepLesson` in `src/features/foundations/types.ts`, player in `src/components/step-lesson.tsx`) and A1 Units 1–3 as a pilot (`german-a1-units.ts`): 12 sessions of 5–7 minutes, each with 10–14 varied steps (scene, words, rule, choose, listen, word-order tiles, typing, matching, speaking).
+**Built:** the unit format (`StepLesson` in `src/features/foundations/types.ts`, player in `src/components/step-lesson.tsx`) and A1 Units 1–6 (`german-a1-units.ts`): 24 sessions of 5–7 minutes, each with 10–14 varied steps (scene, words, rule, choose, listen, word-order tiles, typing, matching, speaking).
 
 | Unit                   | Sessions                             | Grammar                                                         | Goethe A1 tasks                                                                                              |
 | ---------------------- | ------------------------------------ | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | 1 Hallo!               | Words, Grammar, Real talk, Exam task | _sein_, _heißen_, W- and yes/no questions, _du_/_Sie_           | Hören Teil 1 (names), form words, Sprechen Teil 1 (name)                                                     |
 | 2 Woher kommst du?     | Words, Grammar, Real talk, Exam task | Present tense of regular verbs, _-est/-et_, _heißt_, _sprechen_ | Lesen Teil 1 (richtig/falsch), Sprechen Teil 1 (Land, Wohnort, Sprachen)                                     |
 | 3 Zahlen, Alter, Namen | Words, Grammar, Real talk, Exam task | Numbers 0–100 (units first), age with _sein_, prices            | Hören Teil 1 and 3 (corrected numbers), Schreiben Teil 1 (form), full Sprechen Teil 1 except Beruf and Hobby |
+| 4 Meine Familie        | Words, Grammar, Real talk, Exam task | _haben_, _mein/dein/sein/ihr/Ihr_; spoken _der/die_ for he/they | Sprechen Teil 2 (word cards), Lesen richtig/falsch                                                           |
+| 5 Im Café              | Words, Grammar, Real talk, Exam task | _möchten_, accusative _einen/eine/ein_, _den_                   | Sprechen Teil 3 (picture cards), Hören (changed orders and prices)                                           |
+| 6 Einkaufen            | Words, Grammar, Real talk, Exam task | Plural patterns, _kein_ versus _nicht_, amounts without "of"    | Lesen Teil 2 and Teil 3 (adverts, signs), Hören Teil 2 (announcement)                                        |
 
-Native-first content, beyond the Goethe list, includes high-frequency spoken words that are not on it (OpenSubtitles rank in brackets): _genau_ (171), _echt_ (362), _sorry_ (1,521), _nee_ (1,725). It also covers _Moin_/_Servus_/_Grüß Gott_, _Wo kommst du her?_, merged forms (_willste_, _kommste_), _zwo_, numbers as feminine nouns (_die Zwölf_), phone numbers in pairs, spelling with words, _alles klein_ in email addresses, Saxon dialect in Leipzig, and when not to ask "where are you really from?".
+Native-first content in Units 1–3, beyond the Goethe list, includes high-frequency spoken words that are not on it (OpenSubtitles rank in brackets): _genau_ (171), _echt_ (362), _sorry_ (1,521), _nee_ (1,725). It also covers _Moin_/_Servus_/_Grüß Gott_, _Wo kommst du her?_, merged forms (_willste_, _kommste_), _zwo_, numbers as feminine nouns (_die Zwölf_), phone numbers in pairs, spelling with words, _alles klein_ in email addresses, Saxon dialect in Leipzig, and when not to ask "where are you really from?".
 
-The starter lessons these units replace (`greetings`, `introductions`, `origin`, `numbers`) are retired: off the path, with history and review cards kept.
+The starter lessons these units replace (`greetings`, `introductions`, `origin`, `numbers`, `family`, `cafe`, `supermarket`) are retired: off the path, with history and review cards kept.
+
+Units 4–6 add Mama/Papa used by adults, _Kumpel_, _WG_, _Einzelkind_, the _meine Freundin_ ambiguity, _Apfelschorle_ and _Hafermilch_, _Zusammen oder getrennt?_, tipping by naming the total or _Stimmt so_, cash-only places, the bill only on request, Pfand, one-word checkout questions (_Tüte? Bon?_), _Darf's ein bisschen mehr sein?_ and _günstig_ versus _billig_.
 
 **Quality gates in place:** `tests/units.test.ts` (structure, variety, every exercise solvable, unique review cards, no digits or keyboard spellings in German audio and model lines) and the e2e walkthrough that finishes every session through the UI.
 
-**Not yet done:** native-teacher review of the pilot; Units 4–20; the two A1 mock exams; human-recorded audio (scenes currently use the device voice, one voice for all speakers). German A1 stays labelled a starter set until all of these pass.
+**Not yet done:** native-teacher review of Units 1–6; Units 7–20; the two A1 mock exams; human-recorded audio (scenes currently use the device voice, one voice for all speakers). German A1 stays labelled a starter set until all of these pass.

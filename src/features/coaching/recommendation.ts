@@ -42,9 +42,9 @@ export function learningRecommendation(
             href: '/foundation/appointments',
           }
         : {
-            title: 'Order and pay',
-            why: 'Use the basics in an everyday exchange in Germany.',
-            href: '/foundation/cafe',
+            title: 'Order and pay in a café',
+            why: 'Unit 5: order, change your mind and pay the way people do in Germany.',
+            href: '/foundation/de-a1-u5-order',
           };
     return goal === 'work-study'
       ? {

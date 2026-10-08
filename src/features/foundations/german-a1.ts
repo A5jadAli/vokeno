@@ -439,6 +439,8 @@ export const germanA1Lessons = defineLessons('DE', [
   {
     id: 'cafe',
     level: 'A1',
+    // Replaced by German A1 Units 4–6.
+    retired: true,
     title: 'Order and pay in a café',
     outcome:
       'Order politely, answer the “for here or to go” question and ask about paying by card.',
@@ -511,6 +513,8 @@ export const germanA1Lessons = defineLessons('DE', [
   {
     id: 'family',
     level: 'A1',
+    // Replaced by German A1 Units 4–6.
+    retired: true,
     title: 'Talk about family and friends',
     outcome: 'Introduce people close to you and say who you live with.',
     phrases: [
@@ -641,6 +645,8 @@ export const germanA1Lessons = defineLessons('DE', [
   {
     id: 'supermarket',
     level: 'A1',
+    // Replaced by German A1 Units 4–6.
+    retired: true,
     title: 'Shop for food and everyday things',
     outcome: 'Ask where things are, say what you need and handle the checkout.',
     phrases: [
