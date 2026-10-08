@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AppScreen, Eyebrow } from '@/components/voka-ui';
 import { SyncStatusNotice } from '@/components/sync-status';
 import { Palette, VokaFonts } from '@/constants/theme';
-import { useCoachingStore } from '@/features/coaching/store';
+import { useCoachingStore, testDateFor } from '@/features/coaching/store';
 import { curriculumUnits } from '@/features/curriculum/catalog';
 import { listeningScenarios, type LanguageTrack } from '@/features/listening/scenarios';
 import { daysUntilTest, formatTestDate } from '@/features/profile/test-date';
@@ -26,7 +26,7 @@ export default function ProgressScreen() {
     (signal) => signal.track === track,
   );
   const speakingPracticeDates = useCoachingStore((state) => state.speakingPracticeDates);
-  const testDate = useCoachingStore((state) => state.testDate);
+  const testDate = useCoachingStore((state) => testDateFor(state, track));
   const writingPracticeDates = useCoachingStore((state) => state.writingPracticeDates);
   const daysRemaining = daysUntilTest(testDate);
   const habits = useHabits(track);

@@ -37,7 +37,7 @@ describe('cloud sync ownership and failures', () => {
     const hook = await renderHook(() => useCloudSync());
     await waitFor(() => expect(hook.result.current.ready).toBe(true));
     await waitFor(() => expect(useSyncStatus.getState().status).toBe('offline'));
-    await act(() => useCoachingStore.getState().setTestDate('2026-12-01'));
+    await act(() => useCoachingStore.getState().setTestDate('EN', '2026-12-01'));
     mockSession = null;
     await hook.rerender(undefined);
     await waitFor(() => expect(hook.result.current.ready).toBe(true));

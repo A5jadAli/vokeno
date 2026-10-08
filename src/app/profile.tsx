@@ -11,7 +11,7 @@ import { supabase } from '@/features/auth/supabase';
 import { useAuthSession } from '@/features/auth/use-auth-session';
 import { getProfileDisplayName, getProfileInitials } from '@/features/profile/name';
 import { formatTestDate } from '@/features/profile/test-date';
-import { useCoachingStore } from '@/features/coaching/store';
+import { useCoachingStore, testDateFor } from '@/features/coaching/store';
 import { useLanguageSelection } from '@/features/language/selection';
 import { languageDetails, languageTracks, trackColors } from '@/features/language/config';
 
@@ -28,7 +28,7 @@ export default function ProfileScreen() {
   const initials = getProfileInitials(displayName);
   const assessments = useAssessmentStore((state) => state.assessments);
   const track = useLanguageSelection((state) => state.track);
-  const testDate = useCoachingStore((state) => state.testDate);
+  const testDate = useCoachingStore((state) => testDateFor(state, track));
 
   const handleAccount = () => {
     if (!isPermanent) {

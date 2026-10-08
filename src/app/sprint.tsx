@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
-import { speakingGoalCopy, useCoachingStore } from '@/features/coaching/store';
+import { speakingGoalCopy, useCoachingStore, testDateFor } from '@/features/coaching/store';
 import { examMockUnitIds, getCurriculumUnits } from '@/features/curriculum/catalog';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { languageDetails, trackColors } from '@/features/language/config';
@@ -18,7 +18,7 @@ export default function SprintScreen() {
   const [track, setTrack] = useSelectedLanguage();
   const completedIds = useCoachingStore((state) => state.completedUnitIds);
   const goal = useCoachingStore((state) => state.preferences[track].goal);
-  const testDate = useCoachingStore((state) => state.testDate);
+  const testDate = useCoachingStore((state) => testDateFor(state, track));
   const testPlan = getTestDatePlan(testDate);
   const units = getCurriculumUnits(track);
   const accent = languageDetails[track].accent;

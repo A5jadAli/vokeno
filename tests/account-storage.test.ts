@@ -18,7 +18,7 @@ beforeEach(async () => {
 describe('account-local learning storage', () => {
   it('keeps offline progress separate and restores it after signing back in', async () => {
     await activateLearningScope('account-a');
-    useCoachingStore.getState().setTestDate('2026-12-01');
+    useCoachingStore.getState().setTestDate('EN', '2026-12-01');
     useProgressStore.getState().completeScenario('coffee-run');
     useCoachingStore
       .getState()
@@ -27,7 +27,7 @@ describe('account-local learning storage', () => {
     expect(useCoachingStore.getState().testDate).toBeNull();
     expect(useProgressStore.getState().completedScenarioIds).toEqual([]);
     expect(useCoachingStore.getState().foundations).toEqual({});
-    useCoachingStore.getState().setTestDate('2027-01-01');
+    useCoachingStore.getState().setTestDate('EN', '2027-01-01');
     await activateLearningScope('account-b');
     expect(useCoachingStore.getState().testDate).toBeNull();
     expect(useProgressStore.getState().completedScenarioIds).toEqual([]);

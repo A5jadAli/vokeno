@@ -34,7 +34,8 @@ export type SpeakingGoal = 'everyday' | 'interviews' | 'work-study';
 export type CoachTone = 'adaptive' | 'supportive' | 'tough';
 export type StartingAbility = 'new' | 'basics' | 'conversational';
 export type StudyGoal = 'everyday' | 'work-study' | 'ielts-academic' | 'ielts-general';
-type LearningChoices = { ability?: StartingAbility; studyGoal?: StudyGoal };
+/** `testDate` (YYYY-MM-DD) is this language's exam date, e.g. IELTS or Goethe. */
+type LearningChoices = { ability?: StartingAbility; studyGoal?: StudyGoal; testDate?: string };
 
 export type SpeakingPreferences = {
   DE: { goal: SpeakingGoal; reference: 'de-DE' } & LearningChoices;
@@ -89,7 +90,7 @@ type CoachingState = {
   setCoachTone: (tone: CoachTone) => void;
   setGoal: (track: LanguageTrack, goal: SpeakingGoal) => void;
   setHasHydrated: (hydrated: boolean) => void;
-  setTestDate: (date: string | null) => void;
+  setTestDate: (track: LanguageTrack, date: string | null) => void;
 };
 
 export type PersistedCoachingState = Pick<
@@ -278,7 +279,15 @@ export const useCoachingStore = create<CoachingState>()(
           },
         })),
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
-      setTestDate: (testDate) => set({ testDate }),
+      setTestDate: (track, date) =>
+        set((state) => ({
+          preferences: {
+            ...state.preferences,
+            [track]: { ...state.preferences[track], testDate: date ?? undefined },
+          },
+          // Older app versions read the single date, which has always meant English (IELTS).
+          ...(track === 'EN' ? { testDate: date } : {}),
+        })),
     }),
     {
       migrate: (persistedState) => {
@@ -331,3 +340,11 @@ export const speakingGoalCopy: Record<SpeakingGoal, { description: string; label
     label: 'Work & study',
   },
 };
+
+/** A language's test date. The original single date belongs to English. */
+export function testDateFor(
+  state: Pick<CoachingState, 'preferences' | 'testDate'>,
+  track: LanguageTrack,
+): string | null {
+  return state.preferences[track]?.testDate ?? (track === 'EN' ? state.testDate : null);
+}

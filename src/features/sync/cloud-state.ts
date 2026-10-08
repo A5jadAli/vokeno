@@ -78,6 +78,9 @@ function parseLearningChoices(value: Record<string, unknown>) {
     )
       ? value.studyGoal
       : 'everyday') as StudyGoal,
+    ...(typeof value.testDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value.testDate)
+      ? { testDate: value.testDate }
+      : {}),
   };
 }
 

@@ -6,8 +6,9 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { TestDatePicker } from '@/components/test-date-picker';
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
-import { useCoachingStore } from '@/features/coaching/store';
+import { useCoachingStore, testDateFor } from '@/features/coaching/store';
 import { formatTestDate, parseDateOnly, toDateOnly } from '@/features/profile/test-date';
+import { useLanguageSelection } from '@/features/language/selection';
 
 function initialDate(saved: string | null) {
   const parsed = parseDateOnly(saved);
@@ -22,7 +23,8 @@ function initialDate(saved: string | null) {
 
 export default function TestDateScreen() {
   const router = useRouter();
-  const savedDate = useCoachingStore((state) => state.testDate);
+  const track = useLanguageSelection((state) => state.track);
+  const savedDate = useCoachingStore((state) => testDateFor(state, track));
   const setTestDate = useCoachingStore((state) => state.setTestDate);
   const [draft, setDraft] = useState(() => initialDate(savedDate));
   const [pickerVisible, setPickerVisible] = useState(Platform.OS !== 'android');
@@ -30,7 +32,7 @@ export default function TestDateScreen() {
   today.setHours(0, 0, 0, 0);
 
   const save = () => {
-    setTestDate(toDateOnly(draft));
+    setTestDate(track, toDateOnly(draft));
     router.back();
   };
 
@@ -84,7 +86,7 @@ export default function TestDateScreen() {
           <Pressable
             accessibilityRole="button"
             onPress={() => {
-              setTestDate(null);
+              setTestDate(track, null);
               router.back();
             }}
           >
