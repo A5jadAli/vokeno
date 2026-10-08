@@ -81,9 +81,9 @@ type CoachingState = {
   mergeCloudState: (state: Partial<PersistedCoachingState>) => void;
   /** What was practised today, for the honest streak and today's plan. */
   practiceLog: PracticeLog;
-  recordPractice: (kind: PracticeKind) => void;
-  recordSpeakingPractice: () => void;
-  recordWritingPractice: () => void;
+  recordPractice: (kind: PracticeKind, track: LanguageTrack) => void;
+  recordSpeakingPractice: (track: LanguageTrack) => void;
+  recordWritingPractice: (track: LanguageTrack) => void;
   recordSignal: (signal: Omit<CoachingSignal, 'count' | 'lastSeenAt'>) => void;
   resetCoaching: () => void;
   setCoachTone: (tone: CoachTone) => void;
@@ -229,15 +229,15 @@ export const useCoachingStore = create<CoachingState>()(
         })),
       recordSignal: (signal) =>
         set((state) => ({ signals: mergeCoachingSignal(state.signals, signal) })),
-      recordPractice: (kind) =>
+      recordPractice: (kind, track) =>
         set((state) => {
-          const practiceLog = addPractice(state.practiceLog, kind, Date.now());
+          const practiceLog = addPractice(state.practiceLog, kind, Date.now(), track);
           return practiceLog === state.practiceLog ? state : { practiceLog };
         }),
-      recordSpeakingPractice: () =>
+      recordSpeakingPractice: (track) =>
         set((state) => {
           const today = new Date().toISOString().slice(0, 10);
-          const practiceLog = addPractice(state.practiceLog, 'speaking', Date.now());
+          const practiceLog = addPractice(state.practiceLog, 'speaking', Date.now(), track);
           return {
             practiceLog,
             speakingPracticeDates: state.speakingPracticeDates.includes(today)
@@ -245,10 +245,10 @@ export const useCoachingStore = create<CoachingState>()(
               : [...state.speakingPracticeDates, today].slice(-30),
           };
         }),
-      recordWritingPractice: () =>
+      recordWritingPractice: (track) =>
         set((state) => {
           const today = new Date().toISOString().slice(0, 10);
-          const practiceLog = addPractice(state.practiceLog, 'writing', Date.now());
+          const practiceLog = addPractice(state.practiceLog, 'writing', Date.now(), track);
           return {
             practiceLog,
             writingPracticeDates: state.writingPracticeDates.includes(today)

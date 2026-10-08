@@ -59,7 +59,7 @@ export default function ListeningLessonScreen() {
     setChecked(true);
     if (isCorrect) {
       completeScenario(scenario.id);
-      useCoachingStore.getState().recordPractice('listening');
+      useCoachingStore.getState().recordPractice('listening', scenario.track);
     }
   };
 

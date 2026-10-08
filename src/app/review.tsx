@@ -60,7 +60,7 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
     // Only the first attempt in a session moves the card; retries are for learning.
     if (!graded.current.has(item.key)) {
       graded.current.add(item.key);
-      useCoachingStore.getState().recordPractice('review');
+      useCoachingStore.getState().recordPractice('review', track);
       const entry =
         useCoachingStore.getState().foundations[item.lessonId] ?? freshFoundationEntry();
       save(item.lessonId, gradeCard(entry, item.phraseIndex, correct, dayNumber()));

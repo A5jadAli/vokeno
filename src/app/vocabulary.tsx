@@ -134,7 +134,7 @@ export default function VocabularyScreen() {
           accessibilityLabel={isLast ? 'Finish vocabulary deck' : 'Next vocabulary card'}
           accessibilityRole="button"
           onPress={() => {
-            useCoachingStore.getState().recordPractice('review');
+            useCoachingStore.getState().recordPractice('review', 'DE');
             if (isLast) router.replace('/sprint?track=DE');
             else move(1);
           }}

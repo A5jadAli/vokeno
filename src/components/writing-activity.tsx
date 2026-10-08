@@ -113,7 +113,7 @@ function WritingPractice({ track }: { track: LanguageTrack }) {
     setMessage('');
     setDeadline(null);
     saveWriting(taskId, answer, answer);
-    recordWritingPractice();
+    recordWritingPractice(track);
   };
   const getFeedback = async () => {
     abort.current?.abort();

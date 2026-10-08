@@ -69,7 +69,7 @@ function ListeningActivity() {
           router.push('/lesson/coffee-run');
           return;
         }
-        if (selected === 1) useCoachingStore.getState().recordPractice('listening');
+        if (selected === 1) useCoachingStore.getState().recordPractice('listening', 'EN');
         setFeedback(
           selected === 1
             ? 'Correct. They will meet outside the station.'

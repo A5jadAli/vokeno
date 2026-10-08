@@ -1,11 +1,18 @@
 // A small, honest record of practice days. Everything here is pure so the habit rules can be
 // tested without a device clock. Days are the learner's local calendar days, not UTC days.
 
+import type { LanguageTrack } from '@/features/language/config';
+
 export const practiceKinds = ['lesson', 'review', 'listening', 'speaking', 'writing'] as const;
 export type PracticeKind = (typeof practiceKinds)[number];
+/**
+ * What was practised, and in which language ('lesson:ES'). Entries recorded before languages
+ * were tracked have no language: they count for the streak but never tick a language's plan.
+ */
+export type PracticeEntry = PracticeKind | `${PracticeKind}:${LanguageTrack}`;
 
 /** Local day (YYYY-MM-DD) → what was practised that day. */
-export type PracticeLog = Record<string, PracticeKind[]>;
+export type PracticeLog = Record<string, PracticeEntry[]>;
 
 /** Enough history for a best streak and a weekly view, small enough to sync. */
 export const PRACTICE_LOG_DAYS = 120;
@@ -22,6 +29,17 @@ const codes: Record<PracticeKind, string> = {
 const kindsByCode = Object.fromEntries(
   Object.entries(codes).map(([kind, code]) => [code, kind]),
 ) as Record<string, PracticeKind>;
+const trackCodes: Record<LanguageTrack, string> = { EN: 'E', DE: 'D', ES: 'S' };
+const tracksByCode = Object.fromEntries(
+  Object.entries(trackCodes).map(([track, code]) => [code, track]),
+) as Record<string, LanguageTrack>;
+
+/** The kinds practised on a day in one language. */
+export function practisedKinds(log: PracticeLog, day: string, track: LanguageTrack) {
+  return (log[day] ?? [])
+    .filter((entry) => entry.endsWith(`:${track}`))
+    .map((entry) => entry.split(':')[0] as PracticeKind);
+}
 
 const pad = (value: number) => String(value).padStart(2, '0');
 
@@ -60,41 +78,57 @@ function prune(log: PracticeLog, today: string): PracticeLog {
   );
 }
 
-export function addPractice(log: PracticeLog, kind: PracticeKind, time: number): PracticeLog {
+export function addPractice(
+  log: PracticeLog,
+  kind: PracticeKind,
+  time: number,
+  track?: LanguageTrack,
+): PracticeLog {
   const today = localDay(time);
+  const entry: PracticeEntry = track ? `${kind}:${track}` : kind;
   const existing = log[today] ?? [];
-  if (existing.includes(kind)) return log;
-  return prune({ ...log, [today]: [...existing, kind] }, today);
+  if (existing.includes(entry)) return log;
+  return prune({ ...log, [today]: [...existing, entry] }, today);
 }
 
 export function mergePracticeLogs(local: PracticeLog, remote: PracticeLog, today: string) {
   const merged: PracticeLog = { ...local };
-  for (const [day, kinds] of Object.entries(remote)) {
-    merged[day] = practiceKinds.filter(
-      (kind) => kinds.includes(kind) || (merged[day] ?? []).includes(kind),
-    );
+  for (const [day, entries] of Object.entries(remote)) {
+    merged[day] = [...new Set([...(merged[day] ?? []), ...entries])];
   }
   return prune(merged, today);
 }
 
-/** Cloud form: ['2026-10-07:lr', …]. Unknown codes and malformed days are dropped. */
+/** Cloud form: ['2026-10-07:lSrD', …]: a kind letter, then an optional language letter. */
 export function serializePracticeLog(log: PracticeLog): string[] {
   return Object.keys(log)
     .sort()
-    .map((day) => `${day}:${log[day].map((kind) => codes[kind]).join('')}`);
+    .map((day) => {
+      const letters = log[day].map((entry) => {
+        const [kind, track] = entry.split(':') as [PracticeKind, LanguageTrack | undefined];
+        return codes[kind] + (track ? trackCodes[track] : '');
+      });
+      return `${day}:${letters.join('')}`;
+    });
 }
 
+/** Unknown letters and malformed days are dropped. */
 export function parsePracticeLog(value: unknown): PracticeLog {
   if (!Array.isArray(value)) return {};
   const log: PracticeLog = {};
-  for (const entry of value.slice(-PRACTICE_LOG_DAYS * 2)) {
-    if (typeof entry !== 'string') continue;
-    const [day, letters = ''] = entry.split(':');
+  for (const item of value.slice(-PRACTICE_LOG_DAYS * 2)) {
+    if (typeof item !== 'string') continue;
+    const [day, letters = ''] = item.split(':');
     if (!Number.isFinite(dayNumberOf(day))) continue;
-    const kinds = practiceKinds.filter((kind) =>
-      [...letters].some((code) => kindsByCode[code] === kind),
-    );
-    if (kinds.length) log[day] = kinds;
+    const entries = new Set<PracticeEntry>();
+    for (const [, code, trackCode] of letters.matchAll(/([a-z])([A-Z]?)/g)) {
+      const kind = kindsByCode[code];
+      if (!kind) continue;
+      const track = tracksByCode[trackCode];
+      if (trackCode && !track) continue;
+      entries.add(track ? `${kind}:${track}` : kind);
+    }
+    if (entries.size) log[day] = [...entries];
   }
   return log;
 }
@@ -228,18 +262,18 @@ export const stageSteps: Record<PracticeStage, number> = {
  * Merging these keeps an existing learner's streak and stage honest instead of starting at zero.
  */
 export function historyLog(
-  lessonAttemptTimes: string[],
+  lessonAttempts: { at: string; track?: LanguageTrack }[],
   speakingDays: string[],
   writingDays: string[],
 ): PracticeLog {
   const log: PracticeLog = {};
-  const add = (day: string, kind: PracticeKind) => {
+  const add = (day: string, entry: PracticeEntry) => {
     if (!Number.isFinite(dayNumberOf(day))) return;
-    log[day] = log[day]?.includes(kind) ? log[day] : [...(log[day] ?? []), kind];
+    log[day] = log[day]?.includes(entry) ? log[day] : [...(log[day] ?? []), entry];
   };
-  for (const at of lessonAttemptTimes) {
+  for (const { at, track } of lessonAttempts) {
     const time = Date.parse(at);
-    if (Number.isFinite(time)) add(localDay(time), 'lesson');
+    if (Number.isFinite(time)) add(localDay(time), track ? `lesson:${track}` : 'lesson');
   }
   for (const day of speakingDays) add(day, 'speaking');
   for (const day of writingDays) add(day, 'writing');

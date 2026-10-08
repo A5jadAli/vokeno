@@ -356,7 +356,7 @@ export default function ConversationScreen() {
           if (next === 'ended' && sessionRef.current) {
             releaseSession();
             if (userTurnIdsRef.current.size >= 2) {
-              recordSpeakingPractice();
+              recordSpeakingPractice(track);
               if (unit) completeUnit(unit.id);
             }
           }
@@ -421,7 +421,7 @@ export default function ConversationScreen() {
     releaseSession();
     setStatus('ended');
     if (unit && userTurnIdsRef.current.size >= 2) completeUnit(unit.id);
-    if (userTurnIdsRef.current.size >= 2) recordSpeakingPractice();
+    if (userTurnIdsRef.current.size >= 2) recordSpeakingPractice(track);
     if (diagnostic) await calculateAssessment();
   };
 

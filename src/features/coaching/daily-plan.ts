@@ -8,6 +8,7 @@ import {
   dayNumberOf,
   localDay,
   practiceStage,
+  practisedKinds,
   stageSteps,
   type PracticeKind,
   type PracticeLog,
@@ -60,7 +61,7 @@ const rank = (level: string) => levels.indexOf(level as (typeof levels)[number])
 export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
   const { track, progress, log, now } = input;
   const today = localDay(now);
-  const practisedToday = log[today] ?? [];
+  const practisedToday = practisedKinds(log, today, track);
   const { stage, returning } = practiceStage(log, today);
   const lessons = getTrackLessons(track);
   const completedLessons = lessons.filter((lesson) => progress[lesson.id]?.attempts.length).length;

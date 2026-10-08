@@ -93,7 +93,7 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
   };
   const advance = (step: number) => {
     resetTransient();
-    useCoachingStore.getState().recordPractice('lesson');
+    useCoachingStore.getState().recordPractice('lesson', lesson.track);
     update({ step });
   };
 
@@ -172,7 +172,7 @@ function GuidedLesson({ lesson }: { lesson: FoundationLesson }) {
   };
   const complete = (spoken: boolean) => {
     resetTransient();
-    useCoachingStore.getState().recordPractice('lesson');
+    useCoachingStore.getState().recordPractice('lesson', lesson.track);
     haptic.complete();
     update({
       step: 4,

@@ -139,7 +139,7 @@ describe('lessons', () => {
 
 describe('completing the day', () => {
   it('ticks off what was practised today and keeps the step visible', () => {
-    const log: PracticeLog = { ...activeDays(5), [TODAY]: ['lesson'] };
+    const log: PracticeLog = { ...activeDays(5), [TODAY]: ['lesson:ES'] };
     const today = plan({ log });
     const lesson = today.steps.find((step) => step.kind === 'lesson');
     expect(lesson?.done).toBe(true);
@@ -148,7 +148,7 @@ describe('completing the day', () => {
   });
 
   it('offers an optional bonus only once every step is done', () => {
-    const log: PracticeLog = { [TODAY]: ['lesson'] };
+    const log: PracticeLog = { [TODAY]: ['lesson:ES'] };
     const today = plan({ log });
     expect(today.doneCount).toBe(today.steps.length);
     expect(today.bonus).toBeDefined();
@@ -157,7 +157,7 @@ describe('completing the day', () => {
 
   it('offers the next lesson as the bonus after today’s lesson', () => {
     const progress: FoundationProgress = { 'es-first-words': completed() };
-    const today = plan({ progress, log: { [TODAY]: ['lesson'] } });
+    const today = plan({ progress, log: { [TODAY]: ['lesson:ES'] } });
     expect(today.steps[0]).toMatchObject({ kind: 'lesson', done: true });
     expect(today.bonus).toMatchObject({ kind: 'lesson', href: '/foundation/es-names' });
   });
@@ -166,7 +166,7 @@ describe('completing the day', () => {
     const allDone: FoundationProgress = Object.fromEntries(
       getTrackLessons('ES').map((lesson) => [lesson.id, completed()]),
     );
-    const today = plan({ progress: allDone, log: { [TODAY]: ['listening', 'speaking'] } });
+    const today = plan({ progress: allDone, log: { [TODAY]: ['listening:ES', 'speaking:ES'] } });
     expect(today.doneCount).toBe(today.steps.length);
     expect(today.bonus?.kind === 'lesson').toBe(false);
   });
@@ -224,5 +224,17 @@ describe('the lesson step', () => {
           );
           expect(lesson?.href).toMatch(/^\/foundation\//);
         }
+  });
+});
+
+describe('one language at a time', () => {
+  it('does not tick a Spanish step for German practice', () => {
+    const today = plan({ log: { [TODAY]: ['lesson:DE', 'review:DE'] } });
+    expect(today.steps.every((step) => !step.done)).toBe(true);
+  });
+
+  it('ticks the Spanish lesson for Spanish practice', () => {
+    const today = plan({ log: { [TODAY]: ['lesson:ES'] } });
+    expect(today.steps.find((step) => step.kind === 'lesson')?.done).toBe(true);
   });
 });

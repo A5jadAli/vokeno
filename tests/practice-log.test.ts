@@ -9,6 +9,7 @@ import {
   mergePracticeLogs,
   parsePracticeLog,
   practiceStage,
+  practisedKinds,
   practiceStreak,
   PRACTICE_LOG_DAYS,
   serializePracticeLog,
@@ -239,23 +240,87 @@ describe('a stable plan for the day', () => {
 describe('history from before the practice log', () => {
   it('turns lesson attempts and speaking or writing days into practice days', () => {
     const lessonAt = new Date(2026, 9, 6, 21, 0).toISOString();
-    expect(historyLog([lessonAt, lessonAt], ['2026-10-05'], ['2026-10-05'])).toEqual({
-      '2026-10-06': ['lesson'],
+    expect(
+      historyLog(
+        [
+          { at: lessonAt, track: 'DE' },
+          { at: lessonAt, track: 'DE' },
+        ],
+        ['2026-10-05'],
+        ['2026-10-05'],
+      ),
+    ).toEqual({
+      '2026-10-06': ['lesson:DE'],
       '2026-10-05': ['speaking', 'writing'],
     });
   });
 
   it('ignores malformed timestamps and dates', () => {
-    expect(historyLog(['not a time', ''], ['2026-02-30', 'yesterday'], [])).toEqual({});
+    expect(historyLog([{ at: 'not a time' }, { at: '' }], ['2026-02-30', 'yesterday'], [])).toEqual(
+      {},
+    );
   });
 
   it('lets an existing learner keep a streak earned before the update', () => {
     const history = historyLog(
-      [ago(1), ago(2)].map((day) => `${day}T12:00:00`),
+      [ago(1), ago(2)].map((day) => ({ at: `${day}T12:00:00`, track: 'ES' as const })),
       [ago(3)],
       [],
     );
     expect(practiceStreak(history, TODAY)).toMatchObject({ current: 3, atRisk: true });
     expect(practiceStage(history, TODAY).stage).toBe('warm-up');
+  });
+});
+
+describe('languages in the log', () => {
+  const noon = new Date(2026, 9, 7, 12).getTime();
+
+  it('records which language was practised and reports it per language', () => {
+    let log = addPractice({}, 'review', noon, 'DE');
+    log = addPractice(log, 'lesson', noon, 'ES');
+    expect(practisedKinds(log, TODAY, 'DE')).toEqual(['review']);
+    expect(practisedKinds(log, TODAY, 'ES')).toEqual(['lesson']);
+    expect(practisedKinds(log, TODAY, 'EN')).toEqual([]);
+  });
+
+  it('never credits a language with practice that has no language', () => {
+    expect(practisedKinds({ [TODAY]: ['lesson', 'review'] }, TODAY, 'ES')).toEqual([]);
+  });
+
+  it('counts practice in any language for the streak', () => {
+    const log: PracticeLog = { [ago(1)]: ['lesson:DE'], [TODAY]: ['review:ES'] };
+    expect(practiceStreak(log, TODAY).current).toBe(2);
+  });
+
+  it('keeps the same kind in two languages as two entries', () => {
+    let log = addPractice({}, 'lesson', noon, 'DE');
+    log = addPractice(log, 'lesson', noon, 'ES');
+    log = addPractice(log, 'lesson', noon, 'ES');
+    expect(log[TODAY]).toEqual(['lesson:DE', 'lesson:ES']);
+  });
+
+  it('round-trips languages and older entries through the cloud form', () => {
+    const log: PracticeLog = { [TODAY]: ['lesson:ES', 'review:DE', 'speaking', 'writing:EN'] };
+    expect(serializePracticeLog(log)).toEqual([`${TODAY}:lSrDswE`]);
+    expect(parsePracticeLog(serializePracticeLog(log))).toEqual(log);
+  });
+
+  it('drops unknown language letters instead of guessing', () => {
+    expect(parsePracticeLog([`${TODAY}:lXrD`])).toEqual({ [TODAY]: ['review:DE'] });
+  });
+});
+
+describe('cloud size', () => {
+  it('fits the database limit even when every kind is practised in every language daily', () => {
+    const log: PracticeLog = {};
+    for (let day = 0; day < PRACTICE_LOG_DAYS; day++)
+      log[ago(day)] = (['EN', 'DE', 'ES'] as const).flatMap((track) =>
+        (['lesson', 'review', 'listening', 'speaking', 'writing'] as const).map(
+          (kind) => `${kind}:${track}` as const,
+        ),
+      );
+    const stored = serializePracticeLog(log);
+    expect(stored.length).toBeLessThanOrEqual(400);
+    expect(stored.join(',').length).toBeLessThanOrEqual(8000);
   });
 });

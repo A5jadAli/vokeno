@@ -20,7 +20,7 @@ describe('full practice log', () => {
       },
       '2026-10-07',
     );
-    expect(log).toEqual({ '2026-10-07': ['review'], '2026-10-06': ['lesson', 'speaking'] });
+    expect(log).toEqual({ '2026-10-07': ['review'], '2026-10-06': ['lesson:DE', 'speaking'] });
   });
 
   it('is empty for a brand-new learner', () => {

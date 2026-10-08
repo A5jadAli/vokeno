@@ -90,7 +90,7 @@ function EnglishReading() {
                 onPress={() => {
                   if (questionIndex === lesson.questions.length - 1)
                     complete(`reading-${lesson.id}`);
-                  useCoachingStore.getState().recordPractice('lesson');
+                  useCoachingStore.getState().recordPractice('lesson', 'EN');
                   setQuestionIndex(questionIndex + 1);
                   setSelected(null);
                 }}
