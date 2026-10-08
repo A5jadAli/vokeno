@@ -14,6 +14,7 @@ import {
   PrimaryButton,
   PrimaryAccent,
 } from '@/components/lesson-ui';
+import { SessionFooter } from '@/components/session-footer';
 import { AppScreen } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
@@ -87,12 +88,16 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
       <AppScreen
         showNav={false}
         footer={
-          <ActionBar>
-            <PrimaryButton
-              title={total ? 'Back to learning' : 'Open lessons'}
-              onPress={() => router.replace(`/sprint?track=${track}` as Href)}
-            />
-          </ActionBar>
+          total ? (
+            <SessionFooter track={track} />
+          ) : (
+            <ActionBar>
+              <PrimaryButton
+                title={summary.learning ? 'Back to Today' : 'Go to your next lesson'}
+                onPress={() => router.replace(`/?track=${track}` as Href)}
+              />
+            </ActionBar>
+          )
         }
       >
         <LessonTopBar progress={total ? 1 : 0} />
@@ -105,14 +110,18 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
             />
           </Animated.View>
           <Text accessibilityRole="header" style={lessonText.title}>
-            {total ? 'Review complete' : 'Nothing to review yet'}
+            {total
+              ? 'Review complete'
+              : summary.learning
+                ? 'All caught up'
+                : 'Nothing to review yet'}
           </Text>
           <Text style={[lessonText.lead, { textAlign: 'center' }]}>
             {total
               ? `You remembered ${remembered} of ${total} phrases on the first try. Missed phrases come back tomorrow; remembered ones come back later each time.`
               : summary.learning
-                ? 'You are up to date. Phrases come back just before you are likely to forget them.'
-                : 'Finish a guided lesson and its phrases will appear here the next day.'}
+                ? `No phrases are due. ${summary.nextInDays === 1 ? 'The next ones come back tomorrow.' : `The next ones come back in ${summary.nextInDays} days.`} Scheduled review helps you remember them.`
+                : 'Finish a lesson and its phrases appear here the next day.'}
           </Text>
           {summary.learning ? (
             <View style={styles.stats}>

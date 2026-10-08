@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
+import { SessionFooter } from '@/components/session-footer';
 import { AnswerChoice } from '@/components/answer-choice';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { optionOrder } from '@/features/foundations/catalog';
@@ -52,10 +53,6 @@ export default function ListeningLessonScreen() {
         : 'Off';
 
   const checkAnswer = () => {
-    if (checked && isCorrect) {
-      router.replace(`/listening?track=${scenario.track}` as Href);
-      return;
-    }
     setChecked(true);
     if (isCorrect) {
       completeScenario(scenario.id);
@@ -64,7 +61,22 @@ export default function ListeningLessonScreen() {
   };
 
   return (
-    <AppScreen backgroundColor={Palette.ink} dark showNav={false}>
+    <AppScreen
+      backgroundColor={Palette.ink}
+      dark
+      showNav={false}
+      footer={
+        checked && isCorrect ? (
+          <SessionFooter
+            track={scenario.track}
+            secondary={{
+              title: 'More listening',
+              onPress: () => router.replace(`/listening?track=${scenario.track}` as Href),
+            }}
+          />
+        ) : undefined
+      }
+    >
       <View style={styles.header}>
         <HeaderBack dark />
         <View style={styles.headerTitle}>
@@ -223,22 +235,22 @@ export default function ListeningLessonScreen() {
                 : 'Not quite. Replay it slowly, then try once more.'}
             </Text>
           ) : null}
-          <Pressable
-            accessibilityRole="button"
-            accessibilityState={{ disabled: selectedAnswer === undefined }}
-            accessibilityLabel={checked && isCorrect ? 'More listening practice' : 'Check answer'}
-            disabled={selectedAnswer === undefined}
-            onPress={checkAnswer}
-            style={({ pressed }) => [
-              styles.checkButton,
-              selectedAnswer === undefined && styles.disabled,
-              pressed && styles.pressed,
-            ]}
-          >
-            <Text style={styles.checkText}>
-              {checked && isCorrect ? 'More listening practice' : 'Check answer'}
-            </Text>
-          </Pressable>
+          {checked && isCorrect ? null : (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ disabled: selectedAnswer === undefined }}
+              accessibilityLabel="Check answer"
+              disabled={selectedAnswer === undefined}
+              onPress={checkAnswer}
+              style={({ pressed }) => [
+                styles.checkButton,
+                selectedAnswer === undefined && styles.disabled,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Text style={styles.checkText}>Check answer</Text>
+            </Pressable>
+          )}
         </View>
       </View>
     </AppScreen>

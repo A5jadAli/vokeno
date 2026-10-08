@@ -16,13 +16,13 @@ import {
   PrimaryButton,
   TextButton,
 } from '@/components/lesson-ui';
-import { Tactile } from '@/components/motion';
+import { ProgressFill, Tactile } from '@/components/motion';
+import { SessionFooter } from '@/components/session-footer';
 import { AppScreen } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { haptic } from '@/features/feedback/haptics';
 import {
-  getTrackLessons,
   gradeFoundationWriting,
   normaliseFoundationAnswer,
   optionOrder,
@@ -37,6 +37,7 @@ import {
   type FoundationEntry,
 } from '@/features/foundations/progress';
 import { isGradedStep } from '@/features/foundations/types';
+import { lessonContext } from '@/features/journey/course';
 import { languageDetails, trackColors } from '@/features/language/config';
 import { useLanguageSelection } from '@/features/language/selection';
 import { useLessonSpeech, type LessonSpeech } from '@/features/listening/use-lesson-speech';
@@ -75,8 +76,6 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
   const step = steps[index] as LessonStep | undefined;
   const graded = steps.filter(isGradedStep).length;
   const gradedIndex = steps.slice(0, index).filter(isGradedStep).length;
-  const trackLessons = getTrackLessons(lesson.track);
-  const next = trackLessons[trackLessons.indexOf(lesson) + 1];
   const lastAttempt = entry.attempts.at(-1);
   const correctNow = result?.tone === 'correct';
 
@@ -137,24 +136,7 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
   };
 
   let footer: ReactNode = null;
-  if (!step && lastAttempt)
-    footer = (
-      <ActionBar>
-        {next ? (
-          <PrimaryButton
-            title="Next lesson"
-            accessibilityLabel={`Next lesson: ${next.title}`}
-            icon="arrow-right"
-            onPress={() => router.replace(`/foundation/${next.id}` as Href)}
-          />
-        ) : (
-          <PrimaryButton
-            title="See my learning path"
-            onPress={() => router.replace(`/sprint?track=${lesson.track}` as Href)}
-          />
-        )}
-      </ActionBar>
-    );
+  if (!step && lastAttempt) footer = <SessionFooter track={lesson.track} />;
   else if (step && !isGradedStep(step))
     footer = (
       <ActionBar>
@@ -248,7 +230,6 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
               graded={graded}
               correct={lastAttempt.correctFirstTry}
               spoken={lastAttempt.spoken}
-              next={next}
               onRetry={retry}
               onPath={() => router.replace(`/sprint?track=${lesson.track}` as Href)}
             />
@@ -894,7 +875,6 @@ function Complete({
   graded,
   correct,
   spoken,
-  next,
   onRetry,
   onPath,
 }: {
@@ -902,7 +882,6 @@ function Complete({
   graded: number;
   correct: number;
   spoken: boolean;
-  next?: { title: string; outcome: string };
   onRetry: () => void;
   onPath: () => void;
 }) {
@@ -928,17 +907,13 @@ function Complete({
         <Stat label="Speaking" value={spoken ? 'Done' : 'Skipped'} />
         <Stat label="Review" value={`In ${REVIEW_INTERVALS[0]} day`} />
       </Animated.View>
+      <UnitStep lesson={lesson} />
       <Text style={lessonText.lead}>
-        The new words are in your review queue, so they come back just before you are likely to
-        forget them. This is practice evidence, not a language level.
+        Your lesson is saved, and its new words are in your review queue. Scheduled review helps you
+        remember them. This is practice evidence, not a language level.
       </Text>
-      {next ? (
-        <InfoCard icon="arrow-right-circle-outline" title={`Up next: ${next.title}`}>
-          {next.outcome}
-        </InfoCard>
-      ) : null}
       <TextButton title="Practise this lesson again" onPress={onRetry} />
-      <TextButton title="See my learning path" onPress={onPath} />
+      <TextButton title="Open the course" onPress={onPath} />
     </>
   );
 }
@@ -1163,4 +1138,45 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   statValue: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
+  unitStep: { backgroundColor: Palette.white, borderRadius: 18, gap: 8, padding: 16 },
+  unitStepTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
+  unitStepRow: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  unitStepCount: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
+  unitStepNote: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14 },
 });
+
+/** The unit this lesson belongs to, with its progress moving forward by this lesson. */
+function UnitStep({ lesson }: { lesson: StepLesson }) {
+  const progress = useCoachingStore((state) => state.foundations);
+  const context = lessonContext(lesson.track, progress, lesson.id);
+  if (!context) return null;
+  const { unit } = context;
+  const total = unit.lessons.length;
+  const firstTime = (progress[lesson.id]?.attempts.length ?? 0) === 1;
+  return (
+    <View
+      accessible
+      accessibilityLabel={`${unit.label}: ${unit.done} of ${total} lessons done`}
+      style={styles.unitStep}
+    >
+      <Text style={styles.unitStepTitle}>{unit.label}</Text>
+      <View style={styles.unitStepRow}>
+        <ProgressFill
+          value={unit.done / total}
+          from={firstTime ? (unit.done - 1) / total : unit.done / total}
+          color={trackColors[lesson.track].accent}
+          track="rgba(19,18,17,0.08)"
+          height={10}
+        />
+        <Text style={styles.unitStepCount}>
+          {unit.done}/{total}
+        </Text>
+      </View>
+      <Text style={styles.unitStepNote}>
+        {unit.done === total
+          ? 'Unit complete.'
+          : `${total - unit.done} more ${total - unit.done === 1 ? 'lesson' : 'lessons'} in this unit.`}
+      </Text>
+    </View>
+  );
+}

@@ -98,20 +98,23 @@ export function Tactile({
   );
 }
 
-/** A thin progress bar whose fill springs to its new value. */
+/** A thin progress bar whose fill springs to its new value, optionally from an earlier one. */
 export function ProgressFill({
   value,
   color,
   track,
   height = 10,
+  from = 0,
 }: {
   value: number;
   color: string;
   track: string;
   height?: number;
+  /** Where the fill starts, so a completion can show progress moving forward. */
+  from?: number;
 }) {
   const [width, setWidth] = useState(0);
-  const fill = useSharedValue(0);
+  const fill = useSharedValue(Math.max(0, Math.min(1, from)));
   useEffect(() => {
     fill.value = withSpring(Math.max(0, Math.min(1, value)), { damping: 20, stiffness: 140 });
   }, [fill, value]);

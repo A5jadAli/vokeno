@@ -570,8 +570,12 @@ export default function ConversationScreen() {
                 pressed && styles.pressed,
               ]}
             >
-              <MaterialCommunityIcons color={Palette.ink} name="microphone" size={22} />
-              <Text style={styles.startText}>
+              <MaterialCommunityIcons
+                color={trackColors[track].onAccent}
+                name="microphone"
+                size={22}
+              />
+              <Text style={[styles.startText, { color: trackColors[track].onAccent }]}>
                 {permissionPending
                   ? 'Checking microphone…'
                   : assessmentPending
@@ -585,6 +589,17 @@ export default function ConversationScreen() {
             </Pressable>
           )}
           {error ? <Text style={styles.error}>{error}</Text> : null}
+          {status === 'ended' && turns.filter((turn) => turn.role === 'user').length >= 2 ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Back to today's session"
+              onPress={() => router.replace(`/?track=${track}` as Href)}
+              style={({ pressed }) => [styles.sessionLink, pressed && styles.pressed]}
+            >
+              <MaterialCommunityIcons color={Palette.ink} name="check-circle" size={20} />
+              <Text style={styles.sessionLinkText}>Speaking practice saved · back to Today</Text>
+            </Pressable>
+          ) : null}
           {permissionBlocked ? (
             <Pressable
               accessibilityRole="button"
@@ -699,6 +714,19 @@ export default function ConversationScreen() {
 }
 
 const styles = StyleSheet.create({
+  sessionLink: {
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    backgroundColor: Palette.cream,
+    borderRadius: 16,
+    flexDirection: 'row',
+    gap: 8,
+    justifyContent: 'center',
+    marginTop: 10,
+    minHeight: 52,
+    paddingHorizontal: 16,
+  },
+  sessionLinkText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
   header: {
     alignItems: 'center',
     flexDirection: 'row',

@@ -17,6 +17,7 @@ import {
   TextButton,
   PrimaryAccent,
 } from '@/components/lesson-ui';
+import { SessionFooter } from '@/components/session-footer';
 import { StepLessonPlayer } from '@/components/step-lesson';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
@@ -24,7 +25,6 @@ import { useCoachingStore } from '@/features/coaching/store';
 import {
   foundationLessons,
   gradeFoundationWriting,
-  getTrackLessons,
   optionOrder,
   type ClassicLesson,
 } from '@/features/foundations/catalog';
@@ -108,8 +108,6 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
   );
   const index = pinned ?? (firstUnanswered >= 0 ? firstUnanswered : entry.answers.length);
   const question = checks[index];
-  const trackLessons = getTrackLessons(lesson.track);
-  const next = trackLessons[trackLessons.indexOf(lesson) + 1];
   const totalChecks = checks.length + 1;
   const lastAttempt = entry.attempts.at(-1);
   const correctNow = result?.tone === 'correct';
@@ -270,25 +268,7 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
         <TextButton title="Skip speaking for now" onPress={() => complete(false)} />
       </ActionBar>
     );
-  else if (lastAttempt)
-    footer = (
-      <ActionBar>
-        {next ? (
-          <PrimaryButton
-            title="Next lesson"
-            accessibilityLabel={`Next lesson: ${next.title}`}
-            icon="arrow-right"
-            onPress={() => router.replace(`/foundation/${next.id}` as Href)}
-          />
-        ) : (
-          <PrimaryButton
-            title="Try listening"
-            accessibilityLabel={`Try ${languageName} listening`}
-            onPress={() => router.replace(`/listening?track=${lesson.track}` as Href)}
-          />
-        )}
-      </ActionBar>
-    );
+  else if (lastAttempt) footer = <SessionFooter track={lesson.track} />;
 
   return (
     <PrimaryAccent colors={trackColors[lesson.track]}>
@@ -521,17 +501,12 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
                 {lastAttempt.spoken
                   ? 'You also marked the speaking practice as done.'
                   : 'You skipped the speaking practice this time.'}{' '}
-                These phrases are now in your review queue, so they come back just before you are
-                likely to forget them. This is practice evidence, not a language level.
+                Your lesson is saved, and its phrases are in your review queue. Scheduled review
+                helps you remember them. This is practice evidence, not a language level.
               </Text>
-              {next ? (
-                <InfoCard icon="arrow-right-circle-outline" title={`Up next: ${next.title}`}>
-                  {next.outcome}
-                </InfoCard>
-              ) : null}
               <TextButton title="Practise this lesson again" onPress={retry} />
               <TextButton
-                title="See my learning path"
+                title="Open the course"
                 onPress={() => router.replace(`/sprint?track=${lesson.track}` as Href)}
               />
             </>
