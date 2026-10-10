@@ -21,6 +21,15 @@ Do not deploy the Edge Function before its quota migration. Do not distribute th
 - Successful account deletion removes that account’s local learning data on this device. Ordinary sign-out retains scoped offline data. It does not erase another account or the guest profile.
 - Cloud sync requires a successful initial read before uploading. Retries preserve local dirty preferences and merge additive progress. This is not conflict-free real-time editing: preferences are coarse-grained and foundation drafts use timestamps. Review offline/double-device conflict UX before claiming seamless multi-device editing.
 
+## Editing published lessons safely
+
+Learners keep their progress when a lesson changes in an update:
+
+- Lesson, listening and conversation ids are never removed or renamed. `tests/published-ids.json` lists every published id, and the tests fail if one disappears. Take a lesson off the path by retiring it instead.
+- Review cards are keyed by phrase (`phraseKey`), not by position. On every load they are re-matched to the lesson's current phrases. Reordered phrases keep their history. Removed phrases drop their card. New phrases start fresh.
+- Each saved lesson records a `contentVersion`. If the content changed under a half-finished lesson, the learner's position in it resets, and the lesson's completion and best score are kept. Scores are clamped to the lesson's current size.
+- Covered by `tests/change-safety.test.ts`.
+
 ## AI request limits are not spending caps
 
 The database allocates requests atomically under a per-kind/day lock. Clients cannot write quota configuration or usage, or execute the allocation function. The backend obtains anonymous status from `auth.users`, not a client flag.
