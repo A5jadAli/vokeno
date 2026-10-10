@@ -364,6 +364,16 @@ export const useCoachingStore = create<CoachingState>()(
           writingPracticeDates: state.writingPracticeDates ?? [],
         };
       },
+      // Re-check saved lesson progress on every load, so content updates delivered over the
+      // air re-match review cards and restart lessons whose steps changed.
+      merge: (persisted, current) => {
+        const saved = (persisted ?? {}) as Partial<PersistedCoachingState>;
+        return {
+          ...current,
+          ...saved,
+          foundations: parseFoundationProgress(saved.foundations ?? current.foundations),
+        };
+      },
       name: 'voka-coaching',
       onRehydrateStorage: () => (state) => state?.setHasHydrated(true),
       partialize: (state) => ({

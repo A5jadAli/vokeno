@@ -179,7 +179,7 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
     haptic.complete();
     update({
       step: 4,
-      cards: seedCards(lesson, entry),
+      ...seedCards(lesson, entry),
       attempts: [
         ...entry.attempts,
         {
@@ -193,7 +193,12 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
   };
   const retry = () => {
     resetTransient();
-    save(lesson.id, { ...freshFoundationEntry(), attempts: entry.attempts, cards: entry.cards });
+    save(lesson.id, {
+      ...freshFoundationEntry(),
+      attempts: entry.attempts,
+      cards: entry.cards,
+      cardKeys: entry.cardKeys,
+    });
   };
 
   let footer: ReactNode = null;

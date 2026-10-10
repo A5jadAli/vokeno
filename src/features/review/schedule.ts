@@ -4,7 +4,11 @@ import {
   type FoundationLesson,
   type LessonTrack,
 } from '@/features/foundations/catalog';
-import type { FoundationEntry, FoundationProgress } from '@/features/foundations/progress';
+import {
+  phraseKey,
+  type FoundationEntry,
+  type FoundationProgress,
+} from '@/features/foundations/progress';
 
 /** Days until the next review for each Leitner box. Expanding gaps favour long-term retention. */
 export const REVIEW_INTERVALS = [1, 3, 7, 16, 35, 90] as const;
@@ -26,12 +30,15 @@ export type ReviewItem = {
   answer: number;
 };
 
-/** Adds a new card (due tomorrow) for every phrase that has none. Existing cards are kept. */
+/**
+ * Adds a new card (due tomorrow) for every phrase that has none. Existing cards are kept, and
+ * every card is labelled with its phrase so it survives later changes to the lesson.
+ */
 export function seedCards(lesson: FoundationLesson, entry: FoundationEntry, today = dayNumber()) {
-  const cards = [...(entry.cards ?? [])];
-  for (let index = cards.length; index < lesson.phrases.length; index++)
-    cards.push([0, today + REVIEW_INTERVALS[0]]);
-  return cards;
+  const cards = lesson.phrases.map(
+    (_, index) => entry.cards?.[index] ?? ([0, today + REVIEW_INTERVALS[0]] as [number, number]),
+  );
+  return { cards, cardKeys: lesson.phrases.map((phrase) => phraseKey(phrase.target)) };
 }
 
 export function gradeCard(
@@ -56,12 +63,9 @@ export function dueCards(
 ): DueCard[] {
   return allTrackLessons(track)
     .flatMap((lesson) =>
-      (progress[lesson.id]?.cards ?? []).map(([box, dueDay], phraseIndex) => ({
-        lesson,
-        phraseIndex,
-        box,
-        dueDay,
-      })),
+      (progress[lesson.id]?.cards ?? []).flatMap((card, phraseIndex) =>
+        card ? [{ lesson, phraseIndex, box: card[0], dueDay: card[1] }] : [],
+      ),
     )
     .filter((card) => card.dueDay <= today && card.lesson.phrases[card.phraseIndex])
     .sort((a, b) => a.dueDay - b.dueDay || a.box - b.box);
@@ -73,7 +77,9 @@ export function reviewSummary(
   today = dayNumber(),
 ) {
   const lessons = allTrackLessons(track);
-  const all = lessons.flatMap((lesson) => progress[lesson.id]?.cards ?? []);
+  const all = lessons.flatMap((lesson) =>
+    (progress[lesson.id]?.cards ?? []).filter((card): card is [number, number] => Boolean(card)),
+  );
   return {
     due: dueCards(progress, track, today).length,
     learning: all.length,

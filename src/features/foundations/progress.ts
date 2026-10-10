@@ -1,5 +1,5 @@
 import { foundationLessons } from './catalog';
-import { finalStep, gradedCount, MAX_LESSON_CHECKS } from './types';
+import { finalStep, gradedCount, MAX_LESSON_CHECKS, type FoundationLesson } from './types';
 
 // Keep the per-lesson history short: cloud state for every lesson must stay under 256 KB
 // (about 1 KB per lesson in the worst case).
@@ -14,10 +14,83 @@ export type FoundationEntry = {
   draft: string;
   writingMistakes: number;
   attempts: FoundationAttempt[];
-  /** Spaced-review state per phrase index: [box, due day number (days since epoch)]. */
-  cards?: [box: number, dueDay: number][];
+  /**
+   * Spaced-review state per phrase, in the lesson's current phrase order: [box, due day number
+   * (days since epoch)], or null for a phrase added after the lesson was finished.
+   */
+  cards?: ([box: number, dueDay: number] | null)[];
+  /** Which phrase each card belongs to (`phraseKey`), so cards survive reordered content. */
+  cardKeys?: string[];
+  /** The lesson's content version when this progress was saved (`contentVersion`). */
+  v?: string;
   updatedAt: string;
 };
+
+/** A short, stable fingerprint (FNV-1a, base 36). */
+function fingerprint(text: string) {
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < text.length; index++) {
+    hash ^= text.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash.toString(36);
+}
+
+/** Identifies a phrase by its words, not its position, so review cards follow it. */
+export function phraseKey(target: string) {
+  return fingerprint(target.normalize('NFC').trim().replace(/\s+/g, ' ').toLocaleLowerCase());
+}
+
+const versions = new Map<string, string>();
+
+/**
+ * A fingerprint of what a learner steps through. When it changes, a saved half-finished
+ * position may point at a different step, so it starts again from the top.
+ */
+export function contentVersion(lesson: FoundationLesson) {
+  let version = versions.get(lesson.id);
+  if (!version) {
+    version = fingerprint(
+      JSON.stringify(
+        lesson.format === 'steps' ? lesson.steps : [lesson.checks, lesson.writing.accepted],
+      ),
+    );
+    versions.set(lesson.id, version);
+  }
+  return version;
+}
+
+const validCard = (card: unknown): card is [number, number] =>
+  Array.isArray(card) &&
+  Number.isInteger(card[0]) &&
+  card[0] >= 0 &&
+  card[0] <= 5 &&
+  Number.isInteger(card[1]) &&
+  card[1] > 0 &&
+  card[1] < 100000;
+
+/**
+ * Lines stored cards up with the lesson's current phrases by key. Older progress without keys
+ * was saved in phrase order, which is still the order of its phrases.
+ */
+function alignCards(lesson: FoundationLesson, entry: FoundationEntry) {
+  if (!Array.isArray(entry.cards)) return undefined;
+  const keys =
+    Array.isArray(entry.cardKeys) &&
+    entry.cardKeys.length === entry.cards.length &&
+    entry.cardKeys.every((key) => typeof key === 'string' && key.length <= 12)
+      ? entry.cardKeys
+      : lesson.phrases.slice(0, entry.cards.length).map((phrase) => phraseKey(phrase.target));
+  const byKey = new Map<string, [number, number]>();
+  entry.cards.forEach((card, index) => {
+    if (validCard(card) && keys[index]) byKey.set(keys[index], [card[0], card[1]]);
+  });
+  const current = lesson.phrases.map((phrase) => phraseKey(phrase.target));
+  const cards = current.map((key) => byKey.get(key) ?? null);
+  const last = cards.reduce((end, card, index) => (card ? index + 1 : end), 0);
+  if (!last) return undefined;
+  return { cards: cards.slice(0, last), cardKeys: current.slice(0, last) };
+}
 export type FoundationProgress = Record<string, FoundationEntry>;
 
 export function freshFoundationEntry(): FoundationEntry {
@@ -41,10 +114,13 @@ export function parseFoundationProgress(value: unknown): FoundationProgress {
     const entry = raw as FoundationEntry;
     const last = finalStep(lesson);
     const marked = lesson.format === 'steps' ? gradedCount(lesson) : MAX_LESSON_CHECKS;
+    const version = contentVersion(lesson);
+    const changed = entry.v !== undefined && entry.v !== version;
     if (
       !Number.isInteger(entry.step) ||
       entry.step < 0 ||
-      entry.step > last ||
+      // A step past the end is only valid when the lesson has since been shortened.
+      (entry.step > last && !changed) ||
       !Array.isArray(entry.answers) ||
       !entry.answers.every((v) => Number.isInteger(v) && v >= -1 && v < 3) ||
       !Array.isArray(entry.firstTry) ||
@@ -65,36 +141,29 @@ export function parseFoundationProgress(value: unknown): FoundationProgress {
               Number.isFinite(Date.parse(a.at)) &&
               Number.isInteger(a.correctFirstTry) &&
               a.correctFirstTry >= 0 &&
-              a.correctFirstTry <= gradedCount(lesson) &&
+              a.correctFirstTry <= 1000 &&
               typeof a.spoken === 'boolean',
           )
+          // A lesson with fewer marked items now still keeps its earlier completions.
+          .map((a) => ({ ...a, correctFirstTry: Math.min(a.correctFirstTry, gradedCount(lesson)) }))
           .slice(-MAX_FOUNDATION_ATTEMPTS)
       : [];
-    // Card index is the phrase index, so keep the set only when every card is valid.
-    const cards =
-      Array.isArray(entry.cards) &&
-      entry.cards.length <= lesson.phrases.length &&
-      entry.cards.every(
-        (card) =>
-          Array.isArray(card) &&
-          Number.isInteger(card[0]) &&
-          card[0] >= 0 &&
-          card[0] <= 5 &&
-          Number.isInteger(card[1]) &&
-          card[1] > 0 &&
-          card[1] < 100000,
-      )
-        ? entry.cards.map(([box, dueDay]) => [box, dueDay] as [number, number])
-        : undefined;
+    const aligned = alignCards(lesson, entry);
+    // Content changed under a half-finished lesson: start it again rather than resume at a
+    // step that now means something else. Finished work, history and cards stay.
+    const stale = changed && entry.step > 0 && (entry.step < last || entry.step > last);
     result[lesson.id] = {
-      ...(cards?.length ? { cards } : {}),
-      step: entry.step === last && !attempts.length ? 0 : entry.step,
+      ...(aligned ?? {}),
+      v: version,
+      step: stale || (entry.step === last && !attempts.length) ? 0 : entry.step,
       // Step lessons keep one marker here: [1] once a speaking step was done aloud.
-      answers: entry.answers.slice(0, lesson.format === 'steps' ? 1 : MAX_LESSON_CHECKS),
-      firstTry: entry.firstTry.slice(0, marked),
+      answers: stale
+        ? []
+        : entry.answers.slice(0, lesson.format === 'steps' ? 1 : MAX_LESSON_CHECKS),
+      firstTry: stale ? [] : entry.firstTry.slice(0, marked),
       // Drafts are only needed until the writing is passed; keep cloud state small.
       draft:
-        entry.step >= (lesson.format === 'steps' ? last : 3)
+        stale || entry.step >= (lesson.format === 'steps' ? last : 3)
           ? ''
           : entry.draft.slice(0, MAX_DRAFT_LENGTH),
       writingMistakes: Math.min(entry.writingMistakes, 1000),

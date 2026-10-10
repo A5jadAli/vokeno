@@ -187,9 +187,9 @@ describe('German A1 units: progress and review', () => {
 
   it('turns every taught word into a review card due the next day', () => {
     const today = 20_000;
-    const cards = seedCards(session, freshFoundationEntry(), today);
-    expect(cards).toHaveLength(session.phrases.length);
-    const progress = { [session.id]: { ...freshFoundationEntry(), cards } };
+    const seeded = seedCards(session, freshFoundationEntry(), today);
+    expect(seeded.cards).toHaveLength(session.phrases.length);
+    const progress = { [session.id]: { ...freshFoundationEntry(), ...seeded } };
     expect(dueCards(progress, 'DE', today)).toHaveLength(0);
     const review = buildReviewSession(progress, 'DE', today + 1);
     expect(review.length).toBeGreaterThan(0);
@@ -202,7 +202,7 @@ describe('German A1 units: progress and review', () => {
     const progress = {
       greetings: {
         ...freshFoundationEntry(),
-        cards: seedCards(retired, freshFoundationEntry(), 1),
+        ...seedCards(retired, freshFoundationEntry(), 1),
       },
     };
     expect(dueCards(progress, 'DE', 5).length).toBe(retired.phrases.length);

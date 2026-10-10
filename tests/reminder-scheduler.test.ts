@@ -3,7 +3,7 @@ import { describe, expect, it, jest } from '@jest/globals';
 import { applyReminderPlan, reminderId } from '@/features/habits/reminder-scheduler';
 import { planReminders } from '@/features/habits/reminders';
 
-const scheduled = new Map<string, number>();
+const mockScheduled = new Map<string, number>();
 jest.mock('expo-notifications', () => ({
   setNotificationHandler: jest.fn(),
   setNotificationChannelAsync: jest.fn(async () => undefined),
@@ -12,12 +12,12 @@ jest.mock('expo-notifications', () => ({
   getPermissionsAsync: jest.fn(async () => ({ granted: true, canAskAgain: true })),
   cancelAllScheduledNotificationsAsync: jest.fn(async () => {
     await new Promise((resolve) => setTimeout(resolve, 5));
-    scheduled.clear();
+    mockScheduled.clear();
   }),
   scheduleNotificationAsync: jest.fn(
     async ({ identifier, trigger }: { identifier?: string; trigger: { date: number } }) => {
       await new Promise((resolve) => setTimeout(resolve, 1));
-      scheduled.set(identifier ?? `random-${Math.random()}`, trigger.date);
+      mockScheduled.set(identifier ?? `random-${Math.random()}`, trigger.date);
       return identifier ?? '';
     },
   ),
@@ -33,8 +33,8 @@ describe('reminder scheduling', () => {
       language: 'German',
     });
     await Promise.all([1, 2, 3, 4].map(() => applyReminderPlan(plan)));
-    expect(scheduled.size).toBe(plan.length);
-    const days = [...scheduled.keys()];
+    expect(mockScheduled.size).toBe(plan.length);
+    const days = [...mockScheduled.keys()];
     expect(new Set(days).size).toBe(days.length);
     expect(days).toContain(reminderId(plan[0].date));
   });

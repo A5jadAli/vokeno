@@ -24,14 +24,15 @@ function progressWith(cards: [number, number][], id = 'greetings'): FoundationPr
 
 describe('spaced review', () => {
   it('seeds one card per phrase, due tomorrow, without resetting existing cards', () => {
-    const cards = seedCards(greetings, freshFoundationEntry(), today);
+    const { cards, cardKeys } = seedCards(greetings, freshFoundationEntry(), today);
     expect(cards).toHaveLength(greetings.phrases.length);
+    expect(cardKeys).toHaveLength(greetings.phrases.length);
     expect(cards.every(([box, due]) => box === 0 && due === today + 1)).toBe(true);
     const kept = seedCards(
       greetings,
       { ...freshFoundationEntry(), cards: [[3, today + 9]] },
       today,
-    );
+    ).cards;
     expect(kept[0]).toEqual([3, today + 9]);
     expect(kept).toHaveLength(greetings.phrases.length);
   });

@@ -1,9 +1,10 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeIn, SlideInDown } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
+
+import { BottomSheet } from '@/components/bottom-sheet';
 
 import { Palette, VokaFonts } from '@/constants/theme';
 import { useAuthSession } from '@/features/auth/use-auth-session';
@@ -86,7 +87,6 @@ export function LanguagePicker({
   onChange: (track: LanguageTrack) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const insets = useSafeAreaInsets();
   const progress = useCoachingStore((state) => state.foundations);
   const preferences = useCoachingStore((state) => state.preferences);
   const colors = trackColors[track];
@@ -102,79 +102,62 @@ export function LanguagePicker({
         <Text style={styles.pickerText}>{languageDetails[track].name}</Text>
         <MaterialCommunityIcons color={Palette.ink} name="chevron-down" size={18} />
       </Pressable>
-      <Modal
-        animationType="fade"
-        onRequestClose={() => setOpen(false)}
-        statusBarTranslucent
-        transparent
-        visible={open}
-      >
-        <Pressable
-          accessibilityLabel="Close language list"
-          onPress={() => setOpen(false)}
-          style={styles.backdrop}
-        />
-        <Animated.View
-          entering={SlideInDown.springify().damping(20).stiffness(180)}
-          style={[styles.sheet, { paddingBottom: 18 + insets.bottom }]}
-        >
-          <View style={styles.grabber} />
-          <Text accessibilityRole="header" style={styles.sheetTitle}>
-            Your languages
-          </Text>
-          <View accessibilityRole="radiogroup" style={styles.list}>
-            {languageTracks.map((item, index) => {
-              const selected = item === track;
-              const position = coursePosition(progress, item, preferences[item].startAt);
-              const where = !position.started
-                ? languageAudience[item]
-                : position.next
-                  ? `${position.unit?.label ?? position.next.lesson.level} · ${position.finishedLessons} of ${position.totalLessons} lessons done`
-                  : `All ${position.totalLessons} lessons done`;
-              return (
-                <Animated.View key={item} entering={FadeIn.delay(60 * index).duration(200)}>
-                  <Pressable
-                    accessibilityRole="radio"
-                    accessibilityState={{ checked: selected }}
-                    aria-checked={selected}
-                    accessibilityLabel={`${languageDetails[item].name}. ${where}`}
-                    onPress={() => {
-                      onChange(item);
-                      setOpen(false);
-                    }}
-                    style={({ pressed }) => [
-                      styles.row,
-                      selected && { borderColor: trackColors[item].accent },
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <View style={[styles.badge, { backgroundColor: trackColors[item].accent }]}>
-                      <Text style={[styles.badgeText, { color: trackColors[item].onAccent }]}>
-                        {item}
-                      </Text>
-                    </View>
-                    <View style={styles.rowCopy}>
-                      <Text style={styles.rowTitle}>
-                        {languageDetails[item].name}
-                        <Text style={styles.native}> · {languageDetails[item].nativeName}</Text>
-                      </Text>
-                      <Text style={styles.rowMeta}>{where}</Text>
-                    </View>
-                    <MaterialCommunityIcons
-                      color={selected ? Palette.ink : Palette.muted}
-                      name={selected ? 'check-circle' : 'circle-outline'}
-                      size={22}
-                    />
-                  </Pressable>
-                </Animated.View>
-              );
-            })}
-          </View>
-          <Text style={styles.footnote}>
-            Your progress in each language is kept. Explanations are in English.
-          </Text>
-        </Animated.View>
-      </Modal>
+      <BottomSheet visible={open} onClose={() => setOpen(false)} closeLabel="Close language list">
+        <Text accessibilityRole="header" style={styles.sheetTitle}>
+          Your languages
+        </Text>
+        <View accessibilityRole="radiogroup" style={styles.list}>
+          {languageTracks.map((item, index) => {
+            const selected = item === track;
+            const position = coursePosition(progress, item, preferences[item].startAt);
+            const where = !position.started
+              ? languageAudience[item]
+              : position.next
+                ? `${position.unit?.label ?? position.next.lesson.level} · ${position.finishedLessons} of ${position.totalLessons} lessons done`
+                : `All ${position.totalLessons} lessons done`;
+            return (
+              <Animated.View key={item} entering={FadeIn.delay(60 * index).duration(200)}>
+                <Pressable
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: selected }}
+                  aria-checked={selected}
+                  accessibilityLabel={`${languageDetails[item].name}. ${where}`}
+                  onPress={() => {
+                    onChange(item);
+                    setOpen(false);
+                  }}
+                  style={({ pressed }) => [
+                    styles.row,
+                    selected && { borderColor: trackColors[item].accent },
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <View style={[styles.badge, { backgroundColor: trackColors[item].accent }]}>
+                    <Text style={[styles.badgeText, { color: trackColors[item].onAccent }]}>
+                      {item}
+                    </Text>
+                  </View>
+                  <View style={styles.rowCopy}>
+                    <Text style={styles.rowTitle}>
+                      {languageDetails[item].name}
+                      <Text style={styles.native}> · {languageDetails[item].nativeName}</Text>
+                    </Text>
+                    <Text style={styles.rowMeta}>{where}</Text>
+                  </View>
+                  <MaterialCommunityIcons
+                    color={selected ? Palette.ink : Palette.muted}
+                    name={selected ? 'check-circle' : 'circle-outline'}
+                    size={22}
+                  />
+                </Pressable>
+              </Animated.View>
+            );
+          })}
+        </View>
+        <Text style={styles.footnote}>
+          Your progress in each language is kept. Explanations are in English.
+        </Text>
+      </BottomSheet>
     </>
   );
 }
@@ -209,26 +192,6 @@ const styles = StyleSheet.create({
   },
   initials: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
   pressed: { opacity: 0.7 },
-  backdrop: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(19,18,17,0.45)' },
-  sheet: {
-    backgroundColor: Palette.cream,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    bottom: 0,
-    gap: 12,
-    left: 0,
-    paddingHorizontal: 18,
-    paddingTop: 10,
-    position: 'absolute',
-    right: 0,
-  },
-  grabber: {
-    alignSelf: 'center',
-    backgroundColor: 'rgba(19,18,17,0.18)',
-    borderRadius: 99,
-    height: 5,
-    width: 40,
-  },
   sheetTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22, marginTop: 4 },
   list: { gap: 8 },
   row: {

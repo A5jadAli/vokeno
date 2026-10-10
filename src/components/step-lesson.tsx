@@ -100,7 +100,7 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
     update({
       step: steps.length,
       draft: '',
-      cards: seedCards(lesson, entry),
+      ...seedCards(lesson, entry),
       attempts: [
         ...entry.attempts,
         {
@@ -120,7 +120,12 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
   };
   const retry = () => {
     resetTransient();
-    save(lesson.id, { ...freshFoundationEntry(), attempts: entry.attempts, cards: entry.cards });
+    save(lesson.id, {
+      ...freshFoundationEntry(),
+      attempts: entry.attempts,
+      cards: entry.cards,
+      cardKeys: entry.cardKeys,
+    });
   };
   const report = (correct: boolean, title: string, message: string, firstTry = correct) => {
     if (correct) {
