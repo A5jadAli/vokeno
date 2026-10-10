@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useLocalSearchParams, useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
@@ -10,7 +10,8 @@ import { Palette, VokaFonts } from '@/constants/theme';
 import { optionOrder } from '@/features/foundations/catalog';
 import { getScenario, type SubtitleMode } from '@/features/listening/scenarios';
 import { useProgressStore } from '@/features/progress/store';
-import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
+import { scenarioLines } from '@/features/audio/inventory';
+import { useLessonAudio } from '@/features/audio/use-lesson-audio';
 import { trackColors } from '@/features/language/config';
 import { useCoachingStore } from '@/features/coaching/store';
 
@@ -18,7 +19,9 @@ export default function ListeningLessonScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const scenario = useMemo(() => getScenario(id), [id]);
-  const speech = useLessonSpeech(scenario.language);
+  const speech = useLessonAudio(scenario.track);
+  const { prefetch } = speech;
+  useEffect(() => prefetch(scenarioLines(scenario)), [prefetch, scenario]);
   const isPlaying = speech.playing;
   const [isSlow, setIsSlow] = useState(false);
   const [lineIndex, setLineIndex] = useState(0);
@@ -33,6 +36,7 @@ export default function ListeningLessonScreen() {
       scenario.lines.map((line) => line.text),
       slow ? 0.68 : 0.94,
       setLineIndex,
+      scenario.lines.map((line) => line.speaker),
     );
   };
 

@@ -1,63 +1,23 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
 import { LessonAudioButton } from '@/components/lesson-audio-button';
 import { Palette, VokaFonts } from '@/constants/theme';
-import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
+import { useLessonAudio } from '@/features/audio/use-lesson-audio';
+import { vocabularyDeck } from '@/features/audio/spoken-texts';
 import { useCoachingStore } from '@/features/coaching/store';
 
 export default function VocabularyScreen() {
   const router = useRouter();
-  const speech = useLessonSpeech('de-DE');
+  const speech = useLessonAudio('DE');
+  const { prefetch } = speech;
+  useEffect(() => prefetch(vocabularyDeck.map((card) => ({ text: card.word }))), [prefetch]);
   const [flipped, setFlipped] = useState(false);
   const [index, setIndex] = useState(0);
-  const words = [
-    {
-      article: 'DIE',
-      example: 'Die Rechnung, bitte.',
-      meaning: 'the bill',
-      pronunciation: '/ˈʁɛçnʊŋ/',
-      word: 'Rechnung',
-    },
-    {
-      article: 'DER',
-      example: 'Der Kaffee ist noch zu heiß.',
-      meaning: 'the coffee',
-      pronunciation: '/ˈkafe/',
-      word: 'Kaffee',
-    },
-    {
-      article: 'DAS',
-      example: 'Das Wasser ist sehr kalt.',
-      meaning: 'the water',
-      pronunciation: '/ˈvasɐ/',
-      word: 'Wasser',
-    },
-    {
-      article: 'DER',
-      example: 'Der Termin ist am Dienstag.',
-      meaning: 'the appointment',
-      pronunciation: '/tɛʁˈmiːn/',
-      word: 'Termin',
-    },
-    {
-      article: 'DIE',
-      example: 'Die Wohnung ist noch frei.',
-      meaning: 'the flat',
-      pronunciation: '/ˈvoːnʊŋ/',
-      word: 'Wohnung',
-    },
-    {
-      article: 'DAS',
-      example: 'Das Brötchen ist frisch.',
-      meaning: 'the bread roll',
-      pronunciation: '/ˈbʁøːtçən/',
-      word: 'Brötchen',
-    },
-  ];
+  const words = vocabularyDeck;
   const current = words[index];
   const move = (direction: number) => {
     speech.stop();

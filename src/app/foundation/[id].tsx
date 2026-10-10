@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import { type ReactNode, useCallback, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 
@@ -36,7 +36,8 @@ import {
 } from '@/features/foundations/progress';
 import { useLanguageSelection } from '@/features/language/selection';
 import { languageDetails, trackColors } from '@/features/language/config';
-import { useLessonSpeech, type LessonSpeech } from '@/features/listening/use-lesson-speech';
+import { lessonLines } from '@/features/audio/inventory';
+import { useLessonAudio, type LessonAudio } from '@/features/audio/use-lesson-audio';
 import { REVIEW_INTERVALS, seedCards } from '@/features/review/schedule';
 import { haptic } from '@/features/feedback/haptics';
 import { levelLabel } from '@/features/foundations/level-status';
@@ -80,7 +81,9 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
   const saved = useCoachingStore((state) => state.foundations[lesson.id]);
   const save = useCoachingStore((state) => state.saveFoundation);
   const entry = saved ?? freshFoundationEntry();
-  const speech = useLessonSpeech(languageDetails[lesson.track].speechLocale);
+  const speech = useLessonAudio(lesson.track);
+  const { prefetch } = speech;
+  useEffect(() => prefetch(lessonLines(lesson)), [lesson, prefetch]);
   const [selected, setSelected] = useState<number | null>(null);
   const [pinned, setPinned] = useState<number | null>(null);
   const [result, setResult] = useState<Result | null>(null);
@@ -529,7 +532,7 @@ function ReadingCard({
   onToggle,
 }: {
   lesson: ClassicLesson;
-  speech: LessonSpeech;
+  speech: LessonAudio;
   showTranslation: boolean;
   onToggle: () => void;
 }) {
@@ -562,7 +565,7 @@ function ReadingCard({
   );
 }
 
-function PhraseList({ lesson, speech }: { lesson: ClassicLesson; speech: LessonSpeech }) {
+function PhraseList({ lesson, speech }: { lesson: ClassicLesson; speech: LessonAudio }) {
   return (
     <View style={{ gap: 10 }}>
       {lesson.phrases.map((phrase) => (

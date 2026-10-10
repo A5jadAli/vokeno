@@ -49,3 +49,6 @@ skip_nonce_check = false
 # [auth.email.template.recovery]
 # subject = "Reset your Vokeno password"
 # content_path = "./supabase/templates/recovery.html"
+
+[functions.lesson-audio]
+verify_jwt = false

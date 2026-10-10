@@ -5,7 +5,8 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
-import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
+import { useLessonAudio } from '@/features/audio/use-lesson-audio';
+import { listeningWarmUpSample } from '@/features/audio/spoken-texts';
 import { AnswerChoice } from '@/components/answer-choice';
 import { WritingActivity } from '@/components/writing-activity';
 import { useSelectedLanguage } from '@/features/language/selection';
@@ -51,12 +52,12 @@ function ActivityHeader({
 }
 
 function ListeningActivity() {
-  const speech = useLessonSpeech('en-GB');
+  const speech = useLessonAudio('EN');
   const [selected, setSelected] = useState<number | null>(null);
   const [showText, setShowText] = useState(false);
   const [feedback, setFeedback] = useState('');
   const router = useRouter();
-  const sample = 'Let’s meet outside the station at half past three.';
+  const sample = listeningWarmUpSample;
   const play = (rate = 0.92) => void speech.play(sample, rate);
   const footer = (
     <Pressable

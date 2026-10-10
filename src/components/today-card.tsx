@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
-import type { ComponentProps } from 'react';
+import { useEffect, type ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 
@@ -11,7 +11,9 @@ import { StreakStrip } from '@/components/streak-strip';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import type { PlanStep } from '@/features/coaching/daily-plan';
-import { getTrackLessons } from '@/features/foundations/catalog';
+import { foundationLessons, getTrackLessons } from '@/features/foundations/catalog';
+import { lessonLines } from '@/features/audio/inventory';
+import { prefetchClips } from '@/features/audio/use-lesson-audio';
 import { levelLabel, levelNote } from '@/features/foundations/level-status';
 import { remindersSupported } from '@/features/habits/reminder-scheduler';
 import { useReminderStore } from '@/features/habits/reminders';
@@ -43,6 +45,12 @@ export function TodayCard({ track }: { track: LanguageTrack }) {
   const reminderAsked = useReminderStore((state) => state.asked);
   const colors = trackColors[track];
   const current = plan.steps.find((step) => !step.done);
+  // While Today is open, fetch the next lesson's voices so it plays instantly from the first tap.
+  const upcoming = [current, plan.bonus].find((step) => step?.kind === 'lesson')?.key;
+  useEffect(() => {
+    const lesson = foundationLessons.find((item) => `lesson:${item.id}` === upcoming);
+    if (lesson) prefetchClips(track, lessonLines(lesson));
+  }, [track, upcoming]);
   const allDone = !current;
   const open = (step: PlanStep) => router.push(step.href as Href);
   const nextLevelStart = milestone?.nextLevel

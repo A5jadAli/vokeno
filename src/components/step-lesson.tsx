@@ -37,9 +37,10 @@ import {
 } from '@/features/foundations/progress';
 import { isGradedStep } from '@/features/foundations/types';
 import { lessonContext } from '@/features/journey/course';
+import { lessonLines } from '@/features/audio/inventory';
 import { languageDetails, trackColors } from '@/features/language/config';
 import { useLanguageSelection } from '@/features/language/selection';
-import { useLessonSpeech, type LessonSpeech } from '@/features/listening/use-lesson-speech';
+import { useLessonAudio, type LessonAudio } from '@/features/audio/use-lesson-audio';
 import { REVIEW_INTERVALS, seedCards } from '@/features/review/schedule';
 
 type Result = { tone: 'correct' | 'wrong' | 'close'; title: string; message?: string };
@@ -63,7 +64,10 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
   const saved = useCoachingStore((state) => state.foundations[lesson.id]);
   const save = useCoachingStore((state) => state.saveFoundation);
   const entry = saved ?? freshFoundationEntry();
-  const speech = useLessonSpeech(languageDetails[lesson.track].speechLocale);
+  const speech = useLessonAudio(lesson.track);
+  // Download this lesson's voices as soon as it opens, so every line starts at once.
+  const { prefetch } = speech;
+  useEffect(() => prefetch(lessonLines(lesson)), [lesson, prefetch]);
   const [result, setResult] = useState<Result | null>(null);
   // Bumped to reset the current step's local state (selection, tiles, pairs).
   const [attemptKey, setAttemptKey] = useState(0);
@@ -247,7 +251,7 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
 type StepProps = {
   step: LessonStep;
   lesson: StepLesson;
-  speech: LessonSpeech;
+  speech: LessonAudio;
   languageName: string;
   result: Result | null;
   mistakes: number;
@@ -303,7 +307,12 @@ function SceneStep({ step, speech }: StepProps & { step: Of<'scene'> }) {
           onPress={() =>
             speech.busy
               ? speech.stop()
-              : void speech.playSequence(texts, real ? 0.92 : 0.8, setActiveLine)
+              : void speech.playSequence(
+                  texts,
+                  real ? 0.92 : 0.8,
+                  setActiveLine,
+                  step.lines.map((line) => line.speaker),
+                )
           }
           style={({ pressed }) => [styles.playAll, pressed && styles.pressed]}
         >
@@ -360,7 +369,7 @@ function SceneStep({ step, speech }: StepProps & { step: Of<'scene'> }) {
               accessibilityHint="Plays this line"
               onPress={() => {
                 setActiveLine(lineIndex);
-                void speech.play(texts[lineIndex], real ? 0.92 : 0.8);
+                void speech.play(texts[lineIndex], real ? 0.92 : 0.8, line.speaker);
               }}
               style={[styles.bubbleRow, mine && styles.bubbleRowMine]}
             >

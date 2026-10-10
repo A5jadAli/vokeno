@@ -2,7 +2,7 @@
   "expo": {
     "name": "Vokeno",
     "slug": "voka",
-    "version": "1.7.0",
+    "version": "1.8.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "voka",
@@ -65,6 +65,14 @@
         {
           "icon": "./assets/images/notification-icon.png",
           "color": "#FF4A17"
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Allow Vokeno to use your microphone for live language conversations.",
+          "enableBackgroundPlayback": false,
+          "enableBackgroundRecording": false
         }
       ]
     ],

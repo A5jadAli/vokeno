@@ -22,7 +22,7 @@ import { freshFoundationEntry } from '@/features/foundations/progress';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { languageDetails, trackColors } from '@/features/language/config';
 import type { LanguageTrack } from '@/features/language/config';
-import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
+import { useLessonAudio } from '@/features/audio/use-lesson-audio';
 import {
   buildReviewSession,
   dayNumber,
@@ -44,11 +44,13 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
   const router = useRouter();
   const progress = useCoachingStore((state) => state.foundations);
   const save = useCoachingStore((state) => state.saveFoundation);
-  const speech = useLessonSpeech(languageDetails[track].speechLocale);
+  const speech = useLessonAudio(track);
   const language = languageDetails[track].name;
   // Build once so grading does not reshuffle the running session.
   const [queue, setQueue] = useState<ReviewItem[]>(() => buildReviewSession(progress, track));
   const [total] = useState(queue.length);
+  const { prefetch } = speech;
+  useEffect(() => prefetch(queue.map((entry) => ({ text: entry.target }))), [prefetch, queue]);
   const [position, setPosition] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [revealed, setRevealed] = useState(false);

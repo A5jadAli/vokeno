@@ -7,29 +7,15 @@ import { LessonAudioButton } from '@/components/lesson-audio-button';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { trackColors } from '@/features/language/config';
-import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
+import { useLessonAudio } from '@/features/audio/use-lesson-audio';
 import { LanguageSwitch } from '@/components/language-switch';
-
-const checks = {
-  DE: {
-    language: 'de-DE',
-    sentence: 'Der Bus in die Stadt fährt alle zwanzig Minuten.',
-  },
-  EN: {
-    language: 'en-GB',
-    sentence: 'The bus to the city leaves every twenty minutes.',
-  },
-  ES: {
-    language: 'es-MX',
-    sentence: 'El autobús al centro sale a las nueve.',
-  },
-} as const;
+import { levelCheckSentences } from '@/features/audio/spoken-texts';
 
 export default function LevelCheckScreen() {
   const router = useRouter();
   const [track, setTrack] = useSelectedLanguage();
-  const check = checks[track];
-  const speech = useLessonSpeech(check.language);
+  const check = levelCheckSentences[track];
+  const speech = useLessonAudio(track);
 
   return (
     <AppScreen backgroundColor={Palette.ink} dark showNav={false}>

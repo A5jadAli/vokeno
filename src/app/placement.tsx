@@ -20,7 +20,7 @@ import { AppScreen } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { optionOrder } from '@/features/foundations/catalog';
 import { useSelectedLanguage } from '@/features/language/selection';
-import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
+import { useLessonAudio } from '@/features/audio/use-lesson-audio';
 import {
   evaluatePlacement,
   placementStages,
@@ -49,7 +49,7 @@ function PlacementCheck({
   onTrack: (track: LanguageTrack) => void;
 }) {
   const router = useRouter();
-  const speech = useLessonSpeech(languageDetails[track].speechLocale);
+  const speech = useLessonAudio(track);
   const stages = placementStages(track);
   const [started, setStarted] = useState(false);
   const [stageIndex, setStageIndex] = useState(0);

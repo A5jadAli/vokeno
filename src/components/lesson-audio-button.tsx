@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Palette, VokaFonts } from '@/constants/theme';
-import { type LessonSpeech } from '@/features/listening/use-lesson-speech';
+import type { LessonAudio } from '@/features/audio/use-lesson-audio';
 
 /** Label and status space stay mounted, so starting/stopping never moves the target. */
 export function LessonAudioButton({
@@ -11,7 +11,7 @@ export function LessonAudioButton({
   rate = 0.82,
   dark = false,
 }: {
-  speech: LessonSpeech;
+  speech: LessonAudio;
   text: string;
   label: string;
   rate?: number;
@@ -109,7 +109,7 @@ export function AudioIconButton({
   size = 44,
   tone = 'light',
 }: {
-  speech: LessonSpeech;
+  speech: LessonAudio;
   text: string;
   label: string;
   rate?: number;

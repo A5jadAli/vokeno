@@ -7,7 +7,7 @@ import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { AudioIconButton } from '@/components/lesson-audio-button';
 import { ProgressFill, Tactile } from '@/components/motion';
 import { Palette, VokaFonts } from '@/constants/theme';
-import type { LessonSpeech } from '@/features/listening/use-lesson-speech';
+import type { LessonAudio } from '@/features/audio/use-lesson-audio';
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
@@ -308,7 +308,7 @@ export function PhraseCard({
   speech,
 }: {
   phrase: { target: string; meaning: string; use: string };
-  speech: LessonSpeech;
+  speech: LessonAudio;
 }) {
   return (
     <View style={styles.phrase}>
