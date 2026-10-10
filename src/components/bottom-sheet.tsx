@@ -40,8 +40,11 @@ export function BottomSheet({
   }
 
   useEffect(() => {
-    if (visible) offset.set(screen);
-    else
+    // Opening always starts below the screen edge and springs up, whatever happened before.
+    if (visible) {
+      offset.set(screen);
+      offset.set(withSpring(0, OPEN_SPRING));
+    } else
       offset.set(
         withTiming(screen, { duration: 220 }, (done) => {
           if (done) scheduleOnRN(setMounted, false);
@@ -98,15 +101,7 @@ export function BottomSheet({
         </Animated.View>
         <GestureDetector gesture={pan}>
           <Animated.View
-            onLayout={(event) => {
-              const measured = event.nativeEvent.layout.height;
-              setHeight(measured);
-              // First layout after opening: start just below the edge, then spring open.
-              if (offset.get() >= screen) {
-                offset.set(measured);
-                offset.set(withSpring(0, OPEN_SPRING));
-              }
-            }}
+            onLayout={(event) => setHeight(event.nativeEvent.layout.height)}
             style={[styles.sheet, { paddingBottom: 18 + insets.bottom }, sheetStyle]}
           >
             <View accessibilityLabel="Drag down to close" style={styles.handleArea}>
