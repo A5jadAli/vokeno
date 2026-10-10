@@ -67,7 +67,11 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
   const speech = useLessonAudio(lesson.track);
   // Download this lesson's voices as soon as it opens, so every line starts at once.
   const { prefetch } = speech;
-  useEffect(() => prefetch(lessonLines(lesson)), [lesson, prefetch]);
+  useEffect(() => {
+    // The current step's lines go first (below); the rest of the lesson follows.
+    const timer = setTimeout(() => prefetch(lessonLines(lesson), 0), 400);
+    return () => clearTimeout(timer);
+  }, [lesson, prefetch]);
   const [result, setResult] = useState<Result | null>(null);
   // Bumped to reset the current step's local state (selection, tiles, pairs).
   const [attemptKey, setAttemptKey] = useState(0);

@@ -54,14 +54,25 @@ export function playerFor(key: string, uri: string) {
   return player;
 }
 
-/** Downloads clips in the background and readies the first few players. */
+const PARALLEL = 6;
+
+/**
+ * Downloads clips in the background, six at a time and in the order given (the current step
+ * first), and readies players for the first `ready` of them.
+ */
 export async function warmClips(clips: Clip[], ready = 8) {
-  for (const [index, clip] of clips.entries()) {
-    try {
-      const uri = await ensureClip(clip);
-      if (index < ready) playerFor(clip.key, uri);
-    } catch {
-      // Offline or unavailable: the lesson falls back to the device voice for this line.
+  let next = 0;
+  const worker = async () => {
+    while (next < clips.length) {
+      const index = next++;
+      const clip = clips[index];
+      try {
+        const uri = await ensureClip(clip);
+        if (index < ready) playerFor(clip.key, uri);
+      } catch {
+        // Offline or unavailable: the lesson falls back to the device voice for this line.
+      }
     }
-  }
+  };
+  await Promise.all(Array.from({ length: Math.min(PARALLEL, clips.length) }, worker));
 }
