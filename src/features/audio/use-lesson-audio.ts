@@ -66,7 +66,8 @@ export function useLessonAudio(track: LanguageTrack) {
       const uri = await clips.ensureClip(clip);
       if (generation !== token.current) return false;
       const player = clips.playerFor(clip.key, uri);
-      player.playbackRate = clipRate(rate);
+      // The native property is read-only; the setter keeps the pitch at the slower rates.
+      player.setPlaybackRate(clipRate(rate), 'high');
       // A fresh player is already at the start; seeking it first only waits for it to load.
       if (player.currentTime > 0) await player.seekTo(0);
       if (generation !== token.current) return false;

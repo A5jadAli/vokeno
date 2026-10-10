@@ -43,7 +43,6 @@ export function playerFor(key: string, uri: string) {
     players.delete(key);
   } else {
     player = createAudioPlayer({ uri });
-    player.shouldCorrectPitch = true;
   }
   players.set(key, player);
   while (players.size > POOL_SIZE) {
