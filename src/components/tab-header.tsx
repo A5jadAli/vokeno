@@ -103,60 +103,64 @@ export function LanguagePicker({
         <MaterialCommunityIcons color={Palette.ink} name="chevron-down" size={18} />
       </Pressable>
       <BottomSheet visible={open} onClose={() => setOpen(false)} closeLabel="Close language list">
-        <Text accessibilityRole="header" style={styles.sheetTitle}>
-          Your languages
-        </Text>
-        <View accessibilityRole="radiogroup" style={styles.list}>
-          {languageTracks.map((item, index) => {
-            const selected = item === track;
-            const position = coursePosition(progress, item, preferences[item].startAt);
-            const where = !position.started
-              ? languageAudience[item]
-              : position.next
-                ? `${position.unit?.label ?? position.next.lesson.level} · ${position.finishedLessons} of ${position.totalLessons} lessons done`
-                : `All ${position.totalLessons} lessons done`;
-            return (
-              <Animated.View key={item} entering={FadeIn.delay(60 * index).duration(200)}>
-                <Pressable
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: selected }}
-                  aria-checked={selected}
-                  accessibilityLabel={`${languageDetails[item].name}. ${where}`}
-                  onPress={() => {
-                    onChange(item);
-                    setOpen(false);
-                  }}
-                  style={({ pressed }) => [
-                    styles.row,
-                    selected && { borderColor: trackColors[item].accent },
-                    pressed && styles.pressed,
-                  ]}
-                >
-                  <View style={[styles.badge, { backgroundColor: trackColors[item].accent }]}>
-                    <Text style={[styles.badgeText, { color: trackColors[item].onAccent }]}>
-                      {item}
-                    </Text>
-                  </View>
-                  <View style={styles.rowCopy}>
-                    <Text style={styles.rowTitle}>
-                      {languageDetails[item].name}
-                      <Text style={styles.native}> · {languageDetails[item].nativeName}</Text>
-                    </Text>
-                    <Text style={styles.rowMeta}>{where}</Text>
-                  </View>
-                  <MaterialCommunityIcons
-                    color={selected ? Palette.ink : Palette.muted}
-                    name={selected ? 'check-circle' : 'circle-outline'}
-                    size={22}
-                  />
-                </Pressable>
-              </Animated.View>
-            );
-          })}
-        </View>
-        <Text style={styles.footnote}>
-          Your progress in each language is kept. Explanations are in English.
-        </Text>
+        {(close) => (
+          <>
+            <Text accessibilityRole="header" style={styles.sheetTitle}>
+              Your languages
+            </Text>
+            <View accessibilityRole="radiogroup" style={styles.list}>
+              {languageTracks.map((item, index) => {
+                const selected = item === track;
+                const position = coursePosition(progress, item, preferences[item].startAt);
+                const where = !position.started
+                  ? languageAudience[item]
+                  : position.next
+                    ? `${position.unit?.label ?? position.next.lesson.level} · ${position.finishedLessons} of ${position.totalLessons} lessons done`
+                    : `All ${position.totalLessons} lessons done`;
+                return (
+                  <Animated.View key={item} entering={FadeIn.delay(60 * index).duration(200)}>
+                    <Pressable
+                      accessibilityRole="radio"
+                      accessibilityState={{ checked: selected }}
+                      aria-checked={selected}
+                      accessibilityLabel={`${languageDetails[item].name}. ${where}`}
+                      onPress={() => {
+                        onChange(item);
+                        close();
+                      }}
+                      style={({ pressed }) => [
+                        styles.row,
+                        selected && { borderColor: trackColors[item].accent },
+                        pressed && styles.pressed,
+                      ]}
+                    >
+                      <View style={[styles.badge, { backgroundColor: trackColors[item].accent }]}>
+                        <Text style={[styles.badgeText, { color: trackColors[item].onAccent }]}>
+                          {item}
+                        </Text>
+                      </View>
+                      <View style={styles.rowCopy}>
+                        <Text style={styles.rowTitle}>
+                          {languageDetails[item].name}
+                          <Text style={styles.native}> · {languageDetails[item].nativeName}</Text>
+                        </Text>
+                        <Text style={styles.rowMeta}>{where}</Text>
+                      </View>
+                      <MaterialCommunityIcons
+                        color={selected ? Palette.ink : Palette.muted}
+                        name={selected ? 'check-circle' : 'circle-outline'}
+                        size={22}
+                      />
+                    </Pressable>
+                  </Animated.View>
+                );
+              })}
+            </View>
+            <Text style={styles.footnote}>
+              Your progress in each language is kept. Explanations are in English.
+            </Text>
+          </>
+        )}
       </BottomSheet>
     </>
   );

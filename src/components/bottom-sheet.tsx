@@ -1,4 +1,4 @@
-import { useEffect, useState, type PropsWithChildren } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Modal, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, {
@@ -24,45 +24,34 @@ export function BottomSheet({
   onClose,
   closeLabel,
   children,
-}: PropsWithChildren<{ visible: boolean; onClose: () => void; closeLabel: string }>) {
+}: {
+  visible: boolean;
+  onClose: () => void;
+  closeLabel: string;
+  /** Content, or a function that receives `close` to slide the sheet away (after a choice). */
+  children: ReactNode | ((close: () => void) => ReactNode);
+}) {
   const { height: screen } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const [mounted, setMounted] = useState(visible);
-  const [wasVisible, setWasVisible] = useState(visible);
   const [height, setHeight] = useState(screen);
-  // 0 is fully open; `height` is fully below the screen edge.
+  // 0 is fully open; `screen` is fully below the screen edge.
   const offset = useSharedValue(screen);
 
-  // Opening mounts the sheet at once; closing keeps it mounted until it has slid away.
-  if (visible !== wasVisible) {
-    setWasVisible(visible);
-    if (visible) setMounted(true);
-  }
-
   useEffect(() => {
-    // Opening always starts below the screen edge and springs up, whatever happened before.
+    // Opening always starts below the screen edge and springs up.
     if (visible) {
       offset.set(screen);
       offset.set(withSpring(0, OPEN_SPRING));
-    } else
-      offset.set(
-        withTiming(screen, { duration: 220 }, (done) => {
-          if (done) scheduleOnRN(setMounted, false);
-        }),
-      );
+    }
   }, [offset, screen, visible]);
 
-  const finish = () => {
-    setMounted(false);
-    onClose();
-  };
-  const close = () => {
+  // Every way of closing slides the sheet away first, then tells the parent.
+  const close = (duration = 220) =>
     offset.set(
-      withTiming(height, { duration: 220 }, (done) => {
-        if (done) scheduleOnRN(finish);
+      withTiming(screen, { duration }, (done) => {
+        if (done) scheduleOnRN(onClose);
       }),
     );
-  };
 
   const pan = Gesture.Pan()
     // Taps on rows still work; only a clear vertical drag moves the sheet.
@@ -73,8 +62,8 @@ export function BottomSheet({
     .onEnd((event) => {
       if (event.translationY > height * 0.25 || event.velocityY > 900)
         offset.set(
-          withTiming(height, { duration: 200 }, (done) => {
-            if (done) scheduleOnRN(finish);
+          withTiming(screen, { duration: 200 }, (done) => {
+            if (done) scheduleOnRN(onClose);
           }),
         );
       else offset.set(withSpring(0, OPEN_SPRING));
@@ -82,22 +71,27 @@ export function BottomSheet({
 
   const sheetStyle = useAnimatedStyle(() => ({ transform: [{ translateY: offset.get() }] }));
   const backdropStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(offset.get(), [0, height], [1, 0], 'clamp'),
+    opacity: interpolate(offset.get(), [0, Math.min(height, screen)], [1, 0], 'clamp'),
   }));
 
-  if (!mounted) return null;
+  if (!visible) return null;
   return (
     <Modal
       animationType="none"
       navigationBarTranslucent
-      onRequestClose={close}
+      onRequestClose={() => close()}
       statusBarTranslucent
       transparent
       visible
     >
       <GestureHandlerRootView style={styles.root}>
         <Animated.View style={[styles.backdrop, backdropStyle]}>
-          <Pressable accessibilityLabel={closeLabel} onPress={close} style={styles.fill} />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={closeLabel}
+            onPress={() => close()}
+            style={styles.fill}
+          />
         </Animated.View>
         <GestureDetector gesture={pan}>
           <Animated.View
@@ -107,7 +101,7 @@ export function BottomSheet({
             <View accessibilityLabel="Drag down to close" style={styles.handleArea}>
               <View style={styles.grabber} />
             </View>
-            {children}
+            {typeof children === 'function' ? children(close) : children}
           </Animated.View>
         </GestureDetector>
       </GestureHandlerRootView>
