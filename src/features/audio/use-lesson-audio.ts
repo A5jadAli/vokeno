@@ -67,7 +67,8 @@ export function useLessonAudio(track: LanguageTrack) {
       if (generation !== token.current) return false;
       const player = clips.playerFor(clip.key, uri);
       player.playbackRate = clipRate(rate);
-      await player.seekTo(0);
+      // A fresh player is already at the start; seeking it first only waits for it to load.
+      if (player.currentTime > 0) await player.seekTo(0);
       if (generation !== token.current) return false;
       return new Promise<boolean>((resolve) => {
         const subscription = player.addListener('playbackStatusUpdate', (status) => {
@@ -129,12 +130,12 @@ export function useLessonAudio(track: LanguageTrack) {
 
   /** Downloads a lesson's clips in the background so they start at once when tapped. */
   const prefetch = useCallback(
-    (lines: { text: string; speaker?: string }[]) => {
+    (lines: { text: string; speaker?: string }[], ready = 8) => {
       if (!clips) return;
       const found = lines
         .map((line) => findClip(track, line.text, line.speaker))
         .filter((clip): clip is { key: string; url: string } => Boolean(clip));
-      void clips.warmClips(found);
+      void clips.warmClips(found, ready);
     },
     [track],
   );

@@ -1,7 +1,11 @@
 // Every line the app can speak, with who speaks it. The voice generator records exactly this
 // list, screens prefetch their part of it, and a test checks that every entry has a clip.
 
-import { foundationLessons, type FoundationLesson } from '@/features/foundations/catalog';
+import {
+  foundationLessons,
+  type FoundationLesson,
+  type LessonStep,
+} from '@/features/foundations/catalog';
 import type { LanguageTrack } from '@/features/language/config';
 import { listeningScenarios, type ListeningScenario } from '@/features/listening/scenarios';
 import { placementItems } from '@/features/placement/items';
@@ -18,6 +22,23 @@ function collector() {
   return { lines, add };
 }
 
+/** What one step of a unit lesson can say. */
+export function stepLines(track: LanguageTrack, step: LessonStep): SpokenLine[] {
+  const { lines, add } = collector();
+  if (step.kind === 'scene')
+    step.lines.forEach((line) => {
+      add(track, line.text, line.speaker);
+      add(track, line.real, line.speaker);
+    });
+  if (step.kind === 'teach') step.items.forEach((item) => add(track, item.target));
+  if (step.kind === 'choose') add(track, step.audio);
+  if (step.kind === 'speak') step.lines.forEach((line) => add(track, line));
+  if (step.kind === 'rule') step.examples?.forEach((example) => add(track, example));
+  // A correct word-order answer is read back.
+  if (step.kind === 'build') add(track, step.answer.join(' '));
+  return lines;
+}
+
 /** Everything a lesson can say, in the order a learner meets it. */
 export function lessonLines(lesson: FoundationLesson): SpokenLine[] {
   const { lines, add } = collector();
@@ -28,19 +49,7 @@ export function lessonLines(lesson: FoundationLesson): SpokenLine[] {
     lesson.checks.forEach((check) => add(track, check.audio));
     return lines;
   }
-  for (const step of lesson.steps) {
-    if (step.kind === 'scene')
-      step.lines.forEach((line) => {
-        add(track, line.text, line.speaker);
-        add(track, line.real, line.speaker);
-      });
-    if (step.kind === 'teach') step.items.forEach((item) => add(track, item.target));
-    if (step.kind === 'choose') add(track, step.audio);
-    if (step.kind === 'speak') step.lines.forEach((line) => add(track, line));
-    if (step.kind === 'rule') step.examples?.forEach((example) => add(track, example));
-    // A correct word-order answer is read back.
-    if (step.kind === 'build') add(track, step.answer.join(' '));
-  }
+  for (const step of lesson.steps) lines.push(...stepLines(track, step));
   return lines;
 }
 

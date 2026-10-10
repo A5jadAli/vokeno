@@ -37,7 +37,7 @@ import {
 } from '@/features/foundations/progress';
 import { isGradedStep } from '@/features/foundations/types';
 import { lessonContext } from '@/features/journey/course';
-import { lessonLines } from '@/features/audio/inventory';
+import { lessonLines, stepLines } from '@/features/audio/inventory';
 import { languageDetails, trackColors } from '@/features/language/config';
 import { useLanguageSelection } from '@/features/language/selection';
 import { useLessonAudio, type LessonAudio } from '@/features/audio/use-lesson-audio';
@@ -76,6 +76,11 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
 
   const steps = lesson.steps;
   const index = Math.min(entry.step, steps.length);
+  // Ready players for this step and the next, so their audio starts the moment it is tapped.
+  useEffect(() => {
+    const near = steps.slice(index, index + 2).flatMap((item) => stepLines(lesson.track, item));
+    if (near.length) prefetch(near, near.length);
+  }, [index, lesson.track, prefetch, steps]);
   const step = steps[index] as LessonStep | undefined;
   const graded = steps.filter(isGradedStep).length;
   const gradedIndex = steps.slice(0, index).filter(isGradedStep).length;
