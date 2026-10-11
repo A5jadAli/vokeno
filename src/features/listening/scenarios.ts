@@ -901,8 +901,8 @@ export const listeningScenarios: ListeningScenario[] = [
       },
       {
         speaker: 'Maria',
-        text: 'Ich wohne jetzt in Leipzig.',
-        translation: 'I live in Leipzig now.',
+        text: 'Ich wohne seit zwei Wochen in Leipzig.',
+        translation: 'I have been living in Leipzig for two weeks.',
       },
       {
         speaker: 'Maria',
@@ -927,8 +927,9 @@ export const listeningScenarios: ListeningScenario[] = [
     ],
     phrases: [
       {
-        heard: 'Ich wohne jetzt in Leipzig.',
-        meaning: 'Jetzt means now: she has moved to Leipzig.',
+        heard: 'Ich wohne seit zwei Wochen in Leipzig.',
+        meaning:
+          'Seit + a time, with the present tense: where English says “I have been living”, German says “I live … since”.',
       },
       {
         heard: 'Der Kurs beginnt um neun Uhr.',

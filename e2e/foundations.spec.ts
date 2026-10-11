@@ -223,7 +223,7 @@ test('finished lesson phrases come back for spaced review the next day', async (
 });
 
 test('every unit session can be finished through its steps, with full marks', async ({ page }) => {
-  test.setTimeout(600_000);
+  test.setTimeout(1_200_000);
   expect(unitSessions.length).toBeGreaterThanOrEqual(12);
   for (const lesson of unitSessions) {
     await page.goto(`/foundation/${lesson.id}`);

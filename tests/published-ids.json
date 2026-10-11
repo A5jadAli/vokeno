@@ -116,7 +116,19 @@
     "es-mexico",
     "es-fast-speech",
     "es-flight",
-    "es-used-to"
+    "es-used-to",
+    "de-a1-u7-flat",
+    "de-a1-u7-adjectives",
+    "de-a1-u7-wg",
+    "de-a1-u7-exam",
+    "de-a1-u8-time",
+    "de-a1-u8-routine",
+    "de-a1-u8-real",
+    "de-a1-u8-exam",
+    "de-a1-u9-hobbies",
+    "de-a1-u9-lieber",
+    "de-a1-u9-plans",
+    "de-a1-u9-exam"
   ],
   "listening": [
     "coffee-run",

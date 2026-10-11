@@ -25,28 +25,28 @@ Goal: a learner who finishes a Vokeno German level can handle that level's real 
 
 ## A1 (20 units, then two Goethe A1 mocks)
 
-| #   | Unit                          | Grammar                                   | Goethe themes    |
-| --- | ----------------------------- | ----------------------------------------- | ---------------- |
-| 1   | Hallo! Introduce yourself     | _sein_, _heißen_, W-questions, _du_/_Sie_ | Person           |
-| 2   | Where are you from?           | Present tense, regular verbs              | Person, language |
-| 3   | Numbers, age, phone, spelling | Numbers 0–1,000, the alphabet             | Person           |
-| 4   | Family and friends            | _haben_, possessives _mein_/_dein_        | Family           |
-| 5   | At the café                   | _möchten_, accusative _einen_/_eine_      | Food and drink   |
-| 6   | Shopping for food             | Plurals, _kein_ versus _nicht_            | Shopping         |
-| 7   | Home: flat and furniture      | Articles, predicative adjectives          | Living           |
-| 8   | My day                        | Separable verbs, _am_/_um_                | Daily routine    |
-| 9   | Free time and hobbies         | Stem-changing verbs, _gern_/_lieber_      | Free time        |
-| 10  | Dates and appointments        | Days, months, ordinal dates               | Appointments     |
-| 11  | In town                       | Imperative, _zu_/_in_ + place             | Town             |
-| 12  | Trains and tickets            | _können_, questions                       | Travel           |
-| 13  | Clothes and colours           | Accusative with adjectives (chunks)       | Shopping         |
-| 14  | At the doctor's               | _müssen_, body, _wehtun_                  | Health           |
-| 15  | Work and jobs                 | _war_/_hatte_                             | Work             |
-| 16  | Weather and seasons           | _es_ + verb, months                       | Environment      |
-| 17  | Forms and offices             | Personal data, formal register            | Services         |
-| 18  | Messages and emails           | Informal versus formal writing            | Writing task     |
-| 19  | What did you do?              | Perfect tense with _haben_, common verbs  | Narrating        |
-| 20  | Real-life review              | Mixed practice at natural speed           | All              |
+| #   | Unit                          | Grammar                                    | Goethe themes    |
+| --- | ----------------------------- | ------------------------------------------ | ---------------- |
+| 1   | Hallo! Introduce yourself     | _sein_, _heißen_, W-questions, _du_/_Sie_  | Person           |
+| 2   | Where are you from?           | Present tense, regular verbs               | Person, language |
+| 3   | Numbers, age, phone, spelling | Numbers 0–1,000, the alphabet              | Person           |
+| 4   | Family and friends            | _haben_, possessives _mein_/_dein_         | Family           |
+| 5   | At the café                   | _möchten_, accusative _einen_/_eine_       | Food and drink   |
+| 6   | Shopping for food             | Plurals, _kein_ versus _nicht_             | Shopping         |
+| 7   | Home: flat and furniture      | Articles, predicative adjectives           | Living           |
+| 8   | My day                        | Separable verbs, _am_/_um_                 | Daily routine    |
+| 9   | Free time and hobbies         | Stem-changing verbs, _gern_/_lieber_       | Free time        |
+| 10  | Dates and appointments        | Months, ordinal dates (days are in Unit 8) | Appointments     |
+| 11  | In town                       | Imperative, _zu_/_in_ + place              | Town             |
+| 12  | Trains and tickets            | _können_, questions                        | Travel           |
+| 13  | Clothes and colours           | Accusative with adjectives (chunks)        | Shopping         |
+| 14  | At the doctor's               | _müssen_, body, _wehtun_                   | Health           |
+| 15  | Work and jobs                 | _war_/_hatte_                              | Work             |
+| 16  | Weather and seasons           | _es_ + verb, months                        | Environment      |
+| 17  | Forms and offices             | Personal data, formal register             | Services         |
+| 18  | Messages and emails           | Informal versus formal writing             | Writing task     |
+| 19  | What did you do?              | Perfect tense with _haben_, common verbs   | Narrating        |
+| 20  | Real-life review              | Mixed practice at natural speed            | All              |
 
 A2 (about 25 units: dative, reflexive verbs, adjective endings, perfect tense with _sein_, past of modals, _weil_/_dass_/_wenn_, comparatives and superlatives, travel, work, health, media, housing problems, official appointments) and B1 (about 30 units: passive, relative clauses, past perfect, simple past for narration, _zu_ + infinitive, _obwohl_/_trotzdem_, genitive, the subjunctive for politeness and wishes, discussions, complaints, job interviews, official letters) follow the same structure. Unit lists are drafted from the Goethe A2/B1 inventories once A1 is validated.
 
@@ -61,25 +61,30 @@ Each level ends with two full Goethe-format mock exams (Hören, Lesen, Schreiben
 3. Write the remaining A1 units in batches with review, then the two A1 mocks. Mark A1 complete only when every gate passes.
 4. Repeat for A2 and B1, then Spanish, then English (B1–C1 and IELTS).
 
-## Status (8 October 2026)
+## Status (11 October 2026)
 
-**Built:** the unit format (`StepLesson` in `src/features/foundations/types.ts`, player in `src/components/step-lesson.tsx`) and A1 Units 1–6 (`german-a1-units.ts`): 24 sessions of 5–7 minutes, each with 10–14 varied steps (scene, words, rule, choose, listen, word-order tiles, typing, matching, speaking).
+**Built:** the unit format (`StepLesson` in `src/features/foundations/types.ts`, player in `src/components/step-lesson.tsx`) and A1 Units 1–9 (`german-a1-units.ts`): 36 sessions of 5–7 minutes, each with 10–14 varied steps (scene, words, rule, choose, listen, word-order tiles, typing, matching, speaking).
 
-| Unit                   | Sessions                             | Grammar                                                         | Goethe A1 tasks                                                                                              |
-| ---------------------- | ------------------------------------ | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| 1 Hallo!               | Words, Grammar, Real talk, Exam task | _sein_, _heißen_, W- and yes/no questions, _du_/_Sie_           | Hören Teil 1 (names), form words, Sprechen Teil 1 (name)                                                     |
-| 2 Woher kommst du?     | Words, Grammar, Real talk, Exam task | Present tense of regular verbs, _-est/-et_, _heißt_, _sprechen_ | Lesen Teil 1 (richtig/falsch), Sprechen Teil 1 (Land, Wohnort, Sprachen)                                     |
-| 3 Zahlen, Alter, Namen | Words, Grammar, Real talk, Exam task | Numbers 0–100 (units first), age with _sein_, prices            | Hören Teil 1 and 3 (corrected numbers), Schreiben Teil 1 (form), full Sprechen Teil 1 except Beruf and Hobby |
-| 4 Meine Familie        | Words, Grammar, Real talk, Exam task | _haben_, _mein/dein/sein/ihr/Ihr_; spoken _der/die_ for he/they | Sprechen Teil 2 (word cards), Lesen richtig/falsch                                                           |
-| 5 Im Café              | Words, Grammar, Real talk, Exam task | _möchten_, accusative _einen/eine/ein_, _den_                   | Sprechen Teil 3 (picture cards), Hören (changed orders and prices)                                           |
-| 6 Einkaufen            | Words, Grammar, Real talk, Exam task | Plural patterns, _kein_ versus _nicht_, amounts without "of"    | Lesen Teil 2 and Teil 3 (adverts, signs), Hören Teil 2 (announcement)                                        |
+| Unit                   | Sessions                             | Grammar                                                             | Goethe A1 tasks                                                                                              |
+| ---------------------- | ------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 1 Hallo!               | Words, Grammar, Real talk, Exam task | _sein_, _heißen_, W- and yes/no questions, _du_/_Sie_               | Hören Teil 1 (names), form words, Sprechen Teil 1 (name)                                                     |
+| 2 Woher kommst du?     | Words, Grammar, Real talk, Exam task | Present tense of regular verbs, _-est/-et_, _heißt_, _sprechen_     | Lesen Teil 1 (richtig/falsch), Sprechen Teil 1 (Land, Wohnort, Sprachen)                                     |
+| 3 Zahlen, Alter, Namen | Words, Grammar, Real talk, Exam task | Numbers 0–100 (units first), age with _sein_, prices                | Hören Teil 1 and 3 (corrected numbers), Schreiben Teil 1 (form), full Sprechen Teil 1 except Beruf and Hobby |
+| 4 Meine Familie        | Words, Grammar, Real talk, Exam task | _haben_, _mein/dein/sein/ihr/Ihr_; spoken _der/die_ for he/they     | Sprechen Teil 2 (word cards), Lesen richtig/falsch                                                           |
+| 5 Im Café              | Words, Grammar, Real talk, Exam task | _möchten_, accusative _einen/eine/ein_, _den_                       | Sprechen Teil 3 (picture cards), Hören (changed orders and prices)                                           |
+| 6 Einkaufen            | Words, Grammar, Real talk, Exam task | Plural patterns, _kein_ versus _nicht_, amounts without "of"        | Lesen Teil 2 and Teil 3 (adverts, signs), Hören Teil 2 (announcement)                                        |
+| 7 Zu Hause             | Words, Grammar, Real talk, Exam task | _ein_ versus _der_, _er/sie/es_ for things, adjectives after _sein_ | Lesen Teil 2 (flat ads), Lesen Teil 3 (house rules), Sprechen Teil 2 (Wohnen)                                |
+| 8 Mein Tag             | Words, Grammar, Real talk, Exam task | Clock times, separable verbs, _am_/_um_, time first and verb second | Hören (times, a corrected appointment), Lesen Teil 1 (invitation), Schreiben Teil 2 (reply)                  |
+| 9 Freizeit             | Words, Grammar, Real talk, Exam task | Stem-changing verbs, _gern/lieber/am liebsten_, _mögen_             | Lesen Teil 2 (VHS ads), Hören Teil 3 (voicemail), Sprechen Teil 2 (Freizeit)                                 |
 
 Native-first content in Units 1–3, beyond the Goethe list, includes high-frequency spoken words that are not on it (OpenSubtitles rank in brackets): _genau_ (171), _echt_ (362), _sorry_ (1,521), _nee_ (1,725). It also covers _Moin_/_Servus_/_Grüß Gott_, _Wo kommst du her?_, merged forms (_willste_, _kommste_), _zwo_, numbers as feminine nouns (_die Zwölf_), phone numbers in pairs, spelling with words, _alles klein_ in email addresses, Saxon dialect in Leipzig, and when not to ask "where are you really from?".
 
-The starter lessons these units replace (`greetings`, `introductions`, `origin`, `numbers`, `family`, `cafe`, `supermarket`) are retired: off the path, with history and review cards kept.
+The starter lessons these units replace (`greetings`, `introductions`, `origin`, `numbers`, `family`, `cafe`, `supermarket`, `ask-for-help`, `time-routine`, `free-time`) are retired: off the path, with history and review cards kept.
 
 Units 4–6 add Mama/Papa used by adults, _Kumpel_, _WG_, _Einzelkind_, the _meine Freundin_ ambiguity, _Apfelschorle_ and _Hafermilch_, _Zusammen oder getrennt?_, tipping by naming the total or _Stimmt so_, cash-only places, the bill only on request, Pfand, one-word checkout questions (_Tüte? Bon?_), _Darf's ein bisschen mehr sein?_ and _günstig_ versus _billig_.
 
-**Quality gates in place:** `tests/units.test.ts` (structure, variety, every exercise solvable, unique review cards, no digits or keyboard spellings in German audio and model lines) and the e2e walkthrough that finishes every session through the UI.
+Units 7–9 add how Germans count rooms (_Zwei-Zimmer-Wohnung_, kitchen and bathroom not included), flats rented without a kitchen, shoes off at home, rent _warm_ versus _kalt_, the _WG-Casting_, _gemütlich_, _oder?_/_gell?_ tags, _halb acht_ as 7:30, the Saxon and southern _viertel neun_ (8:15), _gegen acht_ and _so um acht_, _Feierabend_, taking in neighbours' parcels, _Mist!_, _Vereine_, _spazieren gehen_ as a pastime, _kicken_, _Bock haben_, _Mal sehen_ as a polite no, _Ich bin dabei!_, _So'n_ and _'n_ reductions, and the Volkshochschule.
 
-**Not yet done:** native-teacher review of Units 1–6; Units 7–20; the two A1 mock exams; human-recorded audio (scenes currently use the device voice, one voice for all speakers). German A1 stays labelled a starter set until all of these pass.
+**Quality gates in place:** `tests/units.test.ts` (structure, variety, every exercise solvable, unique review cards, no phrase taught in two active lessons, no sentence reused in another session or listening lesson, no digits or keyboard spellings in German audio and model lines), `tests/audio.test.ts` (an AI-voice clip for every spoken line) and the e2e walkthrough that finishes every session through the UI.
+
+**Not yet done:** native-teacher review of Units 1–9; Units 10–20; the two A1 mock exams. Audio uses natural AI voices, one per character (`docs/lesson-audio.md`); native recordings may replace them later. German A1 stays labelled a starter set until all of these pass.

@@ -145,6 +145,8 @@ export const germanA1Lessons = defineLessons('DE', [
   {
     id: 'ask-for-help',
     level: 'A1',
+    // Replaced by German A1 Unit 1 (asking for repetition) and Unit 7 (Wie heißt das auf Deutsch?).
+    retired: true,
     title: 'Ask someone to slow down',
     outcome:
       'Say that you do not understand, ask for repetition and keep the conversation in German.',
@@ -583,6 +585,8 @@ export const germanA1Lessons = defineLessons('DE', [
   {
     id: 'time-routine',
     level: 'A1',
+    // Replaced by German A1 Unit 8.
+    retired: true,
     title: 'Tell the time and describe your day',
     outcome: 'Ask and tell the time and describe a simple daily routine.',
     phrases: [
@@ -785,6 +789,8 @@ export const germanA1Lessons = defineLessons('DE', [
   {
     id: 'free-time',
     level: 'A1',
+    // Replaced by German A1 Unit 9.
+    retired: true,
     title: 'Say what you like doing',
     outcome: 'Talk about hobbies and make, accept or decline a suggestion.',
     phrases: [

@@ -3588,4 +3588,1746 @@ const unit6 = defineUnit(
   ],
 );
 
-export const germanA1Units = [...unit1, ...unit2, ...unit3, ...unit4, ...unit5, ...unit6];
+const flatAds =
+  'a) WG-Zimmer, 14 m², möbliert, ab sofort frei. 360 € warm.\nb) 2-Zimmer-Wohnung, 55 m², Balkon, frei ab April. 620 € kalt + 150 € Nebenkosten.';
+const houseRules =
+  'Hausordnung\nRuhezeiten: täglich von 22 bis 6 Uhr und am Sonntag.\nBitte den Müll trennen: Papier, Glas, Bio, Rest.';
+
+const unit7 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u7',
+    number: 7,
+    title: 'Zu Hause',
+    canDo: 'Describe a flat and its rooms, name furniture, and say what things are like.',
+  },
+  [
+    {
+      id: 'de-a1-u7-flat',
+      session: 'Words',
+      title: 'Rooms and furniture',
+      outcome: 'Name the rooms and furniture of a flat, and ask what something is called.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'Karim’s new flat',
+          intro: 'Karim has moved into a new flat. Alex comes round for the first time.',
+          lines: [
+            {
+              speaker: 'Karim',
+              text: 'Hallo, komm rein! Das ist meine neue Wohnung.',
+              meaning: 'Hi, come in! This is my new flat.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Wow, schön! Wie viele Zimmer hast du?',
+              meaning: 'Wow, nice! How many rooms do you have?',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Zwei Zimmer, Küche, Bad. Hier links ist das Wohnzimmer.',
+              meaning: 'Two rooms, kitchen, bathroom. Here on the left is the living room.',
+            },
+            { speaker: 'Alex', text: 'Und das Schlafzimmer?', meaning: 'And the bedroom?' },
+            {
+              speaker: 'Karim',
+              text: 'Hier rechts. Aber das Bett ist noch nicht da.',
+              real: 'Hier rechts. Aber das Bett fehlt noch.',
+              meaning: 'Here on the right. But the bed isn’t here yet.',
+              realMeaning: 'Here on the right. But the bed is still missing.',
+            },
+            { speaker: 'Alex', text: 'Und die Küche?', meaning: 'And the kitchen?' },
+            {
+              speaker: 'Karim',
+              text: 'Die ist klein, aber sie hat einen Balkon!',
+              real: 'Die is klein, aber mit Balkon!',
+              meaning: 'It’s small, but it has a balcony!',
+              realMeaning: 'It’s small, but with a balcony!',
+            },
+          ],
+          note: 'Germans count only the rooms you live in: a Zwei-Zimmer-Wohnung has two rooms plus a kitchen and a bathroom. Many rented flats come without a kitchen, so tenants bring their own or buy it from the last tenant.',
+        },
+        {
+          kind: 'teach',
+          title: 'Rooms',
+          items: [
+            { target: 'die Wohnung', meaning: 'flat, apartment' },
+            { target: 'das Zimmer', meaning: 'room' },
+            { target: 'die Küche', meaning: 'kitchen' },
+            {
+              target: 'das Bad',
+              meaning: 'bathroom',
+              note: 'Short for das Badezimmer. The toilet is often separate: das WC.',
+            },
+            { target: 'das Wohnzimmer', meaning: 'living room' },
+            { target: 'das Schlafzimmer', meaning: 'bedroom' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Karim says: “Zwei Zimmer, Küche, Bad.” How big is his flat?',
+          options: [
+            'Two rooms, plus a kitchen and a bathroom',
+            'Two rooms in total, kitchen included',
+            'Two bedrooms and two bathrooms',
+          ],
+          answer: 0,
+          explanation: 'Küche and Bad are never counted as Zimmer: this is a Zwei-Zimmer-Wohnung.',
+        },
+        {
+          kind: 'teach',
+          title: 'Furniture',
+          items: [
+            { target: 'der Tisch', meaning: 'table' },
+            { target: 'der Stuhl, die Stühle', meaning: 'chair, chairs' },
+            { target: 'das Bett', meaning: 'bed' },
+            { target: 'der Schrank', meaning: 'wardrobe, cupboard' },
+            { target: 'das Sofa', meaning: 'sofa', note: 'Also die Couch.' },
+            { target: 'die Lampe', meaning: 'lamp' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the furniture.',
+          pairs: [
+            ['der Tisch', 'table'],
+            ['die Stühle', 'chairs'],
+            ['der Schrank', 'wardrobe'],
+            ['das Bett', 'bed'],
+            ['die Lampe', 'lamp'],
+          ],
+        },
+        {
+          kind: 'teach',
+          title: 'Around the flat',
+          items: [
+            { target: 'der Balkon', meaning: 'balcony' },
+            { target: 'der Kühlschrank', meaning: 'fridge' },
+            { target: 'das Fenster', meaning: 'window' },
+            { target: 'links / rechts', meaning: 'on the left / on the right' },
+            {
+              target: 'Wie heißt das auf Deutsch?',
+              meaning: 'What is this called in German?',
+              note: 'Point at anything and ask. Wie heißt das auf Englisch? asks the other way round.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. Which room is it?',
+          audio: 'Hier schlafe ich. Das Bett kommt am Freitag.',
+          options: ['The bedroom', 'The kitchen', 'The living room'],
+          answer: 0,
+          explanation: 'Schlafzimmer: schlafen (to sleep) + Zimmer (room).',
+        },
+        {
+          kind: 'choose',
+          prompt: 'You point at the fridge and want the German word. What do you ask?',
+          options: [
+            'Wie heißt das auf Deutsch?',
+            'Wie heißt du auf Deutsch?',
+            'Was kostet das auf Deutsch?',
+          ],
+          answer: 0,
+          explanation:
+            'Wie heißt das …? asks for the name of a thing. Wie heißt du? asks for a person’s name.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “Here on the left is the living room.”',
+          answer: ['Hier', 'links', 'ist', 'das', 'Wohnzimmer.'],
+          extra: ['rechts'],
+          explanation: 'links: on the left. The verb ist stays in second place.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “This is my flat.”',
+          accepted: ['Das ist meine Wohnung.'],
+          hint: 'die Wohnung → meine Wohnung.',
+          explanation: 'Wohnung is a die word, so meine: Das ist meine Wohnung.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Show a friend round your home.',
+          lines: [
+            'Komm rein! Das ist meine Wohnung.',
+            'Hier links ist die Küche.',
+            'Und das ist mein Zimmer.',
+          ],
+          tip: 'In Küche, say i with rounded lips to get ü.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u7-adjectives',
+      session: 'Grammar',
+      title: 'Er, sie, es for things, and “Die Küche ist klein”',
+      outcome: 'Say it with er, sie or es, and describe what things are like.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'ein Tisch, der Tisch',
+          body: 'Ein, eine introduce something new. Der, die, das point to something you both know already. Ich habe einen Tisch. Der Tisch ist alt. In the plural there is no word for “a”: Stühle.',
+          table: [
+            ['ein Tisch', 'der Tisch'],
+            ['eine Lampe', 'die Lampe'],
+            ['ein Bett', 'das Bett'],
+            ['Stühle', 'die Stühle'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Karim hat ___ Sofa. Das Sofa ist neu.',
+          options: ['ein', 'eine', 'der'],
+          answer: 0,
+          explanation: 'First mention, das word: ein Sofa. After that: das Sofa.',
+        },
+        {
+          kind: 'rule',
+          title: 'it: er, sie or es',
+          body: 'English says it for every thing. German follows the noun: a der word becomes er, a die word becomes sie, a das word becomes es. In speech you will also hear der, die, das, as for people in Unit 4: Die ist alt.',
+          table: [
+            ['der Tisch', 'Er ist neu.'],
+            ['die Lampe', 'Sie ist alt.'],
+            ['das Bett', 'Es ist groß.'],
+            ['die Stühle', 'Sie sind neu.'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Wie ist der Schrank? ___ ist sehr alt.',
+          options: ['Er', 'Sie', 'Es'],
+          answer: 0,
+          explanation: 'der Schrank → er.',
+        },
+        {
+          kind: 'teach',
+          title: 'What is it like?',
+          items: [
+            { target: 'groß / klein', meaning: 'big / small' },
+            { target: 'hell / dunkel', meaning: 'bright, light / dark' },
+            { target: 'alt / neu', meaning: 'old / new' },
+            { target: 'ruhig / laut', meaning: 'quiet / noisy, loud' },
+            {
+              target: 'gemütlich',
+              meaning: 'cosy, snug',
+              note: 'A favourite German word for a warm, relaxed place or evening.',
+            },
+            {
+              target: 'bequem',
+              meaning: 'comfortable',
+              note: 'For chairs, beds, sofas and shoes.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Wo ist die Küche? ___ ist hier links.',
+          options: ['Sie', 'Er', 'Es'],
+          answer: 0,
+          explanation: 'die Küche → sie.',
+        },
+        {
+          kind: 'rule',
+          title: 'After sein: no ending',
+          body: 'After ist and sind, the adjective has no ending at all: Die Wohnung ist hell. Das Zimmer ist klein. Die Stühle sind bequem. Endings come later, when the adjective stands before the noun.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Which sentence is correct?',
+          options: ['Das Zimmer ist hell.', 'Das Zimmer ist helles.', 'Das Zimmer hell ist.'],
+          answer: 0,
+          explanation: 'After ist: no ending, and the verb comes second.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the opposites.',
+          pairs: [
+            ['groß', 'klein'],
+            ['hell', 'dunkel'],
+            ['alt', 'neu'],
+            ['ruhig', 'laut'],
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “The flat is bright, but small.”',
+          answer: ['Die', 'Wohnung', 'ist', 'hell,', 'aber', 'klein.'],
+          extra: ['helle'],
+          explanation: 'No ending after ist: hell, klein. Aber (but) joins the two.',
+        },
+        {
+          kind: 'type',
+          prompt: '“Wie ist das Bett?” Answer: “It is comfortable.”',
+          accepted: ['Es ist bequem.', 'Das ist bequem.'],
+          hint: 'das Bett → es.',
+          explanation: 'Es ist bequem. In speech, Das ist bequem works too.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Describe your room.',
+          lines: [
+            'Mein Zimmer ist klein, aber gemütlich.',
+            'Das Bett ist bequem.',
+            'Das Fenster ist groß, und es ist ruhig.',
+          ],
+          tip: 'Gemütlich: stress the second part, ge-MÜT-lich.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u7-wg',
+      session: 'Real talk',
+      title: '“Komm rein!” Visiting a room in a WG',
+      outcome: 'Visit a flat, react like a local and ask the questions that matter.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'A free room',
+          intro: 'A room in Lena’s shared flat is free. Maria comes to see it.',
+          lines: [
+            { speaker: 'Lena', text: 'Hallo, Maria! Komm rein!', meaning: 'Hi, Maria! Come in!' },
+            {
+              speaker: 'Maria',
+              text: 'Hallo! Soll ich die Schuhe ausziehen?',
+              meaning: 'Hi! Should I take my shoes off?',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Ja, gern. So, und hier ist das Zimmer.',
+              meaning: 'Yes, please. So, and here is the room.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Oh, es ist schön hell! Und ganz ruhig.',
+              real: 'Oh, voll schön hell! Und so ruhig hier.',
+              meaning: 'Oh, it’s nice and bright! And very quiet.',
+              realMeaning: 'Oh, really nice and bright! And so quiet here.',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Ja, das Fenster geht zum Hof. Das Zimmer hat sechzehn Quadratmeter.',
+              meaning: 'Yes, the window faces the courtyard. The room is sixteen square metres.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Und was kostet das Zimmer?',
+              real: 'Und was kostet das so im Monat?',
+              meaning: 'And how much is the room?',
+              realMeaning: 'And roughly what does it cost a month?',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Dreihundertachtzig warm, mit Internet.',
+              meaning: '380 a month including heating and bills, with internet.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Super! Das Zimmer gefällt mir.',
+              meaning: 'Great! I like the room.',
+            },
+          ],
+          note: 'Most Germans take their shoes off at home, so guests often ask. Rent is given warm (heating and bills included) or kalt (without them). In a WG, the flatmates usually choose the new person together after short visits, the WG-Casting.',
+        },
+        {
+          kind: 'teach',
+          title: 'Visiting someone at home',
+          items: [
+            {
+              target: 'Komm rein!',
+              meaning: 'Come in!',
+              note: 'To someone you call Sie: Kommen Sie rein!',
+            },
+            { target: 'Soll ich die Schuhe ausziehen?', meaning: 'Should I take my shoes off?' },
+            { target: 'Fühl dich wie zu Hause!', meaning: 'Make yourself at home!' },
+            {
+              target: 'Das gefällt mir.',
+              meaning: 'I like that.',
+              note: 'Literally “that pleases me”: Das Zimmer gefällt mir.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What does Lena say about the room?',
+          audio: 'Das Zimmer ist nicht groß, aber es ist hell und sehr ruhig.',
+          options: ['Not big, but bright and quiet', 'Big and bright, but noisy', 'Small and dark'],
+          answer: 0,
+          explanation: 'nicht groß, aber hell und sehr ruhig.',
+        },
+        {
+          kind: 'teach',
+          title: 'Rent and size',
+          items: [
+            { target: 'die Miete', meaning: 'rent' },
+            {
+              target: 'warm / kalt',
+              meaning: 'with / without heating and bills',
+              note: 'Said about rent: 380 Euro warm. Ads often give the kalt price.',
+            },
+            { target: 'der Quadratmeter', meaning: 'square metre', note: 'Written m² or qm.' },
+            {
+              target: 'der Hof',
+              meaning: 'courtyard',
+              note: 'Many city flats look onto a quiet courtyard at the back.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'A room costs “380 Euro warm”. What do you pay for heating and bills on top?',
+          options: [
+            'Nothing: they are included',
+            'About 100 euros more',
+            'It depends on the furniture',
+          ],
+          answer: 0,
+          explanation: 'warm: heating and service costs are in the price. kalt: they come on top.',
+        },
+        {
+          kind: 'scene',
+          title: 'Jonas comes home',
+          intro: 'Jonas, another flatmate, comes home and says hello. He talks fast.',
+          lines: [
+            {
+              speaker: 'Jonas',
+              text: 'Hey! Du bist Maria, oder? Ich bin Jonas.',
+              real: 'Hey! Du bist Maria, ne? Jonas.',
+              meaning: 'Hey! You’re Maria, right? I’m Jonas.',
+              realMeaning: 'Hey! You’re Maria, right? Jonas.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Hi, Jonas! Die Wohnung ist echt schön.',
+              meaning: 'Hi, Jonas! The flat is really nice.',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Danke! Die Küche ist klein, aber wir kochen oft zusammen.',
+              meaning: 'Thanks! The kitchen is small, but we often cook together.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Und wie viele Leute wohnen hier?',
+              meaning: 'And how many people live here?',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Wir sind drei: Lena, Alex und ich. Fühl dich wie zu Hause!',
+              real: 'Wir sind zu dritt: Lena, Alex und ich. Fühl dich wie zu Hause!',
+              meaning: 'There are three of us: Lena, Alex and me. Make yourself at home!',
+            },
+            { speaker: 'Maria', text: 'Danke, das ist nett!', meaning: 'Thanks, that’s kind!' },
+          ],
+          note: 'Oder? at the end of a sentence means “right?”, just like ne? In the south you will hear gell? instead.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Jonas says: “Du bist Maria, oder?” What is he doing?',
+          options: [
+            'Checking that she is Maria',
+            'Asking her to choose a name',
+            'Saying he does not believe her',
+          ],
+          answer: 0,
+          explanation: 'oder? at the end checks something: right?',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match what you hear at a flat visit.',
+          pairs: [
+            ['Komm rein!', 'Come in!'],
+            ['oder?', 'right?'],
+            ['warm', 'bills included'],
+            ['der Hof', 'courtyard'],
+            ['Das gefällt mir.', 'I like that.'],
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “I like the kitchen.”',
+          answer: ['Die', 'Küche', 'gefällt', 'mir.'],
+          also: ['Mir gefällt die Küche.'],
+          extra: ['ich'],
+          explanation:
+            'The thing you like does the verb, and mir means “to me”: Die Küche gefällt mir.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Lena says: “Fühl dich wie zu Hause!” Answer: “Thanks, that is kind!”',
+          accepted: ['Danke, das ist nett!', 'Danke, das ist sehr nett!'],
+          hint: 'Danke + das ist + nett.',
+          explanation: 'nett: kind, nice. A short, warm reply that always works.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Visit a flat: ask your two questions, then react.',
+          lines: [
+            'Soll ich die Schuhe ausziehen?',
+            'Was kostet das Zimmer?',
+            'Oh, das ist schön hell!',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u7-exam',
+      session: 'Exam task',
+      title: 'Goethe A1 practice: flat ads and house rules',
+      outcome:
+        'Choose a flat ad in Lesen Teil 2, read house rules, and ask about home in Sprechen Teil 2.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'The exam: ads in Lesen Teil 2',
+          body: 'Flat ads are short and full of abbreviations. In Lesen Teil 2 you read two of them and choose the one that fits a person: a or b. Look for the one detail that decides it.',
+        },
+        {
+          kind: 'teach',
+          title: 'Words in flat ads',
+          items: [
+            { target: 'die Anzeige', meaning: 'advert' },
+            { target: 'möbliert', meaning: 'furnished' },
+            {
+              target: 'die Nebenkosten',
+              meaning: 'service charges, bills',
+              note: 'Heating, water, rubbish. Often NK in ads.',
+            },
+            { target: 'ab sofort', meaning: 'from now, immediately' },
+            {
+              target: 'frei',
+              meaning: 'free, available',
+              note: 'Free as in available. Free of charge is kostenlos.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Sie brauchen jetzt sofort ein Zimmer mit Möbeln. Welche Anzeige passt?',
+          context: flatAds,
+          options: ['a) WG-Zimmer', 'b) 2-Zimmer-Wohnung'],
+          answer: 0,
+          explanation:
+            'a is möbliert (with furniture) and frei ab sofort. b is free only from April.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Was kostet die Wohnung b) im Monat, mit Nebenkosten?',
+          context: flatAds,
+          options: ['620 €', '770 €', '150 €'],
+          answer: 1,
+          explanation: '620 € kalt + 150 € Nebenkosten = 770 € warm.',
+        },
+        {
+          kind: 'rule',
+          title: 'Signs: the Hausordnung',
+          body: 'Every building has house rules. Two are everywhere: quiet hours (Ruhezeiten), usually from 22 to 6 o’clock and all of Sunday, and sorting the rubbish (Mülltrennung). Signs like these appear in Lesen Teil 3.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Am Sonntag ist im Haus Ruhezeit.',
+          context: houseRules,
+          options: ['Richtig', 'Falsch'],
+          answer: 0,
+          explanation: '“Ruhezeiten: … und am Sonntag.”',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Die Ruhezeit ist von sechs bis zweiundzwanzig Uhr.',
+          context: houseRules,
+          options: ['Richtig', 'Falsch'],
+          answer: 1,
+          explanation: 'It is the other way round: from 22:00 at night until 6:00 in the morning.',
+        },
+        {
+          kind: 'rule',
+          title: 'Sprechen Teil 2: Wohnen',
+          body: 'As in Unit 4, you draw a word card and ask your partner a question with the word. Today’s topic is Wohnen (living).',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Your card says “Küche”. Which question fits?',
+          options: ['Wie groß ist deine Küche?', 'Küche ist groß?', 'Wie heißt deine Küche?'],
+          answer: 0,
+          explanation: 'A full question with the card word. Ist deine Küche hell? works too.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Your card says “Balkon”. Ask your partner if they have a balcony (du).',
+          accepted: ['Hast du einen Balkon?'],
+          hint: 'Hast du + einen Balkon (der Balkon, as the object).',
+          explanation: 'der Balkon → einen Balkon, as with einen Kaffee in Unit 5.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Unit 7 review: match the pairs.',
+          pairs: [
+            ['möbliert', 'furnished'],
+            ['die Miete', 'rent'],
+            ['hell', 'bright'],
+            ['das Schlafzimmer', 'bedroom'],
+            ['gemütlich', 'cosy'],
+          ],
+        },
+        {
+          kind: 'speak',
+          prompt: 'Answer your partner’s questions about your home.',
+          lines: [
+            'Meine Wohnung hat zwei Zimmer.',
+            'Die Küche ist klein, aber hell.',
+            'Ja, ich habe einen Balkon.',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
+const karimInvitation =
+  'Hallo Alex,\nich habe am Samstag Geburtstag! Am Abend mache ich eine Party in meiner neuen Wohnung. Sie fängt um acht an. Kannst du schon um sieben kommen und mir helfen? Ich kaufe am Vormittag ein.\nViele Grüße\nKarim';
+
+const unit8 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u8',
+    number: 8,
+    title: 'Mein Tag',
+    canDo: 'Ask and tell the time, describe your day, and say when things happen.',
+  },
+  [
+    {
+      id: 'de-a1-u8-time',
+      session: 'Words',
+      title: 'Wie spät ist es?',
+      outcome: 'Ask and tell the time, the everyday way and the official way.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'Monday morning',
+          intro: 'Monday morning in the WG. Alex is in a hurry.',
+          lines: [
+            { speaker: 'Alex', text: 'Lena, wie spät ist es?', meaning: 'Lena, what time is it?' },
+            { speaker: 'Lena', text: 'Es ist halb acht.', meaning: 'It’s half past seven.' },
+            {
+              speaker: 'Alex',
+              text: 'Halb acht? Oh nein, mein Kurs fängt um acht an!',
+              real: 'Halb acht? Mist, mein Kurs fängt um acht an!',
+              meaning: 'Half past seven? Oh no, my course starts at eight!',
+              realMeaning: 'Half past seven? Damn, my course starts at eight!',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Keine Panik. Der Bus kommt um zwanzig vor acht.',
+              real: 'Keine Panik. Der Bus kommt zwanzig vor.',
+              meaning: 'Don’t panic. The bus comes at twenty to eight.',
+              realMeaning: 'Don’t panic. The bus comes at twenty to.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Und wie lange fährt der Bus?',
+              meaning: 'And how long does the bus take?',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Zehn Minuten. Also, Kaffee zum Mitnehmen?',
+              meaning: 'Ten minutes. So, coffee to go?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Ja, bitte! Du bist die Beste!',
+              meaning: 'Yes, please! You’re the best!',
+            },
+          ],
+          note: 'Halb acht is half past seven: halfway to eight. It is the classic trap for English speakers, so always think “half to the next hour”.',
+        },
+        {
+          kind: 'teach',
+          title: 'Telling the time',
+          items: [
+            {
+              target: 'Wie spät ist es?',
+              meaning: 'What time is it?',
+              note: 'Also: Wie viel Uhr ist es?',
+            },
+            { target: 'Es ist acht Uhr.', meaning: 'It’s eight o’clock.' },
+            { target: 'halb acht', meaning: 'half past seven', note: 'Halfway to eight: 7:30.' },
+            { target: 'Viertel nach acht', meaning: 'quarter past eight' },
+            { target: 'Viertel vor neun', meaning: 'quarter to nine' },
+            { target: 'zehn nach acht / zehn vor neun', meaning: 'ten past eight / ten to nine' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Lena says: “Es ist halb acht.” What time is it?',
+          options: ['7:30', '8:30', '8:00'],
+          answer: 0,
+          explanation: 'halb acht: halfway to eight, so 7:30.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What time is it?',
+          audio: 'Es ist jetzt Viertel nach zehn.',
+          options: ['10:15', '9:45', '10:45'],
+          answer: 0,
+          explanation: 'Viertel nach zehn: a quarter past ten.',
+        },
+        {
+          kind: 'teach',
+          title: 'Official times',
+          items: [
+            {
+              target: 'neunzehn Uhr dreißig',
+              meaning: '19:30 (7.30 pm)',
+              note: 'Timetables, the TV, offices and appointments use the 24-hour clock, read out as written.',
+            },
+            { target: 'acht Uhr fünfzehn', meaning: '8:15' },
+            { target: 'Mittag / Mitternacht', meaning: 'noon / midnight' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the times.',
+          pairs: [
+            ['halb neun', '8:30'],
+            ['Viertel nach neun', '9:15'],
+            ['zehn vor neun', '8:50'],
+            ['neunzehn Uhr', '7 pm'],
+            ['Viertel vor zehn', '9:45'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Your ticket says 20:30. A friend asks when your train leaves. What do you say?',
+          options: ['Um halb neun.', 'Um halb zwanzig.', 'Um zwanzig nach acht.'],
+          answer: 0,
+          explanation: 'Among friends, people use the 12-hour clock: 20:30 is halb neun.',
+        },
+        {
+          kind: 'teach',
+          title: 'Parts of the day',
+          items: [
+            { target: 'der Morgen', meaning: 'morning' },
+            {
+              target: 'der Vormittag',
+              meaning: 'late morning',
+              note: 'From about nine until noon.',
+            },
+            { target: 'der Mittag', meaning: 'midday, lunchtime' },
+            { target: 'der Nachmittag', meaning: 'afternoon' },
+            { target: 'der Abend', meaning: 'evening' },
+            { target: 'die Nacht', meaning: 'night' },
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “It is half past nine.”',
+          answer: ['Es', 'ist', 'halb', 'zehn.'],
+          extra: ['neun'],
+          explanation: 'Half past nine is halfway to ten: halb zehn.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write 8:15 in words, the everyday way.',
+          accepted: ['Viertel nach acht', 'Es ist Viertel nach acht.'],
+          hint: 'Viertel + nach + acht.',
+          explanation:
+            'Viertel nach acht. In Leipzig you may also hear viertel neun: more on that soon.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Ask a flatmate the time, then panic a little.',
+          lines: ['Wie spät ist es?', 'Was? Schon Viertel vor acht?', 'Der Bus kommt um zehn vor!'],
+          tip: 'In acht, ch after a is the throaty sound, as in Scottish loch.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u8-routine',
+      session: 'Grammar',
+      title: 'Ich stehe um sieben auf: separable verbs, am and um',
+      outcome: 'Describe your routine with separable verbs, and say when with am and um.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Separable verbs',
+          body: 'Many everyday verbs have a small prefix: aufstehen, anfangen, einkaufen. In a sentence the verb goes second as usual, and the prefix jumps to the very end.',
+          table: [
+            ['aufstehen', 'Ich stehe um sieben auf.'],
+            ['anfangen', 'Der Kurs fängt um acht an.'],
+            ['einkaufen', 'Wir kaufen heute ein.'],
+            ['anrufen', 'Ich rufe dich morgen an.'],
+          ],
+        },
+        {
+          kind: 'teach',
+          title: 'Your day',
+          items: [
+            { target: 'aufstehen', meaning: 'to get up', note: 'Ich stehe auf.' },
+            {
+              target: 'frühstücken',
+              meaning: 'to have breakfast',
+              note: 'Not separable: Ich frühstücke.',
+            },
+            {
+              target: 'anfangen',
+              meaning: 'to start, begin',
+              note: 'The a changes too: ich fange an, er fängt an.',
+            },
+            { target: 'einkaufen', meaning: 'to do the shopping' },
+            { target: 'aufräumen', meaning: 'to tidy up' },
+            { target: 'anrufen', meaning: 'to call (on the phone)' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Which sentence is correct?',
+          options: [
+            'Wir kaufen am Samstag ein.',
+            'Wir einkaufen am Samstag.',
+            'Wir kaufen ein am Samstag.',
+          ],
+          answer: 0,
+          explanation: 'kaufen in second place, ein at the very end.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “I am tidying up my room.”',
+          answer: ['Ich', 'räume', 'mein', 'Zimmer', 'auf.'],
+          extra: ['aufräume'],
+          explanation: 'räume second, auf at the end. English uses -ing here; German does not.',
+        },
+        {
+          kind: 'rule',
+          title: 'am and um',
+          body: 'Use um with clock times and am with days and parts of the day. One exception: in der Nacht.',
+          table: [
+            ['um acht Uhr', 'at eight o’clock'],
+            ['um halb neun', 'at half past eight'],
+            ['am Montag', 'on Monday'],
+            ['am Abend', 'in the evening'],
+            ['in der Nacht', 'at night'],
+          ],
+        },
+        {
+          kind: 'teach',
+          title: 'The week',
+          items: [
+            { target: 'Montag, Dienstag', meaning: 'Monday, Tuesday' },
+            { target: 'Mittwoch, Donnerstag', meaning: 'Wednesday, Thursday' },
+            { target: 'Freitag', meaning: 'Friday' },
+            {
+              target: 'Samstag, Sonntag',
+              meaning: 'Saturday, Sunday',
+              note: 'In the north and east, Saturday is also Sonnabend.',
+            },
+            { target: 'das Wochenende', meaning: 'weekend' },
+            {
+              target: 'heute / morgen',
+              meaning: 'today / tomorrow',
+              note: 'morgen is tomorrow; der Morgen is the morning. morgen früh: tomorrow morning.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Der Kurs ist ___ Montag ___ neun Uhr.',
+          options: ['am … um', 'um … am', 'im … um'],
+          answer: 0,
+          explanation: 'am Montag (a day), um neun Uhr (a clock time).',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Lena arbeitet ___ Nachmittag.',
+          options: ['am', 'um', 'im'],
+          answer: 0,
+          explanation: 'Parts of the day take am: am Morgen, am Nachmittag, am Abend.',
+        },
+        {
+          kind: 'rule',
+          title: 'Time first? The verb stays second',
+          body: 'You can start with the time to stress it. The verb keeps second place, so ich moves behind it: Um sieben stehe ich auf. Am Samstag kaufen wir ein.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Start with the day: “On Sunday I have a long breakfast.”',
+          answer: ['Am', 'Sonntag', 'frühstücke', 'ich', 'lange.'],
+          extra: ['um'],
+          explanation: 'Am Sonntag first, then the verb, then ich: frühstücke ich.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “The course starts at nine.” (anfangen)',
+          accepted: ['Der Kurs fängt um neun an.', 'Der Kurs fängt um neun Uhr an.'],
+          hint: 'fängt second, an at the end.',
+          explanation: 'Der Kurs fängt um neun an.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Describe your morning.',
+          lines: [
+            'Ich stehe um halb sieben auf.',
+            'Dann frühstücke ich.',
+            'Um acht fängt mein Kurs an.',
+          ],
+          tip: 'Stress the prefix of separable verbs: AUFstehen, ANfangen, EINkaufen.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u8-real',
+      session: 'Real talk',
+      title: '“Viertel neun?” Times as people say them',
+      outcome: 'Understand casual and regional times, and talk about your day like a local.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'On the stairs',
+          intro: 'Frau Wagner, the neighbour, asks Alex a favour. She grew up in Leipzig.',
+          lines: [
+            {
+              speaker: 'Frau Wagner',
+              text: 'Guten Morgen, Alex! Sind Sie morgen früh zu Hause?',
+              meaning: 'Good morning, Alex! Are you at home tomorrow morning?',
+            },
+            { speaker: 'Alex', text: 'Ja, bis neun. Warum?', meaning: 'Yes, until nine. Why?' },
+            {
+              speaker: 'Frau Wagner',
+              text: 'Ein Paket kommt für mich, so um viertel neun.',
+              meaning: 'A parcel is coming for me, at about quarter past eight.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Viertel neun? Ist das Viertel vor neun?',
+              meaning: 'Viertel neun? Is that quarter to nine?',
+            },
+            {
+              speaker: 'Frau Wagner',
+              text: 'Nein, nein: Viertel nach acht! So sagen wir das hier in Sachsen.',
+              meaning: 'No, no: quarter past eight! That’s how we say it here in Saxony.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Ach so! Kein Problem, ich nehme das Paket an.',
+              meaning: 'I see! No problem, I’ll take in the parcel.',
+            },
+            {
+              speaker: 'Frau Wagner',
+              text: 'Sie sind ein Schatz! Vielen Dank!',
+              meaning: 'You’re a treasure! Thank you so much!',
+            },
+          ],
+          note: 'In much of eastern and southern Germany and in Austria, viertel neun means 8:15 (a quarter of the way to nine) and dreiviertel neun means 8:45. Everyone understands Viertel nach acht too. Taking in parcels for neighbours is completely normal here.',
+        },
+        {
+          kind: 'teach',
+          title: 'Times, the casual way',
+          items: [
+            { target: 'kurz nach acht', meaning: 'just after eight' },
+            { target: 'gegen acht', meaning: 'around eight' },
+            { target: 'so um acht', meaning: 'eight-ish', note: 'Very casual and vague.' },
+            {
+              target: 'viertel neun / dreiviertel neun',
+              meaning: '8:15 / 8:45 (east and south)',
+            },
+            {
+              target: 'pünktlich',
+              meaning: 'on time',
+              note: 'Being on time matters. Running five minutes late? Send a message.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Frau Wagner says the parcel comes “um viertel neun”. When is that?',
+          options: ['8:15', '8:45', '9:15'],
+          answer: 0,
+          explanation: 'viertel neun: a quarter of the way to nine, so 8:15.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. When do they meet?',
+          audio: 'Wir treffen uns so gegen sieben, okay?',
+          options: ['At about seven', 'At exactly seven', 'At half past seven'],
+          answer: 0,
+          explanation: 'gegen sieben: around seven. So makes it even more relaxed.',
+        },
+        {
+          kind: 'scene',
+          title: 'Not a morning person',
+          intro: 'Breakfast in the WG. Jonas is not a morning person.',
+          lines: [
+            {
+              speaker: 'Lena',
+              text: 'Morgen, Jonas! Gut geschlafen?',
+              meaning: 'Morning, Jonas! Sleep well?',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Nee. Ich bin total müde.',
+              real: 'Nee. Bin total müde.',
+              meaning: 'Nope. I’m totally tired.',
+              realMeaning: 'Nope. Totally tired.',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Wann stehst du denn auf?',
+              meaning: 'So when do you get up?',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Um sechs. Meine Schicht fängt um sieben an.',
+              meaning: 'At six. My shift starts at seven.',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Oh, früh! Und wann hast du Feierabend?',
+              meaning: 'Oh, early! And when do you finish work?',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Um drei. Dann mache ich erst mal gar nichts.',
+              real: 'Um drei. Dann mach ich erst mal gar nix.',
+              meaning: 'At three. Then, first of all, I do nothing at all.',
+            },
+          ],
+          note: 'Many Germans start work early, at seven or eight, and finish early too. Feierabend is the end of the working day and the free time after it.',
+        },
+        {
+          kind: 'teach',
+          title: 'Talking about your day',
+          items: [
+            { target: 'Gut geschlafen?', meaning: 'Sleep well?' },
+            { target: 'Ich bin müde.', meaning: 'I’m tired.' },
+            {
+              target: 'der Feierabend',
+              meaning: 'end of the working day',
+              note: 'Wann hast du Feierabend? When do you finish work?',
+            },
+            { target: 'früh / spät', meaning: 'early / late' },
+            {
+              target: 'erst mal',
+              meaning: 'first (of all), for now',
+              note: 'Very common: Erst mal Kaffee! Coffee first!',
+            },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match what you hear.',
+          pairs: [
+            ['gegen acht', 'around eight'],
+            ['kurz nach acht', 'just after eight'],
+            ['pünktlich', 'on time'],
+            ['müde', 'tired'],
+            ['erst mal', 'first of all'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt:
+            'At five, a colleague closes her laptop and says: “So, Feierabend!” What does she mean?',
+          options: ['Work is over for today', 'She is hungry', 'She is late'],
+          answer: 0,
+          explanation: 'Feierabend: the end of the working day, and the free time after it.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Ask a friend: “When do you finish work?”',
+          answer: ['Wann', 'hast', 'du', 'Feierabend?'],
+          extra: ['bist'],
+          explanation: 'Feierabend haben: Wann hast du Feierabend?',
+        },
+        {
+          kind: 'type',
+          prompt: 'You are running late. Message your friend: “Sorry, I’m coming at around eight.”',
+          accepted: ['Sorry, ich komme gegen acht.', 'Sorry, ich komme so gegen acht.'],
+          hint: 'Sorry + ich komme + gegen acht.',
+          explanation: 'gegen acht: around eight. Sorry is completely normal in German messages.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Tell a new flatmate about your day.',
+          lines: [
+            'Ich stehe früh auf, so um sechs.',
+            'Um halb sechs habe ich Feierabend.',
+            'Dann bin ich total müde.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u8-exam',
+      session: 'Exam task',
+      title: 'Goethe A1 practice: times you hear, a message you write',
+      outcome:
+        'Catch times in Hören, read an invitation in Lesen Teil 1, and answer it for Schreiben Teil 2.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'The exam: times in Hören',
+          body: 'Times come up in almost every listening task. Watch for two traps: halb (halb sieben is 6:30) and a time that is corrected. Always listen to the end.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. When does the course start?',
+          audio: 'Der Deutschkurs fängt am Montag an, um halb sieben am Abend.',
+          options: ['Monday, 6:30 pm', 'Monday, 7:30 pm', 'Sunday, 6:30 pm'],
+          answer: 0,
+          explanation: 'halb sieben: 6:30, and am Abend: in the evening.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. When is the appointment now?',
+          audio:
+            'Hallo, hier ist die Praxis Doktor Braun. Ihr Termin ist nicht um neun, sondern um Viertel nach zehn.',
+          options: ['10:15', '9:00', '9:15'],
+          answer: 0,
+          explanation: '“Nicht um neun, sondern um Viertel nach zehn”: the second time counts.',
+        },
+        {
+          kind: 'rule',
+          title: 'Lesen Teil 1: an invitation',
+          body: 'Lesen Teil 1 again, with a longer message. Read the sentence first, then find the day and the time it is about.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Die Party ist am Samstagabend.',
+          context: karimInvitation,
+          options: ['Richtig', 'Falsch'],
+          answer: 0,
+          explanation: 'am Samstag … am Abend: on Saturday evening.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Alex soll um acht Uhr kommen.',
+          context: karimInvitation,
+          options: ['Richtig', 'Falsch'],
+          answer: 1,
+          explanation: 'The party starts at eight, but Karim asks Alex to come at seven to help.',
+        },
+        {
+          kind: 'teach',
+          title: 'Answering an invitation',
+          items: [
+            { target: 'der Geburtstag', meaning: 'birthday' },
+            { target: 'die Einladung', meaning: 'invitation' },
+            { target: 'Danke für die Einladung!', meaning: 'Thanks for the invitation!' },
+            { target: 'leider', meaning: 'unfortunately' },
+            { target: 'erst um acht', meaning: 'not until eight' },
+          ],
+        },
+        {
+          kind: 'rule',
+          title: 'The exam: Schreiben Teil 2',
+          body: 'You write a message of about 30 words that answers three points. Write one or two sentences for each point, and start and end like a real message.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Point 1: Say you would love to come.',
+          answer: ['Ich', 'komme', 'sehr', 'gern.'],
+          extra: ['kommst'],
+          explanation: 'Ich komme gern: I’d love to come. Sehr makes it warmer.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Point 2: Say that unfortunately you can only come at eight.',
+          answer: ['Leider', 'komme', 'ich', 'erst', 'um', 'acht.'],
+          extra: ['bin'],
+          explanation: 'Leider first, so the verb comes next: Leider komme ich erst um acht.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Point 3: Ask “What can I bring?”',
+          accepted: ['Was kann ich mitbringen?'],
+          hint: 'Was kann ich … and mitbringen at the end, in one piece.',
+          explanation: 'With kann, the second verb goes to the end in one piece: mitbringen.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Read your whole message out loud.',
+          lines: [
+            'Hallo Karim, danke für die Einladung!',
+            'Ich komme sehr gern, aber leider erst um acht.',
+            'Was kann ich mitbringen? Viele Grüße, Alex',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
+const courseAds =
+  'a) Tanzkurs für Anfänger: Salsa und Tango. Jeden Dienstag, 19 bis 20.30 Uhr. 8 Termine, 60 €. Anmeldung bei der VHS.\nb) Lauftreff im Park: Wir laufen jeden Samstag um 9 Uhr, 5 km. Für alle, kostenlos! Keine Anmeldung.';
+const mariaVoicemail =
+  'Hallo Alex, hier ist Maria. Wir gehen morgen schwimmen. Wir treffen uns nicht am Schwimmbad, sondern um zwei Uhr vor dem Supermarkt. Bis morgen!';
+
+const unit9 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u9',
+    number: 9,
+    title: 'Freizeit',
+    canDo:
+      'Talk about hobbies, say what you like and like best, and make, accept or turn down plans.',
+  },
+  [
+    {
+      id: 'de-a1-u9-hobbies',
+      session: 'Words',
+      title: 'What do you do for fun?',
+      outcome: 'Name common hobbies and say what you like doing.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'In the course break',
+          intro: 'Karim and Maria talk about what they do outside the course.',
+          lines: [
+            {
+              speaker: 'Karim',
+              text: 'Was machst du so in deiner Freizeit?',
+              meaning: 'So what do you do in your free time?',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Ich tanze gern. Samba, natürlich! Und du?',
+              meaning: 'I like dancing. Samba, of course! And you?',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Ich spiele jeden Sonntag Fußball.',
+              real: 'Ich kick jeden Sonntag mit Freunden.',
+              meaning: 'I play football every Sunday.',
+              realMeaning: 'I play football with friends every Sunday.',
+            },
+            { speaker: 'Maria', text: 'Cool! In einem Verein?', meaning: 'Cool! In a club?' },
+            {
+              speaker: 'Karim',
+              text: 'Ja, im Sportverein hier um die Ecke. Und ich lese gern.',
+              meaning: 'Yes, in the sports club round the corner. And I like reading.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Ich auch! Und am Wochenende gehe ich gern spazieren.',
+              meaning: 'Me too! And at the weekend I like going for walks.',
+            },
+          ],
+          note: 'Germany has more than 600,000 clubs (Vereine) for sport, music, gardening and much more. Joining one is a classic way to make German friends. Going for a walk, spazieren gehen, is a real pastime here, especially on Sundays.',
+        },
+        {
+          kind: 'teach',
+          title: 'Hobbies',
+          items: [
+            { target: 'Sport machen', meaning: 'to do sport' },
+            { target: 'Fußball spielen', meaning: 'to play football' },
+            { target: 'schwimmen', meaning: 'to swim' },
+            { target: 'tanzen', meaning: 'to dance' },
+            { target: 'lesen', meaning: 'to read' },
+            { target: 'Musik hören', meaning: 'to listen to music' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Karim plays football “im Sportverein”. What is a Verein?',
+          options: ['A club', 'A stadium', 'A team shirt'],
+          answer: 0,
+          explanation: 'der Verein: a club. There is one for almost everything.',
+        },
+        {
+          kind: 'teach',
+          title: 'More free time',
+          items: [
+            { target: 'spazieren gehen', meaning: 'to go for a walk' },
+            { target: 'Rad fahren', meaning: 'to cycle', note: 'Also: Fahrrad fahren.' },
+            { target: 'wandern', meaning: 'to hike' },
+            { target: 'kochen', meaning: 'to cook' },
+            { target: 'Freunde treffen', meaning: 'to meet friends' },
+            { target: 'ins Kino gehen', meaning: 'to go to the cinema' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the hobbies.',
+          pairs: [
+            ['schwimmen', 'swim'],
+            ['tanzen', 'dance'],
+            ['wandern', 'hike'],
+            ['Rad fahren', 'cycle'],
+            ['spazieren gehen', 'go for a walk'],
+          ],
+        },
+        {
+          kind: 'rule',
+          title: 'gern: liking what you do',
+          body: 'To say you like doing something, put gern (or gerne) after the verb: Ich lese gern. Maria tanzt gern. Not your thing? Ich koche nicht gern.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Maria likes swimming. Which sentence is correct?',
+          options: ['Sie schwimmt gern.', 'Sie gern schwimmt.', 'Sie schwimmen gern.'],
+          answer: 0,
+          explanation: 'The verb second with its sie ending, then gern: Sie schwimmt gern.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What does he not like doing?',
+          audio: 'Ich lese gern, aber ich koche nicht gern.',
+          options: ['Cooking', 'Reading', 'Dancing'],
+          answer: 0,
+          explanation: 'nicht gern: does not like doing. He likes reading, not cooking.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “I like going for a walk at the weekend.”',
+          answer: ['Ich', 'gehe', 'am', 'Wochenende', 'gern', 'spazieren.'],
+          also: ['Ich gehe gern am Wochenende spazieren.'],
+          extra: ['um'],
+          explanation: 'spazieren goes to the end, like the second part of a separable verb.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Ask a friend: “Do you like dancing?”',
+          accepted: ['Tanzt du gern?', 'Tanzt du gerne?'],
+          hint: 'Start with the verb: Tanzt du …?',
+          explanation: 'Yes/no questions start with the verb: Tanzt du gern?',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Say what you like doing in your free time.',
+          lines: [
+            'Ich lese gern und ich höre gern Musik.',
+            'Am Wochenende gehe ich gern spazieren.',
+            'Aber ich koche nicht gern.',
+          ],
+          tip: 'In spazieren and Sport, sp sounds like shp.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u9-lieber',
+      session: 'Grammar',
+      title: 'Du fährst, er liest: verbs that change, and gern, lieber, am liebsten',
+      outcome: 'Use verbs that change their vowel, and say what you like, prefer and like best.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Verbs that change their vowel',
+          body: 'You met sprechen → du sprichst in Unit 2. A few other common verbs change their vowel too, but only with du and with er, sie, es. Ich, wir, ihr and sie (they) stay regular.',
+          table: [
+            ['fahren', 'du fährst, er fährt'],
+            ['schlafen', 'du schläfst, sie schläft'],
+            ['lesen', 'du liest, er liest'],
+            ['sehen', 'du siehst, sie sieht'],
+            ['essen', 'du isst, er isst'],
+            ['treffen', 'du triffst, sie trifft'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Karim ___ gern Rad. (fahren)',
+          options: ['fährt', 'fahrt', 'fährst'],
+          answer: 0,
+          explanation: 'er, sie, es: fährt, with ä.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: ___ du gern Krimis? (lesen)',
+          options: ['Liest', 'Lest', 'Lesst'],
+          answer: 0,
+          explanation:
+            'du liest: e becomes ie. Krimis are crime stories, Germany’s favourite on TV.',
+        },
+        {
+          kind: 'teach',
+          title: 'Verbs to know',
+          items: [
+            { target: 'fahren', meaning: 'to go (by vehicle), drive, ride', note: 'Er fährt Rad.' },
+            { target: 'schlafen', meaning: 'to sleep', note: 'Sie schläft lange.' },
+            { target: 'sehen', meaning: 'to see, watch', note: 'Wir sehen einen Film.' },
+            { target: 'essen', meaning: 'to eat', note: 'Was isst du gern?' },
+            { target: 'treffen', meaning: 'to meet', note: 'Er trifft Freunde.' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match each verb with its er form.',
+          pairs: [
+            ['fahren', 'er fährt'],
+            ['lesen', 'er liest'],
+            ['essen', 'er isst'],
+            ['sehen', 'er sieht'],
+            ['schlafen', 'er schläft'],
+          ],
+        },
+        {
+          kind: 'rule',
+          title: 'gern, lieber, am liebsten',
+          body: 'gern: you like it. lieber: you like it more, you prefer it. am liebsten: you like it best of all. Gern and lieber go after the verb; am liebsten usually starts the sentence.',
+          table: [
+            ['Ich schwimme gern.', 'I like swimming.'],
+            ['Ich wandere lieber.', 'I prefer hiking.'],
+            ['Am liebsten tanze ich.', 'Most of all, I like dancing.'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Lena asks: “Kino oder Theater?” Jonas: “Ich gehe ___ ins Kino.” (he prefers it)',
+          options: ['lieber', 'gern', 'am liebsten'],
+          answer: 0,
+          explanation: 'lieber: prefer, for a choice between two.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: ___ spiele ich Tennis. (best of all)',
+          options: ['Am liebsten', 'Lieber', 'Gern'],
+          answer: 0,
+          explanation: 'Am liebsten at the start, then the verb: Am liebsten spiele ich Tennis.',
+        },
+        {
+          kind: 'teach',
+          title: 'Liking things and people: mögen',
+          items: [
+            {
+              target: 'Ich mag Pizza.',
+              meaning: 'I like pizza.',
+              note: 'mögen with things and people; gern with verbs.',
+            },
+            { target: 'Magst du Krimis?', meaning: 'Do you like crime stories?' },
+            { target: 'Ich mag keine Horrorfilme.', meaning: 'I don’t like horror films.' },
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “At the weekend I’d rather sleep in.”',
+          answer: ['Am', 'Wochenende', 'schlafe', 'ich', 'lieber', 'lange.'],
+          extra: ['schläfe'],
+          explanation: 'Only du and er, sie, es change: ich schlafe, du schläfst.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “She is meeting friends.” (treffen)',
+          accepted: ['Sie trifft Freunde.'],
+          hint: 'treffen → sie trifft, with i and double f.',
+          explanation: 'sie trifft: e becomes i. English uses -ing here; German does not.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Say what you like, prefer and like best.',
+          lines: ['Ich sehe gern Filme.', 'Ich lese lieber Krimis.', 'Am liebsten fahre ich Rad.'],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u9-plans',
+      session: 'Real talk',
+      title: '“Hast du Bock?” Making plans',
+      outcome: 'Suggest something, say yes or no kindly, and agree on a time.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'Friday evening',
+          intro: 'Jonas wants to go out. Alex is on the sofa.',
+          lines: [
+            {
+              speaker: 'Jonas',
+              text: 'Hast du heute Lust auf Kino?',
+              real: 'Hast du heute Bock auf Kino?',
+              meaning: 'Do you feel like going to the cinema today?',
+              realMeaning: 'Do you fancy the cinema today?',
+            },
+            { speaker: 'Alex', text: 'Hm, welcher Film?', meaning: 'Hmm, which film?' },
+            {
+              speaker: 'Jonas',
+              text: 'Ein Krimi. Er fängt um Viertel nach acht an.',
+              real: 'So’n Krimi. Fängt Viertel nach acht an.',
+              meaning: 'A crime film. It starts at quarter past eight.',
+              realMeaning: 'Some crime film. Starts quarter past eight.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Heute nicht, ich bin zu müde. Wie wär’s mit morgen?',
+              meaning: 'Not today, I’m too tired. How about tomorrow?',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Morgen spiele ich Fußball. Sonntag?',
+              meaning: 'Tomorrow I’m playing football. Sunday?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Sonntag passt. Um wie viel Uhr?',
+              meaning: 'Sunday works. What time?',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Um sechs? Und danach essen wir noch was.',
+              real: 'Um sechs? Und danach noch ’n Döner.',
+              meaning: 'At six? And afterwards we’ll eat something.',
+              realMeaning: 'At six? And a döner afterwards.',
+            },
+            { speaker: 'Alex', text: 'Super, abgemacht!', meaning: 'Great, it’s a deal!' },
+          ],
+          note: 'Bock haben is very common casual German for “to feel like”: Hast du Bock? Keinen Bock! With people you call Sie, use Lust: Haben Sie Lust …?',
+        },
+        {
+          kind: 'teach',
+          title: 'Suggesting and agreeing',
+          items: [
+            { target: 'Hast du Lust auf Kino?', meaning: 'Do you feel like the cinema?' },
+            {
+              target: 'Hast du Bock?',
+              meaning: 'Do you fancy it?',
+              note: 'Casual. Keinen Bock! means “Can’t be bothered!”',
+            },
+            { target: 'Wie wär’s mit morgen?', meaning: 'How about tomorrow?' },
+            { target: 'Das passt.', meaning: 'That works (for me).' },
+            { target: 'Abgemacht!', meaning: 'It’s a deal!' },
+            {
+              target: 'Mal sehen.',
+              meaning: 'We’ll see.',
+              note: 'Often a polite maybe, or even a polite no.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'You invite a friend, and she answers: “Mal sehen.” What does that often mean?',
+          options: ['Maybe, or a polite no', 'Yes, definitely', 'Let’s watch a film'],
+          answer: 0,
+          explanation: 'Mal sehen: we’ll see. Don’t count on it!',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. When and where do they meet?',
+          audio: 'Sonntag passt mir. Treffen wir uns um sechs vor dem Kino?',
+          options: [
+            'Sunday at six, at the cinema',
+            'Saturday at six, at home',
+            'Sunday at seven, at the cinema',
+          ],
+          answer: 0,
+          explanation: 'Sonntag, um sechs, vor dem Kino: in front of the cinema.',
+        },
+        {
+          kind: 'teach',
+          title: 'Saying no kindly',
+          items: [
+            { target: 'Ich kann leider nicht.', meaning: 'I can’t, unfortunately.' },
+            { target: 'Ich habe schon was vor.', meaning: 'I already have plans.' },
+            { target: 'Vielleicht ein andermal?', meaning: 'Maybe another time?' },
+            { target: 'Schade!', meaning: 'What a pity!' },
+          ],
+        },
+        {
+          kind: 'scene',
+          title: 'A voice message',
+          intro: 'Maria and Karim plan Saturday by voice message.',
+          lines: [
+            {
+              speaker: 'Maria',
+              text: 'Hi Karim! Am Samstag gehen wir wandern, in der Sächsischen Schweiz. Kommst du mit?',
+              meaning:
+                'Hi Karim! On Saturday we’re going hiking in Saxon Switzerland. Are you coming?',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Klingt super! Wann fahrt ihr los?',
+              meaning: 'Sounds great! When are you setting off?',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Um acht, am Hauptbahnhof. Ziemlich früh, ich weiß!',
+              meaning: 'At eight, at the main station. Pretty early, I know!',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Oh, acht ist hart. Aber okay, ich bin dabei!',
+              meaning: 'Oh, eight is tough. But OK, count me in!',
+            },
+          ],
+          note: 'The Sächsische Schweiz, about two hours from Leipzig, is famous for its sandstone rocks and hiking trails. Note ihr fahrt: no vowel change with ihr.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Karim says: “Ich bin dabei!” What does he mean?',
+          options: ['Count me in', 'I am already there', 'I am busy'],
+          answer: 0,
+          explanation: 'dabei sein: to be part of it. Ich bin dabei! Count me in!',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the answers.',
+          pairs: [
+            ['Abgemacht!', 'It’s a deal!'],
+            ['Schade!', 'What a pity!'],
+            ['Mal sehen.', 'We’ll see.'],
+            ['Ich bin dabei!', 'Count me in!'],
+            ['Das passt.', 'That works.'],
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Suggest: “How about Saturday?”',
+          answer: ['Wie', 'wär’s', 'mit', 'Samstag?'],
+          extra: ['am'],
+          explanation: 'Wie wär’s mit + day, with no am.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Turn down an invitation kindly: “Unfortunately I can’t. Maybe another time?”',
+          accepted: [
+            'Ich kann leider nicht. Vielleicht ein andermal?',
+            'Leider kann ich nicht. Vielleicht ein andermal?',
+          ],
+          hint: 'Ich kann leider nicht. + Vielleicht ein andermal?',
+          explanation: 'Leider softens the no, and offering another time keeps it friendly.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Invite a friend, then agree on a time.',
+          lines: [
+            'Hast du am Samstag Lust auf Kino?',
+            'Wie wär’s mit sieben Uhr?',
+            'Super, abgemacht!',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u9-exam',
+      session: 'Exam task',
+      title: 'Goethe A1 practice: course ads, a voicemail and free-time cards',
+      outcome:
+        'Choose the right ad in Lesen Teil 2, catch a place and time in Hören Teil 3, and ask about free time in Sprechen Teil 2.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Lesen Teil 2: course ads',
+          body: 'You know this task from Unit 7: two short texts, one question, a or b. This time: offers from the Volkshochschule (VHS), the adult education centre found in nearly every German town.',
+        },
+        {
+          kind: 'teach',
+          title: 'Words in course ads',
+          items: [
+            {
+              target: 'die Volkshochschule',
+              meaning: 'adult education centre',
+              note: 'Short: VHS.',
+            },
+            { target: 'der Anfänger, die Anfängerin', meaning: 'beginner' },
+            { target: 'die Anmeldung', meaning: 'registration, signing up' },
+            { target: 'kostenlos', meaning: 'free of charge' },
+            { target: 'jeden Dienstag', meaning: 'every Tuesday' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt:
+            'Sie möchten Sport machen, aber Sie haben nur am Wochenende Zeit. Welches Angebot passt?',
+          context: courseAds,
+          options: ['a) Tanzkurs', 'b) Lauftreff'],
+          answer: 1,
+          explanation: 'b is on Saturday, at the weekend. The dance course is on Tuesdays.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Sie möchten nichts bezahlen. Welches Angebot passt?',
+          context: courseAds,
+          options: ['a) Tanzkurs', 'b) Lauftreff'],
+          answer: 1,
+          explanation: 'kostenlos: free. The dance course costs 60 €.',
+        },
+        {
+          kind: 'rule',
+          title: 'The exam: Hören Teil 3',
+          body: 'You hear a phone message twice and choose a, b or c: often a time, a day or a place. Read the question first, and watch out for nicht …, sondern … (not …, but …).',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. Where do they meet?',
+          audio: mariaVoicemail,
+          options: ['In front of the supermarket', 'At the swimming pool', 'At Maria’s flat'],
+          answer: 0,
+          explanation:
+            '“Nicht am Schwimmbad, sondern vor dem Supermarkt”: the second place counts.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen again. What time do they meet?',
+          audio: mariaVoicemail,
+          options: ['At two', 'At twelve', 'At ten'],
+          answer: 0,
+          explanation: '“um zwei Uhr”: at two.',
+        },
+        {
+          kind: 'rule',
+          title: 'Sprechen Teil 2: Freizeit',
+          body: 'Free time is a favourite topic for the word cards: Sport, Wochenende, Hobby, Kino, Musik. Ask a real question with the word, and give a short, true answer.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Your card says “Wochenende”. Which question fits?',
+          options: [
+            'Was machst du am Wochenende?',
+            'Wochenende machst du?',
+            'Wie heißt dein Wochenende?',
+          ],
+          answer: 0,
+          explanation: 'A full W-question with the card word: Was machst du am Wochenende?',
+        },
+        {
+          kind: 'type',
+          prompt: 'Your card says “Sport”. Ask your partner (Sie) if they like doing sport.',
+          accepted: ['Machen Sie gern Sport?', 'Machen Sie gerne Sport?'],
+          hint: 'Verb first: Machen Sie gern …?',
+          explanation: 'Machen Sie gern Sport? Use du or Sie, but stay with one.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Unit 9 review: match the pairs.',
+          pairs: [
+            ['am liebsten', 'best of all'],
+            ['lieber', 'rather'],
+            ['kostenlos', 'free of charge'],
+            ['der Verein', 'club'],
+            ['er fährt', 'he drives, rides'],
+          ],
+        },
+        {
+          kind: 'speak',
+          prompt: 'Answer two free-time questions from your exam partner.',
+          lines: [
+            'Am Wochenende gehe ich gern wandern.',
+            'Ja, ich mache gern Sport. Am liebsten schwimme ich.',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
+export const germanA1Units = [
+  ...unit1,
+  ...unit2,
+  ...unit3,
+  ...unit4,
+  ...unit5,
+  ...unit6,
+  ...unit7,
+  ...unit8,
+  ...unit9,
+];

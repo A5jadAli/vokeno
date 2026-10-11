@@ -56,19 +56,32 @@ export function gradeCard(
 
 type DueCard = { lesson: FoundationLesson; phraseIndex: number; box: number; dueDay: number };
 
+/**
+ * The learner's cards for a language. A card from a retired lesson is left out when an active
+ * lesson already gives the learner the same phrase, so a phrase is never reviewed twice.
+ */
+function liveCards(progress: FoundationProgress, track: LessonTrack) {
+  const cards = allTrackLessons(track).flatMap((lesson) =>
+    (progress[lesson.id]?.cards ?? []).flatMap((card, phraseIndex) => {
+      const phrase = lesson.phrases[phraseIndex];
+      return card && phrase
+        ? [{ lesson, phraseIndex, box: card[0], dueDay: card[1], key: phraseKey(phrase.target) }]
+        : [];
+    }),
+  );
+  const active = new Set(cards.filter((card) => !card.lesson.retired).map((card) => card.key));
+  return cards.filter((card) => !card.lesson.retired || !active.has(card.key));
+}
+
 export function dueCards(
   progress: FoundationProgress,
   track: LessonTrack,
   today = dayNumber(),
 ): DueCard[] {
-  return allTrackLessons(track)
-    .flatMap((lesson) =>
-      (progress[lesson.id]?.cards ?? []).flatMap((card, phraseIndex) =>
-        card ? [{ lesson, phraseIndex, box: card[0], dueDay: card[1] }] : [],
-      ),
-    )
-    .filter((card) => card.dueDay <= today && card.lesson.phrases[card.phraseIndex])
-    .sort((a, b) => a.dueDay - b.dueDay || a.box - b.box);
+  return liveCards(progress, track)
+    .filter((card) => card.dueDay <= today)
+    .sort((a, b) => a.dueDay - b.dueDay || a.box - b.box)
+    .map(({ lesson, phraseIndex, box, dueDay }) => ({ lesson, phraseIndex, box, dueDay }));
 }
 
 export function reviewSummary(
@@ -76,10 +89,7 @@ export function reviewSummary(
   track: LessonTrack,
   today = dayNumber(),
 ) {
-  const lessons = allTrackLessons(track);
-  const all = lessons.flatMap((lesson) =>
-    (progress[lesson.id]?.cards ?? []).filter((card): card is [number, number] => Boolean(card)),
-  );
+  const all = liveCards(progress, track).map(({ box, dueDay }) => [box, dueDay] as const);
   return {
     due: dueCards(progress, track, today).length,
     learning: all.length,

@@ -75,6 +75,23 @@ describe('spaced review', () => {
     });
   });
 
+  it('reviews a phrase once when a retired lesson and its replacement both teach it', () => {
+    const unit = foundationLessons.find((lesson) => lesson.id === 'de-a1-u1-hallo')!;
+    const due = (lesson: typeof unit) => lesson.phrases.map((): [number, number] => [0, today]);
+    const progress = {
+      ...progressWith(due(greetings)),
+      ...progressWith(due(unit), unit.id),
+    };
+    const targets = dueCards(progress, 'DE', today).map(
+      (card) => card.lesson.phrases[card.phraseIndex].target,
+    );
+    expect(new Set(targets).size).toBe(targets.length);
+    // Hallo!, Guten Tag! and the rest come from the unit; Bitte. and Danke. only from greetings.
+    expect(targets.filter((target) => target === 'Hallo!')).toHaveLength(1);
+    expect(targets).toEqual(expect.arrayContaining(['Bitte.', 'Danke.']));
+    expect(reviewSummary(progress, 'DE', today).due).toBe(targets.length);
+  });
+
   it('can build a review item for every phrase in every lesson', () => {
     for (const track of ['DE', 'EN'] as const) {
       const progress: FoundationProgress = Object.fromEntries(

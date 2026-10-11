@@ -9,6 +9,7 @@ import {
 } from '@/features/foundations/catalog';
 import { learningRecommendation } from '@/features/coaching/recommendation';
 import { germanA1Units } from '@/features/foundations/german-a1-units';
+import { listeningScenarios } from '@/features/listening/scenarios';
 import { nextLesson } from '@/features/foundations/next';
 import { freshFoundationEntry, parseFoundationProgress } from '@/features/foundations/progress';
 import {
@@ -23,9 +24,9 @@ const sessions: StepLesson[] = germanA1Units;
 const words = (text: string) => normaliseFoundationAnswer(text).split(' ').sort().join(' ');
 
 describe('German A1 units: structure', () => {
-  it('has six units of four sessions, in order, on the path before the starter lessons', () => {
+  it('has nine units of four sessions, in order, on the path before the starter lessons', () => {
     const units = [...new Set(sessions.map((session) => session.unit.number))];
-    expect(units).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(units).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     for (const number of units)
       expect(sessions.filter((session) => session.unit.number === number)).toHaveLength(4);
     const path = getTrackLessons('DE');
@@ -64,6 +65,56 @@ describe('German A1 units: structure', () => {
     expect(targets.filter((target, index) => targets.indexOf(target) !== index)).toEqual([]);
     for (const session of sessions)
       expect([session.id, session.phrases.length >= 2]).toEqual([session.id, true]);
+  });
+});
+
+describe('German A1 units: nothing repeats', () => {
+  const key = (text: string) =>
+    normaliseFoundationAnswer(text)
+      .replace(/[^\p{L}\p{N} ]/gu, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  it('teaches each phrase in only one active German lesson', () => {
+    // Older A2/B1 lessons that overlap with the units; remove these when A2 is rebuilt.
+    const known = new Set(['zusammen oder getrennt', 'stimmt so', 'genau']);
+    const taughtIn = new Map<string, string>();
+    const twice: string[] = [];
+    for (const lesson of getTrackLessons('DE'))
+      for (const phrase of lesson.phrases) {
+        const text = key(phrase.target);
+        const first = taughtIn.get(text);
+        if (first && first !== lesson.id && !known.has(text))
+          twice.push(`${phrase.target}: ${first} and ${lesson.id}`);
+        taughtIn.set(text, first ?? lesson.id);
+      }
+    expect(twice).toEqual([]);
+  });
+
+  it('never reuses a sentence learners hear or build in another session or listening lesson', () => {
+    const usedIn = new Map<string, Set<string>>();
+    const use = (text: string, where: string) => {
+      const sentence = key(text);
+      if (sentence.split(' ').length < 4) return;
+      usedIn.set(sentence, (usedIn.get(sentence) ?? new Set()).add(where));
+    };
+    for (const session of sessions)
+      for (const step of session.steps) {
+        if (step.kind === 'scene')
+          for (const line of step.lines) {
+            use(line.text, session.id);
+            if (line.real) use(line.real, session.id);
+          }
+        if (step.kind === 'choose' && step.audio) use(step.audio, session.id);
+        if (step.kind === 'build') use(step.answer.join(' '), session.id);
+        if (step.kind === 'type') use(step.accepted[0], session.id);
+      }
+    for (const scenario of listeningScenarios.filter((item) => item.track === 'DE'))
+      for (const line of scenario.lines) use(line.text, scenario.id);
+    const reused = [...usedIn].filter(([, places]) => places.size > 1);
+    expect(reused.map(([sentence, places]) => `${sentence}: ${[...places].join(', ')}`)).toEqual(
+      [],
+    );
   });
 });
 
