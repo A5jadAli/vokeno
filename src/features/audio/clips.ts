@@ -28,15 +28,27 @@ export function clipKey(track: LanguageTrack, text: string, casting: Casting) {
 export const fullDirection = (track: LanguageTrack, casting: Casting) =>
   `${nativeDirection[track]} ${casting.direction}`;
 
-const available = new Set<string>(manifest.clips);
+// Each recorded clip, with the second at which the voice stops (the files end in silence).
+const recorded: Record<string, number> = manifest.clips;
 
 export const AUDIO_BUCKET = 'lesson-audio';
 
 /** The clip for a line, if one has been recorded. */
 export function findClip(track: LanguageTrack, text: string, speaker?: string) {
   const key = clipKey(track, text, castingFor(track, speaker));
-  if (!available.has(key)) return undefined;
+  if (!(key in recorded)) return undefined;
   const base = process.env.EXPO_PUBLIC_SUPABASE_URL;
   if (!base) return undefined;
-  return { key, url: `${base}/storage/v1/object/public/${AUDIO_BUCKET}/${key}.mp3` };
+  const end = recorded[key];
+  // A re-recorded clip keeps its key but not its length, so the length names this take: the
+  // download skips any cached copy of an older take, and the device keeps the takes apart.
+  const take = Math.round(end * 100);
+  return {
+    key: `${key}.${take}`,
+    url: `${base}/storage/v1/object/public/${AUDIO_BUCKET}/${key}.mp3?take=${take}`,
+    /** Seconds until the voice stops; 0 when not measured, so the clip plays to its end. */
+    end,
+  };
 }
+
+export type Clip = NonNullable<ReturnType<typeof findClip>>;

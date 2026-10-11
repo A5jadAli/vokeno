@@ -7,7 +7,7 @@ import { languageDetails, type LanguageTrack } from '@/features/language/config'
 import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
 
 import * as clipCache from './clip-cache';
-import { findClip } from './clips';
+import { findClip, type Clip } from './clips';
 
 type Phase = 'idle' | 'loading' | 'playing';
 
@@ -59,34 +59,35 @@ export function useLessonAudio(track: LanguageTrack) {
     }, [halt, stop]),
   );
 
-  /** Plays one clip to the end; false when it was stopped or failed. */
-  const playClip = useCallback(
-    async (clip: { key: string; url: string }, rate: number, generation: number) => {
-      if (!clips) return false;
-      const uri = await clips.ensureClip(clip);
-      if (generation !== token.current) return false;
-      const player = clips.playerFor(clip.key, uri);
-      // The native property is read-only; the setter keeps the pitch at the slower rates.
-      player.setPlaybackRate(clipRate(rate), 'high');
-      // A fresh player is already at the start; seeking it first only waits for it to load.
-      if (player.currentTime > 0) await player.seekTo(0);
-      if (generation !== token.current) return false;
-      return new Promise<boolean>((resolve) => {
-        const subscription = player.addListener('playbackStatusUpdate', (status) => {
-          if (status.didJustFinish) finish(true);
-        });
-        const finish = (completed: boolean) => {
-          subscription.remove();
-          if (current.current?.player === player) current.current = null;
-          resolve(completed);
-        };
-        current.current = { player, done: () => finish(false) };
-        setPhase('playing');
-        player.play();
+  /** Plays one clip until the voice stops; false when it was stopped or failed. */
+  const playClip = useCallback(async (clip: Clip, rate: number, generation: number) => {
+    if (!clips) return false;
+    const uri = await clips.ensureClip(clip);
+    if (generation !== token.current) return false;
+    const player = clips.playerFor(clip.key, uri);
+    // The native property is read-only; the setter keeps the pitch at the slower rates.
+    player.setPlaybackRate(clipRate(rate), 'high');
+    // A fresh player is already at the start; seeking it first only waits for it to load.
+    if (player.currentTime > 0) await player.seekTo(0);
+    if (generation !== token.current) return false;
+    return new Promise<boolean>((resolve) => {
+      const subscription = player.addListener('playbackStatusUpdate', (status) => {
+        // The recordings end in silence: stop where the voice stops, not where the file does.
+        // A little past it, so the last sound still in the speaker is not cut off.
+        const spoken = clip.end > 0 && status.currentTime >= clip.end + 0.1;
+        if (spoken) player.pause();
+        if (spoken || status.didJustFinish) finish(true);
       });
-    },
-    [],
-  );
+      const finish = (completed: boolean) => {
+        subscription.remove();
+        if (current.current?.player === player) current.current = null;
+        resolve(completed);
+      };
+      current.current = { player, done: () => finish(false) };
+      setPhase('playing');
+      player.play();
+    });
+  }, []);
 
   const playSequence = useCallback(
     async (
@@ -135,7 +136,7 @@ export function useLessonAudio(track: LanguageTrack) {
       if (!clips) return;
       const found = lines
         .map((line) => findClip(track, line.text, line.speaker))
-        .filter((clip): clip is { key: string; url: string } => Boolean(clip));
+        .filter((clip): clip is Clip => Boolean(clip));
       void clips.warmClips(found, ready);
     },
     [track],
@@ -164,7 +165,7 @@ export function prefetchClips(track: LanguageTrack, lines: { text: string; speak
   void clips.warmClips(
     lines
       .map((line) => findClip(track, line.text, line.speaker))
-      .filter((clip): clip is { key: string; url: string } => Boolean(clip)),
+      .filter((clip): clip is Clip => Boolean(clip)),
     0,
   );
 }

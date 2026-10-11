@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { createContext, useContext, type ComponentProps, type PropsWithChildren } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeIn, SlideInDown, ZoomIn } from 'react-native-reanimated';
 
 import { AudioIconButton } from '@/components/lesson-audio-button';
 import { ProgressFill, Tactile } from '@/components/motion';
@@ -11,13 +11,38 @@ import type { LessonAudio } from '@/features/audio/use-lesson-audio';
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
+/** Answer colours: a soft tint for surfaces, a strong accent for marks, a dark ink for text. */
 export const Feedback = {
-  correctBg: '#E3F2E5',
-  correctInk: '#1F5A33',
-  wrongBg: '#FFE9E1',
-  wrongInk: '#8E2D1B',
-  closeBg: '#FFF4CC',
-  closeInk: '#6B4E00',
+  correctBg: '#E5F6EB',
+  correctAccent: '#1E9E57',
+  correctInk: '#14532D',
+  wrongBg: '#FDEBE7',
+  wrongAccent: '#D93F26',
+  wrongInk: '#7A1F10',
+  closeBg: '#FFF5D1',
+  closeAccent: '#D99A00',
+  closeInk: '#5F4500',
+} as const;
+
+const feedbackLooks = {
+  correct: {
+    bg: Feedback.correctBg,
+    accent: Feedback.correctAccent,
+    ink: Feedback.correctInk,
+    icon: 'check-bold',
+  },
+  wrong: {
+    bg: Feedback.wrongBg,
+    accent: Feedback.wrongAccent,
+    ink: Feedback.wrongInk,
+    icon: 'close-thick',
+  },
+  close: {
+    bg: Feedback.closeBg,
+    accent: Feedback.closeAccent,
+    ink: Feedback.closeInk,
+    icon: 'lightbulb-on',
+  },
 } as const;
 
 /** Close control, a thin progress bar and an optional label, as in modern lesson players. */
@@ -91,8 +116,8 @@ export function PrimaryButton({
       lip: '#C99600',
       ink: accent?.onAccent ?? Palette.ink,
     },
-    green: { face: '#2F7A47', lip: '#1C4D2C', ink: Palette.white },
-    red: { face: '#B44931', lip: '#7E2716', ink: Palette.white },
+    green: { face: Feedback.correctAccent, lip: '#137040', ink: Palette.white },
+    red: { face: Feedback.wrongAccent, lip: '#A12A15', ink: Palette.white },
     ink: { face: Palette.ink, lip: '#000000', ink: Palette.cream },
   }[tone];
   const face = disabled ? '#DEDAD2' : look.face;
@@ -162,55 +187,45 @@ export function TextButton({
   );
 }
 
-/** Sticky bottom area. With `feedback`, it becomes a coloured result panel above the action. */
+/**
+ * Sticky bottom area. With `feedback`, it becomes a result sheet that rises from the bottom: a
+ * badge that pops in, a short verdict and the reason, above the next action.
+ */
 export function ActionBar({
   children,
   feedback,
 }: PropsWithChildren<{
   feedback?: { tone: 'correct' | 'wrong' | 'close'; title: string; message?: string };
 }>) {
-  const bg = feedback
-    ? { correct: Feedback.correctBg, wrong: Feedback.wrongBg, close: Feedback.closeBg }[
-        feedback.tone
-      ]
-    : Palette.cream;
-  const ink = feedback
-    ? { correct: Feedback.correctInk, wrong: Feedback.wrongInk, close: Feedback.closeInk }[
-        feedback.tone
-      ]
-    : Palette.ink;
+  if (!feedback) return <View style={[styles.actionBar, styles.actionBorder]}>{children}</View>;
+  const look = feedbackLooks[feedback.tone];
   return (
     <Animated.View
-      key={feedback ? 'feedback' : 'plain'}
-      entering={feedback ? FadeIn.duration(160) : undefined}
-      style={[styles.actionBar, { backgroundColor: bg }, !feedback && styles.actionBorder]}
+      key={`${feedback.tone}-${feedback.title}`}
+      entering={SlideInDown.springify().damping(20).stiffness(220)}
+      style={[styles.actionBar, styles.sheet, { backgroundColor: look.bg }]}
     >
-      {feedback ? (
-        <Animated.View
-          key={`${feedback.tone}-${feedback.title}`}
-          entering={FadeInDown.duration(220)}
-          accessibilityLiveRegion="polite"
-          style={styles.feedbackCopy}
-        >
-          <View style={styles.feedbackHeading}>
-            <MaterialCommunityIcons
-              name={
-                feedback.tone === 'correct'
-                  ? 'check-circle'
-                  : feedback.tone === 'close'
-                    ? 'alert-circle'
-                    : 'close-circle'
-              }
-              size={26}
-              color={ink}
-            />
-            <Text style={[styles.feedbackTitle, { color: ink }]}>{feedback.title}</Text>
-          </View>
-          {feedback.message ? (
-            <Text style={[styles.feedbackMessage, { color: ink }]}>{feedback.message}</Text>
-          ) : null}
-        </Animated.View>
-      ) : null}
+      <View accessibilityLiveRegion="polite" style={styles.feedbackCopy}>
+        <View style={styles.feedbackHeading}>
+          <Animated.View
+            entering={ZoomIn.delay(90).springify().damping(11)}
+            style={[styles.feedbackBadge, { backgroundColor: look.accent }]}
+          >
+            <MaterialCommunityIcons name={look.icon} size={22} color={Palette.white} />
+          </Animated.View>
+          <Text accessibilityRole="header" style={[styles.feedbackTitle, { color: look.ink }]}>
+            {feedback.title}
+          </Text>
+        </View>
+        {feedback.message ? (
+          <Animated.Text
+            entering={FadeIn.delay(120).duration(200)}
+            style={[styles.feedbackMessage, { color: look.ink }]}
+          >
+            {feedback.message}
+          </Animated.Text>
+        ) : null}
+      </View>
       {children}
     </Animated.View>
   );
@@ -385,16 +400,30 @@ const styles = StyleSheet.create({
   textButtonLabel: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
   softPressed: { backgroundColor: 'rgba(19,18,17,0.12)' },
   actionBar: {
+    backgroundColor: Palette.cream,
     gap: 12,
-    overflow: 'hidden',
     paddingBottom: 14,
     paddingHorizontal: 18,
     paddingTop: 14,
   },
   actionBorder: { borderTopColor: Palette.line, borderTopWidth: 1 },
-  feedbackCopy: { gap: 6 },
-  feedbackHeading: { alignItems: 'center', flexDirection: 'row', gap: 8 },
-  feedbackTitle: { fontFamily: VokaFonts.bodyBold, fontSize: 18 },
+  sheet: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    boxShadow: '0 -6px 24px rgba(19, 18, 17, 0.10)',
+    gap: 16,
+    paddingTop: 20,
+  },
+  feedbackCopy: { gap: 8 },
+  feedbackHeading: { alignItems: 'center', flexDirection: 'row', gap: 12 },
+  feedbackBadge: {
+    alignItems: 'center',
+    borderRadius: 20,
+    height: 40,
+    justifyContent: 'center',
+    width: 40,
+  },
+  feedbackTitle: { flex: 1, fontFamily: VokaFonts.bodyBold, fontSize: 22, letterSpacing: -0.3 },
   feedbackMessage: { fontFamily: VokaFonts.bodyMedium, fontSize: 15, lineHeight: 22 },
   info: { backgroundColor: Palette.white, borderRadius: 20, gap: 8, padding: 16 },
   infoHeading: { alignItems: 'center', flexDirection: 'row', gap: 8 },

@@ -9,6 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { Feedback } from '@/components/lesson-ui';
 import { Tactile } from '@/components/motion';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { haptic } from '@/features/feedback/haptics';
@@ -21,8 +22,18 @@ const looks = {
     ink: Palette.ink,
   },
   selected: { face: '#FFF4CC', border: Palette.yellow, lip: '#C99600', ink: Palette.ink },
-  correct: { face: '#E3F2E5', border: '#2F7A47', lip: '#1F5A33', ink: '#1F5A33' },
-  incorrect: { face: '#FFE9E1', border: '#B44931', lip: '#8E2D1B', ink: '#8E2D1B' },
+  correct: {
+    face: Feedback.correctBg,
+    border: Feedback.correctAccent,
+    lip: Feedback.correctAccent,
+    ink: Feedback.correctInk,
+  },
+  incorrect: {
+    face: Feedback.wrongBg,
+    border: Feedback.wrongAccent,
+    lip: Feedback.wrongAccent,
+    ink: Feedback.wrongInk,
+  },
 } as const;
 
 export function AnswerChoice({
@@ -95,7 +106,7 @@ export function AnswerChoice({
             <MaterialCommunityIcons
               name={result === 'correct' ? 'check-circle' : 'close-circle'}
               size={24}
-              color={look.ink}
+              color={look.border}
             />
           ) : null}
         </View>

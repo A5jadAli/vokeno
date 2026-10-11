@@ -3,6 +3,7 @@
 import { createAudioPlayer, type AudioPlayer } from 'expo-audio';
 import { Directory, File, Paths } from 'expo-file-system';
 
+/** key names one recording of a line: a re-recorded line gets a new key. */
 type Clip = { key: string; url: string };
 
 export const clipsSupported = true;
@@ -22,7 +23,7 @@ export function ensureClip(clip: Clip): Promise<string> {
   if (!pending) {
     pending = (async () => {
       if (!folder.exists) folder.create({ intermediates: true, idempotent: true });
-      const saved = await File.downloadFileAsync(clip.url, folder, { idempotent: true });
+      const saved = await File.downloadFileAsync(clip.url, local(clip.key), { idempotent: true });
       return saved.uri;
     })().finally(() => downloads.delete(clip.key));
     downloads.set(clip.key, pending);
@@ -42,7 +43,8 @@ export function playerFor(key: string, uri: string) {
   if (player) {
     players.delete(key);
   } else {
-    player = createAudioPlayer({ uri });
+    // Frequent updates, so a clip is stopped right where its voice ends.
+    player = createAudioPlayer({ uri }, { updateInterval: 50 });
   }
   players.set(key, player);
   while (players.size > POOL_SIZE) {

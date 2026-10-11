@@ -1,14 +1,17 @@
 // Records every spoken line that has no clip yet, through the admin-only lesson-audio function,
-// and adds it to src/features/audio/clips.json. Safe to stop and run again: it resumes.
+// and adds it to src/features/audio/clips.json with the moment the voice stops. Safe to stop and
+// run again: it resumes.
 //
 //   LESSON_AUDIO_TOKEN=… npx tsx --tsconfig tsconfig.json scripts/generate-lesson-audio.ts
 //
 // Needs EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY (from .env.local).
 import { readFileSync, writeFileSync } from 'node:fs';
 
-import { clipKey, fullDirection, spokenForm } from '@/features/audio/clips';
+import { AUDIO_BUCKET, clipKey, fullDirection, spokenForm } from '@/features/audio/clips';
 import { spokenLines } from '@/features/audio/inventory';
 import { castingFor } from '@/features/audio/voices';
+
+import { measureEnds, SILENT } from './clip-ends';
 
 const MANIFEST = 'src/features/audio/clips.json';
 const BATCH = 8;
@@ -27,10 +30,17 @@ const apikey =
 const token = process.env.LESSON_AUDIO_TOKEN;
 if (!url || !apikey || !token) throw new Error('Set LESSON_AUDIO_TOKEN and the Supabase URL/key.');
 
-const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8')) as { clips: string[] };
-const done = new Set(manifest.clips);
-const save = () =>
-  writeFileSync(MANIFEST, `${JSON.stringify({ clips: [...done].sort() }, null, 2)}\n`);
+// Each recorded clip, with the second at which the voice stops (0 until it is measured).
+const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8')) as { clips: Record<string, number> };
+// A clip measured as silent is recorded again.
+const ends = new Map(
+  Object.entries(manifest.clips).filter(([, end]) => !(end > 0 && end <= SILENT)),
+);
+const done = new Set(ends.keys());
+const save = () => {
+  const clips = Object.fromEntries([...done].sort().map((key) => [key, ends.get(key) ?? 0]));
+  writeFileSync(MANIFEST, `${JSON.stringify({ clips }, null, 2)}\n`);
+};
 
 const todo = new Map<string, { key: string; text: string; voice: string; instructions: string }>();
 for (const line of spokenLines()) {
@@ -81,6 +91,33 @@ async function main() {
     );
   }
   save();
+  const unmeasured = new Map(
+    [...done]
+      .filter((key) => !ends.get(key))
+      // A fresh query skips the CDN, which may still hold an earlier take.
+      .map((key) => [
+        key,
+        `${url}/storage/v1/object/public/${AUDIO_BUCKET}/${key}.mp3?fresh=${Date.now()}`,
+      ]),
+  );
+  if (unmeasured.size) {
+    process.stdout.write(`Finding where the voice stops in ${unmeasured.size} clips.\n`);
+    const measured = await measureEnds(unmeasured, (count) => {
+      if (count % 100 === 0) process.stdout.write(`${count}/${unmeasured.size}\n`);
+    });
+    measured.forEach((end, key) => ends.set(key, end));
+    // Now and then the voice comes back empty: drop those clips so the next run records them again.
+    const silent = [...measured].filter(([, end]) => end <= SILENT).map(([key]) => key);
+    silent.forEach((key) => {
+      done.delete(key);
+      ends.delete(key);
+    });
+    save();
+    if (silent.length) {
+      failed += silent.length;
+      process.stdout.write(`${silent.length} clips came back silent.\n`);
+    }
+  }
   process.stdout.write(
     failed ? `Done with ${failed} failures; run again to retry.\n` : 'All clips recorded.\n',
   );

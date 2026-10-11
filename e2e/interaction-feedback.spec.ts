@@ -105,7 +105,7 @@ test('German meaning checks mark the chosen answer and preserve correct feedback
   // The coloured face sits inside the tactile lip.
   await expect(wrong.getByTestId('answer-face')).toHaveCSS(
     'background-color',
-    'rgb(255, 233, 225)',
+    'rgb(253, 235, 231)',
   );
   await page.getByRole('button', { name: 'Try again' }).click();
   const right = page.getByRole('radio', { name: 'Guten Tag!', exact: true });
@@ -114,7 +114,7 @@ test('German meaning checks mark the chosen answer and preserve correct feedback
   await expect(right).toBeChecked();
   await expect(right.getByTestId('answer-face')).toHaveCSS(
     'background-color',
-    'rgb(227, 242, 229)',
+    'rgb(229, 246, 235)',
   );
   await expect(right).toBeDisabled();
   await page.getByRole('button', { name: 'Next question' }).click();
@@ -145,7 +145,7 @@ test('dialogue replay restarts, speed takes effect and listening does not erase 
   const correct = page.getByRole('radio', { name: 'An extra espresso shot' });
   await expect(correct.getByTestId('answer-face')).toHaveCSS(
     'background-color',
-    'rgb(227, 242, 229)',
+    'rgb(229, 246, 235)',
   );
   await page.getByRole('button', { name: 'Replay audio', exact: true }).click();
   await expect(page.getByRole('button', { name: 'More listening', exact: true })).toBeVisible();

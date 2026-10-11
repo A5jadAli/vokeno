@@ -44,6 +44,7 @@ import { useLessonAudio, type LessonAudio } from '@/features/audio/use-lesson-au
 import { REVIEW_INTERVALS, seedCards } from '@/features/review/schedule';
 
 type Result = { tone: 'correct' | 'wrong' | 'close'; title: string; message?: string };
+const PRAISE = ['Nice!', 'Exactly!', 'Well done!', 'Spot on!', 'Correct!'];
 
 const keyboardNote = {
   DE: 'Punctuation and capital letters are not marked. No ß or umlaut key? Type ss, ae, oe or ue.',
@@ -143,7 +144,14 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
   const report = (correct: boolean, title: string, message: string, firstTry = correct) => {
     if (correct) {
       haptic.correct();
-      setResult({ tone: 'correct', title, message });
+      // A plain “Correct” becomes varied praise; after a retry it is plainer and still honest.
+      const verdict =
+        title !== 'Correct'
+          ? title
+          : firstTry && entry.firstTry[gradedIndex] !== false
+            ? PRAISE[index % PRAISE.length]
+            : 'That’s it!';
+      setResult({ tone: 'correct', title: verdict, message });
     } else {
       haptic.wrong();
       setMistakes((count) => count + 1);
@@ -508,7 +516,7 @@ function ChooseStep({
               ? 'Listen again, slowly if you like, then try another answer.'
               : step.context
                 ? 'Read the text again, then try another answer.'
-                : 'Think about who you are talking to and when, then try another answer.',
+                : 'Read the question once more, then pick another answer.',
         ),
     });
   };

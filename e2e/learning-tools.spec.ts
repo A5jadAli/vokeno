@@ -136,7 +136,7 @@ test('reading gives correction, records completion and offers the next text', as
   // The coloured face sits inside the tactile lip.
   await expect(wrong.getByTestId('answer-face')).toHaveCSS(
     'background-color',
-    'rgb(255, 233, 225)',
+    'rgb(253, 235, 231)',
   );
   await expect(page.getByText(/Not quite. Check the evidence/)).toBeVisible();
   await page
@@ -149,7 +149,7 @@ test('reading gives correction, records completion and offers the next text', as
   await expect(correct).toBeChecked();
   await expect(correct.getByTestId('answer-face')).toHaveCSS(
     'background-color',
-    'rgb(227, 242, 229)',
+    'rgb(229, 246, 235)',
   );
   await expect(correct).toBeDisabled();
   await expect(wrong).not.toBeChecked();

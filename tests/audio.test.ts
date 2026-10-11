@@ -8,9 +8,10 @@ import { castingFor, characters } from '@/features/audio/voices';
 import { foundationLessons } from '@/features/foundations/catalog';
 import { listeningScenarios } from '@/features/listening/scenarios';
 
-const recorded = new Set(
-  (JSON.parse(readFileSync('src/features/audio/clips.json', 'utf8')) as { clips: string[] }).clips,
-);
+const manifest = JSON.parse(readFileSync('src/features/audio/clips.json', 'utf8')) as {
+  clips: Record<string, number>;
+};
+const recorded = new Set(Object.keys(manifest.clips));
 
 describe('AI voices', () => {
   it('has a recorded clip for every line the app can speak', () => {
@@ -22,6 +23,14 @@ describe('AI voices', () => {
       .map((line) => `${line.track} ${line.speaker ?? 'narrator'}: ${line.text}`);
     // Record new lines with: npx tsx --tsconfig tsconfig.json scripts/generate-lesson-audio.ts
     expect(missing).toEqual([]);
+  });
+
+  it('knows where the voice stops in every clip, so playback ends without trailing silence', () => {
+    // Below 0.25 s there is no voice at all: the recording came back silent.
+    const unmeasured = Object.entries(manifest.clips).filter(
+      ([, end]) => !(end > 0.25 && end < 60),
+    );
+    expect(unmeasured).toEqual([]);
   });
 
   it('casts every character explicitly, never falling back to the narrator', () => {
