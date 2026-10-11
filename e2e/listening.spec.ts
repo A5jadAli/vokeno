@@ -16,13 +16,18 @@ test('Today has the same layout in every language and no horizontal overflow', a
     page.evaluate(
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
     );
-  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ }),
+  ).toBeVisible();
+  await expect(page.getByText(/^Today · /)).toBeVisible();
+  await expect(page.getByRole('button', { name: /-day streak\./ })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Profile and settings' })).toBeVisible();
   await expect(page.getByRole('button', { name: /^Start lesson: / })).toBeVisible();
   expect(await overflow()).toBe(false);
 
   await chooseLanguage(page, 'German');
-  await expect(page.getByText('Unit 1 · Hallo! · Lesson 1 of 4')).toBeVisible();
+  await expect(page.getByText('Unit 1 · Hallo!')).toBeVisible();
+  await expect(page.getByLabel('Lesson 1 of 4. 0 done.')).toBeVisible();
   await expect(page.getByRole('button', { name: /^Start lesson: Hallo, Tschüss/ })).toBeVisible();
   await chooseLanguage(page, 'Spanish');
   await expect(page.getByRole('button', { name: /^Start lesson: / })).toBeVisible();

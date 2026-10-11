@@ -17,6 +17,7 @@ const unit1 = defineUnit(
   {
     id: 'de-a1-u1',
     number: 1,
+    icon: 'hand-wave',
     title: 'Hallo!',
     canDo: 'Greet people, say who you are and ask their name, with du or Sie.',
   },
@@ -680,6 +681,7 @@ const unit2 = defineUnit(
   {
     id: 'de-a1-u2',
     number: 2,
+    icon: 'earth',
     title: 'Woher kommst du?',
     canDo: 'Say where you are from, where you live and which languages you speak, and ask others.',
   },
@@ -1292,6 +1294,7 @@ const unit3 = defineUnit(
   {
     id: 'de-a1-u3',
     number: 3,
+    icon: 'numeric',
     title: 'Zahlen, Alter, Namen',
     canDo:
       'Understand and say numbers, ages, prices and phone numbers, and spell your name the German way.',
@@ -1890,6 +1893,7 @@ const unit4 = defineUnit(
   {
     id: 'de-a1-u4',
     number: 4,
+    icon: 'account-group',
     title: 'Meine Familie',
     canDo: 'Talk about your family and the people you live with, and ask about theirs.',
   },
@@ -2480,6 +2484,7 @@ const unit5 = defineUnit(
   {
     id: 'de-a1-u5',
     number: 5,
+    icon: 'coffee',
     title: 'Im Café',
     canDo: 'Order food and drink, change your order and pay in a café, bakery or restaurant.',
   },
@@ -3034,6 +3039,7 @@ const unit6 = defineUnit(
   {
     id: 'de-a1-u6',
     number: 6,
+    icon: 'cart',
     title: 'Einkaufen',
     canDo: 'Shop for food, ask where things are, say how much you want, and use kein and nicht.',
   },
@@ -3599,6 +3605,7 @@ const unit7 = defineUnit(
   {
     id: 'de-a1-u7',
     number: 7,
+    icon: 'sofa',
     title: 'Zu Hause',
     canDo: 'Describe a flat and its rooms, name furniture, and say what things are like.',
   },
@@ -4197,6 +4204,7 @@ const unit8 = defineUnit(
   {
     id: 'de-a1-u8',
     number: 8,
+    icon: 'clock-outline',
     title: 'Mein Tag',
     canDo: 'Ask and tell the time, describe your day, and say when things happen.',
   },
@@ -4777,6 +4785,7 @@ const unit9 = defineUnit(
   {
     id: 'de-a1-u9',
     number: 9,
+    icon: 'bike',
     title: 'Freizeit',
     canDo:
       'Talk about hobbies, say what you like and like best, and make, accept or turn down plans.',

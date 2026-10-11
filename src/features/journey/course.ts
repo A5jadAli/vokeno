@@ -55,6 +55,8 @@ export type UnitSummary = {
   /** "Unit 2 · Woher kommst du?" for units, the level for older lessons. */
   label: string;
   canDo: string;
+  /** The unit's topic icon, when it has one. */
+  icon?: string;
   lessons: FoundationLesson[];
   done: number;
 };
@@ -73,6 +75,7 @@ export function courseUnits(track: LanguageTrack, progress: FoundationProgress):
               title: lesson.unit.title,
               label: `Unit ${lesson.unit.number} · ${lesson.unit.title}`,
               canDo: lesson.unit.canDo,
+              icon: lesson.unit.icon,
               lessons: [],
               done: 0,
             }

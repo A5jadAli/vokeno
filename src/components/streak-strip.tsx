@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Palette, VokaFonts } from '@/constants/theme';
 import type { StreakSummary, WeekDayState } from '@/features/habits/practice-log';
@@ -27,36 +27,60 @@ function caption(streak: StreakSummary) {
     : 'You practised today.';
 }
 
+const streakLabel = (streak: StreakSummary) =>
+  `${streak.current}-day streak. Best ${streak.best} days.`;
+
+/** The streak as a small chip for a header: a flame and the number of days. */
+export function StreakChip({ streak, onPress }: { streak: StreakSummary; onPress: () => void }) {
+  const lit = streak.current > 0;
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={streakLabel(streak)}
+      accessibilityHint="Opens your progress"
+      hitSlop={4}
+      onPress={onPress}
+      style={({ pressed }) => [styles.chip, lit && styles.chipLit, pressed && styles.pressed]}
+    >
+      <MaterialCommunityIcons color={lit ? Palette.orange : Palette.muted} name="fire" size={20} />
+      <Text style={styles.chipNumber}>{streak.current}</Text>
+    </Pressable>
+  );
+}
+
 /** The honest streak: practice days in a row, with at most one rest day a week. */
 export function StreakStrip({
   streak,
   week,
   track,
+  showCount = true,
 }: {
   streak: StreakSummary;
   week: { day: string; label: string; state: WeekDayState }[];
   track: LanguageTrack;
+  /** Off where the count is already shown, as in the Today header. */
+  showCount?: boolean;
 }) {
   const colors = trackColors[track];
   const lit = streak.current > 0;
   return (
     <View style={styles.card}>
-      <View style={styles.top}>
-        <View
-          accessible
-          accessibilityLabel={`${streak.current}-day streak. Best ${streak.best} days.`}
-          style={styles.count}
-        >
-          <MaterialCommunityIcons
-            color={lit ? Palette.orange : Palette.muted}
-            name="fire"
-            size={24}
-          />
-          <Text style={styles.number}>{streak.current}</Text>
-          <Text style={styles.unit}>{streak.current === 1 ? 'day' : 'days'}</Text>
+      {showCount ? (
+        <View style={styles.top}>
+          <View accessible accessibilityLabel={streakLabel(streak)} style={styles.count}>
+            <MaterialCommunityIcons
+              color={lit ? Palette.orange : Palette.muted}
+              name="fire"
+              size={24}
+            />
+            <Text style={styles.number}>{streak.current}</Text>
+            <Text style={styles.unit}>{streak.current === 1 ? 'day' : 'days'}</Text>
+          </View>
+          {streak.best > streak.current ? (
+            <Text style={styles.best}>Best {streak.best}</Text>
+          ) : null}
         </View>
-        {streak.best > streak.current ? <Text style={styles.best}>Best {streak.best}</Text> : null}
-      </View>
+      ) : null}
       <View style={styles.week}>
         {week.map((day) => (
           <View
@@ -121,4 +145,17 @@ const styles = StyleSheet.create({
   label: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   labelToday: { color: Palette.ink },
   caption: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 18 },
+  chip: {
+    alignItems: 'center',
+    backgroundColor: Palette.white,
+    borderRadius: 99,
+    flexDirection: 'row',
+    gap: 4,
+    height: 44,
+    paddingLeft: 12,
+    paddingRight: 14,
+  },
+  chipLit: { backgroundColor: '#FFE5DC' },
+  chipNumber: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 17 },
+  pressed: { opacity: 0.7 },
 });

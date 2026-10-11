@@ -5,7 +5,6 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 
 import { PrimaryAccent, PrimaryButton } from '@/components/lesson-ui';
-import { ProgressFill } from '@/components/motion';
 import { ReminderPicker } from '@/components/reminder-picker';
 import { StreakStrip } from '@/components/streak-strip';
 import { Palette, VokaFonts } from '@/constants/theme';
@@ -17,8 +16,9 @@ import { prefetchClips } from '@/features/audio/use-lesson-audio';
 import { levelLabel, levelNote } from '@/features/foundations/level-status';
 import { remindersSupported } from '@/features/habits/reminder-scheduler';
 import { useReminderStore } from '@/features/habits/reminders';
-import { useHabits } from '@/features/habits/use-habits';
-import { lessonContext } from '@/features/journey/course';
+import type { useHabits } from '@/features/habits/use-habits';
+import { reviewSummary } from '@/features/review/schedule';
+import { isFinished, lessonContext } from '@/features/journey/course';
 import { languageDetails, trackColors, type LanguageTrack } from '@/features/language/config';
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
@@ -38,10 +38,17 @@ const kindLabel: Record<PlanStep['kind'], string> = {
 };
 
 /** Today: the one thing to do now, the short session around it, and an honest finish. */
-export function TodayCard({ track }: { track: LanguageTrack }) {
+export function TodayCard({
+  track,
+  habits,
+}: {
+  track: LanguageTrack;
+  habits: ReturnType<typeof useHabits>;
+}) {
   const router = useRouter();
-  const { plan, streak, week, milestone } = useHabits(track);
+  const { plan, streak, week, milestone } = habits;
   const progress = useCoachingStore((state) => state.foundations);
+  const review = reviewSummary(progress, track);
   const reminderAsked = useReminderStore((state) => state.asked);
   const colors = trackColors[track];
   const current = plan.steps.find((step) => !step.done);
@@ -53,6 +60,37 @@ export function TodayCard({ track }: { track: LanguageTrack }) {
   }, [track, upcoming]);
   const allDone = !current;
   const open = (step: PlanStep) => router.push(step.href as Href);
+  // Two quick ways in besides the session, skipping anything the session still has in it.
+  const planned = new Set(plan.steps.filter((step) => !step.done).map((step) => step.kind));
+  const shortcuts = [
+    !planned.has('review') && {
+      icon: 'cards-outline' as IconName,
+      title: 'Review',
+      meta: review.due
+        ? `${Math.min(review.due, 8)} phrases ready`
+        : review.learning
+          ? 'All caught up'
+          : 'Words from lessons land here',
+      href: `/review?track=${track}`,
+      highlight: review.due > 0,
+    },
+    !planned.has('speaking') && {
+      icon: 'microphone-outline' as IconName,
+      title: 'Talk',
+      meta: 'A short chat with the coach',
+      href: `/conversation?track=${track}`,
+      highlight: false,
+    },
+    !planned.has('listening') && {
+      icon: 'headphones' as IconName,
+      title: 'Listen',
+      meta: `Real ${languageDetails[track].name}, short and natural`,
+      href: `/listening?track=${track}`,
+      highlight: false,
+    },
+  ]
+    .filter((tile) => tile !== false)
+    .slice(0, 2);
   const nextLevelStart = milestone?.nextLevel
     ? getTrackLessons(track).find((lesson) => lesson.level === milestone.nextLevel)
     : undefined;
@@ -91,86 +129,112 @@ export function TodayCard({ track }: { track: LanguageTrack }) {
         </Animated.View>
       ) : null}
 
-      <View style={styles.card}>
-        <View style={styles.cardTop}>
-          <Text style={styles.eyebrow}>
-            {allDone ? 'Your session · done' : `Your session · about ${plan.minutes} min`}
-          </Text>
-          {plan.steps.length > 1 ? (
-            <Text style={styles.count}>
-              {plan.doneCount} of {plan.steps.length} done
-            </Text>
-          ) : null}
-        </View>
+      <Text style={styles.intro}>{plan.footnote}</Text>
 
-        {current ? (
-          <Focus step={current} track={track} progress={progress} onOpen={() => open(current)} />
-        ) : (
-          <Animated.View entering={FadeIn.duration(240)} style={styles.done}>
-            <Animated.View
-              entering={ZoomIn.springify().damping(12)}
-              style={[styles.doneBadge, { backgroundColor: colors.accent }]}
-            >
-              <MaterialCommunityIcons color={colors.onAccent} name="check-bold" size={30} />
-            </Animated.View>
-            <Text accessibilityRole="header" style={styles.title}>
-              Today’s session is done
-            </Text>
-            <Text style={styles.lead}>
-              {plan.courseFinished
-                ? `You have finished every ${languageDetails[track].name} lesson available so far. Keep it fresh with review and practice.`
-                : 'That is all you need today. Come back tomorrow, or do one more if you like.'}
-            </Text>
-          </Animated.View>
-        )}
-
-        {plan.steps.length > 1 || allDone ? (
-          <View style={styles.list}>
-            {plan.steps.map((step) => (
-              <StepRow
-                key={step.key}
-                step={step}
-                current={step === current}
-                accent={colors.accent}
-                onAccent={colors.onAccent}
-                onPress={() => open(step)}
-              />
-            ))}
-          </View>
-        ) : null}
-
-        {allDone && plan.bonus ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={`Optional: ${plan.bonus.title}`}
-            onPress={() => open(plan.bonus!)}
-            style={({ pressed }) => [styles.extra, pressed && styles.pressed]}
+      {current ? (
+        <Focus step={current} track={track} progress={progress} onOpen={() => open(current)} />
+      ) : (
+        <Animated.View entering={FadeIn.duration(240)} style={[styles.card, styles.done]}>
+          <Animated.View
+            entering={ZoomIn.springify().damping(12)}
+            style={[styles.doneBadge, { backgroundColor: colors.accent }]}
           >
-            <MaterialCommunityIcons color={Palette.ink} name="plus-circle-outline" size={22} />
-            <View style={styles.extraCopy}>
-              <Text style={styles.extraLabel}>
-                One more, if you like · {plan.bonus.minutes} min
+            <MaterialCommunityIcons color={colors.onAccent} name="check-bold" size={30} />
+          </Animated.View>
+          <Text accessibilityRole="header" style={styles.title}>
+            Today’s session is done
+          </Text>
+          <Text style={styles.lead}>
+            {plan.courseFinished
+              ? `You have finished every ${languageDetails[track].name} lesson available so far. Keep it fresh with review and practice.`
+              : 'That is all you need today. Come back tomorrow, or do one more if you like.'}
+          </Text>
+          {plan.bonus ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Optional: ${plan.bonus.title}`}
+              onPress={() => open(plan.bonus!)}
+              style={({ pressed }) => [styles.extra, pressed && styles.pressed]}
+            >
+              <MaterialCommunityIcons color={Palette.ink} name="plus-circle-outline" size={22} />
+              <View style={styles.extraCopy}>
+                <Text style={styles.extraLabel}>
+                  One more, if you like · {plan.bonus.minutes} min
+                </Text>
+                <Text style={styles.extraTitle}>{plan.bonus.title}</Text>
+              </View>
+              <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={22} />
+            </Pressable>
+          ) : null}
+          {!reminderAsked && remindersSupported ? (
+            <View style={styles.intention}>
+              <Text style={styles.intentionTitle}>When will you practise tomorrow?</Text>
+              <Text style={styles.note}>
+                Picking a time makes it much easier to come back. One reminder a day; you can change
+                it in Settings.
               </Text>
-              <Text style={styles.extraTitle}>{plan.bonus.title}</Text>
+              <ReminderPicker variant="chips" />
             </View>
-            <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={22} />
-          </Pressable>
-        ) : null}
+          ) : null}
+        </Animated.View>
+      )}
 
-        {allDone && !reminderAsked && remindersSupported ? (
-          <View style={styles.intention}>
-            <Text style={styles.intentionTitle}>When will you practise tomorrow?</Text>
-            <Text style={styles.note}>
-              Picking a time makes it much easier to come back. One reminder a day; you can change
-              it in Settings.
+      {/* Several steps, or a finished day: list them, so what was done stays visible. */}
+      {plan.steps.length > 1 || allDone ? (
+        <View style={styles.card}>
+          <View style={styles.cardTop}>
+            <Text style={styles.sectionTitle}>
+              {allDone ? 'Your session · done' : `Your session · about ${plan.minutes} min`}
             </Text>
-            <ReminderPicker variant="chips" />
+            {plan.steps.length > 1 ? (
+              <Text style={styles.count}>
+                {plan.doneCount} of {plan.steps.length} done
+              </Text>
+            ) : null}
           </View>
-        ) : null}
+          {plan.steps.map((step) => (
+            <StepRow
+              key={step.key}
+              step={step}
+              current={step === current}
+              accent={colors.accent}
+              onAccent={colors.onAccent}
+              onPress={() => open(step)}
+            />
+          ))}
+        </View>
+      ) : null}
+
+      <View style={styles.tiles}>
+        {shortcuts.map((tile) => (
+          <Pressable
+            key={tile.title}
+            accessibilityRole="button"
+            accessibilityLabel={`${tile.title}: ${tile.meta}`}
+            onPress={() => router.push(tile.href as Href)}
+            style={({ pressed }) => [styles.tile, pressed && styles.pressed]}
+          >
+            <View
+              style={[
+                styles.tileIcon,
+                { backgroundColor: tile.highlight ? colors.accent : colors.tint },
+              ]}
+            >
+              <MaterialCommunityIcons
+                color={tile.highlight ? colors.onAccent : Palette.ink}
+                name={tile.icon}
+                size={22}
+              />
+            </View>
+            <Text style={styles.tileTitle}>{tile.title}</Text>
+            <Text numberOfLines={2} style={styles.tileMeta}>
+              {tile.meta}
+            </Text>
+          </Pressable>
+        ))}
       </View>
 
-      <StreakStrip streak={streak} track={track} week={week} />
-      <Text style={styles.footnote}>{plan.footnote}</Text>
+      <StreakStrip streak={streak} track={track} week={week} showCount={false} />
     </PrimaryAccent>
   );
 }
@@ -192,45 +256,70 @@ function Focus({
     step.kind === 'lesson'
       ? lessonContext(track, progress, step.key.slice('lesson:'.length))
       : undefined;
+  const icon = (context?.unit.icon as IconName | undefined) ?? kindIcon[step.kind];
+  const lessons = context?.unit.lessons ?? [];
   return (
-    <Animated.View key={step.key} entering={FadeIn.duration(220)} style={styles.focus}>
-      <View style={styles.kindRow}>
-        <View style={[styles.kindIcon, { backgroundColor: colors.tint }]}>
-          <MaterialCommunityIcons color={Palette.ink} name={kindIcon[step.kind]} size={18} />
+    <Animated.View
+      key={step.key}
+      entering={FadeInDown.duration(260)}
+      style={[styles.card, styles.hero]}
+    >
+      <View style={[styles.band, { backgroundColor: colors.tint }]}>
+        {/* A large, faint copy of the topic icon gives the card some character. */}
+        <View importantForAccessibility="no-hide-descendants" style={styles.bandArt}>
+          <MaterialCommunityIcons color={colors.accent} name={icon} size={112} />
         </View>
-        <Text style={styles.kindText} numberOfLines={1}>
-          {context
-            ? `${context.unit.label} · Lesson ${context.number} of ${context.unit.lessons.length}`
-            : kindLabel[step.kind]}
-        </Text>
-      </View>
-      <Text accessibilityRole="header" style={styles.title}>
-        {step.title}
-      </Text>
-      <Text style={styles.lead}>{step.why}</Text>
-      {context ? (
-        <View
-          accessible
-          accessibilityLabel={`${context.unit.done} of ${context.unit.lessons.length} lessons in this unit done`}
-          style={styles.unitProgress}
-        >
-          <ProgressFill
-            value={context.unit.done / context.unit.lessons.length}
-            color={colors.accent}
-            track="rgba(19,18,17,0.08)"
-            height={8}
-          />
-          <Text style={styles.unitCount}>
-            {context.unit.done}/{context.unit.lessons.length}
+        <View style={[styles.bandIcon, { backgroundColor: colors.accent }]}>
+          <MaterialCommunityIcons color={colors.onAccent} name={icon} size={24} />
+        </View>
+        <View style={styles.bandCopy}>
+          <Text numberOfLines={1} style={styles.bandLabel}>
+            {context ? context.unit.label : kindLabel[step.kind]}
           </Text>
+          {context && lessons.length <= 8 ? (
+            <View
+              accessible
+              accessibilityLabel={`Lesson ${context.number} of ${lessons.length}. ${context.unit.done} done.`}
+              style={styles.dots}
+            >
+              {lessons.map((lesson, index) => {
+                const finished = isFinished(progress[lesson.id]);
+                const now = index === context.number - 1;
+                return (
+                  <View
+                    key={lesson.id}
+                    style={[
+                      styles.dotStep,
+                      finished && { backgroundColor: colors.accent },
+                      now && styles.dotNow,
+                    ]}
+                  >
+                    {finished ? (
+                      <MaterialCommunityIcons color={colors.onAccent} name="check" size={11} />
+                    ) : null}
+                  </View>
+                );
+              })}
+            </View>
+          ) : context ? (
+            <Text style={styles.bandMeta}>
+              Lesson {context.number} of {lessons.length}
+            </Text>
+          ) : null}
         </View>
-      ) : null}
-      <PrimaryButton
-        title={`${step.action} · ${step.minutes} min`}
-        icon="arrow-right"
-        accessibilityLabel={`${step.action}: ${step.title}`}
-        onPress={onOpen}
-      />
+      </View>
+      <View style={styles.heroBody}>
+        <Text accessibilityRole="header" style={styles.title}>
+          {step.title}
+        </Text>
+        <Text style={styles.lead}>{step.why}</Text>
+        <PrimaryButton
+          title={`${step.action} · ${step.minutes} min`}
+          icon="arrow-right"
+          accessibilityLabel={`${step.action}: ${step.title}`}
+          onPress={onOpen}
+        />
+      </View>
     </Animated.View>
   );
 }
@@ -288,35 +377,73 @@ function StepRow({
 }
 
 const styles = StyleSheet.create({
+  intro: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: 15,
+    lineHeight: 21,
+    marginBottom: 6,
+    marginHorizontal: 20,
+  },
   card: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
     borderRadius: 24,
     borderWidth: 1,
-    gap: 14,
+    gap: 6,
     marginBottom: 12,
     marginHorizontal: 18,
-    marginTop: 8,
     padding: 18,
   },
-  cardTop: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
-  eyebrow: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
-  count: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
-  focus: { gap: 10 },
-  kindRow: { alignItems: 'center', flexDirection: 'row', gap: 8 },
-  kindIcon: {
+  hero: { gap: 0, overflow: 'hidden', padding: 0 },
+  band: {
     alignItems: 'center',
-    borderRadius: 10,
-    height: 30,
-    justifyContent: 'center',
-    width: 30,
+    flexDirection: 'row',
+    gap: 14,
+    minHeight: 84,
+    overflow: 'hidden',
+    paddingHorizontal: 18,
+    paddingVertical: 16,
   },
-  kindText: { color: Palette.secondary, flex: 1, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  title: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22, lineHeight: 28 },
+  bandCopy: { flex: 1, gap: 8 },
+  bandArt: { opacity: 0.22, position: 'absolute', right: -14, top: -16 },
+  bandIcon: {
+    alignItems: 'center',
+    borderRadius: 14,
+    height: 48,
+    justifyContent: 'center',
+    width: 48,
+  },
+  bandLabel: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
+  bandMeta: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
+  dots: { alignItems: 'center', flexDirection: 'row', gap: 6 },
+  dotStep: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(19,18,17,0.10)',
+    borderRadius: 99,
+    height: 16,
+    justifyContent: 'center',
+    width: 16,
+  },
+  dotNow: {
+    backgroundColor: Palette.white,
+    borderColor: Palette.ink,
+    borderWidth: 2.5,
+    height: 18,
+    width: 18,
+  },
+  heroBody: { gap: 10, padding: 18, paddingTop: 16 },
+  cardTop: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 2,
+  },
+  sectionTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
+  count: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
+  title: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 24, lineHeight: 30 },
   lead: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 15, lineHeight: 22 },
-  unitProgress: { alignItems: 'center', flexDirection: 'row', gap: 10, marginVertical: 2 },
-  unitCount: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
-  done: { alignItems: 'flex-start', gap: 8 },
+  done: { alignItems: 'flex-start', gap: 10 },
   doneBadge: {
     alignItems: 'center',
     borderRadius: 99,
@@ -324,7 +451,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 52,
   },
-  list: { borderTopColor: Palette.line, borderTopWidth: 1, paddingTop: 6 },
   row: { alignItems: 'center', flexDirection: 'row', gap: 12, minHeight: 56, paddingVertical: 6 },
   marker: {
     alignItems: 'center',
@@ -339,8 +465,30 @@ const styles = StyleSheet.create({
   rowTitle: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
   rowTitleDone: { color: Palette.secondary },
   rowMeta: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13 },
+  tiles: { flexDirection: 'row', gap: 12, marginBottom: 12, marginHorizontal: 18 },
+  tile: {
+    backgroundColor: Palette.white,
+    borderColor: Palette.line,
+    borderRadius: 20,
+    borderWidth: 1,
+    flex: 1,
+    gap: 4,
+    minHeight: 120,
+    padding: 14,
+  },
+  tileIcon: {
+    alignItems: 'center',
+    borderRadius: 12,
+    height: 40,
+    justifyContent: 'center',
+    marginBottom: 6,
+    width: 40,
+  },
+  tileTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
+  tileMeta: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 18 },
   extra: {
     alignItems: 'center',
+    alignSelf: 'stretch',
     borderColor: Palette.line,
     borderRadius: 16,
     borderWidth: 1,
@@ -352,18 +500,17 @@ const styles = StyleSheet.create({
   extraCopy: { flex: 1, gap: 2 },
   extraLabel: { color: Palette.secondary, fontFamily: VokaFonts.bodyMedium, fontSize: 13 },
   extraTitle: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
-  intention: { borderColor: Palette.line, borderRadius: 16, borderWidth: 1, gap: 8, padding: 14 },
+  intention: {
+    alignSelf: 'stretch',
+    borderColor: Palette.line,
+    borderRadius: 16,
+    borderWidth: 1,
+    gap: 8,
+    padding: 14,
+  },
   intentionTitle: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 16 },
   note: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, lineHeight: 20 },
-  footnote: {
-    color: Palette.muted,
-    fontFamily: VokaFonts.body,
-    fontSize: 13,
-    lineHeight: 19,
-    marginHorizontal: 22,
-    marginTop: 4,
-  },
-  milestone: { borderRadius: 24, gap: 8, marginHorizontal: 18, marginTop: 8, padding: 18 },
+  milestone: { borderRadius: 24, gap: 8, marginBottom: 12, marginHorizontal: 18, padding: 18 },
   trophy: {
     alignItems: 'center',
     borderRadius: 99,

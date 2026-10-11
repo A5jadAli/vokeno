@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
@@ -30,20 +30,38 @@ export function TabHeader({
   title,
   track,
   onTrack,
+  eyebrow,
+  accessory,
 }: {
   title: string;
   track: LanguageTrack;
   onTrack: (track: LanguageTrack) => void;
+  /** A small line above the title, such as today's date. */
+  eyebrow?: string;
+  /** Shown between the language and the account, such as the streak on Today. */
+  accessory?: ReactNode;
 }) {
   return (
     <View style={styles.header}>
       <View style={styles.headerRow}>
         <LanguagePicker track={track} onChange={onTrack} />
-        <AccountButton />
+        <View style={styles.headerEnd}>
+          {accessory}
+          <AccountButton />
+        </View>
       </View>
-      <Text accessibilityRole="header" numberOfLines={1} style={styles.title}>
-        {title}
-      </Text>
+      <View>
+        {eyebrow ? <Text style={styles.eyebrow}>{eyebrow}</Text> : null}
+        <Text
+          accessibilityRole="header"
+          adjustsFontSizeToFit
+          minimumFontScale={0.75}
+          numberOfLines={1}
+          style={styles.title}
+        >
+          {title}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -169,6 +187,13 @@ export function LanguagePicker({
 const styles = StyleSheet.create({
   header: { gap: 10, paddingBottom: 6, paddingHorizontal: 20, paddingTop: 8 },
   headerRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+  headerEnd: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  eyebrow: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: 14,
+    marginBottom: 2,
+  },
   title: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 30, lineHeight: 36 },
   picker: {
     alignItems: 'center',

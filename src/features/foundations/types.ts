@@ -108,7 +108,14 @@ export const isGradedStep = (step: LessonStep): step is GradedStep =>
 /** A short session inside a unit: about five minutes of varied steps. */
 export type StepLesson = LessonBase & {
   format: 'steps';
-  unit: { id: string; number: number; title: string; canDo: string };
+  unit: {
+    id: string;
+    number: number;
+    title: string;
+    canDo: string;
+    /** A MaterialCommunityIcons name for the unit's topic, shown on Today and in the course. */
+    icon?: string;
+  };
   /** One of the unit's sessions, e.g. "Words", "Grammar", "Real talk", "Exam task". */
   session: string;
   minutes: number;
