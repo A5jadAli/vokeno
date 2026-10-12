@@ -940,6 +940,9 @@ export const germanA1Lessons = defineLessons('DE', [
   {
     id: 'texting',
     level: 'A1',
+    // Replaced by German A1 Unit 18.
+    retired: true,
+    replacedBy: 'de-a1-u18-chat',
     title: 'Message a friend like a German',
     outcome: 'Write and understand short, natural chat messages to arrange a meeting.',
     phrases: [

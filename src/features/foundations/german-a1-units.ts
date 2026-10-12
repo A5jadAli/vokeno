@@ -8524,6 +8524,2526 @@ const unit15 = defineUnit(
   ],
 );
 
+const weatherReport =
+  'Und das Wetter für morgen: Im Norden Regen bei zwölf Grad, im Süden viel Sonne und bis zu zweiundzwanzig Grad.';
+const hamburgPostcard =
+  'Liebe Lena,\nviele Grüße aus Hamburg! Das Wetter ist leider nicht so gut: Es regnet fast jeden Tag, und es ist windig. Aber gestern war es sonnig, und wir waren am Hafen. Morgen fahren wir nach Hause.\nBis bald!\nMaria';
+
+const unit16 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u16',
+    number: 16,
+    icon: 'weather-partly-cloudy',
+    title: 'Das Wetter',
+    canDo: 'Talk about the weather and the seasons, and make weather small talk like a local.',
+  },
+  [
+    {
+      id: 'de-a1-u16-weather',
+      session: 'Words',
+      title: 'Weather and seasons',
+      outcome: 'Say what the weather is like and name the seasons.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'Small talk on the stairs',
+          intro: 'Frau Wagner meets Alex on the stairs. It is raining again.',
+          lines: [
+            {
+              speaker: 'Frau Wagner',
+              text: 'Na, Alex, was für ein Wetter heute!',
+              meaning: 'Well, Alex, what weather today!',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Ja, es regnet schon wieder.',
+              meaning: 'Yes, it’s raining again.',
+            },
+            {
+              speaker: 'Frau Wagner',
+              text: 'Und so kalt! Nur acht Grad.',
+              meaning: 'And so cold! Only eight degrees.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Im Sommer war es aber schön warm.',
+              meaning: 'But in summer it was nice and warm.',
+            },
+            {
+              speaker: 'Frau Wagner',
+              text: 'Ja, ja. Aber morgen soll die Sonne scheinen.',
+              real: 'Ja, ja. Aber morgen soll’s ja schön werden.',
+              meaning: 'Yes, yes. But tomorrow the sun is supposed to shine.',
+              realMeaning: 'Yes, yes. But tomorrow it’s supposed to be nice.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Hoffentlich! Schönen Tag noch, Frau Wagner.',
+              meaning: 'Hopefully! Have a nice day, Frau Wagner.',
+            },
+          ],
+          note: 'Weather is the safest small-talk topic in Germany, and a little complaining is part of it. Temperatures are in degrees Celsius: 20 Grad is pleasantly warm.',
+        },
+        {
+          kind: 'teach',
+          title: 'The weather',
+          items: [
+            { target: 'Es regnet.', meaning: 'It’s raining.' },
+            { target: 'Es schneit.', meaning: 'It’s snowing.' },
+            { target: 'Die Sonne scheint.', meaning: 'The sun is shining.' },
+            { target: 'Es ist windig.', meaning: 'It’s windy.' },
+            { target: 'Es ist bewölkt.', meaning: 'It’s cloudy.' },
+            {
+              target: 'zwanzig Grad',
+              meaning: 'twenty degrees',
+              note: 'Celsius. Below zero: minus fünf Grad.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Frau Wagner says: “Nur acht Grad.” How does that feel?',
+          options: ['Cold', 'Hot', 'Pleasantly warm'],
+          answer: 0,
+          explanation: 'Eight degrees Celsius is about 46 °F: cold.',
+        },
+        {
+          kind: 'teach',
+          title: 'The seasons',
+          items: [
+            { target: 'der Frühling', meaning: 'spring' },
+            { target: 'der Sommer', meaning: 'summer' },
+            { target: 'der Herbst', meaning: 'autumn' },
+            { target: 'der Winter', meaning: 'winter' },
+            {
+              target: 'im Sommer',
+              meaning: 'in summer',
+              note: 'Seasons take im, like months: im Winter, im Mai.',
+            },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the weather.',
+          pairs: [
+            ['Es regnet.', 'It’s raining.'],
+            ['Es schneit.', 'It’s snowing.'],
+            ['Die Sonne scheint.', 'The sun is shining.'],
+            ['Es ist windig.', 'It’s windy.'],
+            ['der Herbst', 'autumn'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What is the weather like tomorrow?',
+          audio: 'Morgen wird es sonnig und warm, bis zu fünfundzwanzig Grad.',
+          options: ['Sunny and warm, up to 25 °C', 'Rainy, about 15 °C', 'Snow, minus 5 °C'],
+          answer: 0,
+          explanation: 'sonnig und warm, bis zu fünfundzwanzig Grad.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'You look outside: a grey sky, but no rain. What do you say?',
+          options: ['Es ist bewölkt.', 'Die Sonne scheint.', 'Es schneit.'],
+          answer: 0,
+          explanation: 'bewölkt: cloudy.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “In winter it often snows.”',
+          answer: ['Im', 'Winter', 'schneit', 'es', 'oft.'],
+          extra: ['ist'],
+          explanation: 'Im Winter first, so the verb comes next: schneit es.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “It’s raining.”',
+          accepted: ['Es regnet.'],
+          hint: 'Es + regnet.',
+          explanation: 'Weather verbs always use es: es regnet, es schneit.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Make weather small talk.',
+          lines: [
+            'Was für ein Wetter heute!',
+            'Es regnet schon wieder.',
+            'Hoffentlich scheint morgen die Sonne.',
+          ],
+          tip: 'In Herbst, the h is breathed and the r is soft: HERPST.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u16-es',
+      session: 'Grammar',
+      title: 'Es regnet, es gibt: sentences with es',
+      outcome: 'Use es for the weather, and es gibt for “there is”.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'es for the weather',
+          body: 'Weather verbs have no real subject, so German uses es: Es regnet. Es ist kalt. If the sentence starts with something else, es comes right after the verb: Heute regnet es.',
+          table: [
+            ['Es regnet.', 'It’s raining.'],
+            ['Heute regnet es.', 'It’s raining today.'],
+            ['Im Mai ist es warm.', 'In May it’s warm.'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Heute ___ sehr kalt.',
+          options: ['ist es', 'es ist', 'ist'],
+          answer: 0,
+          explanation: 'Heute first, then the verb ist, then es.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Which sentence is correct?',
+          options: ['Morgen schneit es.', 'Morgen es schneit.', 'Morgen schneit.'],
+          answer: 0,
+          explanation: 'The verb comes second, and es can’t be left out.',
+        },
+        {
+          kind: 'rule',
+          title: 'es gibt: there is, there are',
+          body: 'es gibt means there is or there are, for one thing or many: Heute gibt es Regen. In Leipzig gibt es viele Parks. What follows is the object: Es gibt einen Park.',
+        },
+        {
+          kind: 'teach',
+          title: 'With es',
+          items: [
+            { target: 'es gibt', meaning: 'there is, there are' },
+            { target: 'Wie ist das Wetter?', meaning: 'What’s the weather like?' },
+            { target: 'Wie warm ist es?', meaning: 'How warm is it?' },
+            {
+              target: 'Es wird dunkel.',
+              meaning: 'It’s getting dark.',
+              note: 'In December, it gets dark at about half past four.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Am Wochenende ___ es Regen.',
+          options: ['gibt', 'ist', 'hat'],
+          answer: 0,
+          explanation: 'es gibt Regen: there will be rain.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the questions and answers.',
+          pairs: [
+            ['Wie ist das Wetter?', 'Es regnet.'],
+            ['Wie warm ist es?', 'Zwanzig Grad.'],
+            ['Gibt es Schnee?', 'Ja, viel!'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What is it like in the evening?',
+          audio: 'Am Abend wird es kühl, und es gibt vielleicht Gewitter.',
+          options: ['Cool, maybe with thunderstorms', 'Hot and sunny', 'Snowy'],
+          answer: 0,
+          explanation: 'kühl: cool. das Gewitter: thunderstorm.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “In Leipzig there are many parks.”',
+          answer: ['In', 'Leipzig', 'gibt', 'es', 'viele', 'Parks.'],
+          extra: ['sind'],
+          explanation: 'In Leipzig first, then gibt, then es.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “Today it is warm.” Start with Heute.',
+          accepted: ['Heute ist es warm.'],
+          hint: 'Heute + ist + es + warm.',
+          explanation: 'Heute first, so ist comes second and es third.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Describe the weather where you are.',
+          lines: [
+            'Heute ist es kalt und windig.',
+            'Im Sommer gibt es viele Gewitter.',
+            'Im Winter wird es früh dunkel.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u16-real',
+      session: 'Real talk',
+      title: '“Was für ein Sauwetter!” Weather talk like a local',
+      outcome: 'Complain about the weather like a German, and know how Germans cope with hot days.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'April weather',
+          intro: 'Lena and Maria want to go to the park. The weather keeps changing.',
+          lines: [
+            {
+              speaker: 'Maria',
+              text: 'Die Sonne scheint! Gehen wir in den Park?',
+              meaning: 'The sun is shining! Shall we go to the park?',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Ja, aber nimm eine Jacke mit. Das ist typisches Aprilwetter.',
+              meaning: 'Yes, but take a jacket. That’s typical April weather.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Oh nein, jetzt regnet es schon wieder!',
+              meaning: 'Oh no, now it’s raining again!',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Was für ein Sauwetter! In zehn Minuten ist es wieder schön.',
+              real: 'So ein Sauwetter! In zehn Minuten isses wieder schön.',
+              meaning: 'What awful weather! In ten minutes it’ll be nice again.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'In Brasilien regnet es auch, aber dann ist es wenigstens warm!',
+              meaning: 'It rains in Brazil too, but at least it’s warm then!',
+            },
+          ],
+          note: 'Aprilwetter means sun, rain, hail and sun again within an hour. Sauwetter (literally “pig weather”) is the everyday word for awful weather.',
+        },
+        {
+          kind: 'teach',
+          title: 'Weather talk',
+          items: [
+            { target: 'Was für ein Sauwetter!', meaning: 'What awful weather!' },
+            { target: 'das Aprilwetter', meaning: 'changeable weather' },
+            { target: 'Nimm eine Jacke mit!', meaning: 'Take a jacket!' },
+            { target: 'Es ist schwül.', meaning: 'It’s humid and close.' },
+            { target: 'die Hitze', meaning: 'heat' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Lena says: “Was für ein Sauwetter!” What does she mean?',
+          options: ['The weather is awful', 'There are pigs in the park', 'The weather is perfect'],
+          answer: 0,
+          explanation:
+            'Sauwetter: awful weather. Sau- makes things extra bad (or extra good: saugut).',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. Why does he stay at home?',
+          audio: 'Bei der Hitze bleibe ich zu Hause. Fünfunddreißig Grad, das ist zu viel!',
+          options: ['It is too hot', 'It is raining', 'He is ill'],
+          answer: 0,
+          explanation: 'die Hitze: heat. Fünfunddreißig Grad: 35 °C.',
+        },
+        {
+          kind: 'scene',
+          title: 'Summer in the WG',
+          intro: 'August. Jonas comes home from work.',
+          lines: [
+            {
+              speaker: 'Jonas',
+              text: 'Puh, ist das heiß! Wir haben dreiunddreißig Grad.',
+              meaning: 'Phew, it’s hot! It’s thirty-three degrees.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Und keine Klimaanlage. Warum gibt es hier keine?',
+              meaning: 'And no air conditioning. Why isn’t there any here?',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Die hat in Deutschland fast niemand. Wir machen morgens die Fenster auf und mittags zu.',
+              meaning:
+                'Hardly anyone in Germany has one. We open the windows in the morning and close them at midday.',
+            },
+            { speaker: 'Alex', text: 'Und dann?', meaning: 'And then?' },
+            {
+              speaker: 'Jonas',
+              text: 'Dann gehen wir an den See. Kommst du mit?',
+              meaning: 'Then we go to the lake. Are you coming?',
+            },
+          ],
+          note: 'Most German homes have no air conditioning. On hot days, people air the flat early, close the windows and blinds at midday, and head to a lake or an open-air pool (Freibad).',
+        },
+        {
+          kind: 'teach',
+          title: 'Hot days',
+          items: [
+            { target: 'Ist das heiß!', meaning: 'It’s so hot!' },
+            { target: 'die Klimaanlage', meaning: 'air conditioning' },
+            { target: 'das Freibad', meaning: 'open-air pool' },
+            { target: 'an den See gehen', meaning: 'to go to the lake' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match what you hear.',
+          pairs: [
+            ['Sauwetter', 'awful weather'],
+            ['schwül', 'humid'],
+            ['die Hitze', 'heat'],
+            ['das Freibad', 'open-air pool'],
+            ['die Klimaanlage', 'air conditioning'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Why do Germans close the windows at midday in summer?',
+          options: ['To keep the heat out', 'To keep the rain out', 'Because of the noise'],
+          answer: 0,
+          explanation: 'Air early, close at midday: the flat stays cool without air conditioning.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Tell a friend: “Take an umbrella!” (der Regenschirm)',
+          answer: ['Nimm', 'einen', 'Regenschirm', 'mit!'],
+          extra: ['Nehmen'],
+          explanation: 'mitnehmen splits: Nimm … mit!',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “What awful weather!”',
+          accepted: ['Was für ein Sauwetter!', 'So ein Sauwetter!'],
+          hint: 'Was für ein + Sauwetter!',
+          explanation: 'Was für ein …! What a …!',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Complain about the weather like a local.',
+          lines: ['Was für ein Sauwetter heute!', 'Es ist so schwül!', 'Kommst du mit an den See?'],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u16-exam',
+      session: 'Exam task',
+      title: 'Goethe A1 practice: a weather report, a postcard and weather cards',
+      outcome:
+        'Catch a weather report in Hören Teil 2, read a postcard in Lesen Teil 1, and talk about seasons in Sprechen Teil 2.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Hören Teil 2: the weather report',
+          body: 'Radio weather reports are short: a region, the weather and a temperature. Read the sentence first and listen for that one detail.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Im Süden scheint morgen die Sonne.',
+          audio: weatherReport,
+          options: ['Richtig', 'Falsch'],
+          answer: 0,
+          explanation: '“im Süden viel Sonne”.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Im Norden wird es zweiundzwanzig Grad warm.',
+          audio: weatherReport,
+          options: ['Richtig', 'Falsch'],
+          answer: 1,
+          explanation: 'In the north: rain and twelve degrees. Twenty-two is in the south.',
+        },
+        {
+          kind: 'teach',
+          title: 'Weather report words',
+          items: [
+            { target: 'der Norden / der Süden', meaning: 'the north / the south' },
+            { target: 'der Osten / der Westen', meaning: 'the east / the west' },
+            { target: 'die Temperatur', meaning: 'temperature' },
+            { target: 'der Wetterbericht', meaning: 'weather report' },
+          ],
+        },
+        {
+          kind: 'rule',
+          title: 'Lesen Teil 1: a postcard',
+          body: 'Postcards and short messages are classic Lesen Teil 1 texts. Watch the time words: what was (gestern), what is (heute) and what will be (morgen).',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? In Hamburg regnet es oft.',
+          context: hamburgPostcard,
+          options: ['Richtig', 'Falsch'],
+          answer: 0,
+          explanation: '“Es regnet fast jeden Tag.”',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Maria fährt heute nach Hause.',
+          context: hamburgPostcard,
+          options: ['Richtig', 'Falsch'],
+          answer: 1,
+          explanation: '“Morgen fahren wir nach Hause”: tomorrow, not today.',
+        },
+        {
+          kind: 'rule',
+          title: 'Sprechen Teil 2: Wetter',
+          body: 'Weather cards: Sommer, Winter, Regen, Lieblingsjahreszeit. Ask a real question with the word and give a short answer.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Your card says “Lieblingsjahreszeit”. Which question fits?',
+          options: [
+            'Was ist deine Lieblingsjahreszeit?',
+            'Lieblingsjahreszeit ist wann?',
+            'Wie viel Grad hat deine Lieblingsjahreszeit?',
+          ],
+          answer: 0,
+          explanation: 'Lieblings- + Jahreszeit: favourite season.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Your card says “Winter”. Ask your partner (du) if they like winter.',
+          accepted: ['Magst du den Winter?', 'Magst du Winter?'],
+          hint: 'Magst du + den Winter?',
+          explanation: 'mögen from Unit 9: Magst du den Winter?',
+        },
+        {
+          kind: 'match',
+          prompt: 'Unit 16 review: match the pairs.',
+          pairs: [
+            ['es regnet', 'it’s raining'],
+            ['der Herbst', 'autumn'],
+            ['es gibt', 'there is'],
+            ['der Süden', 'the south'],
+            ['bewölkt', 'cloudy'],
+          ],
+        },
+        {
+          kind: 'speak',
+          prompt: 'Answer your partner’s weather questions.',
+          lines: [
+            'Meine Lieblingsjahreszeit ist der Herbst.',
+            'Im Winter ist es mir zu kalt.',
+            'Im Sommer gehe ich gern an den See.',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
+const courseApplicant =
+  'Maria Santos ist Brasilianerin. Sie ist am 3. Juli 1998 in Salvador geboren. Sie wohnt jetzt in der Lindenstraße 8 in 04109 Leipzig. Sie ist nicht verheiratet. Sie möchte einen Deutschkurs am Abend machen.';
+
+const unit17 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u17',
+    number: 17,
+    icon: 'file-document-edit-outline',
+    title: 'Ämter und Formulare',
+    canDo:
+      'Give your personal details, fill in a form, and get through an appointment at an office.',
+  },
+  [
+    {
+      id: 'de-a1-u17-details',
+      session: 'Words',
+      title: 'Personal details',
+      outcome: 'Understand and give the personal details that every form asks for.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'At the Bürgeramt',
+          intro:
+            'Maria has moved into the WG and must register her new address at the citizens’ office.',
+          lines: [
+            {
+              speaker: 'Sachbearbeiterin',
+              text: 'Guten Tag. Was kann ich für Sie tun?',
+              meaning: 'Hello. What can I do for you?',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Guten Tag. Ich wohne jetzt in einer neuen Wohnung und möchte die Adresse anmelden.',
+              meaning: 'Hello. I live in a new flat now and would like to register the address.',
+            },
+            {
+              speaker: 'Sachbearbeiterin',
+              text: 'Haben Sie Ihren Pass und die Bestätigung vom Vermieter?',
+              meaning: 'Do you have your passport and the confirmation from the landlord?',
+            },
+            { speaker: 'Maria', text: 'Ja, hier, bitte.', meaning: 'Yes, here you are.' },
+            {
+              speaker: 'Sachbearbeiterin',
+              text: 'Danke. Wie ist Ihr Geburtsdatum?',
+              meaning: 'Thank you. What is your date of birth?',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Der dritte Juli neunzehnhundertachtundneunzig.',
+              meaning: 'The third of July, 1998.',
+            },
+            {
+              speaker: 'Sachbearbeiterin',
+              text: 'Und Ihr Geburtsort?',
+              meaning: 'And your place of birth?',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Salvador, in Brasilien.',
+              meaning: 'Salvador, in Brazil.',
+            },
+          ],
+          note: 'Everyone who moves into a flat in Germany must register the address (Anmeldung) within two weeks. You need a passport or ID card and a confirmation from the landlord, the Wohnungsgeberbestätigung.',
+        },
+        {
+          kind: 'teach',
+          title: 'Personal details',
+          items: [
+            { target: 'das Geburtsdatum', meaning: 'date of birth' },
+            { target: 'der Geburtsort', meaning: 'place of birth' },
+            { target: 'die Staatsangehörigkeit', meaning: 'nationality' },
+            {
+              target: 'der Familienstand',
+              meaning: 'marital status',
+              note: 'ledig, verheiratet, geschieden: from Unit 4.',
+            },
+            {
+              target: 'die Postleitzahl',
+              meaning: 'postcode',
+              note: 'Five digits, before the town: 04109 Leipzig.',
+            },
+            { target: 'die Unterschrift', meaning: 'signature' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'A form asks for “Staatsangehörigkeit”. What do you write?',
+          options: ['Your nationality', 'Your town', 'Your job'],
+          answer: 0,
+          explanation: 'Staatsangehörigkeit: nationality, for example brasilianisch.',
+        },
+        {
+          kind: 'teach',
+          title: 'At the office',
+          items: [
+            { target: 'das Bürgeramt', meaning: 'citizens’ office' },
+            {
+              target: 'der Pass',
+              meaning: 'passport',
+              note: 'Also der Reisepass. ID card: der Personalausweis.',
+            },
+            { target: 'anmelden', meaning: 'to register (an address)' },
+            { target: 'Ziehen Sie eine Nummer.', meaning: 'Take a number.' },
+            { target: 'Sie sind dran.', meaning: 'It’s your turn.' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the form words.',
+          pairs: [
+            ['das Geburtsdatum', 'date of birth'],
+            ['der Geburtsort', 'place of birth'],
+            ['die Postleitzahl', 'postcode'],
+            ['die Unterschrift', 'signature'],
+            ['der Pass', 'passport'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. Where was she born?',
+          audio: 'Ich bin am dritten Juli in Salvador geboren.',
+          options: ['In Salvador', 'In Leipzig', 'In Rio'],
+          answer: 0,
+          explanation: 'in Salvador geboren.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'The clerk asks: “Wie ist Ihr Familienstand?” Which answer fits?',
+          options: ['Ich bin ledig.', 'Ich bin aus Brasilien.', 'Ich bin achtundzwanzig.'],
+          answer: 0,
+          explanation: 'Familienstand: ledig, verheiratet or geschieden.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “I would like to register my address.”',
+          answer: ['Ich', 'möchte', 'meine', 'Adresse', 'anmelden.'],
+          extra: ['melde'],
+          explanation: 'After möchte, anmelden goes to the end in one piece.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Ask: “Where do I have to sign?”',
+          accepted: ['Wo muss ich unterschreiben?', 'Wo unterschreibe ich?'],
+          hint: 'Wo muss ich + unterschreiben?',
+          explanation: 'unterschreiben is not separable: ich unterschreibe.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Give your details at the office.',
+          lines: [
+            'Mein Geburtsdatum ist der dritte Juli.',
+            'Ich bin ledig.',
+            'Wo muss ich unterschreiben?',
+          ],
+          tip: 'In Staatsangehörigkeit, st at the start of a word sounds like sht.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u17-formal',
+      session: 'Grammar',
+      title: 'Wie ist Ihr Name? Formal questions and years',
+      outcome: 'Ask and answer formal questions, and say years.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Formal questions',
+          body: 'At offices, people use Sie and Ihr, and the questions are short and standard. Learn them as fixed patterns.',
+          table: [
+            ['Wie ist Ihr Name?', 'What is your name?'],
+            ['Wann sind Sie geboren?', 'When were you born?'],
+            ['Wo wohnen Sie?', 'Where do you live?'],
+            ['Wie ist Ihre Telefonnummer?', 'What is your phone number?'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Wie ist ___ Adresse? (to someone you call Sie)',
+          options: ['Ihre', 'deine', 'Ihr'],
+          answer: 0,
+          explanation: 'die Adresse → Ihre Adresse. Ihr with a capital I is the formal your.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Wann ___ Sie geboren?',
+          options: ['sind', 'haben', 'ist'],
+          answer: 0,
+          explanation: 'geboren goes with sein: ich bin geboren, Sie sind geboren.',
+        },
+        {
+          kind: 'rule',
+          title: 'Saying years',
+          body: 'Years up to 1999 are said in hundreds: 1998 is neunzehnhundertachtundneunzig. From 2000 on: zweitausend, 2007 is zweitausendsieben. Say just the year, or im Jahr 2020, never “in 2020”.',
+        },
+        {
+          kind: 'teach',
+          title: 'Years',
+          items: [
+            { target: 'neunzehnhundertachtundneunzig', meaning: '1998' },
+            { target: 'zweitausendeins', meaning: '2001' },
+            { target: 'zweitausendzwanzig', meaning: '2020' },
+            { target: 'im Jahr zweitausendzwanzig', meaning: 'in (the year) 2020' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. When was he born?',
+          audio: 'Ich bin neunzehnhundertfünfundachtzig geboren.',
+          options: ['1985', '1958', '1995'],
+          answer: 0,
+          explanation: 'neunzehnhundert + fünfundachtzig: 1985. Units before tens, as always.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the years.',
+          pairs: [
+            ['neunzehnhundertneunzig', '1990'],
+            ['zweitausend', '2000'],
+            ['zweitausendzwölf', '2012'],
+            ['neunzehnhundertachtzig', '1980'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Which sentence is correct?',
+          options: ['Ich bin 1998 geboren.', 'Ich bin in 1998 geboren.', 'Ich habe 1998 geboren.'],
+          answer: 0,
+          explanation: 'No in before a year, and geboren goes with sein.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Ask formally: “When were you born?”',
+          answer: ['Wann', 'sind', 'Sie', 'geboren?'],
+          extra: ['haben'],
+          explanation: 'Wann first, then sind, Sie, and geboren at the end.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write the year in words: 2001',
+          accepted: ['zweitausendeins', 'zweitausend eins'],
+          hint: 'zweitausend + eins.',
+          explanation: 'zweitausendeins, written as one word.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Answer the clerk’s questions.',
+          lines: [
+            'Mein Name ist Maria Santos.',
+            'Ich bin neunzehnhundertachtundneunzig geboren.',
+            'Ich wohne in der Lindenstraße acht.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u17-real',
+      session: 'Real talk',
+      title: '“Ohne Termin geht nichts.” Offices the German way',
+      outcome:
+        'Book an office appointment, bring the right papers, and ask when you don’t understand.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'Booking the office',
+          intro: 'Karim needs an appointment at the citizens’ office and asks Lena.',
+          lines: [
+            {
+              speaker: 'Karim',
+              text: 'Lena, ich muss zum Bürgeramt. Kann ich einfach hingehen?',
+              meaning: 'Lena, I have to go to the citizens’ office. Can I just go there?',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Nein, ohne Termin geht da nichts. Den musst du online buchen.',
+              real: 'Nee, ohne Termin geht da gar nix. Den musste online buchen.',
+              meaning:
+                'No, nothing works there without an appointment. You have to book it online.',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Okay. Oh, der nächste freie Termin ist in drei Wochen!',
+              meaning: 'OK. Oh, the next free appointment is in three weeks!',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Typisch. Schau morgen früh noch mal, da gibt es oft neue Termine.',
+              meaning: 'Typical. Look again early tomorrow, new slots often appear then.',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Gute Idee. Und was muss ich mitbringen?',
+              meaning: 'Good idea. And what do I have to bring?',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Das steht auf der Webseite. Pass, Formular und vielleicht eine Kopie.',
+              meaning: 'It says on the website. Passport, form and maybe a copy.',
+            },
+          ],
+          note: 'Many German offices work only with online appointments, and in big cities the next free slot can be weeks away. Checking early in the morning often helps. Bring every document on the list: without one, you may be sent away.',
+        },
+        {
+          kind: 'teach',
+          title: 'Offices',
+          items: [
+            {
+              target: 'Ohne Termin geht nichts.',
+              meaning: 'Nothing works without an appointment.',
+            },
+            { target: 'online buchen', meaning: 'to book online' },
+            { target: 'Was muss ich mitbringen?', meaning: 'What do I have to bring?' },
+            { target: 'die Kopie', meaning: 'copy' },
+            { target: 'die Webseite', meaning: 'website', note: 'Also: die Website.' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Lena says: “Ohne Termin geht da nichts.” What should Karim do?',
+          options: ['Book an appointment first', 'Go there now', 'Call his landlord'],
+          answer: 0,
+          explanation: 'Without an appointment, nothing works: book online first.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What does he need to bring?',
+          audio: 'Bringen Sie bitte Ihren Pass und eine Kopie vom Mietvertrag mit.',
+          options: [
+            'His passport and a copy of the rental contract',
+            'Only his passport',
+            'A photo and his bank card',
+          ],
+          answer: 0,
+          explanation: 'Pass und eine Kopie vom Mietvertrag.',
+        },
+        {
+          kind: 'scene',
+          title: 'Your number, please',
+          intro: 'At the office, numbers are called out.',
+          lines: [
+            {
+              speaker: 'Ansage',
+              text: 'Die Nummer zweihundertzwölf, bitte zu Platz vier!',
+              meaning: 'Number two hundred and twelve, please go to desk four!',
+            },
+            { speaker: 'Karim', text: 'Das bin ich! Guten Tag.', meaning: 'That’s me! Hello.' },
+            {
+              speaker: 'Sachbearbeiterin',
+              text: 'Guten Tag. Ihren Pass, bitte. Und das Formular?',
+              meaning: 'Hello. Your passport, please. And the form?',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Hier. Aber ich verstehe ein Wort nicht: Was bedeutet „Zuzug“?',
+              meaning: 'Here. But I don’t understand one word: what does “Zuzug” mean?',
+            },
+            {
+              speaker: 'Sachbearbeiterin',
+              text: 'Zuzug heißt: Sie ziehen neu hierher. Hier kommt das Datum vom Umzug hin.',
+              meaning: '“Zuzug” means you are moving here. The date of the move goes here.',
+            },
+          ],
+          note: 'Officials use formal, fast German full of long words. Asking “Was bedeutet …?” is completely normal, and most clerks explain kindly.',
+        },
+        {
+          kind: 'teach',
+          title: 'Getting through',
+          items: [
+            { target: 'Das bin ich!', meaning: 'That’s me!' },
+            { target: 'Was bedeutet das?', meaning: 'What does that mean?' },
+            { target: 'der Umzug', meaning: 'move (to a new home)' },
+            {
+              target: 'ausfüllen',
+              meaning: 'to fill in',
+              note: 'Separable: Ich fülle das Formular aus.',
+            },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match what you hear.',
+          pairs: [
+            ['der Umzug', 'move'],
+            ['online buchen', 'to book online'],
+            ['die Kopie', 'copy'],
+            ['Das bin ich!', 'That’s me!'],
+            ['ausfüllen', 'to fill in'],
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Ask: “What does this word mean?”',
+          answer: ['Was', 'bedeutet', 'dieses', 'Wort?'],
+          extra: ['ist'],
+          explanation: 'Was bedeutet …? The polite way to ask about a word.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Ask: “What do I have to bring?”',
+          accepted: ['Was muss ich mitbringen?'],
+          hint: 'Was muss ich + mitbringen?',
+          explanation: 'muss second, mitbringen at the end.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Get through your office appointment.',
+          lines: [
+            'Guten Tag, ich habe um zehn Uhr einen Termin.',
+            'Hier sind mein Pass und das Formular.',
+            'Entschuldigung, was bedeutet dieses Wort?',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u17-exam',
+      session: 'Exam task',
+      title: 'Goethe A1 practice: Schreiben Teil 1, a form',
+      outcome:
+        'Fill in a form for someone in Schreiben Teil 1, catch a postcode, and ask formal questions.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Schreiben Teil 1: the form',
+          body: 'You read a short text about a person and fill in five gaps in a form for them. You met this in Unit 3; now the form also asks for nationality, marital status and more.',
+        },
+        {
+          kind: 'teach',
+          title: 'Words on forms',
+          items: [
+            { target: 'männlich / weiblich / divers', meaning: 'male / female / diverse' },
+            { target: 'die E-Mail-Adresse', meaning: 'email address' },
+            { target: 'Datum, Unterschrift', meaning: 'date, signature' },
+            {
+              target: 'Zutreffendes ankreuzen',
+              meaning: 'tick where it applies',
+              note: 'A typical form instruction: put a cross in the right box.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Form: Staatsangehörigkeit?',
+          context: courseApplicant,
+          options: ['brasilianisch', 'deutsch', 'Salvador'],
+          answer: 0,
+          explanation: '“Maria Santos ist Brasilianerin”: Brazilian.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Form: Familienstand?',
+          context: courseApplicant,
+          options: ['ledig', 'verheiratet', 'geschieden'],
+          answer: 0,
+          explanation: '“Sie ist nicht verheiratet”: ledig.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Form: Geburtsort?',
+          context: courseApplicant,
+          accepted: ['Salvador'],
+          hint: 'Where was she born?',
+          explanation: '“in Salvador geboren”.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Form: Kurszeit: Vormittag oder Abend?',
+          context: courseApplicant,
+          options: ['Abend', 'Vormittag'],
+          answer: 0,
+          explanation: '“einen Deutschkurs am Abend”.',
+        },
+        {
+          kind: 'rule',
+          title: 'Hören: numbers at the office',
+          body: 'Clerks ask you to spell names and give numbers, as in Unit 3. Postcodes are often read digit by digit: null vier eins null neun.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What is the postcode?',
+          audio: 'Die Postleitzahl ist null vier eins null neun.',
+          options: ['04109', '04190', '40109'],
+          answer: 0,
+          explanation: 'null vier eins null neun: 04109.',
+        },
+        {
+          kind: 'rule',
+          title: 'Sprechen Teil 2: formal cards',
+          body: 'Cards on offices and forms often need Sie: Wie ist Ihre Adresse? Wann sind Sie geboren?',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Your card says “Geburtsort”. Which formal question fits?',
+          options: ['Wo sind Sie geboren?', 'Wo bist du Geburtsort?', 'Geburtsort ist Sie?'],
+          answer: 0,
+          explanation: 'Wo sind Sie geboren? Where were you born?',
+        },
+        {
+          kind: 'match',
+          prompt: 'Unit 17 review: match the pairs.',
+          pairs: [
+            ['die Staatsangehörigkeit', 'nationality'],
+            ['ledig', 'single'],
+            ['die Unterschrift', 'signature'],
+            ['das Bürgeramt', 'citizens’ office'],
+            ['der Umzug', 'move'],
+          ],
+        },
+        {
+          kind: 'speak',
+          prompt: 'Answer formal questions about yourself.',
+          lines: [
+            'Ich heiße Alex, und ich bin in Kanada geboren.',
+            'Ich wohne in der Lindenstraße acht in Leipzig.',
+            'Meine Postleitzahl ist null vier eins null neun.',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
+const courseEmail =
+  'Liebe Kursteilnehmerinnen und Kursteilnehmer,\nder Kurs am Donnerstag fällt leider aus. Wir machen am Freitag um 18 Uhr weiter, im Raum 12. Bitte bringen Sie Ihr Buch mit.\nViele Grüße\nAnna Klein, Volkshochschule';
+
+const unit18 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u18',
+    number: 18,
+    icon: 'message-text-outline',
+    title: 'Nachrichten',
+    canDo: 'Read and write short messages and emails, informal and formal, and know which to use.',
+  },
+  [
+    {
+      id: 'de-a1-u18-chat',
+      session: 'Words',
+      title: 'Chats and voice messages',
+      outcome: 'Read and send short messages the way Germans write them.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'The WG chat',
+          intro: 'The flat has a group chat. Today Alex is late for dinner.',
+          lines: [
+            {
+              speaker: 'Alex',
+              text: 'Hey, bin gleich da! Die Straßenbahn steht im Stau.',
+              meaning: 'Hey, I’ll be there soon! The tram is stuck in traffic.',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Kein Stress! Wir fangen schon mal an.',
+              meaning: 'No stress! We’ll start already.',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Bringst du Brot mit? Wir haben keins mehr.',
+              meaning: 'Can you bring bread? We’ve got none left.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Klar, mach ich. Bis gleich!',
+              meaning: 'Sure, will do. See you soon!',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Danke dir! Liebe Grüße.',
+              meaning: 'Thanks! Love, Lena.',
+            },
+          ],
+          note: 'German chats are short: people drop ich (Bin gleich da) and use abbreviations like LG (liebe Grüße) and VG (viele Grüße).',
+        },
+        {
+          kind: 'teach',
+          title: 'Chat German',
+          items: [
+            { target: 'Bin gleich da!', meaning: 'I’ll be there in a moment!' },
+            { target: 'Kein Stress!', meaning: 'No stress!' },
+            { target: 'Mach ich.', meaning: 'Will do.' },
+            { target: 'Danke dir!', meaning: 'Thanks!' },
+            {
+              target: 'LG / VG',
+              meaning: 'love / best wishes (in messages)',
+              note: 'Liebe Grüße, viele Grüße.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'A friend ends a message with “LG”. What does it mean?',
+          options: ['Liebe Grüße', 'Leider gar nicht', 'Lass gehen'],
+          answer: 0,
+          explanation: 'LG: liebe Grüße, a friendly sign-off.',
+        },
+        {
+          kind: 'teach',
+          title: 'Messages',
+          items: [
+            { target: 'die Nachricht', meaning: 'message' },
+            { target: 'die Sprachnachricht', meaning: 'voice message' },
+            { target: 'Schreib mir!', meaning: 'Write to me!' },
+            { target: 'Ich melde mich.', meaning: 'I’ll get in touch.' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the chat phrases.',
+          pairs: [
+            ['Bin gleich da!', 'I’ll be there soon!'],
+            ['Kein Stress!', 'No stress!'],
+            ['Mach ich.', 'Will do.'],
+            ['die Nachricht', 'message'],
+            ['Ich melde mich.', 'I’ll get in touch.'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen to the voice message. What does Karim need?',
+          audio:
+            'Hi, hier ist Karim. Kannst du mir die Hausaufgaben schicken? Ich war heute nicht im Kurs. Danke!',
+          options: ['The homework', 'A book', 'His keys'],
+          answer: 0,
+          explanation: 'die Hausaufgaben: the homework. He missed the course today.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'You will be ten minutes late. Which message suits a friend?',
+          options: [
+            'Sorry, bin in zehn Minuten da!',
+            'Sehr geehrte Lena, ich komme später.',
+            'Ich bitte vielmals um Entschuldigung.',
+          ],
+          answer: 0,
+          explanation: 'Short and friendly for friends. The others belong in formal emails.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Write to a friend: “Can you bring bread?”',
+          answer: ['Kannst', 'du', 'Brot', 'mitbringen?'],
+          extra: ['bringst'],
+          explanation: 'After kannst, mitbringen goes to the end in one piece.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Reply: “Sure, will do!”',
+          accepted: ['Klar, mach ich!', 'Klar, mache ich!'],
+          hint: 'Klar + mach ich.',
+          explanation: 'Mach ich: short for “Das mache ich.”',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Send three quick voice messages.',
+          lines: [
+            'Bin gleich da!',
+            'Kein Stress, wir sehen uns später.',
+            'Danke dir! Liebe Grüße.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u18-formal',
+      session: 'Grammar',
+      title: 'Hallo or Sehr geehrte? Informal and formal writing',
+      outcome: 'Start, write and end a message in the right register.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Two registers',
+          body: 'For friends and family: du, Hallo or Liebe/Lieber, and Viele Grüße. For offices, schools and people you call Sie: Sehr geehrte Frau or Sehr geehrter Herr + surname, Sie and Ihr, and Mit freundlichen Grüßen.',
+          table: [
+            ['Hallo Karim,', 'Sehr geehrter Herr Haddad,'],
+            ['Liebe Lena,', 'Sehr geehrte Frau Klein,'],
+            ['Kannst du …?', 'Können Sie …?'],
+            ['Viele Grüße', 'Mit freundlichen Grüßen'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'You write to your landlord, Herr Krause. How do you start?',
+          options: ['Sehr geehrter Herr Krause,', 'Hallo Krause,', 'Lieber Krause!'],
+          answer: 0,
+          explanation: 'Formal: Sehr geehrter Herr + surname.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'You write formally to Frau Klein. How do you start?',
+          options: ['Sehr geehrte Frau Klein,', 'Sehr geehrter Frau Klein,', 'Liebe Klein,'],
+          answer: 0,
+          explanation: 'Frau: geehrte. Herr: geehrter.',
+        },
+        {
+          kind: 'teach',
+          title: 'Formal phrases',
+          items: [
+            {
+              target: 'Sehr geehrte Frau Klein,',
+              meaning: 'Dear Ms Klein,',
+              note: 'For a man: Sehr geehrter Herr Krause,',
+            },
+            {
+              target: 'Freundliche Grüße',
+              meaning: 'Kind regards',
+              note: 'A little lighter than Mit freundlichen Grüßen.',
+            },
+            { target: 'Ich habe eine Frage.', meaning: 'I have a question.' },
+            { target: 'Vielen Dank im Voraus!', meaning: 'Thanks in advance!' },
+          ],
+        },
+        {
+          kind: 'rule',
+          title: 'After the greeting: a small letter',
+          body: 'The first line after the greeting starts with a small letter, unless it is a noun or Sie: Liebe Lena, / wie geht es dir? Sehr geehrte Frau Klein, / ich habe eine Frage.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Which line correctly follows “Liebe Lena,”?',
+          options: ['wie geht es dir?', 'Wie geht es dir?', 'WIE geht es dir?'],
+          answer: 0,
+          explanation: 'After the comma, the next line starts with a small letter.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match informal and formal.',
+          pairs: [
+            ['Hallo', 'Sehr geehrte'],
+            ['du', 'Sie'],
+            ['dein', 'Ihr'],
+            ['Viele Grüße', 'Mit freundlichen Grüßen'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. Is this message formal or informal?',
+          audio: 'Sehr geehrte Frau Klein, leider kann ich morgen nicht zum Kurs kommen.',
+          options: ['Formal', 'Informal'],
+          answer: 0,
+          explanation: 'Sehr geehrte and a surname: formal.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Start a formal email: “Dear Mr Krause, I have a question.”',
+          answer: ['Sehr', 'geehrter', 'Herr', 'Krause,', 'ich', 'habe', 'eine', 'Frage.'],
+          extra: ['geehrte'],
+          explanation: 'Herr → geehrter. The next line starts with a small ich.',
+        },
+        {
+          kind: 'type',
+          prompt: 'End a formal email: “Kind regards”',
+          accepted: ['Mit freundlichen Grüßen', 'Freundliche Grüße'],
+          hint: 'Mit freundlichen + Grüßen.',
+          explanation: 'Mit freundlichen Grüßen: the standard formal ending.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Read a formal start and ending aloud.',
+          lines: [
+            'Sehr geehrte Frau Klein,',
+            'ich habe eine Frage zum Kurs.',
+            'Mit freundlichen Grüßen, Alex',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u18-real',
+      session: 'Real talk',
+      title: '“Sorry, bin spät dran!” Messages people really send',
+      outcome: 'Send the messages people really send, and write a short email to a school.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'Running late',
+          intro: 'Maria sends Lena voice messages from the bus.',
+          lines: [
+            {
+              speaker: 'Maria',
+              text: 'Hey Lena! Sorry, ich bin spät dran. Ich bin in zehn Minuten da.',
+              meaning: 'Hey Lena! Sorry, I’m running late. I’ll be there in ten minutes.',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Alles gut! Ich warte im Café an der Ecke.',
+              meaning: 'All good! I’m waiting in the café on the corner.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Super. Bestell mir schon mal einen Cappuccino, ja?',
+              meaning: 'Great. Order me a cappuccino in the meantime, OK?',
+            },
+            { speaker: 'Lena', text: 'Mach ich. Bis gleich!', meaning: 'Will do. See you soon!' },
+          ],
+          note: 'Voice messages are hugely popular in Germany. Spät dran sein, to be running late, is the everyday phrase.',
+        },
+        {
+          kind: 'teach',
+          title: 'Running late',
+          items: [
+            { target: 'Ich bin spät dran.', meaning: 'I’m running late.' },
+            { target: 'Alles gut!', meaning: 'All good! No problem!' },
+            { target: 'Bis gleich!', meaning: 'See you in a moment!' },
+            { target: 'schon mal', meaning: 'in the meantime, already' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Lena answers: “Alles gut!” What does she mean?',
+          options: ['No problem', 'The food is good', 'Everything is finished'],
+          answer: 0,
+          explanation: 'Alles gut: all good, don’t worry.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. When does he arrive?',
+          audio: 'Sorry, mein Zug hat Verspätung. Ich bin erst um halb neun da.',
+          options: ['At 8:30', 'At 9:30', 'At 8:00'],
+          answer: 0,
+          explanation: 'erst um halb neun: not until 8:30.',
+        },
+        {
+          kind: 'scene',
+          title: 'An email to the school',
+          intro: 'Alex is ill and writes to his language school. He reads it to Jonas first.',
+          lines: [
+            {
+              speaker: 'Alex',
+              text: 'Hör mal: Sehr geehrte Frau Schulz, leider bin ich krank und kann diese Woche nicht kommen.',
+              meaning: 'Listen: Dear Ms Schulz, unfortunately I’m ill and can’t come this week.',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Gut. Und frag noch nach den Hausaufgaben.',
+              meaning: 'Good. And ask about the homework too.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Gute Idee. Und am Ende: Mit freundlichen Grüßen?',
+              meaning: 'Good idea. And at the end: Kind regards?',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Genau. Oder etwas lockerer: Viele Grüße.',
+              meaning: 'Exactly. Or a bit more relaxed: Best wishes.',
+            },
+          ],
+          note: 'Teachers and colleagues often switch to Viele Grüße after the first few emails. If they write to you that way, you can answer the same way.',
+        },
+        {
+          kind: 'teach',
+          title: 'Emails',
+          items: [
+            { target: 'die E-Mail', meaning: 'email' },
+            { target: 'schicken', meaning: 'to send' },
+            { target: 'die Hausaufgaben', meaning: 'homework' },
+            { target: 'lockerer', meaning: 'more relaxed, less formal' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match what you hear.',
+          pairs: [
+            ['Ich bin spät dran.', 'I’m running late.'],
+            ['Alles gut!', 'All good!'],
+            ['schicken', 'to send'],
+            ['die Hausaufgaben', 'homework'],
+            ['Bis gleich!', 'See you soon!'],
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Write formally: “Could you send me the homework?”',
+          answer: ['Können', 'Sie', 'mir', 'die', 'Hausaufgaben', 'schicken?'],
+          extra: ['Kannst'],
+          explanation: 'Können Sie first, schicken at the end.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write to a friend: “Sorry, I’m running late!”',
+          accepted: ['Sorry, ich bin spät dran!', 'Sorry, bin spät dran!'],
+          hint: 'Sorry + ich bin spät dran.',
+          explanation: 'spät dran sein: to be running late.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Leave a quick voice message.',
+          lines: [
+            'Hey, sorry, ich bin spät dran.',
+            'Ich bin in zehn Minuten da.',
+            'Bestell schon mal, ja? Bis gleich!',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u18-exam',
+      session: 'Exam task',
+      title: 'Goethe A1 practice: Schreiben Teil 2, formal and informal',
+      outcome:
+        'Write a formal message for Schreiben Teil 2, and read a course email in Lesen Teil 1.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Schreiben Teil 2',
+          body: 'You write about 30 words, either to a friend or to an office or school. Decide first: du or Sie? Then cover all three points, and start and end in the right register.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Task: write to your teacher that you can’t come on Monday. Which start fits?',
+          options: ['Liebe Frau Schulz,', 'Hallo Schulz,', 'Hi Lehrerin,'],
+          answer: 0,
+          explanation:
+            'For a teacher you know: Liebe Frau Schulz. Sehr geehrte Frau Schulz is also fine.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Task: invite a friend to a barbecue. Which ending fits?',
+          options: ['Viele Grüße', 'Mit freundlichen Grüßen', 'Hochachtungsvoll'],
+          answer: 0,
+          explanation: 'For a friend: Viele Grüße or LG.',
+        },
+        {
+          kind: 'teach',
+          title: 'Useful sentences',
+          items: [
+            { target: 'Ich kann leider nicht kommen.', meaning: 'Unfortunately I can’t come.' },
+            { target: 'Ich habe eine Bitte.', meaning: 'I have a request.' },
+            { target: 'Bitte antworten Sie mir bald.', meaning: 'Please reply soon.' },
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Point 1: “Unfortunately I can’t come on Monday.”',
+          answer: ['Leider', 'kann', 'ich', 'am', 'Montag', 'nicht', 'kommen.'],
+          extra: ['komme'],
+          explanation: 'Leider first, then kann, and kommen at the end.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Point 2: “I am ill.”',
+          answer: ['Ich', 'bin', 'krank.'],
+          extra: ['habe'],
+          explanation: 'Ich bin krank, from Unit 10.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Point 3: “Please reply soon.”',
+          accepted: ['Bitte antworten Sie mir bald.', 'Bitte antworten Sie bald.'],
+          hint: 'Bitte antworten Sie + mir bald.',
+          explanation: 'Bitte + the Sie form: polite and clear.',
+        },
+        {
+          kind: 'rule',
+          title: 'Lesen Teil 1: an email',
+          body: 'Emails are also Lesen Teil 1 texts. Find who writes, why, and what you have to do.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Am Donnerstag ist kein Kurs.',
+          context: courseEmail,
+          options: ['Richtig', 'Falsch'],
+          answer: 0,
+          explanation: '“fällt leider aus”: is cancelled.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Der Kurs am Freitag ist im Raum zwei.',
+          context: courseEmail,
+          options: ['Richtig', 'Falsch'],
+          answer: 1,
+          explanation: '“im Raum 12”: room twelve.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Unit 18 review: match the pairs.',
+          pairs: [
+            ['LG', 'liebe Grüße'],
+            ['Sehr geehrte', 'Dear (formal)'],
+            ['spät dran', 'running late'],
+            ['die Nachricht', 'message'],
+            ['schicken', 'to send'],
+          ],
+        },
+        {
+          kind: 'speak',
+          prompt: 'Read your message to your teacher aloud.',
+          lines: [
+            'Liebe Frau Schulz,',
+            'leider kann ich am Montag nicht kommen. Ich bin krank.',
+            'Bitte antworten Sie mir bald. Viele Grüße, Maria',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
+const tomsWeekend =
+  'Hallo zusammen! Letztes Wochenende war toll. Am Samstag habe ich mit meiner Schwester in Berlin eingekauft. Am Abend haben wir in einem kleinen Restaurant gegessen. Am Sonntag hat es geregnet, und ich habe zu Hause gelesen.\nTom';
+
+const unit19 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u19',
+    number: 19,
+    icon: 'history',
+    title: 'Was hast du gemacht?',
+    canDo: 'Say what you did yesterday or at the weekend with the perfect tense, and ask others.',
+  },
+  [
+    {
+      id: 'de-a1-u19-weekend',
+      session: 'Words',
+      title: 'What did you do?',
+      outcome: 'Understand and use the most common past forms.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'Monday before the course',
+          intro: 'Karim and Maria talk before the lesson starts.',
+          lines: [
+            {
+              speaker: 'Karim',
+              text: 'Und, was hast du am Wochenende gemacht?',
+              meaning: 'So, what did you do at the weekend?',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Am Samstag habe ich lange geschlafen und dann gekocht.',
+              meaning: 'On Saturday I slept in and then cooked.',
+            },
+            { speaker: 'Karim', text: 'Klingt gemütlich!', meaning: 'Sounds cosy!' },
+            {
+              speaker: 'Maria',
+              text: 'Am Sonntag habe ich mit Lena einen Film gesehen. Und du?',
+              meaning: 'On Sunday I watched a film with Lena. And you?',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Ich habe Fußball gespielt. Wir haben drei zu eins gewonnen!',
+              meaning: 'I played football. We won three to one!',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Danach haben wir zusammen Pizza gegessen.',
+              meaning: 'Afterwards we ate pizza together.',
+            },
+          ],
+          note: 'In everyday speech, Germans use the perfect tense (habe … gemacht) for the past. Only a few verbs, like war and hatte, are normally used in the simple past.',
+        },
+        {
+          kind: 'teach',
+          title: 'Regular past forms',
+          items: [
+            { target: 'gemacht', meaning: 'done, made (machen)' },
+            { target: 'gekocht', meaning: 'cooked (kochen)' },
+            { target: 'gespielt', meaning: 'played (spielen)' },
+            { target: 'gearbeitet', meaning: 'worked (arbeiten)' },
+            { target: 'gekauft', meaning: 'bought (kaufen)' },
+            { target: 'gelernt', meaning: 'learned (lernen)' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Karim asks: “Was hast du am Wochenende gemacht?” What does he want to know?',
+          options: ['What Maria did at the weekend', 'What Maria will do', 'What Maria likes'],
+          answer: 0,
+          explanation: 'hast … gemacht: the perfect tense, about the past.',
+        },
+        {
+          kind: 'teach',
+          title: 'Irregular past forms',
+          items: [
+            { target: 'gegessen', meaning: 'eaten (essen)' },
+            { target: 'getrunken', meaning: 'drunk (trinken)' },
+            { target: 'gesehen', meaning: 'seen, watched (sehen)' },
+            { target: 'geschlafen', meaning: 'slept (schlafen)' },
+            { target: 'gelesen', meaning: 'read (lesen)' },
+            { target: 'getroffen', meaning: 'met (treffen)' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the past forms.',
+          pairs: [
+            ['gemacht', 'done'],
+            ['gegessen', 'eaten'],
+            ['gesehen', 'seen'],
+            ['gekauft', 'bought'],
+            ['geschlafen', 'slept'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What did she do on Sunday?',
+          audio: 'Am Sonntag habe ich meine Eltern angerufen und ein Buch gelesen.',
+          options: [
+            'She called her parents and read a book',
+            'She visited her parents',
+            'She bought a book',
+          ],
+          answer: 0,
+          explanation: 'angerufen: called. gelesen: read.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Which sentence is about the past?',
+          options: ['Ich habe Pizza gegessen.', 'Ich esse Pizza.', 'Ich möchte Pizza essen.'],
+          answer: 0,
+          explanation: 'habe … gegessen: the perfect tense.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “I played football.”',
+          answer: ['Ich', 'habe', 'Fußball', 'gespielt.'],
+          extra: ['spiele'],
+          explanation: 'habe second, gespielt at the very end.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “I cooked.”',
+          accepted: ['Ich habe gekocht.'],
+          hint: 'Ich habe + gekocht.',
+          explanation: 'habe + gekocht.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Say what you did at the weekend.',
+          lines: [
+            'Am Samstag habe ich lange geschlafen.',
+            'Dann habe ich Freunde getroffen.',
+            'Am Sonntag habe ich gekocht.',
+          ],
+          tip: 'Stress the middle of the past form: ge-MACHT, ge-SPIELT, ge-GES-sen.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u19-perfekt',
+      session: 'Grammar',
+      title: 'Ich habe gekauft: the perfect tense with haben',
+      outcome: 'Build past sentences with haben and the past participle.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'haben + the past participle',
+          body: 'The perfect tense has two parts: haben in second place, and the past participle at the very end: Ich habe Brot gekauft. Wir haben lange gearbeitet.',
+          table: [
+            ['ich habe', 'Ich habe Brot gekauft.'],
+            ['du hast', 'Hast du schon gegessen?'],
+            ['er, sie hat', 'Sie hat Deutsch gelernt.'],
+            ['wir haben', 'Wir haben Musik gehört.'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Gestern ___ ich lange gearbeitet.',
+          options: ['habe', 'bin', 'hat'],
+          answer: 0,
+          explanation: 'ich habe … gearbeitet.',
+        },
+        {
+          kind: 'rule',
+          title: 'Regular verbs: ge- … -t',
+          body: 'Most verbs: ge + stem + t. machen → gemacht, kaufen → gekauft. If the stem ends in -t or -d, add -et: arbeiten → gearbeitet.',
+          table: [
+            ['machen', 'gemacht'],
+            ['kaufen', 'gekauft'],
+            ['arbeiten', 'gearbeitet'],
+            ['hören', 'gehört'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'What is the past participle of “lernen”?',
+          options: ['gelernt', 'gelernen', 'lerntet'],
+          answer: 0,
+          explanation: 'ge + lern + t: gelernt.',
+        },
+        {
+          kind: 'rule',
+          title: 'Irregular verbs: ge- … -en',
+          body: 'Many common verbs end in -en, often with a new vowel: essen → gegessen, trinken → getrunken, treffen → getroffen. Learn them as words.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'What is the past participle of “trinken”?',
+          options: ['getrunken', 'getrinkt', 'getrinken'],
+          answer: 0,
+          explanation: 'trinken → getrunken, with a new vowel.',
+        },
+        {
+          kind: 'rule',
+          title: 'Two small groups',
+          body: 'Separable verbs put ge in the middle: einkaufen → eingekauft, aufräumen → aufgeräumt. Verbs ending in -ieren have no ge at all: studieren → studiert, telefonieren → telefoniert.',
+        },
+        {
+          kind: 'teach',
+          title: 'Special forms',
+          items: [
+            { target: 'eingekauft', meaning: 'did the shopping (einkaufen)' },
+            { target: 'aufgeräumt', meaning: 'tidied up (aufräumen)' },
+            { target: 'angerufen', meaning: 'called (anrufen)' },
+            { target: 'studiert', meaning: 'studied (studieren)' },
+            { target: 'telefoniert', meaning: 'talked on the phone (telefonieren)' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the verb and its past participle.',
+          pairs: [
+            ['einkaufen', 'eingekauft'],
+            ['anrufen', 'angerufen'],
+            ['studieren', 'studiert'],
+            ['treffen', 'getroffen'],
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “We tidied up the flat.”',
+          answer: ['Wir', 'haben', 'die', 'Wohnung', 'aufgeräumt.'],
+          extra: ['räumen'],
+          explanation: 'haben second, aufgeräumt at the end, with ge in the middle.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Ask a friend: “Have you eaten yet?”',
+          accepted: ['Hast du schon gegessen?'],
+          hint: 'Hast du + schon + gegessen?',
+          explanation: 'A yes/no question: hast first, gegessen at the end.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Say what you did yesterday.',
+          lines: [
+            'Gestern habe ich eingekauft.',
+            'Dann habe ich meine Mutter angerufen.',
+            'Am Abend habe ich ein Buch gelesen.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u19-real',
+      session: 'Real talk',
+      title: '“Und dann?” Telling what happened',
+      outcome: 'Tell a short story about your day and keep someone else’s story going.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'What happened?',
+          intro: 'Lena comes home late. Jonas wants to know everything.',
+          lines: [
+            {
+              speaker: 'Jonas',
+              text: 'Na, wo warst du denn so lange?',
+              meaning: 'So, where were you all this time?',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Ich habe mit Maria Kaffee getrunken. Und dann haben wir Karim getroffen!',
+              real: 'Ich hab mit Maria Kaffee getrunken. Und dann ham wir Karim getroffen!',
+              meaning: 'I had coffee with Maria. And then we met Karim!',
+            },
+            { speaker: 'Jonas', text: 'Echt? Und dann?', meaning: 'Really? And then?' },
+            {
+              speaker: 'Lena',
+              text: 'Dann sind wir zusammen ins Kino gegangen.',
+              meaning: 'Then we went to the cinema together.',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Ohne mich? Was habt ihr gesehen?',
+              meaning: 'Without me? What did you see?',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Einen Krimi. Der war echt spannend!',
+              meaning: 'A crime film. It was really exciting!',
+            },
+          ],
+          note: 'In speech, habe often becomes hab and haben becomes ham. Some verbs of movement use sein in the perfect: Wir sind ins Kino gegangen. You will learn them properly in A2; for now, just recognise them.',
+        },
+        {
+          kind: 'teach',
+          title: 'Telling a story',
+          items: [
+            { target: 'Und dann?', meaning: 'And then?' },
+            { target: 'zuerst', meaning: 'first' },
+            { target: 'danach', meaning: 'after that' },
+            { target: 'spannend', meaning: 'exciting, gripping' },
+            {
+              target: 'Ich bin ins Kino gegangen.',
+              meaning: 'I went to the cinema.',
+              note: 'gehen uses sein: ich bin gegangen.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Lena says: “Dann sind wir ins Kino gegangen.” Why sind, not haben?',
+          options: [
+            'gehen is a movement verb and uses sein',
+            'It is the future',
+            'It is a mistake',
+          ],
+          answer: 0,
+          explanation: 'Movement from one place to another (gehen, fahren, kommen) uses sein.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What did they do first?',
+          audio: 'Zuerst haben wir eingekauft, danach haben wir zusammen gekocht.',
+          options: ['They went shopping', 'They cooked', 'They went to the cinema'],
+          answer: 0,
+          explanation: 'Zuerst: first. Danach: after that.',
+        },
+        {
+          kind: 'scene',
+          title: 'At the bakery',
+          intro: 'Frau Wagner meets Alex at the bakery early in the morning.',
+          lines: [
+            {
+              speaker: 'Frau Wagner',
+              text: 'Na, Alex, schon gefrühstückt?',
+              meaning: 'Well, Alex, had breakfast yet?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Nein, noch nicht. Ich habe verschlafen!',
+              meaning: 'No, not yet. I overslept!',
+            },
+            {
+              speaker: 'Frau Wagner',
+              text: 'Ach je! Haben Sie gestern lange gearbeitet?',
+              meaning: 'Oh dear! Did you work late yesterday?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Nein, ich habe bis eins ein Spiel geguckt.',
+              real: 'Nee, ich hab bis eins Fußball geguckt.',
+              meaning: 'No, I watched a match until one.',
+              realMeaning: 'Nah, I watched football until one.',
+            },
+            { speaker: 'Frau Wagner', text: 'Ach, die Jugend!', meaning: 'Oh, young people!' },
+          ],
+          note: 'gucken is the everyday word for watching in much of Germany; sehen and schauen mean the same. Ach, die Jugend! is what older people say, kindly, about the young.',
+        },
+        {
+          kind: 'teach',
+          title: 'The everyday past',
+          items: [
+            { target: 'Schon gefrühstückt?', meaning: 'Had breakfast yet?' },
+            { target: 'Ich habe verschlafen.', meaning: 'I overslept.' },
+            { target: 'geguckt', meaning: 'watched (gucken)' },
+            { target: 'noch nicht', meaning: 'not yet' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match what you hear.',
+          pairs: [
+            ['Und dann?', 'And then?'],
+            ['zuerst', 'first'],
+            ['danach', 'after that'],
+            ['spannend', 'exciting'],
+            ['noch nicht', 'not yet'],
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Tell a story: “First I did the shopping, then I cooked.”',
+          answer: ['Zuerst', 'habe', 'ich', 'eingekauft,', 'dann', 'habe', 'ich', 'gekocht.'],
+          extra: ['bin'],
+          explanation: 'After zuerst and dann, habe comes next, then ich.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Ask a friend about a film: “What did you see?”',
+          accepted: ['Was hast du gesehen?', 'Was hast du geguckt?'],
+          hint: 'Was hast du + gesehen?',
+          explanation: 'hast second, gesehen at the end.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Tell a friend about your evening.',
+          lines: [
+            'Zuerst habe ich gekocht.',
+            'Dann habe ich einen Film geguckt.',
+            'Der war echt spannend!',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u19-exam',
+      session: 'Exam task',
+      title: 'Goethe A1 practice: what happened, in Lesen, Hören and Sprechen',
+      outcome:
+        'Follow past events in a text and in recordings, and ask about the past in Sprechen Teil 2.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Past events in the exam',
+          body: 'Exam texts often tell what someone did. Match each day with its activity, and watch for zuerst, dann and danach.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Tom hat am Samstag in Berlin eingekauft.',
+          context: tomsWeekend,
+          options: ['Richtig', 'Falsch'],
+          answer: 0,
+          explanation: '“Am Samstag habe ich mit meiner Schwester in Berlin eingekauft.”',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Am Sonntag war das Wetter schön.',
+          context: tomsWeekend,
+          options: ['Richtig', 'Falsch'],
+          answer: 1,
+          explanation: '“Am Sonntag hat es geregnet.”',
+        },
+        {
+          kind: 'teach',
+          title: 'Words for the past',
+          items: [
+            { target: 'letztes Wochenende', meaning: 'last weekend' },
+            { target: 'vorgestern', meaning: 'the day before yesterday' },
+            { target: 'toll', meaning: 'great' },
+            { target: 'zu Hause', meaning: 'at home' },
+          ],
+        },
+        {
+          kind: 'rule',
+          title: 'Hören Teil 1: what did they do?',
+          body: 'Three pictures, one question: what did the person do? The answer is in the past participle at the end of the sentence.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What did he do yesterday evening?',
+          audio:
+            'Gestern Abend? Ich war so müde. Ich habe nur noch ferngesehen und bin früh ins Bett gegangen.',
+          options: [
+            'He watched TV and went to bed early',
+            'He went to the cinema',
+            'He worked late',
+          ],
+          answer: 0,
+          explanation: 'ferngesehen: watched TV. früh ins Bett: to bed early.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What did she buy?',
+          audio: 'Ich habe keinen Rock gekauft, sondern eine Hose. Die war im Angebot.',
+          options: ['Trousers', 'A skirt', 'Shoes'],
+          answer: 0,
+          explanation: '“keinen Rock, sondern eine Hose”: not a skirt but trousers.',
+        },
+        {
+          kind: 'rule',
+          title: 'Sprechen Teil 2: the past',
+          body: 'Cards like Wochenende, gestern or Urlaub invite a question in the past: Was hast du am Wochenende gemacht?',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Your card says “Urlaub”. Which question fits?',
+          options: [
+            'Wo hast du Urlaub gemacht?',
+            'Urlaub du hast gemacht?',
+            'Wo machst Urlaub gestern?',
+          ],
+          answer: 0,
+          explanation: 'hast second, gemacht at the end.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Your card says “gestern”. Ask your partner (du): “What did you do yesterday?”',
+          accepted: ['Was hast du gestern gemacht?'],
+          hint: 'Was hast du + gestern + gemacht?',
+          explanation: 'hast second, gemacht at the end.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Unit 19 review: match the pairs.',
+          pairs: [
+            ['gemacht', 'done'],
+            ['getroffen', 'met'],
+            ['eingekauft', 'did the shopping'],
+            ['vorgestern', 'the day before yesterday'],
+            ['Und dann?', 'And then?'],
+          ],
+        },
+        {
+          kind: 'speak',
+          prompt: 'Answer: what did you do last weekend?',
+          lines: [
+            'Letztes Wochenende habe ich Freunde getroffen.',
+            'Wir haben zusammen gekocht und gegessen.',
+            'Am Sonntag habe ich lange geschlafen.',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
+const museumSign =
+  'Stadtmuseum\nDienstag bis Sonntag 10–18 Uhr\nMontag Ruhetag\nEintritt: 6 €, Kinder frei';
+
+const unit20 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u20',
+    number: 20,
+    icon: 'party-popper',
+    title: 'Alles zusammen',
+    canDo:
+      'Use everything from A1 together at natural speed, keep a conversation going, and get ready for the exam.',
+  },
+  [
+    {
+      id: 'de-a1-u20-party',
+      session: 'Natural speed',
+      title: 'Maria’s birthday party',
+      outcome: 'Follow a fast, real conversation that mixes everything from A1.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'The party',
+          intro: 'It is July: Maria’s birthday party in the WG. Everyone is there.',
+          lines: [
+            {
+              speaker: 'Karim',
+              text: 'Maria, alles Gute zum Geburtstag! Heute darf ich ja gratulieren.',
+              meaning: 'Maria, happy birthday! Today I’m allowed to congratulate you.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Danke, Karim! Komm rein, das Essen steht in der Küche.',
+              meaning: 'Thanks, Karim! Come in, the food is in the kitchen.',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Wer möchte was trinken? Es gibt Apfelschorle, Bier und Wasser.',
+              meaning: 'Who would like a drink? There’s apple spritzer, beer and water.',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Für mich ein Bier, bitte. Puh, ist das heiß heute!',
+              meaning: 'A beer for me, please. Phew, it’s hot today!',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Maria, wie war dein erstes Jahr in Deutschland?',
+              meaning: 'Maria, how was your first year in Germany?',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Am Anfang war es schwer. Aber jetzt habe ich Freunde, eine Wohnung und bald eine Stelle!',
+              meaning:
+                'At the beginning it was hard. But now I have friends, a flat and soon a job!',
+            },
+            { speaker: 'Lena', text: 'Prost! Auf Maria!', meaning: 'Cheers! To Maria!' },
+          ],
+          note: 'Germans toast with Prost! (Zum Wohl! with wine) and look each other in the eye while clinking glasses. Looking away is said to bring seven years of bad luck.',
+        },
+        {
+          kind: 'teach',
+          title: 'At a party',
+          items: [
+            { target: 'Auf uns!', meaning: 'To us!', note: 'Auf + a name: Auf Maria!' },
+            { target: 'Am Anfang war es schwer.', meaning: 'At the beginning it was hard.' },
+            { target: 'schwer / leicht', meaning: 'hard / easy' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Why does Karim say: “Heute darf ich ja gratulieren”?',
+          options: [
+            'In Germany you don’t congratulate before the birthday',
+            'He forgot the date',
+            'He is Maria’s teacher',
+          ],
+          answer: 0,
+          explanation: 'Remember Unit 10: no birthday wishes before the day.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What does she want to drink?',
+          audio: 'Für mich eine Apfelschorle, bitte. Ohne Eis.',
+          options: ['An apple spritzer', 'A beer', 'Water with ice'],
+          answer: 0,
+          explanation: 'eine Apfelschorle, ohne Eis: without ice.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match: everything comes back.',
+          pairs: [
+            ['Alles Gute zum Geburtstag!', 'Happy birthday!'],
+            ['Prost!', 'Cheers!'],
+            ['Komm rein!', 'Come in!'],
+            ['Ist das heiß!', 'It’s so hot!'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. How was her first year?',
+          audio: 'Das erste Jahr war nicht leicht, aber jetzt fühle ich mich hier zu Hause.',
+          options: [
+            'Not easy, but now she feels at home',
+            'Easy from the start',
+            'Hard, and she wants to leave',
+          ],
+          answer: 0,
+          explanation:
+            'nicht leicht: not easy. Jetzt fühle ich mich hier zu Hause: now I feel at home here.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “At the beginning it was hard.”',
+          answer: ['Am', 'Anfang', 'war', 'es', 'schwer.'],
+          extra: ['ist'],
+          explanation: 'Am Anfang first, then war, then es.',
+        },
+        {
+          kind: 'type',
+          prompt: 'At the party, ask a friend: “What would you like to drink?”',
+          accepted: ['Was möchtest du trinken?'],
+          hint: 'Was möchtest du + trinken?',
+          explanation: 'From Unit 5: möchtest second, trinken at the end.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Raise a toast and make small talk.',
+          lines: [
+            'Alles Gute zum Geburtstag!',
+            'Prost! Auf uns!',
+            'Wie war dein erstes Jahr hier?',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u20-review',
+      session: 'Review',
+      title: 'A1 grammar in one session',
+      outcome: 'Check the key A1 grammar: verbs, articles, word order, modal verbs and the past.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'The A1 sentence',
+          body: 'Almost every A1 sentence follows three rules: the verb is in second place; a second verb, a separable prefix or a past participle goes to the very end; and a question starts with the verb or a W-word.',
+        },
+        {
+          kind: 'teach',
+          title: 'Small words that hold it together',
+          items: [
+            {
+              target: 'also',
+              meaning: 'so, well',
+              note: 'Careful: also does not mean “also”. “Also” is auch.',
+            },
+            { target: 'auch', meaning: 'also, too' },
+            {
+              target: 'sondern',
+              meaning: 'but (rather)',
+              note: 'After nicht or kein: nicht Tee, sondern Kaffee.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Er ___ aus Ägypten. (kommen)',
+          options: ['kommt', 'kommst', 'komme'],
+          answer: 0,
+          explanation: 'Unit 2: er kommt.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Ich habe ___ Bruder. (der Bruder)',
+          options: ['einen', 'ein', 'eine'],
+          answer: 0,
+          explanation: 'Unit 5: a der word as the object takes einen.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match now and the past.',
+          pairs: [
+            ['ich bin', 'ich war'],
+            ['ich habe', 'ich hatte'],
+            ['ich mache', 'ich habe gemacht'],
+            ['ich esse', 'ich habe gegessen'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Which sentence is correct?',
+          options: [
+            'Am Montag fange ich um acht an.',
+            'Am Montag ich fange um acht an.',
+            'Am Montag fange an ich um acht.',
+          ],
+          answer: 0,
+          explanation: 'Unit 8: verb second, prefix at the end.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Ich trinke ___ Kaffee, sondern Tee.',
+          options: ['keinen', 'nicht', 'kein'],
+          answer: 0,
+          explanation: 'Unit 6: der Kaffee → keinen Kaffee. Then sondern for the alternative.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Ask a friend: “Can you help me tomorrow?”',
+          answer: ['Kannst', 'du', 'mir', 'morgen', 'helfen?'],
+          extra: ['hilfst'],
+          explanation: 'Units 12 and 14: the modal verb first in a question, helfen at the end.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “I am not tired, but hungry.”',
+          accepted: ['Ich bin nicht müde, sondern hungrig.'],
+          hint: 'nicht müde, sondern hungrig.',
+          explanation: 'sondern after nicht: not this, but that.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Say four sentences, one from each part of A1.',
+          lines: [
+            'Ich komme aus Kanada und wohne in Leipzig.',
+            'Morgen stehe ich um sieben auf.',
+            'Heute muss ich lange arbeiten.',
+            'Gestern habe ich Freunde getroffen.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u20-real',
+      session: 'Real talk',
+      title: '“Wie war das noch mal?” Keeping a conversation going',
+      outcome:
+        'Keep a fast conversation going when you don’t understand, need a word or want to change the topic.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'Fast German',
+          intro: 'At the party, Jonas’s friend Tom talks very fast with Alex.',
+          lines: [
+            {
+              speaker: 'Tom',
+              text: 'Und, wie lange biste schon in Leipzig? Gefällt’s dir hier?',
+              meaning: 'So, how long have you been in Leipzig? Do you like it here?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Moment, langsam bitte! Wie lange ich schon hier bin?',
+              meaning: 'Hang on, slowly please! How long I’ve been here?',
+            },
+            {
+              speaker: 'Tom',
+              text: 'Genau, sorry! Wie lange wohnst du schon hier?',
+              meaning: 'Exactly, sorry! How long have you lived here?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Seit einem Jahr. Und es gefällt mir sehr. Wie sagt man „cosy“ auf Deutsch?',
+              meaning: 'For a year. And I like it a lot. How do you say “cosy” in German?',
+            },
+            {
+              speaker: 'Tom',
+              text: 'Gemütlich! Leipzig ist echt gemütlich.',
+              meaning: 'Gemütlich! Leipzig really is cosy.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Genau, gemütlich! Und du, was machst du so?',
+              meaning: 'Exactly, gemütlich! And you, what do you do?',
+            },
+          ],
+          note: 'Asking someone to slow down is normal, even among native speakers. Repeating the question back (Wie lange ich schon hier bin?) also buys you time to think.',
+        },
+        {
+          kind: 'teach',
+          title: 'Keeping it going',
+          items: [
+            { target: 'Moment, langsam bitte!', meaning: 'Hang on, slowly please!' },
+            { target: 'Wie sagt man das auf Deutsch?', meaning: 'How do you say that in German?' },
+            { target: 'Wie war das noch mal?', meaning: 'What was that again?' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'You didn’t catch a word. What do you say?',
+          options: ['Wie war das noch mal?', 'Wie war dein Wochenende?', 'Was kostet das?'],
+          answer: 0,
+          explanation: 'Wie war das noch mal? What was that again?',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What does she want to know?',
+          audio: 'Sag mal, wie sagt man eigentlich Schmetterling auf Englisch?',
+          options: ['How to say a word in English', 'Where the butterfly is', 'What time it is'],
+          answer: 0,
+          explanation:
+            'Wie sagt man … auf Englisch? asks for a translation. (Schmetterling: butterfly.)',
+        },
+        {
+          kind: 'scene',
+          title: 'Changing the topic',
+          intro: 'Later, Maria wants to talk about something else.',
+          lines: [
+            {
+              speaker: 'Maria',
+              text: 'Übrigens, Lena, wann fahren wir an die Ostsee?',
+              meaning: 'By the way, Lena, when are we going to the Baltic Sea?',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Im August, oder? Mit dem Zug sind das etwa drei Stunden.',
+              meaning: 'In August, right? By train it’s about three hours.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Super. Ich war noch nie am Meer in Deutschland!',
+              meaning: 'Great. I’ve never been to the sea in Germany!',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Dann wird es Zeit! Aber das Wasser ist kalt, das sage ich dir gleich.',
+              meaning: 'Then it’s about time! But the water is cold, I’m telling you now.',
+            },
+          ],
+          note: 'Übrigens (by the way) is the easiest way to change the topic. The Baltic Sea (die Ostsee) is about three hours from Leipzig by train and a favourite summer trip.',
+        },
+        {
+          kind: 'teach',
+          title: 'Changing the topic',
+          items: [
+            { target: 'Übrigens', meaning: 'By the way' },
+            { target: 'noch nie', meaning: 'never (yet)' },
+            { target: 'die Ostsee / die Nordsee', meaning: 'the Baltic Sea / the North Sea' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match what you hear.',
+          pairs: [
+            ['Moment!', 'Hang on!'],
+            ['Übrigens', 'By the way'],
+            ['noch nie', 'never'],
+            ['Wie war das noch mal?', 'What was that again?'],
+            ['gemütlich', 'cosy'],
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Change the topic: “By the way, when are we going to the sea?”',
+          answer: ['Übrigens,', 'wann', 'fahren', 'wir', 'ans', 'Meer?'],
+          extra: ['an'],
+          explanation: 'After Übrigens and a comma, the question goes on as normal.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Ask: “How do you say that in German?”',
+          accepted: ['Wie sagt man das auf Deutsch?', 'Wie heißt das auf Deutsch?'],
+          hint: 'Wie sagt man das + auf Deutsch?',
+          explanation: 'Wie sagt man das auf Deutsch? Or, from Unit 7: Wie heißt das auf Deutsch?',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Keep a fast conversation going.',
+          lines: [
+            'Moment, langsam bitte!',
+            'Wie war das noch mal?',
+            'Übrigens, was machst du am Wochenende?',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u20-exam',
+      session: 'Exam warm-up',
+      title: 'Goethe A1 warm-up: one task from each part',
+      outcome:
+        'Do one short task from Hören, Lesen, Schreiben and Sprechen, and know what the full exam looks like.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'The Goethe-Zertifikat A1',
+          body: 'The exam has four parts: Hören (about 20 minutes), Lesen (25 minutes), Schreiben (20 minutes) and Sprechen (about 15 minutes, in a small group). You pass with 60 percent. This session has one task from each part; the full mock exams come next.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Hören: When is Lena coming?',
+          audio:
+            'Hallo, hier ist Lena. Ich komme nicht um sieben, sondern erst um acht. Bis später!',
+          options: ['At eight', 'At seven', 'At half past seven'],
+          answer: 0,
+          explanation: '“nicht um sieben, sondern erst um acht”.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Lesen: Richtig oder falsch? Das Museum ist am Montag geschlossen.',
+          context: museumSign,
+          options: ['Richtig', 'Falsch'],
+          answer: 0,
+          explanation: 'Montag Ruhetag: closed on Monday.',
+        },
+        {
+          kind: 'teach',
+          title: 'Exam words',
+          items: [
+            { target: 'der Ruhetag', meaning: 'closing day' },
+            { target: 'der Eintritt', meaning: 'admission (fee)' },
+            { target: 'die Prüfung', meaning: 'exam' },
+            { target: 'bestehen', meaning: 'to pass (an exam)' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Lesen: How much do children pay?',
+          context: museumSign,
+          options: ['Nothing', '6 €', '3 €'],
+          answer: 0,
+          explanation: 'Kinder frei: children go free.',
+        },
+        {
+          kind: 'rule',
+          title: 'Schreiben Teil 2',
+          body: 'Three points, about 30 words, the right greeting and the right ending. You practised this in Units 8, 10 and 18.',
+        },
+        {
+          kind: 'build',
+          prompt: 'To a friend, point 1: “Thanks for your message!”',
+          answer: ['Danke', 'für', 'deine', 'Nachricht!'],
+          extra: ['Ihre'],
+          explanation: 'deine for a friend; Ihre for someone you call Sie.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Point 2: “I’d love to come on Saturday.”',
+          accepted: [
+            'Ich komme gern am Samstag.',
+            'Am Samstag komme ich gern.',
+            'Ich komme am Samstag gern.',
+          ],
+          hint: 'Ich komme gern + am Samstag.',
+          explanation: 'gern after the verb, as in Unit 9.',
+        },
+        {
+          kind: 'rule',
+          title: 'Sprechen Teil 3',
+          body: 'Last, a request with a picture card. Be polite, use bitte, and answer your partner’s request too.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Your card shows a pen. Which request fits?',
+          options: [
+            'Kannst du mir bitte einen Stift geben?',
+            'Stift, du, geben?',
+            'Ich habe Stift bitte?',
+          ],
+          answer: 0,
+          explanation: 'Kannst du mir bitte … geben? A complete, polite request.',
+        },
+        {
+          kind: 'match',
+          prompt: 'A1 review: match the four parts of the exam.',
+          pairs: [
+            ['Hören', 'listening'],
+            ['Lesen', 'reading'],
+            ['Schreiben', 'writing'],
+            ['Sprechen', 'speaking'],
+            ['bestehen', 'to pass'],
+          ],
+        },
+        {
+          kind: 'speak',
+          prompt: 'Say where you are now.',
+          lines: [
+            'Ich lerne jetzt seit ein paar Monaten Deutsch.',
+            'Bald mache ich die Prüfung.',
+            'Und dann kommt A2!',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
 export const germanA1Units = [
   ...unit1,
   ...unit2,
@@ -8540,4 +11060,9 @@ export const germanA1Units = [
   ...unit13,
   ...unit14,
   ...unit15,
+  ...unit16,
+  ...unit17,
+  ...unit18,
+  ...unit19,
+  ...unit20,
 ];

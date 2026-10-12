@@ -21,6 +21,15 @@ describe('honest level labels', () => {
     expect(levelNote('ES', 'A1')).toMatch(/DELE A1/);
   });
 
+  it('names a level whose units are all built, but says the exam checks are still to come', () => {
+    expect(levelLabel('DE', 'A1')).toBe('A1');
+    expect(isStarterLevel('DE', 'A1')).toBe(true);
+    expect(levelNote('DE', 'A1')).toMatch(/All A1 units are here/);
+    expect(levelNote('DE', 'A1')).toMatch(
+      /not yet mean you are ready for the Goethe-Zertifikat A1/,
+    );
+  });
+
   it('treats a level with no recorded status as a starter, never as complete', () => {
     expect(isStarterLevel('ES', 'B1')).toBe(true);
     expect(levelLabel('ES', 'B1')).toBe('B1 starter');
