@@ -67,6 +67,11 @@ export const characters: Record<LanguageTrack, Record<string, Casting>> = {
       'sage',
       'A ticket inspector on a regional train. Brisk, polite and routine.',
     ),
+    Mitarbeiterin: cast(
+      'shimmer',
+      'A friendly shop assistant in a clothes shop, in her twenties. Helpful and relaxed.',
+    ),
+    Ärztin: cast('nova', 'A calm, kind family doctor in her fifties. Clear and reassuring.'),
     Trainer: cast('verse', 'A cheerful gym trainer in his twenties. Casual and upbeat.'),
     Rezeption: cast('nova', 'A friendly gym receptionist on the phone. Efficient and polite.'),
     Kellnerin: cast('marin', 'A friendly waitress in a busy café. Quick and warm.'),

@@ -6950,6 +6950,1580 @@ const unit12 = defineUnit(
   ],
 );
 
+const clothesAds =
+  'a) Modehaus Krämer: Winterjacken für Damen und Herren, alle Größen. Jetzt 30 % reduziert! Mo–Sa 10–20 Uhr.\nb) Second-Hand-Laden Kleiderkreisel: Hosen, Hemden und Kleider ab 5 €. Nur Größen S bis M. Di–Fr 12–18 Uhr.';
+
+const unit13 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u13',
+    number: 13,
+    icon: 'tshirt-crew-outline',
+    title: 'Kleidung',
+    canDo:
+      'Talk about clothes, colours and sizes, try things on, and exchange something in a shop.',
+  },
+  [
+    {
+      id: 'de-a1-u13-clothes',
+      session: 'Words',
+      title: 'Clothes and colours',
+      outcome: 'Name clothes and colours and say what you are looking for.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'Winter is coming',
+          intro: 'It is getting cold in Leipzig. Maria needs warm clothes, and Lena helps.',
+          lines: [
+            {
+              speaker: 'Maria',
+              text: 'Lena, mir ist so kalt! Ich brauche eine Winterjacke.',
+              meaning: 'Lena, I’m so cold! I need a winter jacket.',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Und einen Schal und Handschuhe. In Brasilien braucht man das nicht, oder?',
+              meaning: 'And a scarf and gloves. You don’t need those in Brazil, do you?',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Nein, nie! Welche Farbe ist gut? Schwarz?',
+              meaning: 'No, never! Which colour is good? Black?',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Schwarz trägt hier jeder. Nimm doch Rot oder Gelb!',
+              real: 'Schwarz trägt hier echt jeder. Nimm doch Rot oder Gelb!',
+              meaning: 'Everyone wears black here. Why not take red or yellow!',
+              realMeaning: 'Literally everyone wears black here. Why not take red or yellow!',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Gute Idee. Und ich brauche warme Schuhe.',
+              meaning: 'Good idea. And I need warm shoes.',
+            },
+          ],
+          note: 'German winters are long and grey, and many people dress in black, grey and dark blue. A popular saying: there is no bad weather, only the wrong clothes.',
+        },
+        {
+          kind: 'teach',
+          title: 'Clothes',
+          items: [
+            { target: 'die Jacke', meaning: 'jacket' },
+            { target: 'die Hose', meaning: 'trousers', note: 'One word, singular: eine Hose.' },
+            { target: 'das Hemd', meaning: 'shirt' },
+            { target: 'der Pullover', meaning: 'jumper, sweater', note: 'Often just der Pulli.' },
+            { target: 'das Kleid', meaning: 'dress' },
+            { target: 'die Schuhe', meaning: 'shoes' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Maria says: “Mir ist so kalt!” What does she mean?',
+          options: ['She feels very cold', 'The weather is cold today', 'Her jacket is cold'],
+          answer: 0,
+          explanation:
+            'Mir ist kalt: I feel cold. Not “Ich bin kalt”, which sounds like a cold personality!',
+        },
+        {
+          kind: 'teach',
+          title: 'Colours',
+          items: [
+            { target: 'schwarz / weiß', meaning: 'black / white' },
+            { target: 'blau / gelb', meaning: 'blue / yellow' },
+            { target: 'grau / braun', meaning: 'grey / brown' },
+            { target: 'hellblau / dunkelblau', meaning: 'light blue / dark blue' },
+            { target: 'bunt', meaning: 'colourful' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the clothes.',
+          pairs: [
+            ['die Jacke', 'jacket'],
+            ['die Hose', 'trousers'],
+            ['das Hemd', 'shirt'],
+            ['das Kleid', 'dress'],
+            ['der Pullover', 'jumper'],
+          ],
+        },
+        {
+          kind: 'teach',
+          title: 'Winter things',
+          items: [
+            { target: 'die Winterjacke', meaning: 'winter jacket' },
+            { target: 'der Schal', meaning: 'scarf' },
+            { target: 'die Handschuhe', meaning: 'gloves' },
+            { target: 'Mir ist kalt.', meaning: 'I’m cold.', note: 'And: Mir ist warm.' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What is she looking for?',
+          audio: 'Ich suche eine Jacke, am liebsten in Dunkelblau.',
+          options: ['A dark blue jacket', 'A light blue jacket', 'A dark blue dress'],
+          answer: 0,
+          explanation: 'eine Jacke in Dunkelblau: a dark blue jacket.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “I need warm shoes.”',
+          answer: ['Ich', 'brauche', 'warme', 'Schuhe.'],
+          extra: ['warm'],
+          explanation: 'Before a plural noun, warm gets an -e: warme Schuhe.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “I’m cold.”',
+          accepted: ['Mir ist kalt.', 'Mir ist kalt!'],
+          hint: 'Mir ist + kalt.',
+          explanation: 'Mir ist kalt. Say it this way, not Ich bin kalt.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Say what you wear and what you need.',
+          lines: [
+            'Ich trage oft Schwarz.',
+            'Mir ist kalt. Ich brauche einen Schal.',
+            'Meine Lieblingsfarbe ist Blau.',
+          ],
+          tip: 'In weiß, ß is a sharp s, and ei sounds like the English “eye”.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u13-adjectives',
+      session: 'Grammar',
+      title: 'Einen blauen Pullover: colours before the noun',
+      outcome:
+        'Say what you are looking for with a colour: einen blauen Pullover, eine rote Jacke.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'After ist: no ending',
+          body: 'You know this from Unit 7: after ist and sind the colour has no ending. Die Jacke ist rot. Die Schuhe sind schwarz.',
+        },
+        {
+          kind: 'rule',
+          title: 'Before the noun: an ending',
+          body: 'When the colour stands before the noun, it takes an ending. For what you buy, want or need (the object), learn these four as patterns.',
+          table: [
+            ['der Pullover', 'Ich suche einen blauen Pullover.'],
+            ['die Jacke', 'Ich suche eine rote Jacke.'],
+            ['das Hemd', 'Ich suche ein weißes Hemd.'],
+            ['die Schuhe', 'Ich suche schwarze Schuhe.'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Ich suche eine ___ Jacke.',
+          options: ['grüne', 'grünen', 'grünes'],
+          answer: 0,
+          explanation: 'die Jacke → eine grüne Jacke.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Ich brauche einen ___ Schal. (warm)',
+          options: ['warmen', 'warme', 'warmes'],
+          answer: 0,
+          explanation: 'der Schal → einen warmen Schal: -en after einen.',
+        },
+        {
+          kind: 'teach',
+          title: 'In the shop',
+          items: [
+            { target: 'Ich suche einen Pullover.', meaning: 'I’m looking for a jumper.' },
+            {
+              target: 'Welche Größe haben Sie?',
+              meaning: 'What size are you?',
+              note: 'Clothes sizes are numbers like 38 or 40, or S, M, L.',
+            },
+            { target: 'Gibt es die auch in Blau?', meaning: 'Is it also available in blue?' },
+            { target: 'Wo ist die Umkleide?', meaning: 'Where is the fitting room?' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Haben Sie ein ___ Hemd? (weiß)',
+          options: ['weißes', 'weißen', 'weiße'],
+          answer: 0,
+          explanation: 'das Hemd → ein weißes Hemd: -es, like the s in das.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the pairs.',
+          pairs: [
+            ['einen blauen Pullover', 'a blue jumper'],
+            ['eine rote Jacke', 'a red jacket'],
+            ['ein weißes Hemd', 'a white shirt'],
+            ['schwarze Schuhe', 'black shoes'],
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “I’m looking for a black coat.” (der Mantel)',
+          answer: ['Ich', 'suche', 'einen', 'schwarzen', 'Mantel.'],
+          extra: ['schwarze'],
+          explanation: 'der Mantel → einen schwarzen Mantel.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What does he want?',
+          audio: 'Haben Sie diese Hose auch in Grau, in Größe zweiunddreißig?',
+          options: [
+            'The trousers in grey, size 32',
+            'The trousers in blue, size 32',
+            'A grey shirt, size 42',
+          ],
+          answer: 0,
+          explanation: 'diese Hose in Grau, Größe zweiunddreißig.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “I need a warm jumper.”',
+          accepted: ['Ich brauche einen warmen Pullover.', 'Ich brauche einen warmen Pulli.'],
+          hint: 'der Pullover → einen warmen Pullover.',
+          explanation: 'einen + warmen + Pullover.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Tell a shop assistant what you are looking for.',
+          lines: [
+            'Ich suche einen warmen Pullover.',
+            'Gibt es die Jacke auch in Rot?',
+            'Wo ist die Umkleide, bitte?',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u13-real',
+      session: 'Real talk',
+      title: '“Das steht dir!” Trying on and exchanging',
+      outcome: 'Try things on, give and take compliments, and exchange something in a shop.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'In the fitting room',
+          intro: 'Maria tries on a jacket. Lena waits outside.',
+          lines: [
+            {
+              speaker: 'Maria',
+              text: 'Und? Wie findest du die Jacke?',
+              meaning: 'Well? What do you think of the jacket?',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Die steht dir super! Die Farbe ist toll.',
+              real: 'Die steht dir mega! Die Farbe ist toll.',
+              meaning: 'It really suits you! The colour is great.',
+              realMeaning: 'It suits you amazingly! The colour is great.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Aber sie ist ein bisschen zu groß, oder?',
+              meaning: 'But it’s a bit too big, isn’t it?',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Stimmt. Probier mal eine Nummer kleiner.',
+              meaning: 'True. Try a size smaller.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Ja, die hier passt perfekt. Die nehme ich!',
+              meaning: 'Yes, this one fits perfectly. I’ll take it!',
+            },
+          ],
+          note: 'Germans tend to give honest opinions about clothes. If a friend says something does not suit you, it is meant kindly.',
+        },
+        {
+          kind: 'teach',
+          title: 'Trying on',
+          items: [
+            { target: 'Wie findest du die Jacke?', meaning: 'What do you think of the jacket?' },
+            { target: 'Das steht dir!', meaning: 'That suits you!' },
+            { target: 'zu groß / zu klein', meaning: 'too big / too small' },
+            { target: 'Die Hose passt nicht.', meaning: 'The trousers don’t fit.' },
+            { target: 'Die nehme ich.', meaning: 'I’ll take it.' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Lena says: “Die steht dir super!” What does she mean?',
+          options: [
+            'The jacket suits Maria',
+            'The jacket is standing there',
+            'The jacket is cheap',
+          ],
+          answer: 0,
+          explanation: 'stehen + dir: to suit you. Passen is about the size.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What is the problem?',
+          audio: 'Die Schuhe sind schön, aber sie sind mir zu klein.',
+          options: [
+            'The shoes are too small',
+            'The shoes are too big',
+            'She doesn’t like the shoes',
+          ],
+          answer: 0,
+          explanation: 'zu klein: too small.',
+        },
+        {
+          kind: 'scene',
+          title: 'Taking it back',
+          intro: 'A week later, Alex wants to exchange a shirt.',
+          lines: [
+            {
+              speaker: 'Alex',
+              text: 'Guten Tag, ich möchte dieses Hemd umtauschen. Es ist zu eng.',
+              meaning: 'Hello, I’d like to exchange this shirt. It’s too tight.',
+            },
+            {
+              speaker: 'Mitarbeiterin',
+              text: 'Kein Problem. Haben Sie den Kassenzettel noch?',
+              real: 'Kein Thema. Haben Sie den Kassenzettel noch?',
+              meaning: 'No problem. Do you still have the receipt?',
+            },
+            { speaker: 'Alex', text: 'Ja, hier.', meaning: 'Yes, here.' },
+            {
+              speaker: 'Mitarbeiterin',
+              text: 'Möchten Sie eine Nummer größer oder lieber einen Gutschein?',
+              meaning: 'Would you like a size bigger, or rather a voucher?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Eine Nummer größer, bitte.',
+              meaning: 'A size bigger, please.',
+            },
+          ],
+          note: 'In German shops, exchanging or returning something you bought in person is a favour, not a right: keep the receipt. Online purchases can usually be returned within 14 days.',
+        },
+        {
+          kind: 'teach',
+          title: 'Exchanging',
+          items: [
+            {
+              target: 'umtauschen',
+              meaning: 'to exchange',
+              note: 'Separable: Ich tausche das Hemd um.',
+            },
+            { target: 'zu eng / zu weit', meaning: 'too tight / too loose' },
+            {
+              target: 'der Kassenzettel',
+              meaning: 'receipt',
+              note: 'Also der Bon or der Kassenbon.',
+            },
+            { target: 'der Gutschein', meaning: 'voucher' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match what you hear.',
+          pairs: [
+            ['Das steht dir!', 'That suits you!'],
+            ['zu eng', 'too tight'],
+            ['umtauschen', 'to exchange'],
+            ['der Gutschein', 'voucher'],
+            ['Die nehme ich.', 'I’ll take it.'],
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “I’d like to exchange the trousers.”',
+          answer: ['Ich', 'möchte', 'die', 'Hose', 'umtauschen.'],
+          extra: ['tausche'],
+          explanation: 'After möchte, umtauschen goes to the end in one piece.',
+        },
+        {
+          kind: 'type',
+          prompt: 'A friend tries on a dress. Tell her: “That suits you!”',
+          accepted: ['Das steht dir!', 'Das steht dir super!', 'Das Kleid steht dir!'],
+          hint: 'Das steht + dir.',
+          explanation: 'Das steht dir! To someone you call Sie: Das steht Ihnen.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Try something on, then decide.',
+          lines: [
+            'Die Jacke ist ein bisschen zu groß.',
+            'Haben Sie die eine Nummer kleiner?',
+            'Perfekt, die nehme ich!',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u13-exam',
+      session: 'Exam task',
+      title: 'Goethe A1 practice: shop ads, an order and clothes cards',
+      outcome:
+        'Choose the right shop in Lesen Teil 2, catch details in Hören, and ask about clothes in Sprechen Teil 2.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Lesen Teil 2: shops',
+          body: 'Two short ads, one need: look for the detail that decides it, such as sizes, prices or opening days.',
+        },
+        {
+          kind: 'teach',
+          title: 'Words in shop ads',
+          items: [
+            { target: 'reduziert', meaning: 'reduced, on sale' },
+            { target: 'Damen / Herren', meaning: 'women’s / men’s' },
+            { target: 'die Größe', meaning: 'size' },
+            { target: 'gebraucht', meaning: 'second-hand, used' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Sie brauchen eine Winterjacke in Größe XL. Wohin gehen Sie?',
+          context: clothesAds,
+          options: ['a) Modehaus Krämer', 'b) Kleiderkreisel'],
+          answer: 0,
+          explanation: 'a has alle Größen; b has only S to M.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Sie möchten am Montag einkaufen. Wohin gehen Sie?',
+          context: clothesAds,
+          options: ['a) Modehaus Krämer', 'b) Kleiderkreisel'],
+          answer: 0,
+          explanation: 'a is open Mo–Sa; b only Di–Fr (Tuesday to Friday).',
+        },
+        {
+          kind: 'rule',
+          title: 'Hören: clothes and prices',
+          body: 'In a shop dialogue, listen for three details: the item, the colour and the price. The first price is often not the final one.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. How much does the jumper cost now?',
+          audio: 'Der Pullover kostet normal fünfzig Euro, aber heute nur dreißig.',
+          options: ['30 euros', '50 euros', '13 euros'],
+          answer: 0,
+          explanation: '“heute nur dreißig”: today only 30.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. Which colour does she take?',
+          audio: 'Die rote Jacke ist schön, aber ich nehme lieber die graue.',
+          options: ['Grey', 'Red', 'Green'],
+          answer: 0,
+          explanation: '“ich nehme lieber die graue”: she prefers the grey one.',
+        },
+        {
+          kind: 'rule',
+          title: 'Sprechen Teil 2: Kleidung',
+          body: 'Word cards on clothes: Farbe, Größe, Schuhe, Lieblingskleidung. Ask a real question and give a short answer.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Your card says “Lieblingsfarbe”. Which question fits?',
+          options: [
+            'Was ist deine Lieblingsfarbe?',
+            'Lieblingsfarbe hast du?',
+            'Wie viel kostet deine Lieblingsfarbe?',
+          ],
+          answer: 0,
+          explanation: 'Lieblings- + noun: your favourite. Was ist deine Lieblingsfarbe?',
+        },
+        {
+          kind: 'type',
+          prompt: 'Your card says “Schuhe”. Ask your partner (du) what shoe size they take.',
+          accepted: ['Welche Schuhgröße hast du?', 'Was für eine Schuhgröße hast du?'],
+          hint: 'Welche + Schuhgröße + hast du?',
+          explanation: 'Welche Schuhgröße hast du? German shoe sizes run from about 36 to 46.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Unit 13 review: match the pairs.',
+          pairs: [
+            ['die Hose', 'trousers'],
+            ['grau', 'grey'],
+            ['zu groß', 'too big'],
+            ['reduziert', 'on sale'],
+            ['der Kassenzettel', 'receipt'],
+          ],
+        },
+        {
+          kind: 'speak',
+          prompt: 'Answer your partner’s questions about clothes.',
+          lines: [
+            'Meine Lieblingsfarbe ist Grün.',
+            'Ich habe Schuhgröße zweiundvierzig.',
+            'Im Winter trage ich gern einen warmen Pulli.',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
+const surgeryHours =
+  'Hausarztpraxis Dr. Becker\nSprechzeiten: Mo, Di, Do 8–12 und 15–18 Uhr, Mi und Fr 8–12 Uhr.\nBitte nur mit Termin. Für Rezepte rufen Sie bitte vormittags an.';
+const practiceVoicemail =
+  'Guten Tag, hier ist die Praxis Doktor Becker. Ihr Termin morgen ist nicht um neun Uhr, sondern um halb elf. Bitte bringen Sie Ihre Krankenkassenkarte mit. Danke!';
+
+const unit14 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u14',
+    number: 14,
+    icon: 'stethoscope',
+    title: 'Beim Arzt',
+    canDo:
+      'Say what hurts, understand a doctor’s instructions, and deal with a sick note and a prescription.',
+  },
+  [
+    {
+      id: 'de-a1-u14-body',
+      session: 'Words',
+      title: 'The body and what hurts',
+      outcome: 'Name parts of the body and say where it hurts.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'A bad morning',
+          intro: 'Jonas is still in bed at ten. Lena knocks on his door.',
+          lines: [
+            {
+              speaker: 'Lena',
+              text: 'Jonas? Alles okay? Du bist noch im Bett.',
+              meaning: 'Jonas? Everything OK? You’re still in bed.',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Nein, mir geht’s schlecht. Mein Kopf tut weh.',
+              meaning: 'No, I feel awful. My head hurts.',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Oh nein. Hast du Fieber?',
+              meaning: 'Oh no. Do you have a temperature?',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Ich glaube, ja. Und der Hals tut auch weh.',
+              real: 'Ich glaub schon. Und der Hals tut auch weh.',
+              meaning: 'I think so. And my throat hurts too.',
+            },
+            {
+              speaker: 'Lena',
+              text: 'Ich mache dir einen Tee. Und ruf beim Arzt an!',
+              meaning: 'I’ll make you a tea. And call the doctor!',
+            },
+          ],
+          note: 'When Germans are ill, tea is the first cure: Kamillentee (camomile) for the stomach, Pfefferminztee and honey for a cold.',
+        },
+        {
+          kind: 'teach',
+          title: 'The body',
+          items: [
+            { target: 'der Kopf', meaning: 'head' },
+            { target: 'der Hals', meaning: 'throat, neck' },
+            { target: 'der Bauch', meaning: 'stomach, belly' },
+            { target: 'der Rücken', meaning: 'back' },
+            { target: 'der Arm, das Bein', meaning: 'arm, leg' },
+            { target: 'der Zahn, die Zähne', meaning: 'tooth, teeth' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Jonas says: “Mein Kopf tut weh.” What is wrong?',
+          options: ['He has a headache', 'He has a stomach ache', 'He is tired'],
+          answer: 0,
+          explanation: 'Der Kopf tut weh: the head hurts.',
+        },
+        {
+          kind: 'teach',
+          title: 'How you feel',
+          items: [
+            {
+              target: 'Mir geht’s schlecht.',
+              meaning: 'I feel awful.',
+              note: 'The opposite: Mir geht’s gut.',
+            },
+            { target: 'Mein Kopf tut weh.', meaning: 'My head hurts.' },
+            { target: 'Ich habe Fieber.', meaning: 'I have a temperature.' },
+            {
+              target: 'Kopfschmerzen / Bauchschmerzen',
+              meaning: 'headache / stomach ache',
+              note: 'Ich habe Kopfschmerzen.',
+            },
+            {
+              target: 'Gesundheit!',
+              meaning: 'Bless you!',
+              note: 'What you say when someone sneezes.',
+            },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the body parts.',
+          pairs: [
+            ['der Kopf', 'head'],
+            ['der Bauch', 'stomach'],
+            ['der Rücken', 'back'],
+            ['das Bein', 'leg'],
+            ['die Zähne', 'teeth'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What hurts?',
+          audio: 'Seit gestern tut mir der Rücken weh.',
+          options: ['His back', 'His head', 'His leg'],
+          answer: 0,
+          explanation: 'der Rücken: the back.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Someone sneezes next to you. What do you say?',
+          options: ['Gesundheit!', 'Gute Fahrt!', 'Prost!'],
+          answer: 0,
+          explanation: 'Gesundheit! literally means “health”.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “My stomach hurts.”',
+          answer: ['Mein', 'Bauch', 'tut', 'weh.'],
+          extra: ['habe'],
+          explanation: 'wehtun splits: tut … weh.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “I have a headache.”',
+          accepted: ['Ich habe Kopfschmerzen.', 'Mein Kopf tut weh.', 'Mir tut der Kopf weh.'],
+          hint: 'Ich habe + Kopfschmerzen.',
+          explanation: 'Ich habe Kopfschmerzen, or: Mein Kopf tut weh.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Tell a friend you are not well.',
+          lines: [
+            'Mir geht’s schlecht.',
+            'Ich habe Fieber und Kopfschmerzen.',
+            'Der Hals tut auch weh.',
+          ],
+          tip: 'In Bauch, au sounds like the “ow” in “how”, and ch is the throaty sound.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u14-muessen',
+      session: 'Grammar',
+      title: 'Sie müssen viel trinken: müssen and wehtun',
+      outcome: 'Say what you must do, and understand a doctor’s advice.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'müssen: must, have to',
+          body: 'müssen works like können: the vowel changes in the singular, ich and er, sie, es have no ending, and the second verb goes to the end.',
+          table: [
+            ['ich muss', 'Ich muss zum Arzt gehen.'],
+            ['du musst', 'Du musst im Bett bleiben.'],
+            ['er, sie, es muss', 'Sie muss viel trinken.'],
+            ['wir müssen', 'Wir müssen warten.'],
+            ['ihr müsst', 'Müsst ihr heute arbeiten?'],
+            ['sie, Sie müssen', 'Sie müssen sich ausruhen.'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Du ___ im Bett bleiben.',
+          options: ['musst', 'muss', 'müsst'],
+          answer: 0,
+          explanation: 'du musst, with -st.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Jonas ___ heute nicht arbeiten.',
+          options: ['kann', 'kannst', 'könnt'],
+          answer: 0,
+          explanation: 'er kann: no ending. können and müssen work the same way.',
+        },
+        {
+          kind: 'teach',
+          title: 'What the doctor says',
+          items: [
+            { target: 'Sie müssen viel trinken.', meaning: 'You must drink a lot.' },
+            { target: 'im Bett bleiben', meaning: 'to stay in bed' },
+            {
+              target: 'die Tabletten',
+              meaning: 'tablets, pills',
+              note: 'zweimal am Tag: twice a day.',
+            },
+            { target: 'Sie dürfen nicht rauchen.', meaning: 'You must not smoke.' },
+          ],
+        },
+        {
+          kind: 'rule',
+          title: 'mustn’t: nicht dürfen',
+          body: 'Careful: nicht müssen means “don’t have to”. For “must not”, Germans say nicht dürfen: Sie müssen nicht kommen (you don’t have to come). Sie dürfen nicht rauchen (you must not smoke).',
+        },
+        {
+          kind: 'choose',
+          prompt: 'The doctor says: “Sie müssen heute nicht arbeiten.” What does it mean?',
+          options: [
+            'You don’t have to work today',
+            'You must not work today',
+            'You must work today',
+          ],
+          answer: 0,
+          explanation: 'nicht müssen: don’t have to.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “I have to go to the doctor.”',
+          answer: ['Ich', 'muss', 'zum', 'Arzt', 'gehen.'],
+          extra: ['gehe'],
+          explanation: 'muss second, gehen at the end. der Arzt → zum Arzt.',
+        },
+        {
+          kind: 'rule',
+          title: 'wehtun: what hurts',
+          body: 'wehtun is separable: Der Kopf tut weh. For two or more things: Die Füße tun weh. Add mir to make it personal: Mir tut der Bauch weh.',
+          table: [
+            ['Der Kopf tut weh.', 'My head hurts.'],
+            ['Die Füße tun weh.', 'My feet hurt.'],
+            ['Mir tut der Rücken weh.', 'My back hurts.'],
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the forms.',
+          pairs: [
+            ['ich muss', 'I must'],
+            ['du musst', 'you must'],
+            ['wir müssen', 'we must'],
+            ['es tut weh', 'it hurts'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. How often does he take the tablets?',
+          audio: 'Nehmen Sie die Tabletten dreimal am Tag, nach dem Essen.',
+          options: ['Three times a day, after meals', 'Twice a day, before meals', 'Once a day'],
+          answer: 0,
+          explanation: 'dreimal am Tag, nach dem Essen.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “You must drink a lot.” (to a friend)',
+          accepted: ['Du musst viel trinken.'],
+          hint: 'Du musst + viel + trinken.',
+          explanation: 'musst second, trinken at the end.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Give a sick friend some advice.',
+          lines: [
+            'Du musst im Bett bleiben.',
+            'Du musst viel Tee trinken.',
+            'Und du darfst heute nicht arbeiten!',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u14-real',
+      session: 'Real talk',
+      title: '“Was fehlt Ihnen?” At the doctor’s',
+      outcome: 'Explain your symptoms, follow the doctor, and get a sick note and a prescription.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'At the reception',
+          intro: 'Alex has a sore throat and goes to his family doctor.',
+          lines: [
+            {
+              speaker: 'Praxis',
+              text: 'Guten Morgen. Waren Sie schon mal bei uns?',
+              meaning: 'Good morning. Have you been here before?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Nein, das ist mein erstes Mal.',
+              meaning: 'No, this is my first time.',
+            },
+            {
+              speaker: 'Praxis',
+              text: 'Dann brauche ich Ihre Krankenkassenkarte. Und füllen Sie bitte den Bogen aus.',
+              meaning: 'Then I need your health insurance card. And please fill in the form.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Okay. Muss ich lange warten?',
+              meaning: 'OK. Do I have to wait long?',
+            },
+            {
+              speaker: 'Praxis',
+              text: 'Etwa zwanzig Minuten. Nehmen Sie bitte im Wartezimmer Platz.',
+              meaning: 'About twenty minutes. Please take a seat in the waiting room.',
+            },
+          ],
+          note: 'In Germany you usually go to your family doctor (Hausarzt) first. Bring your health insurance card (Krankenkassenkarte) to every visit.',
+        },
+        {
+          kind: 'teach',
+          title: 'At the practice',
+          items: [
+            { target: 'der Arzt, die Ärztin', meaning: 'doctor' },
+            { target: 'die Krankenkassenkarte', meaning: 'health insurance card' },
+            { target: 'das Wartezimmer', meaning: 'waiting room' },
+            {
+              target: 'Was fehlt Ihnen?',
+              meaning: 'What’s the matter?',
+              note: 'The doctor’s classic first question.',
+            },
+          ],
+        },
+        {
+          kind: 'scene',
+          title: 'With the doctor',
+          intro: 'The doctor calls Alex in.',
+          lines: [
+            {
+              speaker: 'Ärztin',
+              text: 'So, was fehlt Ihnen?',
+              real: 'So, was fehlt Ihnen denn?',
+              meaning: 'So, what’s the matter?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Mein Hals tut weh, und ich habe Fieber. Seit Montag.',
+              meaning: 'My throat hurts, and I have a temperature. Since Monday.',
+            },
+            {
+              speaker: 'Ärztin',
+              text: 'Machen Sie bitte den Mund auf. Ah ja, der Hals ist sehr rot.',
+              meaning: 'Please open your mouth. Ah yes, your throat is very red.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Ist es schlimm?',
+              meaning: 'Is it bad?',
+            },
+            {
+              speaker: 'Ärztin',
+              text: 'Nein, eine Erkältung. Ich schreibe Sie bis Freitag krank. Und hier ist ein Rezept.',
+              meaning:
+                'No, a cold. I’ll sign you off sick until Friday. And here is a prescription.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Danke! Bekomme ich die Medikamente in der Apotheke?',
+              meaning: 'Thanks! Do I get the medicine at the pharmacy?',
+            },
+          ],
+          note: 'A sick note (Krankschreibung) goes to your employer. Most employers need one from the fourth day of illness, some from the first. For minor illnesses, doctors can also issue it by phone.',
+        },
+        {
+          kind: 'teach',
+          title: 'The diagnosis',
+          items: [
+            { target: 'Ist es schlimm?', meaning: 'Is it bad?' },
+            { target: 'die Erkältung', meaning: 'a cold' },
+            {
+              target: 'krankschreiben',
+              meaning: 'to sign someone off sick',
+              note: 'Ich schreibe Sie krank: you get a sick note.',
+            },
+            { target: 'das Rezept', meaning: 'prescription', note: 'Also: recipe!' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'The doctor says: “Ich schreibe Sie bis Freitag krank.” What happens?',
+          options: [
+            'Alex gets a sick note until Friday',
+            'Alex must come back on Friday',
+            'Alex is healthy again on Friday',
+          ],
+          answer: 0,
+          explanation: 'krankschreiben: to give someone a sick note.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What does the doctor want?',
+          audio: 'Machen Sie bitte den Mund auf und sagen Sie Aaah.',
+          options: ['Open your mouth', 'Take a deep breath', 'Lie down'],
+          answer: 0,
+          explanation: 'den Mund aufmachen: to open your mouth.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match what you hear.',
+          pairs: [
+            ['Was fehlt Ihnen?', 'What’s the matter?'],
+            ['das Rezept', 'prescription'],
+            ['die Erkältung', 'a cold'],
+            ['das Wartezimmer', 'waiting room'],
+            ['Ist es schlimm?', 'Is it bad?'],
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Tell the doctor: “I have had a temperature since Monday.”',
+          answer: ['Ich', 'habe', 'seit', 'Montag', 'Fieber.'],
+          extra: ['hatte'],
+          explanation: 'seit + present tense: Ich habe seit Montag Fieber.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Ask the doctor: “Is it bad?”',
+          accepted: ['Ist es schlimm?', 'Ist das schlimm?'],
+          hint: 'Ist es + schlimm?',
+          explanation: 'Ist es schlimm? A short question that every patient asks.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Explain your problem to a doctor.',
+          lines: [
+            'Mein Hals tut weh, und ich habe Fieber.',
+            'Seit Mittwoch.',
+            'Brauche ich ein Rezept?',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u14-exam',
+      session: 'Exam task',
+      title: 'Goethe A1 practice: surgery hours, a voicemail and requests',
+      outcome:
+        'Read surgery hours in Lesen Teil 3, catch a changed time in Hören Teil 3, and ask for help in Sprechen Teil 3.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Lesen Teil 3: surgery hours',
+          body: 'Doctors’ practices list their Sprechzeiten (opening hours). Many close on Wednesday and Friday afternoons.',
+        },
+        {
+          kind: 'teach',
+          title: 'Words at the practice',
+          items: [
+            { target: 'die Sprechzeiten', meaning: 'surgery hours' },
+            { target: 'vormittags / nachmittags', meaning: 'in the morning / in the afternoon' },
+            { target: 'der Hausarzt, die Hausärztin', meaning: 'family doctor, GP' },
+            {
+              target: 'der Notdienst',
+              meaning: 'out-of-hours service',
+              note: 'In Germany: 116 117. Emergencies: 112.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Am Mittwochnachmittag ist die Praxis geöffnet.',
+          context: surgeryHours,
+          options: ['Richtig', 'Falsch'],
+          answer: 1,
+          explanation: 'Mi und Fr 8–12 Uhr: on Wednesday only in the morning.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Für ein Rezept ruft man am besten vormittags an.',
+          context: surgeryHours,
+          options: ['Richtig', 'Falsch'],
+          answer: 0,
+          explanation: '“Für Rezepte rufen Sie bitte vormittags an.”',
+        },
+        {
+          kind: 'rule',
+          title: 'Hören Teil 3: a message from the practice',
+          body: 'Practices often call to move an appointment. Listen for nicht …, sondern … and for what to bring.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. When is the appointment now?',
+          audio: practiceVoicemail,
+          options: ['At 10:30', 'At 9:00', 'At 9:30'],
+          answer: 0,
+          explanation: '“nicht um neun Uhr, sondern um halb elf”: 10:30.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen again. What must the patient bring?',
+          audio: practiceVoicemail,
+          options: ['The health insurance card', 'A prescription', 'A sick note'],
+          answer: 0,
+          explanation: '“Bitte bringen Sie Ihre Krankenkassenkarte mit.”',
+        },
+        {
+          kind: 'rule',
+          title: 'Sprechen Teil 3: requests',
+          body: 'Picture cards can show a glass of water, a phone or a chair. Make a polite request and answer one.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Your card shows a glass of water. Which request fits?',
+          options: [
+            'Kann ich bitte ein Glas Wasser haben?',
+            'Wasser, Glas, ich?',
+            'Sie haben Wasser trinken?',
+          ],
+          answer: 0,
+          explanation: 'Kann ich bitte … haben? A polite request for something.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Your card shows a phone. Ask politely: “Can I call the doctor?”',
+          accepted: [
+            'Kann ich den Arzt anrufen?',
+            'Kann ich bitte den Arzt anrufen?',
+            'Kann ich die Ärztin anrufen?',
+          ],
+          hint: 'Kann ich + den Arzt + anrufen?',
+          explanation: 'Kann first, anrufen at the end in one piece.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Unit 14 review: match the pairs.',
+          pairs: [
+            ['der Rücken', 'back'],
+            ['Ich habe Fieber.', 'I have a temperature.'],
+            ['die Sprechzeiten', 'surgery hours'],
+            ['das Rezept', 'prescription'],
+            ['du musst', 'you must'],
+          ],
+        },
+        {
+          kind: 'speak',
+          prompt: 'Call the practice to get an appointment.',
+          lines: [
+            'Guten Tag, ich brauche bitte einen Termin.',
+            'Ich habe seit gestern Fieber.',
+            'Geht es heute noch?',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
+const jobAds =
+  'a) Café Lindner sucht Aushilfe (m/w/d) für Samstag und Sonntag, 8–14 Uhr. Erfahrung nicht nötig. Bewerbung per E-Mail.\nb) Büro Schmidt & Partner sucht Bürokraft (m/w/d), Montag bis Freitag, 20 Stunden pro Woche. Gute Computerkenntnisse.';
+
+const unit15 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u15',
+    number: 15,
+    icon: 'briefcase-outline',
+    title: 'Arbeit und Beruf',
+    canDo:
+      'Say what you do for a living, talk about your workplace, and say where you were and what you had.',
+  },
+  [
+    {
+      id: 'de-a1-u15-jobs',
+      session: 'Words',
+      title: 'Jobs and workplaces',
+      outcome: 'Say what you do, ask others, and name common jobs.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'What do you do?',
+          intro: 'In the German course, Frau Schulz asks everyone about their work.',
+          lines: [
+            {
+              speaker: 'Frau Schulz',
+              text: 'Karim, was sind Sie von Beruf?',
+              meaning: 'Karim, what do you do for a living?',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Ich bin Ingenieur. Aber hier arbeite ich jetzt in einem Lager.',
+              meaning: 'I’m an engineer. But here I work in a warehouse now.',
+            },
+            {
+              speaker: 'Frau Schulz',
+              text: 'Und Sie, Maria?',
+              meaning: 'And you, Maria?',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Ich bin Krankenpflegerin. Ich suche eine Stelle in einem Krankenhaus.',
+              meaning: 'I’m a nurse. I’m looking for a job in a hospital.',
+            },
+            {
+              speaker: 'Frau Schulz',
+              text: 'Pflegekräfte sucht man in Deutschland überall. Viel Glück!',
+              meaning: 'Nurses are needed everywhere in Germany. Good luck!',
+            },
+          ],
+          note: 'German drops the article with jobs: Ich bin Ingenieur, not “ein Ingenieur”. Many people who move to Germany need their qualifications recognised before they can work in their profession again.',
+        },
+        {
+          kind: 'teach',
+          title: 'Jobs',
+          items: [
+            { target: 'der Lehrer, die Lehrerin', meaning: 'teacher' },
+            {
+              target: 'der Ingenieur, die Ingenieurin',
+              meaning: 'engineer',
+              note: 'Most jobs add -in for a woman.',
+            },
+            { target: 'der Krankenpfleger, die Krankenpflegerin', meaning: 'nurse' },
+            { target: 'der Verkäufer, die Verkäuferin', meaning: 'shop assistant' },
+            { target: 'der Koch, die Köchin', meaning: 'cook, chef' },
+            { target: 'der Student, die Studentin', meaning: 'student (university)' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'How do you say “I am a teacher” (a woman speaking)?',
+          options: ['Ich bin Lehrerin.', 'Ich bin eine Lehrerin.', 'Ich bin Lehrer von Beruf in.'],
+          answer: 0,
+          explanation: 'No article with jobs: Ich bin Lehrerin.',
+        },
+        {
+          kind: 'teach',
+          title: 'Talking about work',
+          items: [
+            { target: 'Was sind Sie von Beruf?', meaning: 'What do you do for a living?' },
+            {
+              target: 'Was machst du beruflich?',
+              meaning: 'What do you do for work?',
+              note: 'Casual: Und was machst du so?',
+            },
+            { target: 'die Stelle', meaning: 'job, position' },
+            { target: 'das Krankenhaus', meaning: 'hospital' },
+            { target: 'das Büro', meaning: 'office' },
+            { target: 'die Firma', meaning: 'company' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the jobs.',
+          pairs: [
+            ['die Lehrerin', 'teacher'],
+            ['der Koch', 'cook'],
+            ['die Verkäuferin', 'shop assistant'],
+            ['der Ingenieur', 'engineer'],
+            ['die Studentin', 'student'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. Where does she work?',
+          audio: 'Ich bin Köchin. Ich arbeite in einem Restaurant am Hauptbahnhof.',
+          options: ['In a restaurant', 'In a hospital', 'In an office'],
+          answer: 0,
+          explanation: 'Köchin, in einem Restaurant.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'You meet someone at a party. What is the casual question about work?',
+          options: ['Was machst du beruflich?', 'Was sind Ihre Firma?', 'Wo ist dein Beruf?'],
+          answer: 0,
+          explanation: 'Was machst du beruflich? With Sie: Was sind Sie von Beruf?',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “I work in an office.”',
+          answer: ['Ich', 'arbeite', 'in', 'einem', 'Büro.'],
+          extra: ['ein'],
+          explanation: 'in + einem: in einem Büro, in einem Krankenhaus.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “I am a student.” (a man speaking, at university)',
+          accepted: ['Ich bin Student.', 'Ich studiere.'],
+          hint: 'Ich bin + Student, no article.',
+          explanation: 'Ich bin Student. A school pupil is a Schüler.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Say what you do.',
+          lines: [
+            'Ich bin Ingenieurin von Beruf.',
+            'Ich arbeite in einer Firma in Leipzig.',
+            'Und was machst du beruflich?',
+          ],
+          tip: 'In Ingenieur, g sounds like the s in “measure”: in-zhen-YÖR.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u15-war',
+      session: 'Grammar',
+      title: 'Ich war, ich hatte: talking about the past',
+      outcome: 'Say where you were and what you had, with war and hatte.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'war: was, were',
+          body: 'For sein, Germans use the simple past war, even in speech: Gestern war ich krank. Ich and er, sie, es are the same.',
+          table: [
+            ['ich war', 'Ich war in Berlin.'],
+            ['du warst', 'Wo warst du gestern?'],
+            ['er, sie, es war', 'Das war super!'],
+            ['wir waren', 'Wir waren im Kino.'],
+            ['ihr wart', 'Wart ihr schon in Dresden?'],
+            ['sie, Sie waren', 'Sie waren sehr nett.'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Gestern ___ ich krank.',
+          options: ['war', 'warst', 'waren'],
+          answer: 0,
+          explanation: 'ich war.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Wo ___ du am Wochenende?',
+          options: ['warst', 'war', 'wart'],
+          answer: 0,
+          explanation: 'du warst, with -st.',
+        },
+        {
+          kind: 'rule',
+          title: 'hatte: had',
+          body: 'For haben, the past is hatte, with the same pattern: ich hatte, du hattest, er hatte, wir hatten, ihr hattet, sie hatten.',
+          table: [
+            ['ich hatte', 'Ich hatte keine Zeit.'],
+            ['du hattest', 'Hattest du Urlaub?'],
+            ['wir hatten', 'Wir hatten viel Arbeit.'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Letzte Woche ___ wir viel Arbeit.',
+          options: ['hatten', 'hatte', 'hattet'],
+          answer: 0,
+          explanation: 'wir hatten.',
+        },
+        {
+          kind: 'teach',
+          title: 'When it was',
+          items: [
+            { target: 'gestern', meaning: 'yesterday' },
+            { target: 'letzte Woche', meaning: 'last week' },
+            { target: 'früher', meaning: 'before, in the past', note: 'Früher war ich Lehrer.' },
+            { target: 'vor zwei Jahren', meaning: 'two years ago' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match now and then.',
+          pairs: [
+            ['ich bin', 'ich war'],
+            ['du hast', 'du hattest'],
+            ['wir sind', 'wir waren'],
+            ['sie hat', 'sie hatte'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What was Karim’s job in Egypt?',
+          audio: 'In Ägypten war ich Ingenieur. Ich hatte ein Büro in Kairo.',
+          options: ['Engineer', 'Teacher', 'Cook'],
+          answer: 0,
+          explanation: '“In Ägypten war ich Ingenieur.”',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “Before, I was a teacher.” (a woman speaking)',
+          answer: ['Früher', 'war', 'ich', 'Lehrerin.'],
+          extra: ['bin'],
+          explanation: 'Früher first, then war, then ich.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “I had no time yesterday.”',
+          accepted: ['Ich hatte gestern keine Zeit.', 'Gestern hatte ich keine Zeit.'],
+          hint: 'Ich hatte + gestern + keine Zeit.',
+          explanation: 'hatte, the past of haben. Keine Zeit, as in Unit 6.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Talk about your past and your work.',
+          lines: [
+            'Früher war ich Student.',
+            'Letzte Woche hatte ich viel Arbeit.',
+            'Gestern war ich müde.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u15-real',
+      session: 'Real talk',
+      title: '“Wir duzen uns hier.” A first day at work',
+      outcome:
+        'Get through a first day at work: names, du or Sie, lunch and the small talk around it.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'The first day',
+          intro: 'Alex starts a new job at a small company. Aylin shows him around.',
+          lines: [
+            {
+              speaker: 'Aylin',
+              text: 'Hallo, du bist Alex, oder? Ich bin Aylin. Wir duzen uns hier alle.',
+              meaning: 'Hi, you’re Alex, right? I’m Aylin. We all say du here.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Hallo, Aylin! Freut mich. Wo ist mein Platz?',
+              meaning: 'Hi, Aylin! Nice to meet you. Where is my desk?',
+            },
+            {
+              speaker: 'Aylin',
+              text: 'Hier, neben Tim. Und da hinten ist die Küche. Kaffee ist umsonst.',
+              meaning: 'Here, next to Tim. And back there is the kitchen. Coffee is free.',
+            },
+            {
+              speaker: 'Tim',
+              text: 'Hi, Alex! Willkommen im Team. Kommst du nachher mit in die Kantine?',
+              real: 'Hi, Alex! Willkommen im Team. Kommste nachher mit in die Kantine?',
+              meaning: 'Hi, Alex! Welcome to the team. Are you coming to the canteen later?',
+            },
+            { speaker: 'Alex', text: 'Gern! Um wie viel Uhr?', meaning: 'Sure! What time?' },
+            {
+              speaker: 'Tim',
+              text: 'Um zwölf. Wir essen hier alle früh.',
+              meaning: 'At twelve. We all eat early here.',
+            },
+          ],
+          note: 'Many younger and international companies use du for everyone. In more traditional workplaces, colleagues say Sie until someone offers du, and the older or more senior person usually offers it.',
+        },
+        {
+          kind: 'teach',
+          title: 'At work',
+          items: [
+            { target: 'der Kollege, die Kollegin', meaning: 'colleague' },
+            { target: 'der Chef, die Chefin', meaning: 'boss' },
+            { target: 'Wir duzen uns.', meaning: 'We say du to each other.' },
+            { target: 'die Kantine', meaning: 'canteen' },
+            { target: 'Willkommen im Team!', meaning: 'Welcome to the team!' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Aylin says: “Wir duzen uns hier alle.” What does that mean for Alex?',
+          options: [
+            'He can say du to everyone, even the boss',
+            'He must say Sie to everyone',
+            'He must speak English',
+          ],
+          answer: 0,
+          explanation: 'duzen: to say du. siezen: to say Sie.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. When do they go to lunch?',
+          audio: 'Wir gehen heute um halb eins in die Kantine, okay?',
+          options: ['At 12:30', 'At 1:30', 'At 11:30'],
+          answer: 0,
+          explanation: 'halb eins: halfway to one, 12:30.',
+        },
+        {
+          kind: 'scene',
+          title: 'Monday small talk',
+          intro: 'The next Monday, Tim asks Alex about his weekend.',
+          lines: [
+            {
+              speaker: 'Tim',
+              text: 'Na, wie war dein Wochenende?',
+              meaning: 'So, how was your weekend?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Super! Ich war in Dresden. Und du?',
+              meaning: 'Great! I was in Dresden. And you?',
+            },
+            {
+              speaker: 'Tim',
+              text: 'Ruhig. Ich hatte Besuch von meinen Eltern.',
+              meaning: 'Quiet. My parents came to visit.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Schön! Und jetzt wieder Montag.',
+              real: 'Schön! Und jetzt wieder Montag, ne?',
+              meaning: 'Nice! And now it’s Monday again.',
+              realMeaning: 'Nice! And now it’s Monday again, eh?',
+            },
+            {
+              speaker: 'Tim',
+              text: 'Ja, leider. Erst mal Kaffee!',
+              meaning: 'Yes, unfortunately. Coffee first!',
+            },
+          ],
+          note: 'Wie war dein Wochenende? is the standard Monday question at work. A short answer with war and hatte is all you need.',
+        },
+        {
+          kind: 'teach',
+          title: 'Monday questions',
+          items: [
+            { target: 'Ich war in Dresden.', meaning: 'I was in Dresden.' },
+            { target: 'Ich hatte Besuch.', meaning: 'I had visitors.' },
+            { target: 'ruhig', meaning: 'quiet, calm' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match what you hear.',
+          pairs: [
+            ['die Kollegin', 'colleague'],
+            ['die Chefin', 'boss'],
+            ['die Kantine', 'canteen'],
+            ['Wir duzen uns.', 'We say du.'],
+            ['Ich hatte Besuch.', 'I had visitors.'],
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Answer a colleague: “It was great! I was at the lake.”',
+          answer: ['Es', 'war', 'super!', 'Ich', 'war', 'am', 'See.'],
+          extra: ['bin'],
+          explanation: 'war twice: Es war super, ich war am See.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Ask a colleague on Monday: “How was your weekend?” (du)',
+          accepted: ['Wie war dein Wochenende?', 'Na, wie war dein Wochenende?'],
+          hint: 'Wie war + dein Wochenende?',
+          explanation: 'Wie war …? How was …? The Monday classic.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Introduce yourself on your first day.',
+          lines: [
+            'Hallo, ich bin neu hier. Ich heiße Alex.',
+            'Ich bin Ingenieur und arbeite im Team von Aylin.',
+            'Kommst du mit in die Kantine?',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u15-exam',
+      session: 'Exam task',
+      title: 'Goethe A1 practice: job ads and your whole introduction',
+      outcome:
+        'Choose a job ad in Lesen Teil 2, and give the full Sprechen Teil 1 introduction, now with your job.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Lesen Teil 2: job ads',
+          body: 'Job ads are short: the job, the days and hours, and what you need. m/w/d means the job is for men, women and diverse people.',
+        },
+        {
+          kind: 'teach',
+          title: 'Words in job ads',
+          items: [
+            { target: 'die Aushilfe', meaning: 'temporary helper, part-time help' },
+            { target: 'die Erfahrung', meaning: 'experience' },
+            { target: 'die Bewerbung', meaning: 'application' },
+            { target: 'pro Woche', meaning: 'per week' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Sie studieren und haben nur am Wochenende Zeit. Welche Stelle passt?',
+          context: jobAds,
+          options: ['a) Café Lindner', 'b) Büro Schmidt & Partner'],
+          answer: 0,
+          explanation: 'a is on Saturday and Sunday; b is Monday to Friday.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Sie haben noch nie in einem Café gearbeitet. Ist das ein Problem für Stelle a?',
+          context: jobAds,
+          options: ['Nein', 'Ja'],
+          answer: 0,
+          explanation: '“Erfahrung nicht nötig”: no experience needed.',
+        },
+        {
+          kind: 'rule',
+          title: 'Sprechen Teil 1: the full introduction',
+          body: 'Since Unit 3 you have practised Sprechen Teil 1 except the job. The full list is Name, Alter, Land, Wohnort, Sprachen, Beruf, Hobby. Say one short sentence for each.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Which sentence is right for the word Beruf?',
+          options: [
+            'Ich bin Verkäuferin von Beruf.',
+            'Mein Beruf ist Leipzig.',
+            'Ich spreche Beruf.',
+          ],
+          answer: 0,
+          explanation: 'Ich bin … von Beruf, or just: Ich bin Verkäuferin.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Which sentence is right for the word Hobby?',
+          options: [
+            'In meiner Freizeit tanze ich gern.',
+            'Mein Hobby ist dreißig.',
+            'Ich habe Hobby Berlin.',
+          ],
+          answer: 0,
+          explanation: 'gern from Unit 9: In meiner Freizeit tanze ich gern.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “I work as a cook in a restaurant.”',
+          answer: ['Ich', 'arbeite', 'als', 'Koch', 'in', 'einem', 'Restaurant.'],
+          extra: ['ein'],
+          explanation: 'arbeiten als + job, with no article.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write Maria’s job sentence for the exam: “I am a nurse.”',
+          accepted: ['Ich bin Krankenpflegerin.', 'Ich bin Krankenpflegerin von Beruf.'],
+          hint: 'Ich bin + Krankenpflegerin, with no article.',
+          explanation: 'Ich bin Krankenpflegerin. Use your own job the same way.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Unit 15 review: match the pairs.',
+          pairs: [
+            ['ich war', 'I was'],
+            ['ich hatte', 'I had'],
+            ['die Stelle', 'job'],
+            ['die Bewerbung', 'application'],
+            ['gestern', 'yesterday'],
+          ],
+        },
+        {
+          kind: 'speak',
+          prompt: 'Give your whole Sprechen Teil 1 introduction.',
+          lines: [
+            'Ich heiße Maria. Ich bin achtundzwanzig Jahre alt.',
+            'Ich komme aus Brasilien und wohne in Leipzig.',
+            'Ich spreche Portugiesisch, Englisch und ein bisschen Deutsch.',
+            'Ich bin Krankenpflegerin. In meiner Freizeit tanze ich gern.',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
 export const germanA1Units = [
   ...unit1,
   ...unit2,
@@ -6963,4 +8537,7 @@ export const germanA1Units = [
   ...unit10,
   ...unit11,
   ...unit12,
+  ...unit13,
+  ...unit14,
+  ...unit15,
 ];

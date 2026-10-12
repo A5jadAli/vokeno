@@ -24,9 +24,9 @@ const sessions: StepLesson[] = germanA1Units;
 const words = (text: string) => normaliseFoundationAnswer(text).split(' ').sort().join(' ');
 
 describe('German A1 units: structure', () => {
-  it('has twelve units of four sessions, in order, on the path before the starter lessons', () => {
+  it('has fifteen units of four sessions, in order, on the path before the starter lessons', () => {
     const units = [...new Set(sessions.map((session) => session.unit.number))];
-    expect(units).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+    expect(units).toEqual(Array.from({ length: 15 }, (_, index) => index + 1));
     for (const number of units)
       expect(sessions.filter((session) => session.unit.number === number)).toHaveLength(4);
     const path = getTrackLessons('DE');
