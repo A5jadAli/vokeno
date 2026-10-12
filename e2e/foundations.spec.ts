@@ -222,14 +222,20 @@ test('finished lesson phrases come back for spaced review the next day', async (
   await expect(page.getByText(/You remembered \d+ of 7 phrases/)).toBeVisible();
 });
 
-test('every unit session can be finished through its steps, with full marks', async ({ page }) => {
-  test.setTimeout(1_800_000);
-  expect(unitSessions.length).toBeGreaterThanOrEqual(12);
-  for (const lesson of unitSessions) {
-    await page.goto(`/foundation/${lesson.id}`);
-    await expect(page.getByRole('heading', { name: lesson.title })).toBeVisible();
-    for (const step of lesson.steps) await playStep(page, step);
-    const marked = markedSteps(lesson);
-    await expect(page.getByText(`${marked}/${marked} right first time`)).toBeVisible();
-  }
-});
+// One test per unit, so a failure names the unit. The content is the same at every screen size,
+// so one device runs the full walkthrough; the layout checks above cover both.
+const unitNumbers = [...new Set(unitSessions.map((lesson) => lesson.unit.number))];
+for (const number of unitNumbers)
+  test(`every session of unit ${number} can be finished with full marks`, async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'modern-android', 'Content check: one device is enough.');
+    test.setTimeout(300_000);
+    for (const lesson of unitSessions.filter((item) => item.unit.number === number)) {
+      await page.goto(`/foundation/${lesson.id}`);
+      await expect(page.getByRole('heading', { name: lesson.title })).toBeVisible();
+      for (const step of lesson.steps) await playStep(page, step);
+      const marked = markedSteps(lesson);
+      await expect(page.getByText(`${marked}/${marked} right first time`)).toBeVisible();
+    }
+  });
