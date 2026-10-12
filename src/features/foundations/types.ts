@@ -27,6 +27,8 @@ type LessonBase = {
    * review cards are not lost.
    */
   retired?: boolean;
+  /** For a retired lesson: the path lesson that now teaches it, used for saved starting points. */
+  replacedBy?: string;
 };
 
 /** The original format: phrases, up to four checks, one written phrase and speaking aloud. */

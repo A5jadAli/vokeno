@@ -37,9 +37,9 @@ export function learningRecommendation(
     if (ability === 'basics')
       return goal === 'work-study'
         ? {
-            title: 'Arrange an appointment',
-            why: 'Practise polite requests and times for work or study.',
-            href: '/foundation/appointments',
+            title: 'Start Unit 8: Mein Tag',
+            why: 'Unit 8: times, your working day and answering an invitation, all at A1.',
+            href: '/foundation/de-a1-u8-time',
           }
         : {
             title: 'Order and pay in a café',

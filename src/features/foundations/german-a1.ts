@@ -7,6 +7,7 @@ export const germanA1Lessons = defineLessons('DE', [
     level: 'A1',
     // Replaced by German A1 Units 1–3.
     retired: true,
+    replacedBy: 'de-a1-u1-hallo',
     title: 'Hello, please and thank you',
     outcome: 'Greet people, thank them and say goodbye in formal and casual situations.',
     phrases: [
@@ -77,6 +78,7 @@ export const germanA1Lessons = defineLessons('DE', [
     level: 'A1',
     // Replaced by German A1 Units 1–3.
     retired: true,
+    replacedBy: 'de-a1-u1-ich-bin',
     title: 'Say your name',
     outcome: 'Introduce yourself naturally and ask someone’s name in the right register.',
     phrases: [
@@ -147,6 +149,7 @@ export const germanA1Lessons = defineLessons('DE', [
     level: 'A1',
     // Replaced by German A1 Unit 1 (asking for repetition) and Unit 7 (Wie heißt das auf Deutsch?).
     retired: true,
+    replacedBy: 'de-a1-u1-du-sie',
     title: 'Ask someone to slow down',
     outcome:
       'Say that you do not understand, ask for repetition and keep the conversation in German.',
@@ -310,6 +313,7 @@ export const germanA1Lessons = defineLessons('DE', [
     level: 'A1',
     // Replaced by German A1 Units 1–3.
     retired: true,
+    replacedBy: 'de-a1-u2-countries',
     title: 'Where you are from and what you speak',
     outcome: 'Say where you come from, where you live and which languages you speak.',
     phrases: [
@@ -371,6 +375,7 @@ export const germanA1Lessons = defineLessons('DE', [
     level: 'A1',
     // Replaced by German A1 Units 1–3.
     retired: true,
+    replacedBy: 'de-a1-u3-numbers',
     title: 'Numbers and prices',
     outcome: 'Understand prices at the till and ask what something costs.',
     phrases: [
@@ -443,6 +448,7 @@ export const germanA1Lessons = defineLessons('DE', [
     level: 'A1',
     // Replaced by German A1 Units 4–6.
     retired: true,
+    replacedBy: 'de-a1-u5-order',
     title: 'Order and pay in a café',
     outcome:
       'Order politely, answer the “for here or to go” question and ask about paying by card.',
@@ -517,6 +523,7 @@ export const germanA1Lessons = defineLessons('DE', [
     level: 'A1',
     // Replaced by German A1 Units 4–6.
     retired: true,
+    replacedBy: 'de-a1-u4-family',
     title: 'Talk about family and friends',
     outcome: 'Introduce people close to you and say who you live with.',
     phrases: [
@@ -587,6 +594,7 @@ export const germanA1Lessons = defineLessons('DE', [
     level: 'A1',
     // Replaced by German A1 Unit 8.
     retired: true,
+    replacedBy: 'de-a1-u8-time',
     title: 'Tell the time and describe your day',
     outcome: 'Ask and tell the time and describe a simple daily routine.',
     phrases: [
@@ -651,6 +659,7 @@ export const germanA1Lessons = defineLessons('DE', [
     level: 'A1',
     // Replaced by German A1 Units 4–6.
     retired: true,
+    replacedBy: 'de-a1-u6-shopping',
     title: 'Shop for food and everyday things',
     outcome: 'Ask where things are, say what you need and handle the checkout.',
     phrases: [
@@ -791,6 +800,7 @@ export const germanA1Lessons = defineLessons('DE', [
     level: 'A1',
     // Replaced by German A1 Unit 9.
     retired: true,
+    replacedBy: 'de-a1-u9-hobbies',
     title: 'Say what you like doing',
     outcome: 'Talk about hobbies and make, accept or decline a suggestion.',
     phrases: [

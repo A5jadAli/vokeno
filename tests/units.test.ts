@@ -271,6 +271,28 @@ describe('German A1 units: progress and review', () => {
     expect(learningRecommendation('DE', 'new').href).toBe('/foundation/de-a1-u1-hallo');
   });
 
+  it('moves a starting point saved for a retired lesson to the unit that replaced it', () => {
+    const retired = foundationLessons.filter((lesson) => lesson.track === 'DE' && lesson.retired);
+    const path = new Set(getTrackLessons('DE').map((lesson) => lesson.id));
+    for (const lesson of retired)
+      expect([lesson.id, path.has(lesson.replacedBy ?? '')]).toEqual([lesson.id, true]);
+    // Earlier versions saved the café lesson as the start for learners who knew some German.
+    expect(nextLesson({}, 'DE', 'cafe').id).toBe('de-a1-u5-order');
+    expect(nextLesson({}, 'DE', 'time-routine').id).toBe('de-a1-u8-time');
+  });
+
+  it('starts German beginners and learners who know some words inside A1', () => {
+    for (const ability of ['new', 'basics'] as const)
+      for (const goal of ['everyday', 'work-study'] as const) {
+        const id = learningRecommendation('DE', ability, goal).href.split('/').at(-1);
+        expect([ability, goal, foundationLessons.find((l) => l.id === id)?.level]).toEqual([
+          ability,
+          goal,
+          'A1',
+        ]);
+      }
+  });
+
   it('counts only marked steps towards the score', () => {
     expect(gradedCount(session)).toBe(session.steps.filter(isGradedStep).length);
   });

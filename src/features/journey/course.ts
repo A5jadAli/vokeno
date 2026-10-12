@@ -1,7 +1,11 @@
 // Where a learner is in a language's course. Today, Course, Progress, the language picker and
 // every completion screen read their "what next" from here, so they can never disagree.
 
-import { getTrackLessons, type FoundationLesson } from '@/features/foundations/catalog';
+import {
+  allTrackLessons,
+  getTrackLessons,
+  type FoundationLesson,
+} from '@/features/foundations/catalog';
 import type { FoundationEntry, FoundationProgress } from '@/features/foundations/progress';
 import { finalStep } from '@/features/foundations/types';
 import type { LanguageTrack } from '@/features/language/config';
@@ -23,6 +27,18 @@ export type NextLesson = {
  * 2. The first unstarted lesson from the learner's chosen starting point.
  * 3. Any lesson still unstarted, for example ones skipped by placement.
  */
+/** A saved starting point, moved to the unit lesson that replaced it if it was retired. */
+function pathStart(track: LanguageTrack, startAt?: string) {
+  const lessons = allTrackLessons(track);
+  let id = startAt;
+  for (let hop = 0; hop < 3; hop++) {
+    const lesson = lessons.find((item) => item.id === id);
+    if (!lesson?.retired || !lesson.replacedBy) break;
+    id = lesson.replacedBy;
+  }
+  return id;
+}
+
 export function findNextLesson(
   progress: FoundationProgress,
   track: LanguageTrack,
@@ -41,7 +57,7 @@ export function findNextLesson(
   if (resume) return { lesson: resume, reason: 'resume' };
   const start = Math.max(
     0,
-    lessons.findIndex((lesson) => lesson.id === startAt),
+    lessons.findIndex((lesson) => lesson.id === pathStart(track, startAt)),
   );
   const fresh =
     lessons.slice(start).find((lesson) => !isFinished(progress[lesson.id])) ??
