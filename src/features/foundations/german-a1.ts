@@ -727,6 +727,9 @@ export const germanA1Lessons = defineLessons('DE', [
   {
     id: 'directions',
     level: 'A1',
+    // Replaced by German A1 Unit 11.
+    retired: true,
+    replacedBy: 'de-a1-u11-places',
     title: 'Find your way and take a train',
     outcome: 'Ask the way, understand left, right and straight ahead, and buy a ticket.',
     phrases: [

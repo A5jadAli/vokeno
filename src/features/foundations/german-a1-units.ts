@@ -5329,6 +5329,1627 @@ const unit9 = defineUnit(
   ],
 );
 
+const practiceNotice =
+  'Praxis Dr. Klein\nVom 4. bis 15. August geschlossen.\nAb 18. August sind wir wieder für Sie da.\nIn dringenden Fällen: Praxis Dr. Ahmadi, Lindenstraße 3.';
+
+const unit10 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u10',
+    number: 10,
+    icon: 'calendar-month',
+    title: 'Termine',
+    canDo: 'Say and understand dates, talk about birthdays, and make or cancel an appointment.',
+  },
+  [
+    {
+      id: 'de-a1-u10-months',
+      session: 'Words',
+      title: 'Months and birthdays',
+      outcome: 'Name the months and say when things happen in the year.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'When is your birthday?',
+          intro: 'In the course break, Maria and Karim talk about birthdays.',
+          lines: [
+            {
+              speaker: 'Maria',
+              text: 'Karim, wann hast du Geburtstag?',
+              meaning: 'Karim, when is your birthday?',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Im März. Am zwölften März.',
+              meaning: 'In March. On the twelfth of March.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Oh, schade, das ist vorbei! Meiner ist im Juli.',
+              real: 'Oh, schade, schon vorbei! Meiner ist im Juli.',
+              meaning: 'Oh, too bad, that’s over! Mine is in July.',
+              realMeaning: 'Oh, too bad, already over! Mine is in July.',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Im Juli? Dann machen wir eine Party!',
+              meaning: 'In July? Then we’ll have a party!',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Aber nicht vorher gratulieren, okay? Das bringt Unglück.',
+              meaning: 'But don’t congratulate me early, OK? That brings bad luck.',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Ach so? Okay, dann erst am Tag selbst.',
+              meaning: 'Really? OK, then only on the day itself.',
+            },
+          ],
+          note: 'In Germany, wishing someone a happy birthday before the day is said to bring bad luck. If you are late, say Alles Gute nachträglich! At work, the person with the birthday usually brings the cake.',
+        },
+        {
+          kind: 'teach',
+          title: 'The months',
+          items: [
+            {
+              target: 'Januar, Februar, März',
+              meaning: 'January, February, March',
+              note: 'In Austria, January is often Jänner.',
+            },
+            { target: 'April, Mai, Juni', meaning: 'April, May, June' },
+            {
+              target: 'Juli, August, September',
+              meaning: 'July, August, September',
+              note: 'On the phone, people sometimes say Juno and Julei so June and July are not mixed up.',
+            },
+            { target: 'Oktober, November, Dezember', meaning: 'October, November, December' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Karim’s birthday is “am zwölften März”. When is it?',
+          options: ['12 March', '2 March', '12 May'],
+          answer: 0,
+          explanation: 'zwölf → am zwölften: on the twelfth. März: March.',
+        },
+        {
+          kind: 'teach',
+          title: 'When in the year',
+          items: [
+            {
+              target: 'im Mai',
+              meaning: 'in May',
+              note: 'Months take im: im Januar, im Dezember.',
+            },
+            {
+              target: 'Anfang / Mitte / Ende Mai',
+              meaning: 'at the beginning / in the middle / at the end of May',
+            },
+            { target: 'nächste Woche', meaning: 'next week' },
+            { target: 'übermorgen', meaning: 'the day after tomorrow' },
+            { target: 'Alles Gute zum Geburtstag!', meaning: 'Happy birthday!' },
+            { target: 'Alles Gute nachträglich!', meaning: 'Happy belated birthday!' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the months.',
+          pairs: [
+            ['Januar', 'January'],
+            ['März', 'March'],
+            ['Mai', 'May'],
+            ['Juli', 'July'],
+            ['Oktober', 'October'],
+            ['Dezember', 'December'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. When is the next course?',
+          audio: 'Der nächste Kurs ist Ende Oktober.',
+          options: [
+            'At the end of October',
+            'At the beginning of October',
+            'In the middle of October',
+          ],
+          answer: 0,
+          explanation: 'Ende Oktober: at the end of October.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'A colleague’s birthday was yesterday. What do you say?',
+          options: ['Alles Gute nachträglich!', 'Alles Gute für morgen!', 'Gute Nacht!'],
+          answer: 0,
+          explanation: 'nachträglich: belated. Wishing someone well in advance is avoided.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “My birthday is in July.”',
+          answer: ['Mein', 'Geburtstag', 'ist', 'im', 'Juli.'],
+          also: ['Im Juli ist mein Geburtstag.'],
+          extra: ['am'],
+          explanation: 'Months take im: im Juli. Dates take am: am zwölften Juli.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “next week”.',
+          accepted: ['nächste Woche'],
+          hint: 'nächste + Woche.',
+          explanation: 'nächste Woche. Also nächsten Monat and nächstes Jahr.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Talk about birthdays.',
+          lines: [
+            'Mein Geburtstag ist im Juli.',
+            'Wann hast du Geburtstag?',
+            'Alles Gute nachträglich!',
+          ],
+          tip: 'In März, ä sounds like the e in “bed”, a little longer.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u10-dates',
+      session: 'Grammar',
+      title: 'Am dritten Mai: dates with ordinal numbers',
+      outcome: 'Say and understand dates: der dritte Mai, am dritten Mai.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Ordinal numbers',
+          body: 'Dates use ordinal numbers. Up to 19, add -te to the number; from 20, add -ste. Four are different and worth learning by heart: erste, dritte, siebte, achte.',
+          table: [
+            ['1.', 'der erste'],
+            ['2.', 'der zweite'],
+            ['3.', 'der dritte'],
+            ['7.', 'der siebte'],
+            ['8.', 'der achte'],
+            ['20.', 'der zwanzigste'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'How do you say “the fourth”?',
+          options: ['der vierte', 'der vierste', 'der viertste'],
+          answer: 0,
+          explanation: 'Up to 19: the number + -te. vier → der vierte.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'How do you say “the twenty-first”?',
+          options: ['der einundzwanzigste', 'der einundzwanzigte', 'der einszwanzigste'],
+          answer: 0,
+          explanation: 'From 20: -ste. einundzwanzig → der einundzwanzigste.',
+        },
+        {
+          kind: 'rule',
+          title: 'der dritte, am dritten',
+          body: 'What the date is: Heute ist der dritte Mai. When something happens: am dritten Mai. After am, the ending is -en.',
+          table: [
+            ['Heute ist der dritte Mai.', 'Today is the third of May.'],
+            ['Die Party ist am dritten Mai.', 'The party is on the third of May.'],
+          ],
+        },
+        {
+          kind: 'teach',
+          title: 'Asking about dates',
+          items: [
+            {
+              target: 'Der Wievielte ist heute?',
+              meaning: 'What’s the date today?',
+              note: 'Casual: Den Wievielten haben wir heute?',
+            },
+            { target: 'Heute ist der erste.', meaning: 'Today is the first.' },
+            { target: 'Am Wievielten?', meaning: 'On which date?' },
+            { target: 'vom ersten bis zum fünften', meaning: 'from the first to the fifth' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Mein Kurs beginnt ___ Mai.',
+          options: ['am zweiten', 'der zweite', 'am zweite'],
+          answer: 0,
+          explanation: 'am + the ordinal with -en: am zweiten Mai.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the dates.',
+          pairs: [
+            ['am ersten', 'on the 1st'],
+            ['am dritten', 'on the 3rd'],
+            ['am siebten', 'on the 7th'],
+            ['am zwanzigsten', 'on the 20th'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. When is the appointment?',
+          audio: 'Ihr Termin ist am siebzehnten Juni.',
+          options: ['17 June', '7 June', '17 July'],
+          answer: 0,
+          explanation: 'am siebzehnten: the 17th. Juni, not Juli: listen to the end of the word.',
+        },
+        {
+          kind: 'rule',
+          title: 'Written dates',
+          body: 'Germans write the day first, then the month, with dots: 3.5. is the 3rd of May, not the 5th of March. Read it aloud as der dritte Mai, or in everyday speech der dritte Fünfte.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “I was born on the eighth of March.”',
+          answer: ['Ich', 'bin', 'am', 'achten', 'März', 'geboren.'],
+          extra: ['achte'],
+          explanation: 'am + achten, with -en. geboren goes to the end.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “Today is the first of June.”',
+          accepted: ['Heute ist der erste Juni.'],
+          hint: 'Heute ist der + erste + Juni.',
+          explanation: 'After ist: der erste. After am: am ersten.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Say three dates that matter to you.',
+          lines: [
+            'Mein Geburtstag ist am achten März.',
+            'Heute ist der zwölfte Oktober.',
+            'Der Kurs ist vom ersten bis zum fünften Juni.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u10-real',
+      session: 'Real talk',
+      title: '“Passt dir Donnerstag?” Booking and cancelling',
+      outcome: 'Book, move and cancel an appointment, by phone and by message.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'At the hairdresser’s',
+          intro: 'Alex calls a hairdresser to book a haircut.',
+          lines: [
+            {
+              speaker: 'Friseurin',
+              text: 'Salon Haarmonie, guten Tag!',
+              meaning: 'Salon Haarmonie, hello!',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Hallo, ich hätte gern einen Termin zum Haareschneiden.',
+              meaning: 'Hello, I’d like an appointment for a haircut.',
+            },
+            {
+              speaker: 'Friseurin',
+              text: 'Gern. Wann passt es Ihnen?',
+              meaning: 'Sure. When suits you?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Geht es am Donnerstag?',
+              real: 'Geht’s am Donnerstag?',
+              meaning: 'Is Thursday possible?',
+            },
+            {
+              speaker: 'Friseurin',
+              text: 'Donnerstag ist leider voll. Freitag um halb fünf?',
+              meaning: 'Thursday is fully booked, unfortunately. Friday at half past four?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Ja, das passt mir gut.',
+              meaning: 'Yes, that suits me well.',
+            },
+            {
+              speaker: 'Friseurin',
+              text: 'Prima. Und Ihr Name, bitte?',
+              meaning: 'Great. And your name, please?',
+            },
+          ],
+          note: 'German hairdressers love puns in their names: Haarmonie, Vorhair Nachhair, Kamm in. Hairdressers, doctors and offices mostly work with appointments, so book ahead.',
+        },
+        {
+          kind: 'teach',
+          title: 'Booking',
+          items: [
+            { target: 'der Termin', meaning: 'appointment' },
+            { target: 'Wann passt es Ihnen?', meaning: 'When suits you?' },
+            {
+              target: 'Geht es am Donnerstag?',
+              meaning: 'Is Thursday possible?',
+              note: 'Casual: Passt dir Donnerstag?',
+            },
+            { target: 'voll', meaning: 'full, booked up', note: 'Also: ausgebucht.' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. When is the haircut?',
+          audio: 'Gut, dann sehen wir uns am Freitag um halb fünf.',
+          options: ['Friday, 4:30', 'Friday, 5:30', 'Thursday, 4:30'],
+          answer: 0,
+          explanation: 'halb fünf: halfway to five, 4:30, as in Unit 8.',
+        },
+        {
+          kind: 'scene',
+          title: 'Something came up',
+          intro: 'On Thursday evening, Alex has to cancel and calls the salon.',
+          lines: [
+            {
+              speaker: 'Alex',
+              text: 'Hallo, hier ist Alex. Ich habe morgen um halb fünf einen Termin.',
+              meaning: 'Hello, it’s Alex. I have an appointment tomorrow at half past four.',
+            },
+            {
+              speaker: 'Friseurin',
+              text: 'Ja, ich sehe es hier. Was kann ich für Sie tun?',
+              meaning: 'Yes, I can see it here. What can I do for you?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Leider muss ich absagen. Ich bin krank.',
+              meaning: 'Unfortunately I have to cancel. I’m ill.',
+            },
+            {
+              speaker: 'Friseurin',
+              text: 'Kein Problem, gute Besserung! Machen wir einen neuen Termin?',
+              meaning: 'No problem, get well soon! Shall we make a new appointment?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Ja, gern. Vielleicht nächste Woche?',
+              meaning: 'Yes, please. Maybe next week?',
+            },
+          ],
+          note: 'Cancel at least a day ahead if you can: many practices and salons charge for appointments that are missed without notice.',
+        },
+        {
+          kind: 'teach',
+          title: 'Changing plans',
+          items: [
+            {
+              target: 'absagen',
+              meaning: 'to cancel',
+              note: 'Separable: Ich sage den Termin ab.',
+            },
+            { target: 'Ich bin krank.', meaning: 'I’m ill.' },
+            { target: 'Gute Besserung!', meaning: 'Get well soon!' },
+            { target: 'einen neuen Termin machen', meaning: 'to make a new appointment' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Someone tells you they are ill. What do you say?',
+          options: ['Gute Besserung!', 'Alles Gute nachträglich!', 'Guten Appetit!'],
+          answer: 0,
+          explanation: 'Gute Besserung: get well soon.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match what you hear.',
+          pairs: [
+            ['Wann passt es Ihnen?', 'When suits you?'],
+            ['voll', 'booked up'],
+            ['absagen', 'to cancel'],
+            ['Gute Besserung!', 'Get well soon!'],
+            ['übermorgen', 'the day after tomorrow'],
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Ask a friend casually: “Does Thursday work for you?”',
+          answer: ['Passt', 'dir', 'Donnerstag?'],
+          extra: ['du'],
+          explanation: 'Passt dir …? Literally “does … suit you?”. No am needed here.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Message a friend: “Sorry, I have to cancel.”',
+          accepted: ['Sorry, ich muss absagen.', 'Tut mir leid, ich muss absagen.'],
+          hint: 'ich muss + absagen at the end.',
+          explanation: 'After muss, the second verb goes to the end in one piece: absagen.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Book an appointment by phone.',
+          lines: [
+            'Hallo, ich hätte gern einen Termin.',
+            'Geht es am Freitag?',
+            'Ja, das passt mir gut. Danke!',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u10-exam',
+      session: 'Exam task',
+      title: 'Goethe A1 practice: dates you hear, a notice, a message',
+      outcome:
+        'Catch dates in Hören, read a notice in Lesen Teil 3, and cancel an appointment in writing.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'The exam: dates in Hören',
+          body: 'Dates come up often. Listen for the ending (-ten, -sten) and for the month. As with times, a date may be corrected, so listen to the end.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. When is the party?',
+          audio: 'Die Party ist am fünfzehnten. Nein, Moment, am sechzehnten Mai!',
+          options: ['16 May', '15 May', '6 May'],
+          answer: 0,
+          explanation: '“Nein, Moment”: the second date counts.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. Until when is the shop closed?',
+          audio: 'Liebe Kunden, unser Geschäft ist bis zum dritten Januar geschlossen.',
+          options: ['Until 3 January', 'Until 13 January', 'Until 3 June'],
+          answer: 0,
+          explanation: 'bis zum dritten Januar: until the third of January.',
+        },
+        {
+          kind: 'rule',
+          title: 'Lesen Teil 3: a notice',
+          body: 'Practices and offices put up notices when they close for a holiday. Look for vom … bis (from … to) and ab (from … on).',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Die Praxis ist im August fast zwei Wochen geschlossen.',
+          context: practiceNotice,
+          options: ['Richtig', 'Falsch'],
+          answer: 0,
+          explanation: 'Vom 4. bis 15. August: closed for almost two weeks.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Am 16. August ist die Praxis wieder geöffnet.',
+          context: practiceNotice,
+          options: ['Richtig', 'Falsch'],
+          answer: 1,
+          explanation: '“Ab 18. August”: it opens again on the 18th.',
+        },
+        {
+          kind: 'teach',
+          title: 'Words in notices',
+          items: [
+            { target: 'der Urlaub', meaning: 'holiday, time off' },
+            { target: 'ab', meaning: 'from … on', note: 'Ab Montag: from Monday on.' },
+            { target: 'dringend', meaning: 'urgent' },
+            { target: 'wieder', meaning: 'again' },
+          ],
+        },
+        {
+          kind: 'rule',
+          title: 'Schreiben Teil 2: cancel and suggest',
+          body: 'A classic task: you can’t come to an appointment. Say sorry, give a reason, and suggest a new day.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Point 1: Say that unfortunately you can’t come on Friday.',
+          answer: ['Leider', 'kann', 'ich', 'am', 'Freitag', 'nicht', 'kommen.'],
+          extra: ['bin'],
+          explanation: 'Leider first, then kann, and kommen at the very end.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Point 2: Give the reason: you have to work.',
+          answer: ['Ich', 'muss', 'arbeiten.'],
+          extra: ['arbeite'],
+          explanation: 'muss, then the second verb at the end: arbeiten.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Point 3: Suggest a new date: “Is the twelfth possible?”',
+          accepted: ['Geht es am zwölften?', 'Geht es am zwölften auch?', 'Passt es am zwölften?'],
+          hint: 'Geht es + am zwölften?',
+          explanation: 'Geht es am zwölften? Short and polite.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Read your message aloud.',
+          lines: [
+            'Liebe Frau Klein, leider kann ich am Freitag nicht kommen.',
+            'Ich muss arbeiten. Geht es am zwölften?',
+            'Viele Grüße, Alex',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
+const libraryPages =
+  'a) Stadtbibliothek: Mo–Fr 10–19 Uhr, Sa 10–14 Uhr. Am Markt 10. Straßenbahn 9, Haltestelle Markt.\nb) Musikbibliothek: Di und Do 13–18 Uhr. Parkstraße 2. Bus 89, Haltestelle Parkstraße.';
+const postDirections =
+  'Gehen Sie hier geradeaus bis zur Kirche. Die Post ist dann links, neben dem Café.';
+
+const unit11 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u11',
+    number: 11,
+    icon: 'city-variant-outline',
+    title: 'In der Stadt',
+    canDo: 'Ask the way and follow directions, name places in town, and give simple instructions.',
+  },
+  [
+    {
+      id: 'de-a1-u11-places',
+      session: 'Words',
+      title: 'Places in town',
+      outcome: 'Name places in town and ask how to get there.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'In the city centre',
+          intro: 'Maria and Karim are in the centre of Leipzig. Maria needs a pharmacy.',
+          lines: [
+            {
+              speaker: 'Maria',
+              text: 'Karim, gibt es hier eine Apotheke?',
+              meaning: 'Karim, is there a pharmacy around here?',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Ja, am Marktplatz, gegenüber vom Rathaus.',
+              meaning: 'Yes, on the market square, opposite the town hall.',
+            },
+            { speaker: 'Maria', text: 'Ist das weit?', meaning: 'Is that far?' },
+            {
+              speaker: 'Karim',
+              text: 'Nein, nur fünf Minuten zu Fuß. Wir gehen hier geradeaus.',
+              meaning: 'No, only five minutes on foot. We go straight on here.',
+            },
+            {
+              speaker: 'Maria',
+              text: 'Und danach muss ich noch zur Post.',
+              real: 'Und danach muss ich noch schnell zur Post.',
+              meaning: 'And after that I still need to go to the post office.',
+              realMeaning: 'And after that I still need to pop to the post office.',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Die Post ist direkt am Bahnhof. Das ist auch nicht weit.',
+              meaning: 'The post office is right by the station. That’s not far either.',
+            },
+          ],
+          note: 'Many German towns are built around a Marktplatz with the Rathaus (town hall) and a church. Most medicines, even painkillers, are sold only in an Apotheke, marked with a red A.',
+        },
+        {
+          kind: 'teach',
+          title: 'In town',
+          items: [
+            { target: 'der Bahnhof', meaning: 'station' },
+            { target: 'die Apotheke', meaning: 'pharmacy' },
+            { target: 'die Post', meaning: 'post office' },
+            { target: 'die Bank', meaning: 'bank' },
+            { target: 'das Rathaus', meaning: 'town hall' },
+            { target: 'der Marktplatz', meaning: 'market square' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Maria needs painkillers. Where does she go?',
+          options: ['In die Apotheke', 'In den Supermarkt', 'In die Post'],
+          answer: 0,
+          explanation:
+            'In Germany, most medicines, even painkillers, are sold only in an Apotheke.',
+        },
+        {
+          kind: 'teach',
+          title: 'How far?',
+          items: [
+            { target: 'Ist das weit?', meaning: 'Is that far?' },
+            { target: 'zu Fuß', meaning: 'on foot' },
+            { target: 'geradeaus', meaning: 'straight on' },
+            { target: 'gegenüber', meaning: 'opposite' },
+            { target: 'direkt am Bahnhof', meaning: 'right by the station' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the places.',
+          pairs: [
+            ['der Bahnhof', 'station'],
+            ['die Apotheke', 'pharmacy'],
+            ['das Rathaus', 'town hall'],
+            ['der Marktplatz', 'market square'],
+            ['die Post', 'post office'],
+          ],
+        },
+        {
+          kind: 'rule',
+          title: 'zum, zur: going to a place',
+          body: 'To say where you are going, use zum for der and das words and zur for die words: zum Bahnhof, zum Rathaus, zur Post, zur Apotheke. zum is short for zu dem, zur for zu der.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Ich gehe ___ Post.',
+          options: ['zur', 'zum', 'zu'],
+          answer: 0,
+          explanation: 'die Post → zur Post.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. Where does she want to go?',
+          audio: 'Entschuldigung, wie komme ich zum Rathaus?',
+          options: ['To the town hall', 'To the station', 'To the post office'],
+          answer: 0,
+          explanation: 'zum Rathaus: to the town hall.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Ask: “How do I get to the station?”',
+          answer: ['Wie', 'komme', 'ich', 'zum', 'Bahnhof?'],
+          extra: ['zur'],
+          explanation: 'der Bahnhof → zum Bahnhof.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Write: “I am going to the pharmacy.”',
+          accepted: ['Ich gehe zur Apotheke.', 'Ich gehe in die Apotheke.'],
+          hint: 'die Apotheke → zur Apotheke.',
+          explanation: 'zur Apotheke (towards it) and in die Apotheke (into it) are both natural.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Ask about places in your town.',
+          lines: ['Gibt es hier eine Apotheke?', 'Ist das weit?', 'Wie komme ich zur Post?'],
+          tip: 'In Apotheke, the stress is on the e: a-po-TEE-ke.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u11-imperative',
+      session: 'Grammar',
+      title: 'Gehen Sie geradeaus! Giving instructions',
+      outcome: 'Understand and give directions and instructions with the imperative.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Instructions to someone you call Sie',
+          body: 'Put the verb first and keep Sie: Gehen Sie geradeaus. Nehmen Sie den Bus. Add bitte to sound friendly.',
+          table: [
+            ['gehen', 'Gehen Sie geradeaus.'],
+            ['nehmen', 'Nehmen Sie die zweite Straße links.'],
+            ['warten', 'Warten Sie bitte hier.'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Which sentence tells a stranger to take the bus?',
+          options: ['Nehmen Sie den Bus.', 'Sie nehmen den Bus?', 'Nimm Sie den Bus.'],
+          answer: 0,
+          explanation: 'Verb first, then Sie: Nehmen Sie den Bus.',
+        },
+        {
+          kind: 'rule',
+          title: 'Instructions to a friend (du)',
+          body: 'Take the du form and drop -st and du: du gehst → Geh! du kommst → Komm! An e that changes to i stays: du nimmst → Nimm! An a that changes to ä does not: du fährst → Fahr!',
+          table: [
+            ['du gehst', 'Geh!'],
+            ['du kommst', 'Komm mit!'],
+            ['du nimmst', 'Nimm den Bus!'],
+            ['du fährst', 'Fahr langsam!'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Tell a friend: “Come with me!”',
+          options: ['Komm mit!', 'Kommst mit!', 'Komm du mit!'],
+          answer: 0,
+          explanation: 'du kommst → Komm! The prefix mit goes to the end.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Tell a friend: “Take the tram!” (nehmen)',
+          options: ['Nimm die Straßenbahn!', 'Nehm die Straßenbahn!', 'Nimmst die Straßenbahn!'],
+          answer: 0,
+          explanation: 'du nimmst → Nimm! The i stays.',
+        },
+        {
+          kind: 'teach',
+          title: 'Directions',
+          items: [
+            { target: 'die erste Straße links', meaning: 'the first street on the left' },
+            { target: 'an der Ampel', meaning: 'at the traffic lights' },
+            { target: 'an der Kreuzung', meaning: 'at the crossroads' },
+            { target: 'über die Brücke', meaning: 'over the bridge' },
+            { target: 'bis zur Kirche', meaning: 'as far as the church' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the directions.',
+          pairs: [
+            ['geradeaus', 'straight on'],
+            ['an der Ampel', 'at the traffic lights'],
+            ['die erste Straße links', 'the first street on the left'],
+            ['über die Brücke', 'over the bridge'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. Where do you turn?',
+          audio: 'Gehen Sie bis zur Ampel und dann rechts.',
+          options: [
+            'Right at the traffic lights',
+            'Left at the traffic lights',
+            'Right at the church',
+          ],
+          answer: 0,
+          explanation: 'bis zur Ampel, dann rechts.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Tell a stranger: “Take the first street on the right.”',
+          answer: ['Nehmen', 'Sie', 'die', 'erste', 'Straße', 'rechts.'],
+          extra: ['Nimm'],
+          explanation: 'Verb first, then Sie. Nimm is for a friend.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Tell a friend: “Wait here!” (warten)',
+          accepted: ['Warte hier!', 'Wart hier!'],
+          hint: 'du wartest → Warte!',
+          explanation: 'Verbs ending in -t or -d keep an e: Warte! In speech: Wart mal!',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Give a stranger directions to the station.',
+          lines: [
+            'Gehen Sie hier geradeaus.',
+            'Nehmen Sie an der Ampel die erste Straße links.',
+            'Der Bahnhof ist dann rechts.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u11-real',
+      session: 'Real talk',
+      title: '“Ich bin auch nicht von hier.” Asking the way',
+      outcome:
+        'Ask strangers the way, cope with fast answers, and know the unwritten rules of the street.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'Lost in Leipzig',
+          intro: 'Alex is looking for the Thomaskirche. He asks two people.',
+          lines: [
+            {
+              speaker: 'Alex',
+              text: 'Entschuldigung, wo ist die Thomaskirche?',
+              meaning: 'Excuse me, where is the Thomaskirche?',
+            },
+            {
+              speaker: 'Passantin',
+              text: 'Tut mir leid, ich bin auch nicht von hier.',
+              real: 'Sorry, bin auch nicht von hier.',
+              meaning: 'Sorry, I’m not from here either.',
+            },
+            { speaker: 'Alex', text: 'Okay, danke trotzdem!', meaning: 'OK, thanks anyway!' },
+            {
+              speaker: 'Alex',
+              text: 'Entschuldigung, ist die Thomaskirche hier in der Nähe?',
+              meaning: 'Excuse me, is the Thomaskirche near here?',
+            },
+            {
+              speaker: 'Passant',
+              text: 'Ja, ganz nah. Da vorne links, dann sehen Sie sie schon.',
+              real: 'Ja, gleich da vorne links, dann sehen Sie die schon.',
+              meaning: 'Yes, very close. Up there on the left, then you’ll see it.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Super, vielen Dank!',
+              meaning: 'Great, thank you very much!',
+            },
+            {
+              speaker: 'Passant',
+              text: 'Gern. Und Vorsicht, das ist ein Radweg!',
+              meaning: 'You’re welcome. And careful, that’s a cycle path!',
+            },
+          ],
+          note: 'Ich bin auch nicht von hier is one of the most common answers in any German city. Red or marked lanes on the pavement are cycle paths: walking on them annoys cyclists, who will ring their bell.',
+        },
+        {
+          kind: 'teach',
+          title: 'Asking strangers',
+          items: [
+            { target: 'Ist das hier in der Nähe?', meaning: 'Is that near here?' },
+            { target: 'Ich bin auch nicht von hier.', meaning: 'I’m not from here either.' },
+            { target: 'Danke trotzdem!', meaning: 'Thanks anyway!' },
+            { target: 'da vorne', meaning: 'up there, just ahead' },
+            { target: 'ganz nah', meaning: 'very close' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'You ask the way and hear: “Ich bin auch nicht von hier.” What now?',
+          options: [
+            'Say “Danke trotzdem!” and ask someone else',
+            'Ask the same question more slowly',
+            'Say “Gute Besserung!”',
+          ],
+          answer: 0,
+          explanation: 'They can’t help: thank them anyway and try the next person.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. How far is it?',
+          audio: 'Das ist ganz nah, vielleicht zwei Minuten zu Fuß.',
+          options: [
+            'About two minutes on foot',
+            'About twenty minutes on foot',
+            'Two stops by bus',
+          ],
+          answer: 0,
+          explanation: 'ganz nah, zwei Minuten zu Fuß: very close.',
+        },
+        {
+          kind: 'scene',
+          title: 'The red man',
+          intro: 'Karim and Alex are at a pedestrian crossing. There are no cars.',
+          lines: [
+            {
+              speaker: 'Alex',
+              text: 'Komm, da ist kein Auto!',
+              meaning: 'Come on, there’s no car!',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Warte, die Ampel ist rot!',
+              meaning: 'Wait, the light is red!',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Aber die Straße ist leer.',
+              meaning: 'But the street is empty.',
+            },
+            {
+              speaker: 'Karim',
+              text: 'Egal. Da drüben steht ein Kind. Bei Rot bleibt man stehen.',
+              real: 'Egal. Da drüben steht ’n Kind. Bei Rot bleibt man stehen.',
+              meaning: 'Doesn’t matter. There’s a child over there. On red, you wait.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Okay, okay. Ganz schön deutsch!',
+              meaning: 'OK, OK. That’s pretty German!',
+            },
+          ],
+          note: 'Many Germans wait at a red light even when the road is empty, especially when children can see them. Crossing on red can also mean a fine.',
+        },
+        {
+          kind: 'teach',
+          title: 'Words from the street',
+          items: [
+            { target: 'rot / grün', meaning: 'red / green' },
+            { target: 'die Haltestelle', meaning: 'stop (bus, tram)' },
+            { target: 'der Radweg', meaning: 'cycle path' },
+            { target: 'Vorsicht!', meaning: 'Careful!' },
+            { target: 'Egal.', meaning: 'Doesn’t matter.' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match what you hear.',
+          pairs: [
+            ['Vorsicht!', 'Careful!'],
+            ['da vorne', 'up ahead'],
+            ['Danke trotzdem!', 'Thanks anyway!'],
+            ['der Radweg', 'cycle path'],
+            ['Egal.', 'Doesn’t matter.'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Why does Karim wait at the empty crossing?',
+          options: ['The light is red, and a child is watching', 'He is lost', 'The bus is coming'],
+          answer: 0,
+          explanation: 'Bei Rot bleibt man stehen: on red, you wait.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Ask: “Is the station near here?”',
+          answer: ['Ist', 'der', 'Bahnhof', 'hier', 'in', 'der', 'Nähe?'],
+          extra: ['zum'],
+          explanation: 'Ist … hier in der Nähe? Is … near here?',
+        },
+        {
+          kind: 'type',
+          prompt:
+            'Someone asks you the way, but you are new too. Write: “Sorry, I’m not from here either.”',
+          accepted: [
+            'Tut mir leid, ich bin auch nicht von hier.',
+            'Sorry, ich bin auch nicht von hier.',
+          ],
+          hint: 'ich bin + auch nicht + von hier.',
+          explanation: 'auch nicht: not … either.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Ask a stranger the way, then thank them.',
+          lines: [
+            'Entschuldigung, ist die Post hier in der Nähe?',
+            'Super, vielen Dank!',
+            'Danke trotzdem!',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u11-exam',
+      session: 'Exam task',
+      title: 'Goethe A1 practice: web pages and directions',
+      outcome:
+        'Find the right web page in Lesen Teil 2, follow directions you hear, and ask the way in Sprechen Teil 3.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Lesen Teil 2: web pages',
+          body: 'You read two short web pages and decide which one helps: opening hours, the address and how to get there.',
+        },
+        {
+          kind: 'teach',
+          title: 'Words on town web pages',
+          items: [
+            { target: 'die Bibliothek', meaning: 'library' },
+            { target: 'die Adresse', meaning: 'address' },
+            { target: 'die Linie', meaning: 'line (bus, tram)' },
+            {
+              target: 'aussteigen',
+              meaning: 'to get off',
+              note: 'Separable: Wir steigen am Marktplatz aus.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Sie möchten am Samstag Bücher ausleihen. Wohin gehen Sie?',
+          context: libraryPages,
+          options: ['a) Stadtbibliothek', 'b) Musikbibliothek'],
+          answer: 0,
+          explanation: 'a is open on Saturday: Sa 10–14 Uhr.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Mit welcher Linie fahren Sie zur Musikbibliothek?',
+          context: libraryPages,
+          options: ['Bus 89', 'Straßenbahn 9', 'Bus 9'],
+          answer: 0,
+          explanation: 'b) Musikbibliothek: Bus 89, Haltestelle Parkstraße.',
+        },
+        {
+          kind: 'rule',
+          title: 'Hören: directions',
+          body: 'When someone explains the way, follow each step in order: geradeaus, links, rechts, and the landmarks in between.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. Where is the post office?',
+          audio: postDirections,
+          options: [
+            'Left, once you reach the church',
+            'Right, before the church',
+            'Opposite the station',
+          ],
+          answer: 0,
+          explanation: 'bis zur Kirche, dann links.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen again. What is next to the post office?',
+          audio: postDirections,
+          options: ['A café', 'A bank', 'A pharmacy'],
+          answer: 0,
+          explanation: '“neben dem Café”: next to the café.',
+        },
+        {
+          kind: 'rule',
+          title: 'Sprechen Teil 3: asking for help',
+          body: 'You met Sprechen Teil 3 in Unit 5. With places, ask politely with Wo ist …? or Können Sie mir bitte …?, and add Entschuldigung.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Your card shows a map. Which request fits?',
+          options: [
+            'Können Sie mir bitte den Weg zum Bahnhof zeigen?',
+            'Bahnhof zeigen, Sie?',
+            'Wo Bahnhof?',
+          ],
+          answer: 0,
+          explanation: 'A full, polite request: Können Sie mir bitte …?',
+        },
+        {
+          kind: 'type',
+          prompt: 'Your card shows a bus. Ask a stranger where the stop is.',
+          accepted: [
+            'Entschuldigung, wo ist die Haltestelle?',
+            'Wo ist die Haltestelle, bitte?',
+            'Wo ist bitte die Haltestelle?',
+          ],
+          hint: 'Entschuldigung, wo ist + die Haltestelle?',
+          explanation: 'Entschuldigung or bitte makes it polite.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Unit 11 review: match the pairs.',
+          pairs: [
+            ['zur Post', 'to the post office'],
+            ['geradeaus', 'straight on'],
+            ['die Haltestelle', 'stop'],
+            ['Nimm!', 'Take!'],
+            ['aussteigen', 'to get off'],
+          ],
+        },
+        {
+          kind: 'speak',
+          prompt: 'Explain the way to your home from the nearest stop.',
+          lines: [
+            'Nimm die Straßenbahn bis zum Marktplatz.',
+            'Dann geh geradeaus bis zur Ampel.',
+            'Meine Wohnung ist gleich da vorne links.',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
+const dresdenConnections =
+  'a) Leipzig Hbf ab 8:12, Dresden Hbf an 9:47. Regionalexpress: Deutschlandticket gilt.\nb) Leipzig Hbf ab 8:35, Dresden Hbf an 9:40. ICE: 29,90 €, Deutschlandticket gilt nicht.';
+
+const unit12 = defineUnit(
+  'DE',
+  'A1',
+  {
+    id: 'de-a1-u12',
+    number: 12,
+    icon: 'train',
+    title: 'Bahn fahren',
+    canDo:
+      'Buy a ticket, understand platforms, times and delays, and ask what you can and can’t do.',
+  },
+  [
+    {
+      id: 'de-a1-u12-tickets',
+      session: 'Words',
+      title: 'Trains, trams and tickets',
+      outcome: 'Name ways to travel and buy a ticket.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'A day in Dresden',
+          intro: 'Jonas and Alex plan a day trip to Dresden by train.',
+          lines: [
+            {
+              speaker: 'Jonas',
+              text: 'Wollen wir am Samstag nach Dresden fahren?',
+              meaning: 'Shall we go to Dresden on Saturday?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Gern! Wie lange braucht der Zug?',
+              meaning: 'Sure! How long does the train take?',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Etwa anderthalb Stunden, mit dem Regionalexpress.',
+              meaning: 'About an hour and a half, with the regional express.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Und was kostet eine Fahrkarte?',
+              meaning: 'And how much is a ticket?',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Mit dem Deutschlandticket nichts extra. Hast du eins?',
+              real: 'Mit’m Deutschlandticket nix extra. Haste eins?',
+              meaning: 'With the Deutschlandticket, nothing extra. Do you have one?',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Nein. Dann kaufe ich eine Fahrkarte am Automaten.',
+              meaning: 'No. Then I’ll buy a ticket at the machine.',
+            },
+          ],
+          note: 'The Deutschlandticket is a monthly subscription for local and regional trains, buses and trams all over Germany. It does not cover fast long-distance trains like the ICE.',
+        },
+        {
+          kind: 'teach',
+          title: 'Getting around',
+          items: [
+            { target: 'der Zug', meaning: 'train' },
+            {
+              target: 'die Straßenbahn',
+              meaning: 'tram',
+              note: 'In Leipzig and many other cities, the tram is the main way to get around.',
+            },
+            { target: 'die S-Bahn / die U-Bahn', meaning: 'suburban train / underground' },
+            { target: 'die Fahrkarte', meaning: 'ticket', note: 'Also: das Ticket.' },
+            { target: 'der Automat', meaning: 'ticket machine' },
+            { target: 'mit dem Zug', meaning: 'by train' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Jonas says: “Etwa anderthalb Stunden.” What does etwa mean?',
+          options: ['about, roughly', 'exactly', 'at least'],
+          answer: 0,
+          explanation: 'etwa: about. ungefähr means the same.',
+        },
+        {
+          kind: 'teach',
+          title: 'Buying a ticket',
+          items: [
+            {
+              target: 'Einmal nach Dresden, bitte.',
+              meaning: 'One ticket to Dresden, please.',
+              note: 'The short way at the counter. Two tickets: Zweimal.',
+            },
+            { target: 'einfach', meaning: 'one way' },
+            { target: 'hin und zurück', meaning: 'return, there and back' },
+            { target: 'Wie lange dauert die Fahrt?', meaning: 'How long is the journey?' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the travel words.',
+          pairs: [
+            ['der Zug', 'train'],
+            ['die Straßenbahn', 'tram'],
+            ['die Fahrkarte', 'ticket'],
+            ['hin und zurück', 'return'],
+            ['einfach', 'one way'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What ticket does he buy?',
+          audio: 'Einmal nach Leipzig und zurück, bitte.',
+          options: [
+            'A return ticket to Leipzig',
+            'A one-way ticket to Leipzig',
+            'Two tickets to Leipzig',
+          ],
+          answer: 0,
+          explanation: 'und zurück: and back, a return ticket.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'You want to go to Berlin and come back the same day. What do you ask for?',
+          options: [
+            'Hin und zurück nach Berlin, bitte.',
+            'Einfach nach Berlin, bitte.',
+            'Zweimal Berlin, bitte.',
+          ],
+          answer: 0,
+          explanation: 'hin und zurück: there and back.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Ask: “How long does it take by train?”',
+          answer: ['Wie', 'lange', 'dauert', 'das', 'mit', 'dem', 'Zug?'],
+          extra: ['der'],
+          explanation: 'dauern: to take (time). mit dem Zug: by train.',
+        },
+        {
+          kind: 'type',
+          prompt: 'At the counter, say: “One ticket to Berlin, please.”',
+          accepted: ['Einmal nach Berlin, bitte.'],
+          hint: 'Einmal + nach Berlin + bitte.',
+          explanation: 'Einmal: one (ticket). Zweimal for two.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Buy a ticket at the counter.',
+          lines: ['Einmal nach Dresden, bitte.', 'Hin und zurück.', 'Wie lange dauert die Fahrt?'],
+          tip: 'In Zug, the z sounds like ts: tsook.',
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u12-koennen',
+      session: 'Grammar',
+      title: 'Kann ich hier sitzen? können and the verb at the end',
+      outcome: 'Say what you can and can’t do, and ask if something is possible.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'können: can, be able to',
+          body: 'können changes its vowel in the singular, and ich and er, sie, es have no ending. The second verb goes to the very end, in its basic form.',
+          table: [
+            ['ich kann', 'Ich kann heute nicht kommen.'],
+            ['du kannst', 'Kannst du mich abholen?'],
+            ['er, sie, es kann', 'Sie kann gut Deutsch.'],
+            ['wir können', 'Wir können den Bus nehmen.'],
+            ['ihr könnt', 'Könnt ihr warten?'],
+            ['sie, Sie können', 'Können Sie das wiederholen?'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: ___ du mich vom Bahnhof abholen?',
+          options: ['Kannst', 'Kann', 'Könnt'],
+          answer: 0,
+          explanation: 'du kannst, with -st.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Complete: Karim ___ heute nicht kommen.',
+          options: ['kann', 'kannt', 'können'],
+          answer: 0,
+          explanation: 'er, sie, es kann: no ending, like ich kann.',
+        },
+        {
+          kind: 'rule',
+          title: 'The verb at the end',
+          body: 'With können, the main verb moves to the end: Ich kann den Zug nehmen. In a question too: Kann ich hier eine Fahrkarte kaufen?',
+        },
+        {
+          kind: 'build',
+          prompt: 'Say: “We can take the tram.”',
+          answer: ['Wir', 'können', 'die', 'Straßenbahn', 'nehmen.'],
+          extra: ['nimmt'],
+          explanation: 'können second, nehmen at the end.',
+        },
+        {
+          kind: 'teach',
+          title: 'What is possible?',
+          items: [
+            { target: 'Kann ich hier sitzen?', meaning: 'Can I sit here?' },
+            {
+              target: 'Ist hier noch frei?',
+              meaning: 'Is this seat free?',
+              note: 'The usual question on a train or in a café.',
+            },
+            {
+              target: 'abholen',
+              meaning: 'to pick someone up',
+              note: 'Separable: Ich hole dich ab.',
+            },
+            { target: 'Das geht nicht.', meaning: 'That’s not possible.' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Which question is correct?',
+          options: ['Kann ich hier sitzen?', 'Kann ich sitzen hier?', 'Ich kann hier sitzen?'],
+          answer: 0,
+          explanation: 'Kann first in a yes/no question, sitzen at the end.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match the forms of können.',
+          pairs: [
+            ['ich', 'kann'],
+            ['du', 'kannst'],
+            ['wir', 'können'],
+            ['ihr', 'könnt'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. What can’t she do?',
+          audio: 'Ich kann dich leider nicht abholen, ich arbeite bis sechs.',
+          options: ['Pick him up', 'Work today', 'Call him'],
+          answer: 0,
+          explanation: 'nicht abholen: she can’t pick him up. She works until six.',
+        },
+        {
+          kind: 'rule',
+          title: 'Two kinds of questions',
+          body: 'As in Unit 1: a W-question starts with the question word, then the verb: Wann fährt der Zug? A yes/no question starts with the verb: Fährt der Zug pünktlich? With können: Wann kannst du kommen? Kannst du kommen?',
+        },
+        {
+          kind: 'type',
+          prompt: 'Ask a friend: “When can you come?”',
+          accepted: ['Wann kannst du kommen?'],
+          hint: 'Wann + kannst + du + kommen?',
+          explanation: 'The question word, then kannst, then du, and kommen at the end.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'Say what you can and can’t do today.',
+          lines: [
+            'Ich kann heute nicht kommen.',
+            'Kannst du mich vom Bahnhof abholen?',
+            'Wir können die Straßenbahn nehmen.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u12-real',
+      session: 'Real talk',
+      title: '“Die Bahn hat mal wieder Verspätung”',
+      outcome:
+        'Understand platform changes and delays, get through a ticket check, and complain about the train like a local.',
+      minutes: 7,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'On the platform',
+          intro: 'Alex and Jonas are waiting at Leipzig Hauptbahnhof. There is an announcement.',
+          lines: [
+            {
+              speaker: 'Ansage',
+              text: 'Information zum Regionalexpress nach Dresden, Abfahrt neun Uhr zwölf: heute von Gleis fünf.',
+              meaning:
+                'Information about the regional express to Dresden, departure 9:12: today from platform 5.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Gleis fünf? Ich dachte, Gleis zwei!',
+              meaning: 'Platform five? I thought platform two!',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Ja, Gleiswechsel. Schnell, komm!',
+              meaning: 'Yes, platform change. Quick, come on!',
+            },
+            {
+              speaker: 'Ansage',
+              text: 'Der Zug hat heute etwa fünfzehn Minuten Verspätung.',
+              meaning: 'The train is about fifteen minutes late today.',
+            },
+            {
+              speaker: 'Jonas',
+              text: 'Typisch. Die Bahn hat mal wieder Verspätung.',
+              real: 'Typisch. Die Bahn mal wieder.',
+              meaning: 'Typical. The train is late again.',
+              realMeaning: 'Typical. Deutsche Bahn again.',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Na ja, dann haben wir noch Zeit für einen Kaffee.',
+              meaning: 'Oh well, then we still have time for a coffee.',
+            },
+          ],
+          note: 'Delays are so common that complaining about Die Bahn is a national small-talk topic. Always check the display: platform changes (Gleiswechsel) happen often.',
+        },
+        {
+          kind: 'teach',
+          title: 'At the station',
+          items: [
+            { target: 'das Gleis', meaning: 'platform, track' },
+            { target: 'die Abfahrt / die Ankunft', meaning: 'departure / arrival' },
+            { target: 'die Verspätung', meaning: 'delay' },
+            {
+              target: 'umsteigen',
+              meaning: 'to change (trains)',
+              note: 'Separable: In Halle steigen wir um.',
+            },
+            { target: 'Typisch!', meaning: 'Typical!' },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'The announcement says “heute von Gleis fünf”. What do you do?',
+          options: ['Go to platform 5', 'Wait at platform 2', 'Wait five minutes'],
+          answer: 0,
+          explanation: 'heute von Gleis fünf: today it leaves from platform 5.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. How late is the train?',
+          audio: 'Der Zug nach Berlin hat circa zwanzig Minuten Verspätung.',
+          options: ['About 20 minutes', 'About 10 minutes', 'About 2 minutes'],
+          answer: 0,
+          explanation: 'circa zwanzig Minuten: about twenty minutes.',
+        },
+        {
+          kind: 'scene',
+          title: 'Tickets, please',
+          intro: 'On the train, an inspector checks tickets.',
+          lines: [
+            {
+              speaker: 'Kontrolleurin',
+              text: 'Guten Tag, die Fahrkarten, bitte!',
+              real: 'Tach, die Fahrkarten bitte!',
+              meaning: 'Hello, tickets, please!',
+              realMeaning: 'Hi, tickets please!',
+            },
+            {
+              speaker: 'Alex',
+              text: 'Hier, bitte. Hält der Zug auch in Riesa?',
+              meaning: 'Here you are. Does the train stop in Riesa too?',
+            },
+            {
+              speaker: 'Kontrolleurin',
+              text: 'Ja, in zwanzig Minuten. Danke, gute Fahrt!',
+              meaning: 'Yes, in twenty minutes. Thanks, have a good trip!',
+            },
+            { speaker: 'Alex', text: 'Danke, Ihnen auch!', meaning: 'Thanks, you too!' },
+          ],
+          note: 'German stations have no ticket barriers: you need a valid ticket before you get on. Riding without one (schwarzfahren) costs a fine of 60 euros.',
+        },
+        {
+          kind: 'teach',
+          title: 'On the train',
+          items: [
+            { target: 'Die Fahrkarten, bitte!', meaning: 'Tickets, please!' },
+            { target: 'Gute Fahrt!', meaning: 'Have a good trip!' },
+            {
+              target: 'Danke, Ihnen auch!',
+              meaning: 'Thanks, you too!',
+              note: 'To a friend: Danke, dir auch!',
+            },
+            { target: 'Hält der Zug in Riesa?', meaning: 'Does the train stop in Riesa?' },
+          ],
+        },
+        {
+          kind: 'match',
+          prompt: 'Match what you hear.',
+          pairs: [
+            ['das Gleis', 'platform'],
+            ['die Verspätung', 'delay'],
+            ['umsteigen', 'to change trains'],
+            ['Gute Fahrt!', 'Have a good trip!'],
+            ['Typisch!', 'Typical!'],
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'The inspector says “Gute Fahrt!”. What do you answer?',
+          options: ['Danke, Ihnen auch!', 'Gute Besserung!', 'Bis später!'],
+          answer: 0,
+          explanation: 'Ihnen auch: you too, to someone you call Sie.',
+        },
+        {
+          kind: 'build',
+          prompt: 'Ask: “Do I have to change trains?”',
+          answer: ['Muss', 'ich', 'umsteigen?'],
+          extra: ['um'],
+          explanation: 'With muss, umsteigen goes to the end in one piece.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Complain like a local: “The train is late again.”',
+          accepted: ['Die Bahn hat mal wieder Verspätung.', 'Der Zug hat mal wieder Verspätung.'],
+          hint: 'hat + mal wieder + Verspätung.',
+          explanation: 'mal wieder: once again. Usually said with a sigh.',
+        },
+        {
+          kind: 'speak',
+          prompt: 'At the station: ask, check and react.',
+          lines: [
+            'Von welchem Gleis fährt der Zug nach Dresden?',
+            'Hat der Zug Verspätung?',
+            'Typisch! Dann trinken wir noch einen Kaffee.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u12-exam',
+      session: 'Exam task',
+      title: 'Goethe A1 practice: announcements, connections and requests',
+      outcome:
+        'Catch platforms and times in Hören Teil 2, choose a connection in Lesen Teil 2, and make requests in Sprechen Teil 3.',
+      minutes: 6,
+      steps: [
+        {
+          kind: 'rule',
+          title: 'Hören Teil 2: at the station',
+          body: 'Announcements are short and fast: a train, a platform, a time, sometimes a delay. You hear each one once. Read the sentence first, then listen for that one detail.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Der Zug nach Hamburg fährt heute von Gleis drei.',
+          audio: 'Achtung an Gleis drei: Der Intercity nach Hamburg fährt heute von Gleis acht.',
+          options: ['Richtig', 'Falsch'],
+          answer: 1,
+          explanation: 'The announcement is at Gleis drei, but the train leaves from Gleis acht.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Richtig oder falsch? Der Bus fährt in fünf Minuten.',
+          audio:
+            'Liebe Fahrgäste, der Bus der Linie zwölf zum Flughafen fährt in fünf Minuten an der Haltestelle Hauptbahnhof ab.',
+          options: ['Richtig', 'Falsch'],
+          answer: 0,
+          explanation: 'fährt in fünf Minuten ab: leaves in five minutes.',
+        },
+        {
+          kind: 'rule',
+          title: 'Lesen Teil 2: connections',
+          body: 'You compare two connections or offers: departure (ab), arrival (an), the kind of train and the price.',
+        },
+        {
+          kind: 'choose',
+          prompt:
+            'Sie haben ein Deutschlandticket und möchten nichts extra bezahlen. Welche Verbindung nehmen Sie?',
+          context: dresdenConnections,
+          options: ['a) 8:12, Regionalverkehr', 'b) 8:35, ICE'],
+          answer: 0,
+          explanation: 'The Deutschlandticket is valid on regional trains, not on the ICE.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Sie möchten so schnell wie möglich in Dresden sein. Welche Verbindung passt?',
+          context: dresdenConnections,
+          options: ['a) 8:12, Regionalverkehr', 'b) 8:35, ICE'],
+          answer: 1,
+          explanation: 'b takes about an hour; a takes over an hour and a half.',
+        },
+        {
+          kind: 'teach',
+          title: 'Words in timetables',
+          items: [
+            { target: 'ab / an', meaning: 'departs / arrives' },
+            { target: 'die Verbindung', meaning: 'connection' },
+            { target: 'gilt', meaning: 'is valid', note: 'Das Ticket gilt nicht im ICE.' },
+            { target: 'der Fahrgast, die Fahrgäste', meaning: 'passenger, passengers' },
+          ],
+        },
+        {
+          kind: 'rule',
+          title: 'Sprechen Teil 3: requests with können',
+          body: 'Picture cards often show a ticket, a bag or a seat. Make a polite request with Können Sie …? or Kann ich …?, and answer one too.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Your card shows a ticket machine. Which request fits?',
+          options: [
+            'Können Sie mir bitte am Automaten helfen?',
+            'Automat, helfen Sie?',
+            'Sie können Automat?',
+          ],
+          answer: 0,
+          explanation: 'Können Sie mir bitte …? is the safest polite request.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Your card shows a window seat. Ask if you can sit by the window.',
+          accepted: ['Kann ich am Fenster sitzen?', 'Kann ich bitte am Fenster sitzen?'],
+          hint: 'Kann ich + am Fenster + sitzen?',
+          explanation: 'Kann first, sitzen at the end.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Unit 12 review: match the pairs.',
+          pairs: [
+            ['einfach', 'one way'],
+            ['hin und zurück', 'return'],
+            ['das Gleis', 'platform'],
+            ['umsteigen', 'to change trains'],
+            ['ich kann', 'I can'],
+          ],
+        },
+        {
+          kind: 'speak',
+          prompt: 'Answer your exam partner’s requests.',
+          lines: [
+            'Ja, natürlich. Hier, bitte.',
+            'Tut mir leid, das geht nicht.',
+            'Ist hier noch frei? Kann ich hier sitzen?',
+          ],
+        },
+      ],
+    },
+  ],
+);
+
 export const germanA1Units = [
   ...unit1,
   ...unit2,
@@ -5339,4 +6960,7 @@ export const germanA1Units = [
   ...unit7,
   ...unit8,
   ...unit9,
+  ...unit10,
+  ...unit11,
+  ...unit12,
 ];

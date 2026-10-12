@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
-import { useEffect, type ComponentProps } from 'react';
+import { useEffect, useState, type ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 
@@ -15,6 +15,7 @@ import { lessonLines } from '@/features/audio/inventory';
 import { prefetchClips } from '@/features/audio/use-lesson-audio';
 import { levelLabel, levelNote } from '@/features/foundations/level-status';
 import { remindersSupported } from '@/features/habits/reminder-scheduler';
+import { hasSeenTodayGuide, markTodayGuideSeen } from '@/features/onboarding/storage';
 import { useReminderStore } from '@/features/habits/reminders';
 import type { useHabits } from '@/features/habits/use-habits';
 import { reviewSummary } from '@/features/review/schedule';
@@ -179,6 +180,8 @@ export function TodayCard({
         </Animated.View>
       )}
 
+      {plan.position.finishedLessons < 3 ? <TodayGuide /> : null}
+
       {/* Several steps, or a finished day: list them, so what was done stays visible. */}
       {plan.steps.length > 1 || allDone ? (
         <View style={styles.card}>
@@ -236,6 +239,48 @@ export function TodayCard({
 
       <StreakStrip streak={streak} track={track} week={week} showCount={false} />
     </PrimaryAccent>
+  );
+}
+
+const guidePoints: [IconName, string, string][] = [
+  ['home-outline', 'Today', 'Tap the big button. It is always your next step.'],
+  ['map-outline', 'Course', 'Your whole path, unit by unit, if you want to look ahead.'],
+  ['dumbbell', 'Practice', 'Extra review, listening and talking, whenever you like.'],
+];
+
+/** A short guide for new learners: where to go each day. It stays away once dismissed. */
+function TodayGuide() {
+  const [seen, setSeen] = useState(true);
+  useEffect(() => {
+    void hasSeenTodayGuide().then((value) => setSeen(value));
+  }, []);
+  if (seen) return null;
+  const dismiss = () => {
+    setSeen(true);
+    void markTodayGuideSeen();
+  };
+  return (
+    <Animated.View entering={FadeInDown.duration(260)} style={styles.card}>
+      <Text accessibilityRole="header" style={styles.sectionTitle}>
+        How Vokeno works
+      </Text>
+      {guidePoints.map(([icon, title, text]) => (
+        <View key={title} style={styles.guideRow}>
+          <MaterialCommunityIcons color={Palette.ink} name={icon} size={20} />
+          <Text style={styles.guideText}>
+            <Text style={styles.guideTitle}>{title}: </Text>
+            {text}
+          </Text>
+        </View>
+      ))}
+      <Pressable
+        accessibilityRole="button"
+        onPress={dismiss}
+        style={({ pressed }) => [styles.guideButton, pressed && styles.pressed]}
+      >
+        <Text style={styles.guideButtonText}>Got it</Text>
+      </Pressable>
+    </Animated.View>
   );
 }
 
@@ -465,6 +510,26 @@ const styles = StyleSheet.create({
   rowTitle: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
   rowTitleDone: { color: Palette.secondary },
   rowMeta: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13 },
+  guideRow: { alignItems: 'flex-start', flexDirection: 'row', gap: 10, paddingVertical: 4 },
+  guideText: {
+    color: Palette.secondary,
+    flex: 1,
+    fontFamily: VokaFonts.body,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  guideTitle: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold },
+  guideButton: {
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: Palette.soft,
+    borderRadius: 12,
+    justifyContent: 'center',
+    marginTop: 6,
+    minHeight: 44,
+    paddingHorizontal: 18,
+  },
+  guideButtonText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
   tiles: { flexDirection: 'row', gap: 12, marginBottom: 12, marginHorizontal: 18 },
   tile: {
     backgroundColor: Palette.white,

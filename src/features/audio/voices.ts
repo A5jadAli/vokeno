@@ -57,6 +57,16 @@ export const characters: Record<LanguageTrack, Record<string, Casting>> = {
       'echo',
       'Karim, a man in his thirties from Egypt who speaks fluent German with a light Arabic accent.',
     ),
+    Friseurin: cast('nova', 'A friendly hairdresser in her thirties answering the salon phone.'),
+    Passantin: cast('coral', 'A young woman on a busy street, in a hurry but polite.'),
+    Passant: cast(
+      'cedar',
+      'A friendly local man in his fifties giving directions. Relaxed, a little fast.',
+    ),
+    Kontrolleurin: cast(
+      'sage',
+      'A ticket inspector on a regional train. Brisk, polite and routine.',
+    ),
     Trainer: cast('verse', 'A cheerful gym trainer in his twenties. Casual and upbeat.'),
     Rezeption: cast('nova', 'A friendly gym receptionist on the phone. Efficient and polite.'),
     Kellnerin: cast('marin', 'A friendly waitress in a busy café. Quick and warm.'),
