@@ -17,10 +17,13 @@ describe('learning plans, writing drafts and reading content', () => {
           true,
         );
       }
-    expect(learningRecommendation('EN', 'basics', 'ielts-academic').href).toContain('task=chart');
-    expect(learningRecommendation('EN', 'basics', 'ielts-general').href).toContain('task=letter');
-    expect(learningRecommendation('EN', 'conversational', 'ielts-academic').href).toContain(
-      'task=opinion',
+    // IELTS learners who know some English start at the first IELTS lesson, so Today continues
+    // through the IELTS lessons in order.
+    expect(learningRecommendation('EN', 'basics', 'ielts-academic').href).toBe(
+      '/foundation/en-ielts-listening',
+    );
+    expect(learningRecommendation('EN', 'conversational', 'ielts-general').href).toBe(
+      '/foundation/en-ielts-listening',
     );
     expect(learningRecommendation('EN', 'new', 'ielts-academic').href).toBe(
       '/foundation/en-sounds',

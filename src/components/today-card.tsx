@@ -244,7 +244,7 @@ export function TodayCard({
 
 const guidePoints: [IconName, string, string][] = [
   ['home-outline', 'Today', 'Tap the big button. It is always your next step.'],
-  ['map-outline', 'Course', 'Your whole path, unit by unit, if you want to look ahead.'],
+  ['map-outline', 'Course', 'Your whole path in order, if you want to look ahead.'],
   ['dumbbell', 'Practice', 'Extra review, listening and talking, whenever you like.'],
 ];
 

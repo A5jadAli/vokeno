@@ -18,26 +18,29 @@ export function learningRecommendation(
         why: 'Put familiar words to work in a real service conversation.',
         href: '/foundation/es-cafe',
       };
-    return {
-      title: goal === 'work-study' ? 'Keep the conversation going' : 'Find your way',
-      why:
-        goal === 'work-study'
-          ? 'Ask for repetition and clarification before practising longer conversations.'
-          : 'Ask for a place, follow directions and confirm what you heard.',
-      href: goal === 'work-study' ? '/foundation/es-repair' : '/foundation/es-directions',
-    };
+    return goal === 'work-study'
+      ? {
+          title: 'Make and change an appointment',
+          why: 'Start at A2: arrange times and handle changes, as you would at work.',
+          href: '/foundation/es-appointment',
+        }
+      : {
+          title: 'What did you do at the weekend?',
+          why: 'Start at A2: talk about the past and keep a real conversation going.',
+          href: '/foundation/es-weekend',
+        };
   }
   if (track === 'DE') {
     if (ability === 'new')
       return {
-        title: 'Start Unit 1: Hallo!',
+        title: 'Unit 1: Hallo!',
         why: 'Short sessions with real scenes, the words people use, and clear English explanations.',
         href: '/foundation/de-a1-u1-hallo',
       };
     if (ability === 'basics')
       return goal === 'work-study'
         ? {
-            title: 'Start Unit 8: Mein Tag',
+            title: 'Unit 8: Mein Tag',
             why: 'Unit 8: times, your working day and answering an invitation, all at A1.',
             href: '/foundation/de-a1-u8-time',
           }
@@ -48,37 +51,44 @@ export function learningRecommendation(
           };
     return goal === 'work-study'
       ? {
-          title: 'Explain a problem at work',
-          why: 'Practise reasons, polite solutions and connected sentences.',
-          href: '/foundation/work-problem',
+          title: 'Arrange an appointment',
+          why: 'Start at A2: polite requests and times for work or study.',
+          href: '/foundation/appointments',
         }
       : {
-          title: 'Explain and compare your options',
-          why: 'Build a longer answer with reasons and a clear preference.',
-          href: '/foundation/opinions',
+          title: 'What did you do at the weekend?',
+          why: 'Start at A2: talk about the past and keep a conversation going.',
+          href: '/foundation/weekend-smalltalk',
         };
   }
-  if (ability === 'new')
-    return {
-      title: 'Start with the English sounds that matter',
-      why: 'The first guided lesson: hear and practise the contrasts that make you easy to understand.',
-      href: '/foundation/en-sounds',
-    };
-  if (goal === 'ielts-academic')
-    return {
-      title: ability === 'basics' ? 'Describe a chart' : 'Develop a supported opinion',
-      why: 'Practise exam-relevant writing with a saved draft and a revision checklist.',
-      href: ability === 'basics' ? '/activity/write?task=chart' : '/activity/write?task=opinion',
-    };
-  if (goal === 'ielts-general' || goal === 'work-study')
-    return {
-      title: 'Write a practical request',
-      why: 'Cover each point and choose a suitable tone for the reader.',
-      href: '/activity/write?task=letter',
-    };
+  // English starts at A2. Every choice opens a lesson, so Today continues from the same place.
+  if (goal === 'ielts-academic' || goal === 'ielts-general')
+    return ability === 'new'
+      ? {
+          title: 'English sounds that change meaning',
+          why: 'Start with the sounds, then move on to the IELTS lessons at B1.',
+          href: '/foundation/en-sounds',
+        }
+      : {
+          title: 'IELTS Listening: numbers, spelling and traps',
+          why: 'The first IELTS lesson. Reading, Writing and Speaking follow in order.',
+          href: '/foundation/en-ielts-listening',
+        };
+  if (ability === 'conversational')
+    return goal === 'work-study'
+      ? {
+          title: 'Messages at work: email, Slack and Teams',
+          why: 'Start at B1 with the English you write at work every day.',
+          href: '/foundation/en-workplace',
+        }
+      : {
+          title: 'Ask and suggest politely',
+          why: 'Start at B1: sound natural and polite, not just correct.',
+          href: '/foundation/en-softening',
+        };
   return {
-    title: 'Read for the main idea and detail',
-    why: 'Read a short real-world text, then explain the evidence for your answer.',
-    href: '/reading',
+    title: 'English sounds that change meaning',
+    why: 'The first guided lesson: hear and practise the contrasts that make you easy to understand.',
+    href: '/foundation/en-sounds',
   };
 }

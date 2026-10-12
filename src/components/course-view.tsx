@@ -26,6 +26,9 @@ import {
 import { trackColors, type LanguageTrack } from '@/features/language/config';
 import type { LessonLevel } from '@/features/foundations/types';
 
+/** Ends a title as a sentence for screen readers, without doubling “!” or “?”. */
+const sentence = (text: string) => (/[.!?]$/.test(text) ? text : `${text}.`);
+
 /** The course: levels, then units with the current one open and the rest summarised. */
 export function CourseView({ track }: { track: LanguageTrack }) {
   const router = useRouter();
@@ -158,7 +161,7 @@ function UnitCard({
         accessibilityRole="button"
         accessibilityState={{ expanded: open }}
         aria-expanded={open}
-        accessibilityLabel={`${unit.label}. ${unit.done} of ${total} done${current ? '. You are here' : ''}`}
+        accessibilityLabel={`${sentence(unit.label)} ${unit.done} of ${total} done${current ? '. You are here' : ''}`}
         onPress={onToggle}
         style={({ pressed }) => [styles.unitHeader, pressed && styles.pressed]}
       >
@@ -217,7 +220,7 @@ function UnitCard({
               <Pressable
                 key={lesson.id}
                 accessibilityRole="button"
-                accessibilityLabel={`${lesson.title}. ${finished ? 'Done' : going ? 'In progress' : isNext ? 'Next' : 'Not started'}`}
+                accessibilityLabel={`${sentence(lesson.title)} ${finished ? 'Done' : going ? 'In progress' : isNext ? 'Next' : 'Not started'}`}
                 onPress={() => onOpenLesson(lesson)}
                 style={({ pressed }) => [
                   styles.lesson,

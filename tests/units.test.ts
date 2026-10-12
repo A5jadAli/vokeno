@@ -293,6 +293,35 @@ describe('German A1 units: progress and review', () => {
       }
   });
 
+  it('orders every language level by level, so Today and Course agree', () => {
+    const rank = ['A1', 'A2', 'B1', 'B2'];
+    for (const track of ['DE', 'EN', 'ES'] as const) {
+      const levels = getTrackLessons(track).map((lesson) => rank.indexOf(lesson.level));
+      expect([
+        track,
+        levels.every((level, index) => index === 0 || level >= levels[index - 1]),
+      ]).toEqual([track, true]);
+    }
+  });
+
+  it('starts more experienced learners later on the path, never earlier', () => {
+    for (const track of ['DE', 'EN', 'ES'] as const) {
+      const path = getTrackLessons(track).map((lesson) => lesson.id);
+      for (const goal of ['everyday', 'work-study', 'ielts-academic', 'ielts-general'] as const) {
+        const start = (['new', 'basics', 'conversational'] as const).map((ability) => {
+          const id = learningRecommendation(track, ability, goal).href.split('/').at(-1) ?? '';
+          expect([track, ability, goal, path.includes(id)]).toEqual([track, ability, goal, true]);
+          return path.indexOf(id);
+        });
+        expect([track, goal, start[0] <= start[1] && start[1] <= start[2]]).toEqual([
+          track,
+          goal,
+          true,
+        ]);
+      }
+    }
+  });
+
   it('counts only marked steps towards the score', () => {
     expect(gradedCount(session)).toBe(session.steps.filter(isGradedStep).length);
   });

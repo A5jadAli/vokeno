@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
-import type { ComponentProps } from 'react';
+import { useState, type ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -25,6 +25,8 @@ export default function OnboardingScreen() {
   const router = useRouter();
   const track = useLanguageSelection((state) => state.track);
   const choose = useLanguageSelection((state) => state.choose);
+  // Nothing is pre-selected: English here starts at A2, so a beginner must not land in it by default.
+  const [chosen, setChosen] = useState(false);
 
   const finish = async (destination: string) => {
     await completeOnboarding();
@@ -37,8 +39,9 @@ export default function OnboardingScreen() {
       footer={
         <ActionBar>
           <PrimaryButton
-            title={`Continue with ${languageDetails[track].name}`}
-            icon="arrow-right"
+            title={chosen ? `Continue with ${languageDetails[track].name}` : 'Choose a language'}
+            icon={chosen ? 'arrow-right' : undefined}
+            disabled={!chosen}
             onPress={() => void finish('/learning-plan')}
           />
           <TextButton
@@ -60,7 +63,7 @@ export default function OnboardingScreen() {
 
         <View accessibilityRole="radiogroup" style={styles.options}>
           {languageTracks.map((language, index) => {
-            const selected = language === track;
+            const selected = chosen && language === track;
             const colors = trackColors[language];
             return (
               <Animated.View
@@ -72,7 +75,10 @@ export default function OnboardingScreen() {
                   accessibilityState={{ checked: selected }}
                   aria-checked={selected}
                   accessibilityLabel={`${languageDetails[language].name}. ${languageAudience[language]}`}
-                  onPress={() => choose(language)}
+                  onPress={() => {
+                    choose(language);
+                    setChosen(true);
+                  }}
                   style={({ pressed }) => [
                     styles.option,
                     selected && { borderColor: colors.accent },

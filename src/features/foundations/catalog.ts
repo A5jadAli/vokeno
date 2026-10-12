@@ -5,7 +5,7 @@ import { germanB1Lessons } from './german-b1';
 import { spanishA1Lessons } from './spanish-a1';
 import { spanishA2Lessons } from './spanish-a2';
 import { germanA1Units } from './german-a1-units';
-import type { ClassicLesson, FoundationLesson, LessonTrack } from './types';
+import type { ClassicLesson, FoundationLesson, LessonLevel, LessonTrack } from './types';
 
 export type {
   ClassicLesson,
@@ -34,9 +34,22 @@ export const foundationLessons: FoundationLesson[] = [
   ...spanishA2Lessons,
 ];
 
-/** The learning path: every lesson of a language in order, without retired ones. */
+const levelOrder: LessonLevel[] = ['A1', 'A2', 'B1', 'B2'];
+
+/**
+ * The learning path: every lesson of a language, without retired ones, level by level (the
+ * catalog order within a level), so "what next" follows the same order as the course.
+ */
 export function getTrackLessons(track: LessonTrack) {
-  return foundationLessons.filter((lesson) => lesson.track === track && !lesson.retired);
+  return foundationLessons
+    .filter((lesson) => lesson.track === track && !lesson.retired)
+    .map((lesson, index) => ({ lesson, index }))
+    .sort(
+      (a, b) =>
+        levelOrder.indexOf(a.lesson.level) - levelOrder.indexOf(b.lesson.level) ||
+        a.index - b.index,
+    )
+    .map(({ lesson }) => lesson);
 }
 
 /** Every lesson of a language, retired ones included: for review cards and history. */

@@ -126,7 +126,7 @@ test('starting ability and exam goal change the recommended practice', async ({ 
     page.getByRole('radio', { name: 'IELTS General Training', exact: true }),
   ).toBeChecked();
   await page.getByRole('button', { name: /^Start: / }).click();
-  await expect(page).toHaveURL(/\/activity\/write\?task=letter$/);
+  await expect(page).toHaveURL(/\/foundation\/en-ielts-listening$/);
 });
 test('reading gives correction, records completion and offers the next text', async ({ page }) => {
   await page.goto('/reading');
