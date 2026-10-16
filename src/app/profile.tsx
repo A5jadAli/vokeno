@@ -241,13 +241,13 @@ export default function ProfileScreen() {
           <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
         </Pressable>
         <Pressable
-          accessibilityLabel={`Set test date, currently ${formatTestDate(testDate)}`}
+          accessibilityLabel={`Set goal date, currently ${formatTestDate(testDate)}`}
           accessibilityRole="button"
           onPress={() => router.push('/test-date' as Href)}
           style={({ pressed }) => [styles.settingRow, pressed && styles.pressed]}
         >
-          <MaterialCommunityIcons color={Palette.ink} name="calendar-blank-outline" size={20} />
-          <Text style={styles.settingLabel}>Test date</Text>
+          <MaterialCommunityIcons color={Palette.ink} name="flag-checkered" size={20} />
+          <Text style={styles.settingLabel}>Goal date</Text>
           <Text style={styles.settingValue}>{formatTestDate(testDate)}</Text>
           <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
         </Pressable>
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   name: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22 },
   badges: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 8 },
   badge: {
-    backgroundColor: 'rgba(255,74,23,.2)',
+    backgroundColor: 'rgba(19,18,17,.08)',
     borderRadius: 99,
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   planGlow: {
-    backgroundColor: 'rgba(255,74,23,.16)',
+    backgroundColor: 'rgba(241,237,227,.08)',
     borderRadius: 99,
     height: 150,
     position: 'absolute',

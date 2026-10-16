@@ -57,7 +57,11 @@ export default function LevelCheckScreen() {
           <Pressable
             accessibilityLabel="Start spoken level check"
             onPress={() => router.push(`/conversation?track=${track}&practice=diagnostic`)}
-            style={({ pressed }) => [styles.micHalo, pressed && styles.pressed]}
+            style={({ pressed }) => [
+              styles.micHalo,
+              { backgroundColor: `${colors.accent}2E` },
+              pressed && styles.pressed,
+            ]}
           >
             <View style={[styles.mic, { backgroundColor: colors.accent }]}>
               <MaterialCommunityIcons color={colors.onAccent} name="microphone" size={35} />
@@ -119,7 +123,6 @@ const styles = StyleSheet.create({
   micArea: { alignItems: 'center', paddingBottom: 42 },
   micHalo: {
     alignItems: 'center',
-    backgroundColor: 'rgba(255,74,23,.18)',
     borderRadius: 99,
     height: 128,
     justifyContent: 'center',

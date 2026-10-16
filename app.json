@@ -26,9 +26,10 @@
         "android.permission.USE_EXACT_ALARM"
       ],
       "adaptiveIcon": {
-        "backgroundColor": "#131211",
+        "backgroundColor": "#F1EDE3",
         "backgroundImage": "./assets/images/android-icon-background.png",
-        "foregroundImage": "./assets/images/android-icon-foreground.png"
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": true,
       "package": "com.asjadali.voka"
@@ -42,7 +43,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#131211",
+          "backgroundColor": "#F1EDE3",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 128
         }
@@ -64,7 +65,7 @@
         "expo-notifications",
         {
           "icon": "./assets/images/notification-icon.png",
-          "color": "#FF4A17"
+          "color": "#131211"
         }
       ],
       [

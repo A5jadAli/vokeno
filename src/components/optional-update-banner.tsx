@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Brand, Palette, VokaFonts } from '@/constants/theme';
 import { downloadAvailableUpdate, restartWithDownloadedUpdate } from '@/features/updates/ota';
 
 const UPDATE_SNOOZE_KEY = '@voka/update-snoozed-until';
@@ -44,7 +44,7 @@ export function OptionalUpdateBanner() {
     <View pointerEvents="box-none" style={[styles.layer, { paddingTop: insets.top + 8 }]}>
       <View accessibilityLiveRegion="polite" style={styles.banner}>
         <View style={styles.icon}>
-          <MaterialCommunityIcons color={Palette.ink} name="arrow-up-bold" size={21} />
+          <MaterialCommunityIcons color={Brand.onDarkInk} name="arrow-up-bold" size={21} />
         </View>
         <View style={styles.copy}>
           <Text style={styles.title}>A Vokeno update is ready</Text>
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
+    backgroundColor: Brand.onDark,
     borderRadius: 13,
     height: 42,
     justifyContent: 'center',
@@ -109,10 +109,10 @@ const styles = StyleSheet.create({
   actions: { alignItems: 'center', flexDirection: 'row', gap: 18, marginTop: 12 },
   later: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   updateButton: {
-    backgroundColor: Palette.orange,
+    backgroundColor: Brand.onDark,
     borderRadius: 99,
     paddingHorizontal: 18,
     paddingVertical: 8,
   },
-  updateText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
+  updateText: { color: Brand.onDarkInk, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
 });
