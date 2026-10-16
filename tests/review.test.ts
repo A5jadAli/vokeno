@@ -6,8 +6,10 @@ import {
   type FoundationEntry,
   type FoundationProgress,
 } from '@/features/foundations/progress';
+import { dayNumberOf, localDay } from '@/features/habits/practice-log';
 import {
   buildReviewSession,
+  dayNumber,
   dueCards,
   gradeCard,
   REVIEW_INTERVALS,
@@ -116,5 +118,14 @@ describe('spaced review', () => {
     });
     expect(parsed.greetings.cards).toEqual([[1, today]]);
     expect(parsed.introductions.cards).toBeUndefined();
+  });
+});
+
+describe('review days', () => {
+  it('count local calendar days, like Today, so a lesson after midnight is due tomorrow', () => {
+    const justAfterMidnight = new Date(2026, 9, 17, 0, 30).getTime();
+    const lateEvening = new Date(2026, 9, 16, 23, 30).getTime();
+    expect(dayNumber(justAfterMidnight)).toBe(dayNumberOf(localDay(justAfterMidnight)));
+    expect(dayNumber(justAfterMidnight) - dayNumber(lateEvening)).toBe(1);
   });
 });

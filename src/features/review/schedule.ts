@@ -9,12 +9,17 @@ import {
   type FoundationEntry,
   type FoundationProgress,
 } from '@/features/foundations/progress';
+import { dayNumberOf, localDay } from '@/features/habits/practice-log';
 
 /** Days until the next review for each Leitner box. Expanding gaps favour long-term retention. */
 export const REVIEW_INTERVALS = [1, 3, 7, 16, 35, 90] as const;
 export const REVIEW_SESSION_SIZE = 8;
 
-export const dayNumber = (time = Date.now()) => Math.floor(time / 86_400_000);
+/**
+ * The learner's local calendar day as a number, the same count Today and the streak use. A UTC
+ * count made phrases learned after midnight east of Greenwich come back "due" straight away.
+ */
+export const dayNumber = (time = Date.now()) => dayNumberOf(localDay(time));
 
 export type ReviewKind = 'choose' | 'listen' | 'recall';
 export type ReviewItem = {
