@@ -2,7 +2,8 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { buildTodayPlan } from '@/features/coaching/daily-plan';
-import { useCoachingStore } from '@/features/coaching/store';
+import { buildGoalPlan } from '@/features/coaching/goal-plan';
+import { testDateFor, useCoachingStore } from '@/features/coaching/store';
 import type { LanguageTrack } from '@/features/language/config';
 import { useProgressStore } from '@/features/progress/store';
 
@@ -23,13 +24,24 @@ export function useHabits(track: LanguageTrack) {
   const completedScenarioIds = useProgressStore((state) => state.completedScenarioIds);
   const activities = useCoachingStore((state) => state.activityLog);
   const session = useCoachingStore((state) => state.sessions[track]);
+  const testDate = useCoachingStore((state) => testDateFor(state, track));
   const habits = useMemo(() => {
     const today = localDay(clock);
     const log = fullPracticeLog(
       { practiceLog, foundations: progress, speakingPracticeDates, writingPracticeDates },
       today,
     );
+    const goal = buildGoalPlan({
+      track,
+      progress,
+      date: testDate,
+      level: choices.goalLevel,
+      since: choices.goalSince,
+      startAt: choices.startAt,
+      now: clock,
+    });
     return {
+      goal,
       plan: buildTodayPlan({
         track,
         progress,
@@ -39,6 +51,7 @@ export function useHabits(track: LanguageTrack) {
         activities,
         session,
         startAt: choices.startAt,
+        lessonsToday: goal?.lessonsToday,
         now: clock,
       }),
       streak: practiceStreak(log, today),
@@ -55,6 +68,7 @@ export function useHabits(track: LanguageTrack) {
     practiceLog,
     progress,
     speakingPracticeDates,
+    testDate,
     track,
     writingPracticeDates,
   ]);

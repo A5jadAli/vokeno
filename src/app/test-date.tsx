@@ -6,8 +6,12 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { TestDatePicker } from '@/components/test-date-picker';
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
+import { defaultGoalLevel, goalLevels } from '@/features/coaching/goal-plan';
 import { useCoachingStore, testDateFor } from '@/features/coaching/store';
+import { exams, levelLabel } from '@/features/foundations/level-status';
+import type { LessonLevel } from '@/features/foundations/types';
 import { formatTestDate, parseDateOnly, toDateOnly } from '@/features/profile/test-date';
+import { languageDetails, trackColors } from '@/features/language/config';
 import { useLanguageSelection } from '@/features/language/selection';
 
 function initialDate(saved: string | null) {
@@ -26,13 +30,20 @@ export default function TestDateScreen() {
   const track = useLanguageSelection((state) => state.track);
   const savedDate = useCoachingStore((state) => testDateFor(state, track));
   const setTestDate = useCoachingStore((state) => state.setTestDate);
+  const choices = useCoachingStore((state) => state.preferences[track]);
+  const progress = useCoachingStore((state) => state.foundations);
+  const colors = trackColors[track];
+  const levels = goalLevels(track);
+  const [level, setLevel] = useState<LessonLevel>(
+    () => choices.goalLevel ?? defaultGoalLevel(progress, track, choices.startAt),
+  );
   const [draft, setDraft] = useState(() => initialDate(savedDate));
   const [pickerVisible, setPickerVisible] = useState(Platform.OS !== 'android');
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   const save = () => {
-    setTestDate(track, toDateOnly(draft));
+    setTestDate(track, toDateOnly(draft), level);
     router.back();
   };
 
@@ -40,27 +51,57 @@ export default function TestDateScreen() {
     <AppScreen backgroundColor={Palette.ink} dark showNav={false}>
       <View style={styles.header}>
         <HeaderBack dark />
-        <Text style={styles.headerTitle}>Test date</Text>
+        <Text style={styles.headerTitle}>Your goal</Text>
         <View style={styles.spacer} />
       </View>
       <View style={styles.body}>
-        <View style={styles.icon}>
-          <MaterialCommunityIcons color={Palette.ink} name="calendar-check" size={32} />
+        <View style={[styles.icon, { backgroundColor: colors.accent }]}>
+          <MaterialCommunityIcons color={colors.onAccent} name="flag-checkered" size={32} />
         </View>
-        <Eyebrow color={Palette.orange}>Your target</Eyebrow>
-        <Text style={styles.title}>When is your language test?</Text>
+        <Eyebrow color={colors.onDark}>Ready by your date</Eyebrow>
+        <Text style={styles.title}>Which level, and by when?</Text>
         <Text style={styles.copy}>
-          See a countdown and what to practise. It does not book the exam.
+          An exam, a visa or a move. Vokeno plans your weeks to get there. It does not book the
+          exam.
         </Text>
+
+        {levels.length > 1 ? (
+          <View accessibilityRole="radiogroup" style={styles.levels}>
+            {levels.map((item) => {
+              const chosen = item === level;
+              const exam = exams[track]?.[item];
+              return (
+                <Pressable
+                  key={item}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: chosen }}
+                  accessibilityLabel={`${languageDetails[track].name} ${levelLabel(track, item)}${exam ? `, ${exam}` : ''}`}
+                  onPress={() => setLevel(item)}
+                  style={[styles.level, chosen && { backgroundColor: colors.onDark }]}
+                >
+                  <Text style={[styles.levelText, chosen && styles.levelTextChosen]}>{item}</Text>
+                  {exam ? (
+                    <Text
+                      numberOfLines={1}
+                      style={[styles.levelExam, chosen && styles.levelTextChosen]}
+                    >
+                      {exam.replace('-Zertifikat', '').replace(' or Cambridge', '')}
+                    </Text>
+                  ) : null}
+                </Pressable>
+              );
+            })}
+          </View>
+        ) : null}
 
         {Platform.OS === 'android' ? (
           <Pressable
-            accessibilityLabel="Choose test date"
+            accessibilityLabel="Choose goal date"
             accessibilityRole="button"
             onPress={() => setPickerVisible(true)}
             style={styles.dateButton}
           >
-            <MaterialCommunityIcons color={Palette.orange} name="calendar-month" size={23} />
+            <MaterialCommunityIcons color={colors.onDark} name="calendar-month" size={23} />
             <Text style={styles.dateButtonText}>{formatTestDate(toDateOnly(draft))}</Text>
             <MaterialCommunityIcons color={Palette.cream} name="chevron-down" size={21} />
           </Pressable>
@@ -78,8 +119,12 @@ export default function TestDateScreen() {
           </View>
         ) : null}
 
-        <Pressable accessibilityRole="button" onPress={save} style={styles.saveButton}>
-          <Text style={styles.saveText}>Save test date</Text>
+        <Pressable
+          accessibilityRole="button"
+          onPress={save}
+          style={[styles.saveButton, { backgroundColor: colors.accent }]}
+        >
+          <Text style={[styles.saveText, { color: colors.onAccent }]}>Save goal</Text>
         </Pressable>
         {savedDate ? (
           <Pressable
@@ -89,7 +134,7 @@ export default function TestDateScreen() {
               router.back();
             }}
           >
-            <Text style={styles.removeText}>Remove test date</Text>
+            <Text style={styles.removeText}>Remove goal</Text>
           </Pressable>
         ) : null}
       </View>
@@ -109,7 +154,6 @@ const styles = StyleSheet.create({
   body: { padding: 24, paddingTop: 30 },
   icon: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
     borderRadius: 20,
     height: 64,
     justifyContent: 'center',
@@ -150,15 +194,28 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
     borderRadius: 18,
     justifyContent: 'center',
     marginTop: 25,
     minHeight: 58,
   },
-  saveText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
+  saveText: { fontFamily: VokaFonts.bodyBold, fontSize: 16 },
+  levels: { flexDirection: 'row', gap: 8, marginTop: 22 },
+  level: {
+    alignItems: 'center',
+    backgroundColor: '#282623',
+    borderRadius: 16,
+    flex: 1,
+    gap: 2,
+    minHeight: 60,
+    justifyContent: 'center',
+    paddingHorizontal: 6,
+  },
+  levelText: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 17 },
+  levelExam: { color: 'rgba(241,237,227,.6)', fontFamily: VokaFonts.body, fontSize: 11 },
+  levelTextChosen: { color: Palette.ink },
   removeText: {
-    color: '#FFB49E',
+    color: 'rgba(241,237,227,.72)',
     fontFamily: VokaFonts.bodyBold,
     fontSize: 14,
     paddingVertical: 18,

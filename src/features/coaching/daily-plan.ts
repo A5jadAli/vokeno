@@ -10,7 +10,12 @@ import {
   type PracticeStage,
 } from '@/features/habits/practice-log';
 import { finishedOn, type ActivityKey, type ActivityLog } from '@/features/journey/activity-log';
-import { coursePosition, lessonMinutes, type CoursePosition } from '@/features/journey/course';
+import {
+  coursePosition,
+  lessonMinutes,
+  lessonsAhead,
+  type CoursePosition,
+} from '@/features/journey/course';
 import { suggestedConversation, suggestedScenario } from '@/features/journey/practice';
 import type { LanguageTrack } from '@/features/language/config';
 import { listeningScenarios } from '@/features/listening/scenarios';
@@ -61,6 +66,8 @@ export type TodayPlanInput = {
   session?: SessionSnapshot;
   /** The learner's chosen starting lesson for this language. */
   startAt?: string;
+  /** New lessons the learner's goal date needs today (from the goal plan); one by default. */
+  lessonsToday?: number;
   now: number;
 };
 
@@ -194,6 +201,15 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
   const practice = day % 2 === 0 ? [listeningKey, speakingKey] : [speakingKey, listeningKey];
   // A learner who has not finished a single lesson always starts with one.
   const firstSteps = position.finishedLessons === 0 && nextLessonKey;
+  // A goal date can need more than one new lesson a day: the lessons after the next one join the
+  // session, never on a first day or a gentle restart.
+  const extraLessons: ActivityKey[] =
+    nextLessonKey && !firstSteps && !returning
+      ? lessonsAhead(progress, track, input.startAt)
+          .map((lesson): ActivityKey => `lesson:${lesson.id}`)
+          .filter((key) => key !== nextLessonKey)
+          .slice(0, Math.max(0, Math.min(2, (input.lessonsToday ?? 1) - 1)))
+      : [];
 
   // Due phrases always come first: a short review before new words is what turns a lesson into
   // long-term memory (spaced retrieval), and the first review, the day after, matters most. So
@@ -205,16 +221,19 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
         : firstSteps
           ? [nextLessonKey]
           : stage === 'warm-up'
-            ? [reviewKey, nextLessonKey ?? practice[0]]
-            : stage === 'building'
-              ? [reviewKey, nextLessonKey, practice[0], practice[1]]
-              : [reviewKey, nextLessonKey, practice[0], practice[1]];
+            ? [reviewKey, nextLessonKey ?? practice[0], ...extraLessons]
+            : [reviewKey, nextLessonKey, ...extraLessons, practice[0], practice[1]];
     const size =
       stageSteps[returning || firstSteps ? 'warm-up' : stage] +
-      (reviewKey && stage === 'warm-up' && !returning && !firstSteps ? 1 : 0);
+      (reviewKey && stage === 'warm-up' && !returning && !firstSteps ? 1 : 0) +
+      extraLessons.length;
     const keys: ActivityKey[] = [];
+    const extras = new Set<ActivityKey>(extraLessons);
     for (const key of ordered) {
-      if (key && !keys.some((existing) => existing.split(':')[0] === key.split(':')[0]))
+      if (
+        key &&
+        (extras.has(key) || !keys.some((existing) => existing.split(':')[0] === key.split(':')[0]))
+      )
         keys.push(key);
       if (keys.length === size) break;
     }

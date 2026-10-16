@@ -169,25 +169,31 @@ test('exposes profile initials, coaching settings, version and password recovery
   await expect(page.getByText('Send reset link')).toBeVisible();
 });
 
-test('sets, displays and removes a test date', async ({ page }) => {
+test('sets, displays and removes a goal date', async ({ page }) => {
   await page.goto('/profile');
-  await page.getByLabel('Set test date, currently Not set').click();
-  await expect(page.getByText('When is your language test?')).toBeVisible();
+  await page.getByLabel('Set goal date, currently Not set').click();
+  await expect(page.getByText('Which level, and by when?')).toBeVisible();
   await page.getByLabel('Next day').click();
-  await page.getByText('Save test date').click();
+  await page.getByText('Save goal').click();
 
   await expect(page).toHaveURL(/\/profile$/);
-  await expect(page.getByLabel(/^Set test date, currently (?!Not set)/)).toBeVisible();
+  await expect(page.getByLabel(/^Set goal date, currently (?!Not set)/)).toBeVisible();
 
   await page.goto('/practice');
   await expect(
-    page.getByRole('button', { name: /^Test date: .*4 focused sessions this week/ }),
+    page.getByRole('button', { name: /^Goal date: .*4 focused sessions this week/ }),
+  ).toBeVisible();
+
+  // Today shows the plan towards the date: the level, the weeks and whether it is on track.
+  await page.goto('/');
+  await expect(
+    page.getByRole('button', { name: /^\w+ A\d( starter)? by .*Week 1 of \d+.*Change goal$/ }),
   ).toBeVisible();
 
   await page.goto('/profile');
-  await page.getByLabel(/^Set test date, currently (?!Not set)/).click();
-  await page.getByText('Remove test date').click();
-  await expect(page.getByLabel('Set test date, currently Not set')).toBeVisible();
+  await page.getByLabel(/^Set goal date, currently (?!Not set)/).click();
+  await page.getByText('Remove goal').click();
+  await expect(page.getByLabel('Set goal date, currently Not set')).toBeVisible();
 });
 
 test('protects purchases behind account creation and exposes legal terms', async ({ page }) => {

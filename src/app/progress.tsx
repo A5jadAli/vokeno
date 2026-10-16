@@ -130,13 +130,13 @@ export default function ProgressScreen() {
       {testDate ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Change test date"
+          accessibilityLabel="Change goal date"
           onPress={() => router.push('/test-date' as Href)}
           style={({ pressed }) => [styles.card, styles.row, pressed && styles.pressed]}
         >
           <MaterialCommunityIcons color={Palette.ink} name="calendar-clock" size={24} />
           <View style={styles.rowCopy}>
-            <Text style={styles.eyebrow}>Test date · {formatTestDate(testDate)}</Text>
+            <Text style={styles.eyebrow}>Goal date · {formatTestDate(testDate)}</Text>
             <Text style={styles.rowTitle}>
               {daysLeft !== null && daysLeft < 0
                 ? 'This date has passed · tap to update'

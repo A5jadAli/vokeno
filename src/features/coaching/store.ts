@@ -28,6 +28,7 @@ import {
   type PracticeLog,
 } from '@/features/habits/practice-log';
 import type { SessionSnapshot } from '@/features/coaching/daily-plan';
+import type { LessonLevel } from '@/features/foundations/types';
 import {
   addActivity,
   parseActivityLog,
@@ -44,11 +45,14 @@ export type StudyGoal = 'everyday' | 'work-study' | 'ielts-academic' | 'ielts-ge
 /**
  * `testDate` (YYYY-MM-DD) is this language's exam date, e.g. IELTS or Goethe. `startAt` is the
  * lesson the learner chose to start from (their answer in setup, or an accepted placement).
+ * `goalLevel` is the level to reach by the test date, and `goalSince` the day that goal was set.
  */
 type LearningChoices = {
   ability?: StartingAbility;
   studyGoal?: StudyGoal;
   testDate?: string;
+  goalLevel?: LessonLevel;
+  goalSince?: string;
   startAt?: string;
 };
 
@@ -112,7 +116,7 @@ type CoachingState = {
   setCoachTone: (tone: CoachTone) => void;
   setGoal: (track: LanguageTrack, goal: SpeakingGoal) => void;
   setHasHydrated: (hydrated: boolean) => void;
-  setTestDate: (track: LanguageTrack, date: string | null) => void;
+  setTestDate: (track: LanguageTrack, date: string | null, level?: LessonLevel) => void;
 };
 
 export type PersistedCoachingState = Pick<
@@ -335,15 +339,29 @@ export const useCoachingStore = create<CoachingState>()(
           },
         })),
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
-      setTestDate: (track, date) =>
-        set((state) => ({
-          preferences: {
-            ...state.preferences,
-            [track]: { ...state.preferences[track], testDate: date ?? undefined },
-          },
-          // Older app versions read the single date, which has always meant English (IELTS).
-          ...(track === 'EN' ? { testDate: date } : {}),
-        })),
+      setTestDate: (track, date, level) =>
+        set((state) => {
+          const current = state.preferences[track];
+          // A new date or level is a new goal: its weeks count from today.
+          const changed = date !== (current.testDate ?? null) || level !== current.goalLevel;
+          return {
+            preferences: {
+              ...state.preferences,
+              [track]: {
+                ...current,
+                testDate: date ?? undefined,
+                goalLevel: date ? level : undefined,
+                goalSince: date
+                  ? changed || !current.goalSince
+                    ? localDay(Date.now())
+                    : current.goalSince
+                  : undefined,
+              },
+            },
+            // Older app versions read the single date, which has always meant English (IELTS).
+            ...(track === 'EN' ? { testDate: date } : {}),
+          };
+        }),
     }),
     {
       migrate: (persistedState) => {

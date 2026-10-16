@@ -11,6 +11,7 @@ import type {
 import type { CoachingSignal } from '@/features/coaching/store-types';
 import { supabase } from '@/features/auth/supabase';
 import { parseFoundationProgress } from '@/features/foundations/progress';
+import type { LessonLevel } from '@/features/foundations/types';
 import { parseWritingProgress } from '@/features/writing/progress';
 import { parsePracticeLog, serializePracticeLog } from '@/features/habits/practice-log';
 
@@ -81,6 +82,12 @@ function parseLearningChoices(value: Record<string, unknown>) {
       : 'everyday') as StudyGoal,
     ...(typeof value.testDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value.testDate)
       ? { testDate: value.testDate }
+      : {}),
+    ...(['A1', 'A2', 'B1', 'B2'].includes(String(value.goalLevel))
+      ? { goalLevel: value.goalLevel as LessonLevel }
+      : {}),
+    ...(typeof value.goalSince === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value.goalSince)
+      ? { goalSince: value.goalSince }
       : {}),
     ...(typeof value.startAt === 'string' && /^[a-z0-9-]{1,80}$/.test(value.startAt)
       ? { startAt: value.startAt }

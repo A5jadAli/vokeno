@@ -17,7 +17,7 @@ export const levelStatus: Record<
   ES: { A1: 'starter', A2: 'starter' },
 };
 
-const exams: Partial<Record<LanguageTrack, Partial<Record<LessonLevel, string>>>> = {
+export const exams: Partial<Record<LanguageTrack, Partial<Record<LessonLevel, string>>>> = {
   DE: { A1: 'Goethe-Zertifikat A1', A2: 'Goethe-Zertifikat A2', B1: 'Goethe-Zertifikat B1' },
   ES: { A1: 'DELE A1', A2: 'DELE A2' },
   EN: { B1: 'IELTS or Cambridge', B2: 'IELTS or Cambridge' },

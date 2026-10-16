@@ -4,6 +4,7 @@ import { useEffect, useState, type ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 
+import { GoalCard, GoalPrompt } from '@/components/goal-card';
 import { PrimaryAccent, PrimaryButton } from '@/components/lesson-ui';
 import { ReminderPicker } from '@/components/reminder-picker';
 import { StreakStrip } from '@/components/streak-strip';
@@ -47,7 +48,7 @@ export function TodayCard({
   habits: ReturnType<typeof useHabits>;
 }) {
   const router = useRouter();
-  const { plan, streak, week, milestone } = habits;
+  const { goal, plan, streak, week, milestone } = habits;
   const progress = useCoachingStore((state) => state.foundations);
   const review = reviewSummary(progress, track);
   const reminderAsked = useReminderStore((state) => state.asked);
@@ -130,6 +131,8 @@ export function TodayCard({
         </Animated.View>
       ) : null}
 
+      {goal ? <GoalCard goal={goal} track={track} /> : null}
+
       <Text style={styles.intro}>{plan.footnote}</Text>
 
       {current ? (
@@ -167,6 +170,7 @@ export function TodayCard({
               <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={22} />
             </Pressable>
           ) : null}
+          {!goal && plan.position.finishedLessons >= 2 ? <GoalPrompt /> : null}
           {!reminderAsked && remindersSupported ? (
             <View style={styles.intention}>
               <Text style={styles.intentionTitle}>When will you practise tomorrow?</Text>

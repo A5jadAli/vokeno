@@ -65,6 +65,16 @@ export function findNextLesson(
   return fresh ? { lesson: fresh, reason: 'start' } : null;
 }
 
+/** Unfinished lessons from the learner's starting point on, in course order. */
+export function lessonsAhead(progress: FoundationProgress, track: LanguageTrack, startAt?: string) {
+  const lessons = getTrackLessons(track);
+  const start = Math.max(
+    0,
+    lessons.findIndex((lesson) => lesson.id === pathStart(track, startAt)),
+  );
+  return lessons.slice(start).filter((lesson) => !isFinished(progress[lesson.id]));
+}
+
 export type UnitSummary = {
   id: string;
   title: string;

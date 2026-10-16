@@ -236,11 +236,11 @@ export default function PracticeScreen() {
         ) : null}
         <Row
           icon="calendar-clock"
-          title={testDate ? `Test date: ${formatTestDate(testDate)}` : 'Add a test date'}
+          title={testDate ? `Goal date: ${formatTestDate(testDate)}` : 'Set a goal date'}
           meta={
             testPlan
               ? `${testPlan.cadence}. ${testPlan.recommendation}`
-              : 'Only if you are preparing for an exam'
+              : 'For an exam, a visa or a move'
           }
           onPress={() => go('/test-date')}
         />
