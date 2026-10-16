@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { type Href, useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
@@ -55,7 +55,6 @@ const keyboardNote = {
 
 /** A unit session: a short run of varied steps, saved after every step. */
 export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
-  const router = useRouter();
   useFocusEffect(
     useCallback(() => {
       useLanguageSelection.getState().choose(lesson.track);
@@ -257,7 +256,6 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
               correct={lastAttempt.correctFirstTry}
               spoken={lastAttempt.spoken}
               onRetry={retry}
-              onPath={() => router.replace(`/sprint?track=${lesson.track}` as Href)}
             />
           ) : null}
         </View>
@@ -905,14 +903,12 @@ function Complete({
   correct,
   spoken,
   onRetry,
-  onPath,
 }: {
   lesson: StepLesson;
   graded: number;
   correct: number;
   spoken: boolean;
   onRetry: () => void;
-  onPath: () => void;
 }) {
   const colors = trackColors[lesson.track];
   return (
@@ -939,7 +935,6 @@ function Complete({
       <UnitStep lesson={lesson} />
       <Text style={lessonText.lead}>Saved. Your new words come back for review tomorrow.</Text>
       <TextButton title="Practise this lesson again" onPress={onRetry} />
-      <TextButton title="Open the course" onPress={onPath} />
     </>
   );
 }
