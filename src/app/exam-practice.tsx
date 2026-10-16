@@ -13,7 +13,7 @@ export default function ExamPracticeScreen() {
   return (
     <AppScreen showNav={false}>
       <View style={styles.header}>
-        <HeaderBack />
+        <HeaderBack variant="close" />
       </View>
       <View style={styles.body}>
         <Text style={lessonText.meta}>Optional exam support</Text>

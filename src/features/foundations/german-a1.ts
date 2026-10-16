@@ -236,19 +236,19 @@ export const germanA1Lessons = defineLessons('DE', [
     outcome: 'Recognise the sounds that change meaning and make your German easy to understand.',
     phrases: [
       [
-        'schön – schon',
-        'beautiful – already',
+        'schön, schon',
+        'beautiful, already',
         'ö: say “ay” with rounded lips. Without the dots it is a plain o, and the meaning changes.',
       ],
-      ['Tür – Tier', 'door – animal', 'ü: say “ee” and round your lips as if whistling.'],
+      ['Tür, Tier', 'door, animal', 'ü: say “ee” and round your lips as if whistling.'],
       [
-        'ich – ach',
-        'I – oh',
+        'ich, ach',
+        'I, oh',
         'After i, e, ä, ö, ü and consonants, ch is a soft hiss. After a, o, u it is scraped at the back, like Scottish “loch”.',
       ],
       [
-        'Wein – Wien',
-        'wine – Vienna',
+        'Wein, Wien',
+        'wine, Vienna',
         'ei sounds like “eye”; ie sounds like “ee”. Read the second letter.',
       ],
       [
@@ -306,7 +306,7 @@ export const germanA1Lessons = defineLessons('DE', [
       explanation: 'Schön has an umlaut. Without it, schon means already.',
     },
     speaking:
-      'Read each pair slowly, then quickly: schon – schön, Tier – Tür, ich – ach, Wein – Wien. If you can, record yourself on your phone and compare with the audio.',
+      'Read each pair slowly, then quickly: schon and schön, Tier and Tür, ich and ach, Wein and Wien. If you can, record yourself on your phone and compare with the audio.',
   },
   {
     id: 'origin',

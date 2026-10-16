@@ -79,7 +79,10 @@ export default function RootLayout() {
 }
 
 // Primary destinations switch with a quick cross-fade; focused flows rise like a sheet.
-const tabRoutes = ['index', 'sprint', 'progress', 'profile', 'conversation'];
+// One motion per kind of screen. The four tabs fade into each other, like a tab bar. Learning
+// activities open from below as a focused screen with a close button. Every other page slides
+// in from the right with a back button.
+const tabRoutes = ['index', 'sprint', 'practice', 'progress'];
 const flowRoutes = [
   'foundation/[id]',
   'review',
@@ -88,6 +91,9 @@ const flowRoutes = [
   'activity/[kind]',
   'lesson/[id]',
   'level-check',
+  'reading',
+  'vocabulary',
+  'exam-practice',
 ];
 
 function SplashGate() {

@@ -148,7 +148,7 @@ export function TodayCard({
           <Text style={styles.lead}>
             {plan.courseFinished
               ? `You have finished every ${languageDetails[track].name} lesson available so far. Keep it fresh with review and practice.`
-              : 'That is all you need today. Come back tomorrow, or do one more if you like.'}
+              : 'That’s all for today. See you tomorrow.'}
           </Text>
           {plan.bonus ? (
             <Pressable
@@ -170,10 +170,7 @@ export function TodayCard({
           {!reminderAsked && remindersSupported ? (
             <View style={styles.intention}>
               <Text style={styles.intentionTitle}>When will you practise tomorrow?</Text>
-              <Text style={styles.note}>
-                Picking a time makes it much easier to come back. One reminder a day; you can change
-                it in Settings.
-              </Text>
+              <Text style={styles.note}>A set time makes it easier to come back.</Text>
               <ReminderPicker variant="chips" />
             </View>
           ) : null}

@@ -409,10 +409,7 @@ function FeedbackView({ feedback, track }: { feedback: WritingFeedback; track: L
       <InfoCard icon="flag-checkered" title="Next step" tone="yellow">
         {feedback.nextStep}
       </InfoCard>
-      <Text style={lessonText.small}>
-        AI feedback can be wrong. It describes this text; it is not a band score, CEFR level or exam
-        result.
-      </Text>
+      <Text style={lessonText.small}>AI feedback can be wrong. It is not a score or a level.</Text>
     </View>
   );
 }

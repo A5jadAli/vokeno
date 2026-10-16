@@ -56,8 +56,7 @@ export function CourseView({ track }: { track: LanguageTrack }) {
         <View style={[styles.banner, { backgroundColor: colors.tint }]}>
           <MaterialCommunityIcons color={Palette.ink} name="flag-checkered" size={22} />
           <Text style={styles.bannerText}>
-            You have finished every lesson available so far. New units appear here as soon as they
-            are ready; your progress stays.
+            You have finished every lesson so far. New units appear here when ready.
           </Text>
         </View>
       ) : null}

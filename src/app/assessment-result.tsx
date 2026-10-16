@@ -62,8 +62,7 @@ export default function AssessmentResultScreen() {
             <Eyebrow color={trackColors[track].onDark}>No result yet</Eyebrow>
             <Text style={styles.title}>Complete a real conversation first.</Text>
             <Text style={styles.copy}>
-              Vokeno only estimates a level after it has enough transcript evidence. It never fills
-              this page with a made-up score.
+              A level appears once there is enough evidence. No made-up scores.
             </Text>
           </>
         )}

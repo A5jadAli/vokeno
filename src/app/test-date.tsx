@@ -50,8 +50,7 @@ export default function TestDateScreen() {
         <Eyebrow color={Palette.orange}>Your target</Eyebrow>
         <Text style={styles.title}>When is your language test?</Text>
         <Text style={styles.copy}>
-          See a countdown and practice suggestions for your target date. This does not book a test
-          or schedule reminders. You can change or remove it any time.
+          See a countdown and what to practise. It does not book the exam.
         </Text>
 
         {Platform.OS === 'android' ? (

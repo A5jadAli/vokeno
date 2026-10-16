@@ -114,10 +114,7 @@ export default function OnboardingScreen() {
             </View>
           ))}
         </View>
-        <Text style={styles.note}>
-          No account needed to start. Explanations are in English. Guest progress stays on this
-          device; create an account later to keep it in sync.
-        </Text>
+        <Text style={styles.note}>No account needed. Explanations are in English.</Text>
       </View>
     </AppScreen>
   );

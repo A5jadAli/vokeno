@@ -29,7 +29,7 @@ function EnglishReading() {
   return (
     <AppScreen showNav={false}>
       <View style={{ padding: 20, gap: 18 }}>
-        <HeaderBack />
+        <HeaderBack variant="close" />
         <Eyebrow>Read, check, explain</Eyebrow>
         <Text style={{ color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 28 }}>
           English reading practice
@@ -100,10 +100,7 @@ function EnglishReading() {
         ) : (
           <>
             <Eyebrow>Practice saved</Eyebrow>
-            <Text style={styles.copy}>
-              You checked all three answers. This records practice, not an exam score. Explain one
-              answer aloud and point to the words that support it.
-            </Text>
+            <Text style={styles.copy}>All three checked. Now explain one answer aloud.</Text>
             <Button
               primary
               label={

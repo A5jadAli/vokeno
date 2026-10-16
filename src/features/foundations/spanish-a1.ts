@@ -181,7 +181,7 @@ export const spanishA1Lessons = defineLessons('ES', [
     id: 'es-sounds',
     level: 'A1',
     title: 'The Spanish sounds that matter most',
-    outcome: 'Hear and say the sounds that change meaning: r and rr, ñ, j and the five vowels.',
+    outcome: 'The sounds that change meaning: r, rr, ñ, j and vowels.',
     phrases: [
       ['pero, perro', 'but, dog', 'One tap for r, a rolled rr. The difference changes the word.'],
       [

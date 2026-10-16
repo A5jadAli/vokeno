@@ -108,7 +108,7 @@ describe('review', () => {
       (step) => step.kind === 'review',
     );
     expect(review?.title).toBe('Review 8 phrases');
-    expect(review?.why).toMatch(/other 4 can wait/);
+    expect(review?.why).toMatch(/4 more another day/);
   });
 
   it('comes first after a break, as a gentle restart', () => {

@@ -33,7 +33,7 @@ function ActivityHeader({
 }) {
   return (
     <View style={styles.header}>
-      <HeaderBack dark={dark} />
+      <HeaderBack dark={dark} variant="close" />
       <View style={styles.progressBars}>
         {Array.from({ length: total }, (_, item) => (
           <View

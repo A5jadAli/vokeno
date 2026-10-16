@@ -72,7 +72,7 @@ test('all authored listening lessons are discoverable and open in the correct la
         .getByRole('button', { name: `Open listening lesson ${scenario.title}`, exact: true })
         .click();
       await expect(page.getByText(scenario.question.prompt, { exact: true })).toBeVisible();
-      await page.getByRole('button', { name: 'Go back', exact: true }).click();
+      await page.getByRole('button', { name: 'Close', exact: true }).click();
       await expect(page).toHaveURL(new RegExp(`/listening\\?track=${track}$`));
     }
   }

@@ -105,9 +105,7 @@ function PlacementCheck({
             {language} placement check
           </Text>
           <Text style={lessonText.lead}>
-            About 3–5 minutes. Questions get harder while you answer securely, and the check stops
-            at the right level. You will see your answers at the end, so choose what you really
-            think rather than guessing.
+            About 3 to 5 minutes. It gets harder as you go and stops at your level.
           </Text>
           <LanguageSwitch
             groupLabel="Placement language"
@@ -116,8 +114,7 @@ function PlacementCheck({
             track={track}
           />
           <InfoCard icon="format-list-checks" title="What it covers">
-            Grammar, vocabulary, listening and real-world phrasing, five questions per level.
-            Listening questions use your device voice; turn your sound on.
+            Five questions per level. Turn your sound on for listening.
           </InfoCard>
         </View>
       </AppScreen>

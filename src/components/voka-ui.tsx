@@ -228,11 +228,21 @@ export function RoundIcon({
   );
 }
 
-export function HeaderBack({ dark = false }: { dark?: boolean }) {
+/**
+ * The top-left control. Pages that sit in the app use “back” (an arrow). Learning activities,
+ * which open as a focused screen from below, use “close” (a cross), matching lessons and review.
+ */
+export function HeaderBack({
+  dark = false,
+  variant = 'back',
+}: {
+  dark?: boolean;
+  variant?: 'back' | 'close';
+}) {
   const router = useRouter();
   return (
     <Pressable
-      accessibilityLabel="Go back"
+      accessibilityLabel={variant === 'close' ? 'Close' : 'Go back'}
       accessibilityRole="button"
       onPress={() => {
         if (router.canGoBack()) {
@@ -249,8 +259,8 @@ export function HeaderBack({ dark = false }: { dark?: boolean }) {
     >
       <MaterialCommunityIcons
         color={dark ? Palette.cream : Palette.ink}
-        name="chevron-left"
-        size={25}
+        name={variant === 'close' ? 'close' : 'chevron-left'}
+        size={variant === 'close' ? 23 : 25}
       />
     </Pressable>
   );

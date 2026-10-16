@@ -683,7 +683,7 @@ export const spanishA2Lessons = defineLessons('ES', [
       'These are informal and Mexican: perfect with friends, less so in a formal email. ¿Mande? is the exception: it is polite, and Mexicans use it instead of ¿Qué? to ask someone to repeat.',
     pronunciation:
       'In fast speech pues often shortens to pos. In ahorita the h is silent: a-o-RI-ta.',
-    reading: ['—¿Ya vienes? —Ahorita voy.', '“Are you coming?” “I’m coming in a moment.”'],
+    reading: ['“¿Ya vienes?” “Ahorita voy.”', '“Are you coming?” “I’m coming in a moment.”'],
     checks: [
       {
         prompt: 'In Mexico, you did not hear what someone said. What is the polite reaction?',

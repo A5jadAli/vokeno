@@ -120,7 +120,7 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
           </Text>
           <Text style={[lessonText.lead, { textAlign: 'center' }]}>
             {total
-              ? `You remembered ${remembered} of ${total} phrases on the first try. Missed phrases come back tomorrow; remembered ones come back later each time.`
+              ? `You remembered ${remembered} of ${total} phrases first time. Missed ones come back tomorrow.`
               : summary.learning
                 ? `No phrases are due. ${summary.nextInDays === 1 ? 'The next ones come back tomorrow.' : `The next ones come back in ${summary.nextInDays} days.`} Scheduled review helps you remember them.`
                 : 'Finish a lesson and its phrases appear here the next day.'}

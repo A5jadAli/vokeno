@@ -103,9 +103,9 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
       key,
       title: lesson.title,
       why: finished
-        ? 'Finished today. Its words are in your review.'
+        ? 'Done. Its words are in your review.'
         : resuming
-          ? `Pick up where you left off. ${lesson.outcome}`
+          ? 'Pick up where you left off.'
           : lesson.outcome,
       href: `/foundation/${id}`,
       action: finished ? 'Open lesson' : resuming ? 'Continue lesson' : 'Start lesson',
@@ -124,10 +124,10 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
       key,
       title: finished ? 'Phrase review' : `Review ${count} ${count === 1 ? 'phrase' : 'phrases'}`,
       why: finished
-        ? 'Done for today. Scheduled review helps you remember them.'
+        ? 'Done for today.'
         : due > count
-          ? `A quick refresh of familiar phrases. The other ${due - count} can wait.`
-          : 'A quick refresh of phrases you have learned.',
+          ? `A quick refresh. ${due - count} more another day.`
+          : 'A quick refresh of words you know.',
       href: `/review?track=${track}`,
       action: finished ? 'Review again' : 'Start review',
       minutes: 3,
@@ -161,10 +161,10 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
       key,
       title: unit ? `Speak: ${unit.title}` : 'Speak with your coach',
       why: finished
-        ? 'Done. Speaking is where it all comes together.'
+        ? 'Done. Nice speaking!'
         : unit
-          ? `${unit.outcome} Stop whenever you like.`
-          : 'A short, friendly conversation. Stop whenever you like.',
+          ? unit.outcome
+          : 'A short, friendly chat with your coach.',
       href: unit ? `/conversation?track=${track}&unit=${unit.id}` : `/conversation?track=${track}`,
       action: finished ? 'Speak again' : 'Start speaking',
       minutes: 5,

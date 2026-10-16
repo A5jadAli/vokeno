@@ -42,8 +42,7 @@ export default function AccentScreen() {
       <View style={styles.body}>
         <Text style={styles.title}>Sound clear, natural and like yourself.</Text>
         <Text style={styles.intro}>
-          Choose what you need. Vokeno targets intelligibility, rhythm and useful modern speech, not
-          accent erasure or imitation of a celebrity.
+          Choose what you need. The goal is being understood, not losing your accent.
         </Text>
 
         <LanguageSwitch

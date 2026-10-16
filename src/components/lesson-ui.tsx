@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { createContext, useContext, type ComponentProps, type PropsWithChildren } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View, type TextInputProps } from 'react-native';
 import Animated, { FadeIn, SlideInDown, ZoomIn } from 'react-native-reanimated';
 
 import { AudioIconButton } from '@/components/lesson-audio-button';
@@ -10,6 +10,19 @@ import { Palette, VokaFonts } from '@/constants/theme';
 import type { LessonAudio } from '@/features/audio/use-lesson-audio';
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
+
+/**
+ * Settings for a box where the learner types an answer: no autocorrect, no autofill and, on
+ * Android, no suggestion bar (Gboard ignores the plain flag in multi-line boxes, so the
+ * visible-password keyboard is used: letters, umlauts by long press, but no suggestions).
+ */
+export const answerInputProps: TextInputProps = {
+  autoCorrect: false,
+  autoComplete: 'off',
+  spellCheck: false,
+  importantForAutofill: 'no',
+  keyboardType: Platform.OS === 'android' ? 'visible-password' : 'default',
+};
 
 /** Answer colours: a soft tint for surfaces, a strong accent for marks, a dark ink for text. */
 export const Feedback = {

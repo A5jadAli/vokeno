@@ -748,7 +748,7 @@ export const germanB1Lessons = defineLessons('DE', [
     id: 'prep-verbs',
     level: 'B1',
     title: 'Waiting for, thinking about: verbs with prepositions',
-    outcome: 'Use common verbs with fixed prepositions, and ask and answer with wo(r)- and da(r)-.',
+    outcome: 'Verbs with fixed prepositions, and wo(r)- and da(r)-.',
     phrases: [
       ['Ich warte auf den Bus.', 'I am waiting for the bus.', 'Warten auf + accusative.'],
       ['Worauf wartest du?', 'What are you waiting for?', 'Wo(r) + preposition for things.'],
@@ -770,7 +770,7 @@ export const germanB1Lessons = defineLessons('DE', [
       ],
     ],
     notice:
-      'Learn these verbs as chunks with their preposition: warten auf, denken an, sich freuen auf/über, sich interessieren für, sich kümmern um, Angst haben vor. For things, use wo(r)- and da(r)-: Worüber sprecht ihr? – Darüber. For people, use preposition + pronoun: Auf wen wartest du? – Auf ihn.',
+      'Learn these verbs as chunks with their preposition: warten auf, denken an, sich freuen auf/über, sich interessieren für, sich kümmern um, Angst haben vor. For things, use wo(r)- and da(r)-: “Worüber sprecht ihr?” “Darüber.” For people, use preposition + pronoun: “Auf wen wartest du?” “Auf ihn.”',
     pronunciation: 'In darauf and worauf, stress the preposition part: da-RAUF, wo-RAUF.',
     checks: [
       {
@@ -885,7 +885,7 @@ export const germanB1Lessons = defineLessons('DE', [
     id: 'official-letters',
     level: 'B1',
     title: 'Understand official letters and write emails',
-    outcome: 'Understand passive and formal phrases in letters and open and close a formal email.',
+    outcome: 'Understand formal letters and write a formal email.',
     phrases: [
       [
         'Ihr Antrag wird bearbeitet.',
@@ -969,8 +969,7 @@ export const germanB1Lessons = defineLessons('DE', [
     id: 'plan-together',
     level: 'B1',
     title: 'Plan something together',
-    outcome:
-      'Make suggestions, react to a partner and agree on a plan, in real life and in the B1 speaking exam.',
+    outcome: 'Suggest, react and agree on a plan with someone.',
     phrases: [
       [
         'Wie wäre es, wenn wir am Samstag grillen?',
@@ -1178,7 +1177,7 @@ export const germanB1Lessons = defineLessons('DE', [
       },
       {
         prompt: 'Listen. How was the holiday?',
-        audio: 'Wie war der Urlaub? – Na ja, das Wetter war mies, aber das Essen war super.',
+        audio: 'Wie war der Urlaub? Na ja, das Wetter war mies, aber das Essen war super.',
         options: [
           'Bad weather but great food',
           'Great weather and great food',

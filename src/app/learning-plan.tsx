@@ -111,9 +111,8 @@ export default function LearningPlanScreen() {
 
         {track === 'EN' && ability === 'new' ? (
           <InfoCard icon="information-outline" title="English here starts at A2">
-            The English lessons are for learners who already know basic words and phrases. A course
-            for complete beginners is not available yet. If English is new to you, go slowly and use
-            the slow audio.
+            These lessons start at A2, for learners who know some basics. A beginner course is not
+            ready yet.
           </InfoCard>
         ) : null}
 

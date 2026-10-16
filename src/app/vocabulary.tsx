@@ -41,7 +41,7 @@ export default function VocabularyScreen() {
   return (
     <AppScreen showNav={false}>
       <View style={styles.header}>
-        <HeaderBack />
+        <HeaderBack variant="close" />
         <View style={styles.progressDots}>
           {words.map((word, dot) => (
             <View

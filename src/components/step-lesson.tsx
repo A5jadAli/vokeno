@@ -7,6 +7,7 @@ import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { AnswerChoice } from '@/components/answer-choice';
 import { AudioIconButton } from '@/components/lesson-audio-button';
 import {
+  answerInputProps,
   ActionBar,
   Feedback,
   InfoCard,
@@ -47,9 +48,9 @@ type Result = { tone: 'correct' | 'wrong' | 'close'; title: string; message?: st
 const PRAISE = ['Nice!', 'Exactly!', 'Well done!', 'Spot on!', 'Correct!'];
 
 const keyboardNote = {
-  DE: 'Punctuation and capital letters are not marked. No ß or umlaut key? Type ss, ae, oe or ue.',
+  DE: 'Capitals and punctuation don’t count. No ß or umlauts? Type ss, ae, oe or ue.',
   EN: 'Punctuation and capital letters are not marked.',
-  ES: 'Punctuation and capital letters do not count. A missing accent is accepted, and you will see where it goes. Ñ always counts.',
+  ES: 'Capitals and punctuation don’t count. Missing accents are fine; ñ counts.',
 } as const;
 
 /** A unit session: a short run of varied steps, saved after every step. */
@@ -760,10 +761,8 @@ function TypeStep({
       </Text>
       <TextInput
         accessibilityLabel={`Your ${languageName} answer`}
+        {...answerInputProps}
         autoCapitalize="sentences"
-        autoCorrect={false}
-        autoComplete="off"
-        spellCheck={false}
         maxLength={MAX_DRAFT_LENGTH}
         multiline
         placeholder={`Type in ${languageName}`}
@@ -938,10 +937,7 @@ function Complete({
         <Stat label="Review" value={`In ${REVIEW_INTERVALS[0]} day`} />
       </Animated.View>
       <UnitStep lesson={lesson} />
-      <Text style={lessonText.lead}>
-        Your lesson is saved, and its new words are in your review queue. Scheduled review helps you
-        remember them. This is practice evidence, not a language level.
-      </Text>
+      <Text style={lessonText.lead}>Saved. Your new words come back for review tomorrow.</Text>
       <TextButton title="Practise this lesson again" onPress={onRetry} />
       <TextButton title="Open the course" onPress={onPath} />
     </>

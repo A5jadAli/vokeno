@@ -517,7 +517,7 @@ export const germanA2Lessons = defineLessons('DE', [
       [
         'Stimmt so.',
         'Keep the change.',
-        'Say it when handing over money to include the tip. Around 5–10 % is usual.',
+        'Say it when handing over money to include the tip. Around 5 to 10% is usual.',
       ],
     ],
     notice:
@@ -703,7 +703,7 @@ export const germanA2Lessons = defineLessons('DE', [
     id: 'feelings',
     level: 'A2',
     title: 'Talk about feelings and react',
-    outcome: 'Express feelings, look forward to things and react to news like a native speaker.',
+    outcome: 'Talk about feelings and react to news naturally.',
     phrases: [
       [
         'Ich freue mich auf das Wochenende.',
@@ -805,7 +805,11 @@ export const germanA2Lessons = defineLessons('DE', [
         'That’s just how it is.',
         'Halt accepts something that cannot be changed. More common in the south; eben in the north.',
       ],
-      ['Doch!', 'Yes, it is! / Yes, I do!', 'Contradicts a negative: Du kommst nicht mit? – Doch!'],
+      [
+        'Doch!',
+        'Yes, it is! / Yes, I do!',
+        'Contradicts a negative: “Du kommst nicht mit?” “Doch!”',
+      ],
       ['Genau.', 'Exactly. / Right.', 'The most common agreement word in spoken German.'],
     ],
     notice:
@@ -860,28 +864,28 @@ export const germanA2Lessons = defineLessons('DE', [
     phrases: [
       [
         'Haste mal ne Minute?',
-        'Hast du mal eine Minute? – Have you got a minute?',
+        'Hast du mal eine Minute? (Have you got a minute?)',
         'Du merges with the verb (haste, kannste); eine becomes ne.',
       ],
       [
         'Ich hab keine Ahnung.',
-        'Ich habe keine Ahnung. – I have no idea.',
+        'Ich habe keine Ahnung. (I have no idea.)',
         'The -e of ich habe is almost always dropped in speech.',
       ],
-      ['Was gibt’s?', 'Was gibt es? – What’s up?', 'Es shrinks to ’s: gibt’s, geht’s, war’s.'],
+      ['Was gibt’s?', 'Was gibt es? (What’s up?)', 'Es shrinks to ’s: gibt’s, geht’s, war’s.'],
       [
         'Ich geh mal kurz raus.',
-        'Ich gehe mal kurz hinaus. – I’m just popping out.',
+        'Ich gehe mal kurz hinaus. (I’m just popping out.)',
         'Raus and rein replace hinaus and herein in speech.',
       ],
       [
         'Nee, is schon okay.',
-        'Nein, das ist schon okay. – No, it’s fine.',
+        'Nein, das ist schon okay. (No, it’s fine.)',
         'Nee means nein; das is often dropped at the start; ist can sound like is.',
       ],
       [
         'Weiß ich nicht.',
-        'Das weiß ich nicht. – Dunno.',
+        'Das weiß ich nicht. (Dunno.)',
         'Dropping the first word is very common.',
       ],
     ],

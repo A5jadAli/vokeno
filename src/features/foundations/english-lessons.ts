@@ -7,31 +7,30 @@ export const englishLessons = defineLessons('EN', [
     id: 'en-sounds',
     level: 'A2',
     title: 'English sounds that change meaning',
-    outcome:
-      'Hear and produce the sound and stress contrasts that matter most for being understood.',
+    outcome: 'The sounds and stress that make you easy to understand.',
     phrases: [
       [
-        'ship – sheep',
+        'ship, sheep',
         'short /ɪ/ vs long /iː/',
-        'Relax your tongue for ship; smile and hold longer for sheep. Also: live – leave, fit – feet.',
+        'Relax your tongue for ship; smile and hold longer for sheep. Also: live and leave, fit and feet.',
       ],
       [
-        'very – worry, vest – west',
+        'very, worry, vest, west',
         '/v/ vs /w/',
         'For v, touch your top teeth to your lower lip. For w, round your lips with no teeth.',
       ],
       [
-        'think – sink',
+        'think, sink',
         '/θ/ vs /s/',
         'Tongue lightly between the teeth, then blow. Getting this slightly wrong is less of a problem than vowel length or stress.',
       ],
       [
-        'PHOtograph – phoTOgraphy – photoGRAPHic',
+        'PHOtograph, phoTOgraphy, photoGRAPHic',
         'word stress moves',
         'Wrong stress confuses listeners more than an accent does.',
       ],
       [
-        'walked (1) – played (1) – wanted (2)',
+        'walked (1), played (1), wanted (2)',
         'the -ed ending',
         'Only add a syllable after t or d: want-ed, need-ed. Walked is one syllable: “walkt”.',
       ],
@@ -219,7 +218,7 @@ export const englishLessons = defineLessons('EN', [
       },
       {
         prompt: 'Listen. How does the second speaker feel?',
-        audio: 'I got the job! — No way! That’s amazing!',
+        audio: 'I got the job! No way! That’s amazing!',
         options: ['Surprised and happy', 'Angry', 'Disappointed'],
         answer: 0,
         explanation: 'You heard “No way! That’s amazing!”: happy surprise.',
@@ -332,7 +331,7 @@ export const englishLessons = defineLessons('EN', [
     checks: [
       {
         prompt:
-          'Your manager says your idea is “quite interesting — I’ll bear it in mind.” What is most likely?',
+          'Your manager says your idea is “quite interesting, I’ll bear it in mind.” What is most likely?',
         options: [
           'They are not very convinced',
           'They will implement it tomorrow',
@@ -764,7 +763,7 @@ export const englishLessons = defineLessons('EN', [
     id: 'en-register',
     level: 'B1',
     title: 'Formal or informal? Choose the right tone',
-    outcome: 'Match your tone to the reader, as in IELTS General Training letters and real emails.',
+    outcome: 'Match your tone to the reader in letters and emails.',
     phrases: [
       [
         'I am writing to enquire about … / Just wanted to ask about …',
@@ -848,7 +847,7 @@ export const englishLessons = defineLessons('EN', [
     title: 'IELTS Listening: numbers, spelling and traps',
     outcome: 'Catch numbers, spellings and corrected details, as in Listening Part 1.',
     phrases: [
-      ['fifTEEN – FIFty', '15 vs 50', 'Teen numbers stress the end; tens stress the start.'],
+      ['fifTEEN, FIFty', '15 vs 50', 'Teen numbers stress the end; tens stress the start.'],
       ['double L, double O', 'spelling', 'Repeated letters are spelled with “double”.'],
       ['oh / zero', 'saying 0', 'British phone numbers usually use “oh”.'],
       [
@@ -865,7 +864,7 @@ export const englishLessons = defineLessons('EN', [
     notice:
       'IELTS Listening has four parts and 40 questions, and you hear each recording once. Part 1 is often a booking or form with names, numbers and dates. Speakers change their minds, so the first detail you hear can be a distractor. Check spelling and word limits such as “NO MORE THAN TWO WORDS”.',
     pronunciation:
-      'Say 13–19 and 30–90 in pairs: thirTEEN – THIRty. Getting this right helps people understand you too.',
+      'Say 13 to 19 and 30 to 90 in pairs: thirTEEN, THIRty. Getting this right helps people understand you too.',
     checks: [
       {
         prompt: 'Listen. How much is one session?',
@@ -1209,7 +1208,7 @@ export const englishLessons = defineLessons('EN', [
       ['I used to …, but these days …', 'Past vs present', 'Great for questions about change.'],
     ],
     notice:
-      'Part 1 lasts 4–5 minutes, with questions about familiar topics such as home, work, study and hobbies. Aim for two or three sentences: an answer plus a reason or example. Memorised speeches are easy to spot; natural, extended answers work better.',
+      'Part 1 lasts 4 to 5 minutes, with questions about familiar topics such as home, work, study and hobbies. Aim for two or three sentences: an answer plus a reason or example. Memorised speeches are easy to spot; natural, extended answers work better.',
     pronunciation:
       'Start answering quickly. A short natural opener such as “Yeah, I do, actually” sounds fluent; a long silence does not.',
     checks: [
@@ -1259,7 +1258,7 @@ export const englishLessons = defineLessons('EN', [
     id: 'en-ielts-speaking-2',
     level: 'B2',
     title: 'IELTS Speaking Part 2: the long turn',
-    outcome: 'Plan in one minute and speak for up to two minutes, covering every point.',
+    outcome: 'Plan in one minute, then speak for two.',
     phrases: [
       [
         'I’m going to talk about …',
@@ -1284,7 +1283,7 @@ export const englishLessons = defineLessons('EN', [
         prompt: 'What is the best use of the one-minute preparation?',
         options: [
           'Write the full answer word for word',
-          'Note 4–5 keywords for the bullet points',
+          'Note 4 or 5 keywords for the bullet points',
           'Sit quietly and relax',
         ],
         answer: 1,

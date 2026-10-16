@@ -82,7 +82,7 @@ export default function ListeningLessonScreen() {
       }
     >
       <View style={styles.header}>
-        <HeaderBack dark />
+        <HeaderBack dark variant="close" />
         <View style={styles.headerTitle}>
           <Eyebrow color={trackColors[scenario.track].onDark}>
             {scenario.level} · Real-life listening

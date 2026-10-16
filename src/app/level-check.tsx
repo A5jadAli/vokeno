@@ -20,7 +20,7 @@ export default function LevelCheckScreen() {
   return (
     <AppScreen backgroundColor={Palette.ink} dark showNav={false}>
       <View style={styles.topRow}>
-        <HeaderBack dark />
+        <HeaderBack dark variant="close" />
         <Text style={styles.duration}>ABOUT 2 MINUTES</Text>
         <View style={styles.spacer} />
       </View>

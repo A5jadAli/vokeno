@@ -7,6 +7,7 @@ import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { AnswerChoice } from '@/components/answer-choice';
 import { AudioIconButton } from '@/components/lesson-audio-button';
 import {
+  answerInputProps,
   ActionBar,
   InfoCard,
   LessonTopBar,
@@ -409,10 +410,8 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
               </Text>
               <TextInput
                 accessibilityLabel={`Your ${languageName} answer`}
+                {...answerInputProps}
                 autoCapitalize="sentences"
-                autoCorrect={false}
-                autoComplete="off"
-                spellCheck={false}
                 maxLength={MAX_DRAFT_LENGTH}
                 multiline
                 placeholder={`Type in ${languageName}`}
@@ -431,9 +430,9 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
               />
               <Text style={lessonText.small}>
                 {lesson.track === 'DE'
-                  ? 'Punctuation and capital letters are not marked. No ß or umlaut key? Type ss, ae, oe or ue, or add German to your keyboard languages so autocorrect leaves German words alone.'
+                  ? 'Capitals and punctuation don’t count. No ß or umlauts? Type ss, ae, oe or ue.'
                   : lesson.track === 'ES'
-                    ? 'Punctuation and capital letters do not count. A missing accent is accepted, and you will see where it goes. Ñ always counts.'
+                    ? 'Capitals and punctuation don’t count. Missing accents are fine; ñ counts.'
                     : 'Punctuation and capital letters are not marked. Your draft is saved.'}
               </Text>
               {entry.writingMistakes >= 2 && !correctNow ? (
@@ -468,10 +467,7 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
               <InfoCard icon="account-voice" title="Your task" tone="ink">
                 {lesson.speaking}
               </InfoCard>
-              <Text style={lessonText.small}>
-                Say each phrase, then play it to compare. Nothing is recorded here. For feedback on
-                your speaking, practise with the live coach.
-              </Text>
+              <Text style={lessonText.small}>Say each phrase, then play it to compare.</Text>
               <PhraseList lesson={lesson} speech={speech} />
               <TextButton
                 title="Practise with the live coach"

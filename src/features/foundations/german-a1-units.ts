@@ -26,7 +26,7 @@ const unit1 = defineUnit(
       id: 'de-a1-u1-hallo',
       session: 'Words',
       title: 'Hallo, Tschüss and everything in between',
-      outcome: 'Say hello and goodbye the way people in Germany do, from morning to night.',
+      outcome: 'Say hello and goodbye like people in Germany do.',
       minutes: 5,
       steps: [
         {
@@ -388,8 +388,7 @@ const unit1 = defineUnit(
       id: 'de-a1-u1-du-sie',
       session: 'Real talk',
       title: 'du or Sie, and what to say when you do not understand',
-      outcome:
-        'Choose du or Sie like a local, and keep a conversation going when you do not understand.',
+      outcome: 'Pick du or Sie, and cope when you don’t understand.',
       minutes: 6,
       steps: [
         {
@@ -575,8 +574,7 @@ const unit1 = defineUnit(
       id: 'de-a1-u1-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: names and forms',
-      outcome:
-        'Do a Hören Teil 1 task about names, read a simple form, and start your Sprechen Teil 1 introduction.',
+      outcome: 'Exam practice: names you hear, a simple form, your introduction.',
       minutes: 5,
       steps: [
         {
@@ -1181,8 +1179,7 @@ const unit2 = defineUnit(
       id: 'de-a1-u2-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: read a message, introduce yourself',
-      outcome:
-        'Do a Lesen Teil 1 task and answer the Land, Wohnort and Sprachen cards of Sprechen Teil 1.',
+      outcome: 'Exam practice: a short message and where you live.',
       minutes: 6,
       steps: [
         {
@@ -1581,8 +1578,7 @@ const unit3 = defineUnit(
       id: 'de-a1-u3-spelling',
       session: 'Real talk',
       title: 'Spell your name, give your number',
-      outcome:
-        'Spell your name the way people do on the phone, and give phone numbers and email addresses.',
+      outcome: 'Spell your name and give your number and email.',
       minutes: 7,
       steps: [
         {
@@ -1763,8 +1759,7 @@ const unit3 = defineUnit(
       id: 'de-a1-u3-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: numbers you hear, a form you fill',
-      outcome:
-        'Catch numbers in Hören, fill a Schreiben Teil 1 form, and give the whole Sprechen Teil 1 introduction.',
+      outcome: 'Exam practice: numbers, a form and your full introduction.',
       minutes: 7,
       steps: [
         {
@@ -2372,8 +2367,7 @@ const unit4 = defineUnit(
       id: 'de-a1-u4-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: ask and answer about family',
-      outcome:
-        'Do a Sprechen Teil 2 task with word cards, and a Lesen task about a family weekend.',
+      outcome: 'Exam practice: word cards and a family weekend text.',
       minutes: 6,
       steps: [
         {
@@ -2929,8 +2923,7 @@ const unit5 = defineUnit(
       id: 'de-a1-u5-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: requests and prices',
-      outcome:
-        'Do a Sprechen Teil 3 task with picture cards, and Hören tasks about orders and prices.',
+      outcome: 'Exam practice: picture cards, orders and prices.',
       minutes: 6,
       steps: [
         {
@@ -3504,7 +3497,7 @@ const unit6 = defineUnit(
       id: 'de-a1-u6-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: signs, ads and announcements',
-      outcome: 'Do Lesen Teil 2 and Teil 3 tasks, and a Hören Teil 2 supermarket announcement.',
+      outcome: 'Exam practice: ads, signs and a shop announcement.',
       minutes: 6,
       steps: [
         {
@@ -3614,7 +3607,7 @@ const unit7 = defineUnit(
       id: 'de-a1-u7-flat',
       session: 'Words',
       title: 'Rooms and furniture',
-      outcome: 'Name the rooms and furniture of a flat, and ask what something is called.',
+      outcome: 'Name rooms and furniture, and ask what things are called.',
       minutes: 6,
       steps: [
         {
@@ -4085,8 +4078,7 @@ const unit7 = defineUnit(
       id: 'de-a1-u7-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: flat ads and house rules',
-      outcome:
-        'Choose a flat ad in Lesen Teil 2, read house rules, and ask about home in Sprechen Teil 2.',
+      outcome: 'Exam practice: flat ads, house rules and word cards.',
       minutes: 6,
       steps: [
         {
@@ -4676,8 +4668,7 @@ const unit8 = defineUnit(
       id: 'de-a1-u8-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: times you hear, a message you write',
-      outcome:
-        'Catch times in Hören, read an invitation in Lesen Teil 1, and answer it for Schreiben Teil 2.',
+      outcome: 'Exam practice: times, an invitation and your reply.',
       minutes: 7,
       steps: [
         {
@@ -4927,7 +4918,7 @@ const unit9 = defineUnit(
       id: 'de-a1-u9-lieber',
       session: 'Grammar',
       title: 'Du fährst, er liest: verbs that change, and gern, lieber, am liebsten',
-      outcome: 'Use verbs that change their vowel, and say what you like, prefer and like best.',
+      outcome: 'Verbs that change, and what you like best.',
       minutes: 7,
       steps: [
         {
@@ -5219,8 +5210,7 @@ const unit9 = defineUnit(
       id: 'de-a1-u9-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: course ads, a voicemail and free-time cards',
-      outcome:
-        'Choose the right ad in Lesen Teil 2, catch a place and time in Hören Teil 3, and ask about free time in Sprechen Teil 2.',
+      outcome: 'Exam practice: course ads, a voicemail and free-time cards.',
       minutes: 6,
       steps: [
         {
@@ -5771,8 +5761,7 @@ const unit10 = defineUnit(
       id: 'de-a1-u10-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: dates you hear, a notice, a message',
-      outcome:
-        'Catch dates in Hören, read a notice in Lesen Teil 3, and cancel an appointment in writing.',
+      outcome: 'Exam practice: dates, a notice and cancelling in writing.',
       minutes: 6,
       steps: [
         {
@@ -6121,8 +6110,7 @@ const unit11 = defineUnit(
       id: 'de-a1-u11-real',
       session: 'Real talk',
       title: '“Ich bin auch nicht von hier.” Asking the way',
-      outcome:
-        'Ask strangers the way, cope with fast answers, and know the unwritten rules of the street.',
+      outcome: 'Ask strangers the way and know the street rules.',
       minutes: 7,
       steps: [
         {
@@ -6296,8 +6284,7 @@ const unit11 = defineUnit(
       id: 'de-a1-u11-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: web pages and directions',
-      outcome:
-        'Find the right web page in Lesen Teil 2, follow directions you hear, and ask the way in Sprechen Teil 3.',
+      outcome: 'Exam practice: web pages, directions and asking the way.',
       minutes: 6,
       steps: [
         {
@@ -6682,8 +6669,7 @@ const unit12 = defineUnit(
       id: 'de-a1-u12-real',
       session: 'Real talk',
       title: '“Die Bahn hat mal wieder Verspätung”',
-      outcome:
-        'Understand platform changes and delays, get through a ticket check, and complain about the train like a local.',
+      outcome: 'Handle platform changes, delays and a ticket check.',
       minutes: 7,
       steps: [
         {
@@ -6844,8 +6830,7 @@ const unit12 = defineUnit(
       id: 'de-a1-u12-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: announcements, connections and requests',
-      outcome:
-        'Catch platforms and times in Hören Teil 2, choose a connection in Lesen Teil 2, and make requests in Sprechen Teil 3.',
+      outcome: 'Exam practice: announcements, connections and requests.',
       minutes: 6,
       steps: [
         {
@@ -7097,8 +7082,7 @@ const unit13 = defineUnit(
       id: 'de-a1-u13-adjectives',
       session: 'Grammar',
       title: 'Einen blauen Pullover: colours before the noun',
-      outcome:
-        'Say what you are looking for with a colour: einen blauen Pullover, eine rote Jacke.',
+      outcome: 'Say what you want with a colour: einen blauen Pullover.',
       minutes: 7,
       steps: [
         {
@@ -7363,8 +7347,7 @@ const unit13 = defineUnit(
       id: 'de-a1-u13-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: shop ads, an order and clothes cards',
-      outcome:
-        'Choose the right shop in Lesen Teil 2, catch details in Hören, and ask about clothes in Sprechen Teil 2.',
+      outcome: 'Exam practice: shop ads, prices and clothes cards.',
       minutes: 6,
       steps: [
         {
@@ -7740,7 +7723,7 @@ const unit14 = defineUnit(
       id: 'de-a1-u14-real',
       session: 'Real talk',
       title: '“Was fehlt Ihnen?” At the doctor’s',
-      outcome: 'Explain your symptoms, follow the doctor, and get a sick note and a prescription.',
+      outcome: 'Explain symptoms, follow the doctor, get a sick note.',
       minutes: 7,
       steps: [
         {
@@ -7903,8 +7886,7 @@ const unit14 = defineUnit(
       id: 'de-a1-u14-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: surgery hours, a voicemail and requests',
-      outcome:
-        'Read surgery hours in Lesen Teil 3, catch a changed time in Hören Teil 3, and ask for help in Sprechen Teil 3.',
+      outcome: 'Exam practice: surgery hours, a voicemail and requests.',
       minutes: 6,
       steps: [
         {
@@ -8269,8 +8251,7 @@ const unit15 = defineUnit(
       id: 'de-a1-u15-real',
       session: 'Real talk',
       title: '“Wir duzen uns hier.” A first day at work',
-      outcome:
-        'Get through a first day at work: names, du or Sie, lunch and the small talk around it.',
+      outcome: 'Your first day at work: names, du, lunch and small talk.',
       minutes: 7,
       steps: [
         {
@@ -8422,8 +8403,7 @@ const unit15 = defineUnit(
       id: 'de-a1-u15-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: job ads and your whole introduction',
-      outcome:
-        'Choose a job ad in Lesen Teil 2, and give the full Sprechen Teil 1 introduction, now with your job.',
+      outcome: 'Exam practice: job ads and your full introduction.',
       minutes: 6,
       steps: [
         {
@@ -8780,7 +8760,7 @@ const unit16 = defineUnit(
       id: 'de-a1-u16-real',
       session: 'Real talk',
       title: '“Was für ein Sauwetter!” Weather talk like a local',
-      outcome: 'Complain about the weather like a German, and know how Germans cope with hot days.',
+      outcome: 'Weather talk like a local, and how Germans beat the heat.',
       minutes: 7,
       steps: [
         {
@@ -8927,8 +8907,7 @@ const unit16 = defineUnit(
       id: 'de-a1-u16-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: a weather report, a postcard and weather cards',
-      outcome:
-        'Catch a weather report in Hören Teil 2, read a postcard in Lesen Teil 1, and talk about seasons in Sprechen Teil 2.',
+      outcome: 'Exam practice: a weather report, a postcard and season cards.',
       minutes: 6,
       steps: [
         {
@@ -9293,8 +9272,7 @@ const unit17 = defineUnit(
       id: 'de-a1-u17-real',
       session: 'Real talk',
       title: '“Ohne Termin geht nichts.” Offices the German way',
-      outcome:
-        'Book an office appointment, bring the right papers, and ask when you don’t understand.',
+      outcome: 'Book an office visit and bring the right papers.',
       minutes: 7,
       steps: [
         {
@@ -9453,8 +9431,7 @@ const unit17 = defineUnit(
       id: 'de-a1-u17-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: Schreiben Teil 1, a form',
-      outcome:
-        'Fill in a form for someone in Schreiben Teil 1, catch a postcode, and ask formal questions.',
+      outcome: 'Exam practice: fill in a form and ask formal questions.',
       minutes: 6,
       steps: [
         {
@@ -9809,7 +9786,7 @@ const unit18 = defineUnit(
       id: 'de-a1-u18-real',
       session: 'Real talk',
       title: '“Sorry, bin spät dran!” Messages people really send',
-      outcome: 'Send the messages people really send, and write a short email to a school.',
+      outcome: 'The messages people really send, and an email to a school.',
       minutes: 7,
       steps: [
         {
@@ -9939,8 +9916,7 @@ const unit18 = defineUnit(
       id: 'de-a1-u18-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: Schreiben Teil 2, formal and informal',
-      outcome:
-        'Write a formal message for Schreiben Teil 2, and read a course email in Lesen Teil 1.',
+      outcome: 'Exam practice: a formal message and a course email.',
       minutes: 6,
       steps: [
         {
@@ -10444,8 +10420,7 @@ const unit19 = defineUnit(
       id: 'de-a1-u19-exam',
       session: 'Exam task',
       title: 'Goethe A1 practice: what happened, in Lesen, Hören and Sprechen',
-      outcome:
-        'Follow past events in a text and in recordings, and ask about the past in Sprechen Teil 2.',
+      outcome: 'Exam practice: past events in texts, recordings and cards.',
       minutes: 6,
       steps: [
         {
@@ -10695,7 +10670,7 @@ const unit20 = defineUnit(
       id: 'de-a1-u20-review',
       session: 'Review',
       title: 'A1 grammar in one session',
-      outcome: 'Check the key A1 grammar: verbs, articles, word order, modal verbs and the past.',
+      outcome: 'Check the key A1 grammar in one session.',
       minutes: 7,
       steps: [
         {
@@ -10792,8 +10767,7 @@ const unit20 = defineUnit(
       id: 'de-a1-u20-real',
       session: 'Real talk',
       title: '“Wie war das noch mal?” Keeping a conversation going',
-      outcome:
-        'Keep a fast conversation going when you don’t understand, need a word or want to change the topic.',
+      outcome: 'Keep a fast conversation going, even when you’re lost.',
       minutes: 7,
       steps: [
         {
@@ -10936,8 +10910,7 @@ const unit20 = defineUnit(
       id: 'de-a1-u20-exam',
       session: 'Exam warm-up',
       title: 'Goethe A1 warm-up: one task from each part',
-      outcome:
-        'Do one short task from Hören, Lesen, Schreiben and Sprechen, and know what the full exam looks like.',
+      outcome: 'One short task from each part of the A1 exam.',
       minutes: 7,
       steps: [
         {

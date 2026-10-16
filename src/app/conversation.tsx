@@ -164,8 +164,7 @@ export default function ConversationScreen() {
     : diagnostic
       ? {
           ...baseMode,
-          description:
-            'Read the sentence naturally, then answer a few short questions. Vokeno adapts to what it hears without inventing a pronunciation score.',
+          description: 'Read the sentence, then answer a few short questions.',
           level: 'Adaptive',
           starter:
             track === 'EN'
@@ -315,7 +314,7 @@ export default function ConversationScreen() {
           setPermissionBlocked(access === 'blocked');
           setError(
             access === 'blocked'
-              ? 'Microphone access is off. Enable it in your phone settings to use live voice. Text lessons still work without it.'
+              ? 'Microphone is off. Turn it on in your phone settings to talk live.'
               : 'Microphone access was not allowed. Tap Try again to allow it, or continue with text lessons.',
           );
         }
@@ -461,8 +460,7 @@ export default function ConversationScreen() {
         <Text style={styles.title}>{mode.title}</Text>
         <Text style={styles.description}>{mode.description}</Text>
         <Text style={styles.description}>
-          Sessions last up to five minutes. You can stop at any time; your microphone also stops
-          when you leave this screen or background the app.
+          Up to five minutes. Stop any time; the microphone stops when you leave.
         </Text>
 
         {!diagnostic && !unit ? (
@@ -702,8 +700,7 @@ export default function ConversationScreen() {
             ))
           ) : (
             <Text style={styles.coachCopy}>
-              Hesitations, repeated words and requests for help can become gentle in-conversation
-              coaching. Vokeno never invents a pronunciation score.
+              Pauses and requests for help become gentle tips. No made-up scores.
             </Text>
           )}
         </View>
