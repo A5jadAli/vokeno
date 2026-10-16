@@ -36,6 +36,22 @@ function plan(overrides: Partial<TodayPlanInput> = {}) {
   });
 }
 
+describe('spaced review comes first', () => {
+  it('the day after the first lesson: review its words, then the next lesson', () => {
+    const today = dayNumberOf(TODAY);
+    const day2 = plan({ progress: { 'es-first-words': completed(today) }, log: activeDays(1) });
+    expect(day2.stage).toBe('warm-up');
+    expect(day2.steps.map((step) => step.kind)).toEqual(['review', 'lesson']);
+  });
+
+  it('in an established routine, review still comes before new words', () => {
+    const today = dayNumberOf(TODAY);
+    const routine = plan({ progress: { 'es-first-words': completed(today) }, log: activeDays(8) });
+    expect(routine.steps[0].kind).toBe('review');
+    expect(routine.steps[1].kind).toBe('lesson');
+  });
+});
+
 describe('a brand-new learner', () => {
   it('gets exactly one small step: the first useful Spanish exchange', () => {
     const today = plan();

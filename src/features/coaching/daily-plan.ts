@@ -195,16 +195,23 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
   // A learner who has not finished a single lesson always starts with one.
   const firstSteps = position.finishedLessons === 0 && nextLessonKey;
 
+  // Due phrases always come first: a short review before new words is what turns a lesson into
+  // long-term memory (spaced retrieval), and the first review, the day after, matters most. So
+  // even a one-step day in the warm-up stage grows to review plus the next lesson.
   const fresh = (): ActivityKey[] => {
     const ordered: (ActivityKey | null)[] =
       returning && !firstSteps
         ? [reviewKey ?? nextLessonKey ?? practice[0]]
-        : stage === 'warm-up' || firstSteps
-          ? [nextLessonKey ?? reviewKey ?? practice[0]]
-          : stage === 'building'
-            ? [nextLessonKey, reviewKey ?? practice[0], practice[1]]
-            : [reviewKey ?? practice[1], nextLessonKey, practice[0], practice[1]];
-    const size = stageSteps[returning || firstSteps ? 'warm-up' : stage];
+        : firstSteps
+          ? [nextLessonKey]
+          : stage === 'warm-up'
+            ? [reviewKey, nextLessonKey ?? practice[0]]
+            : stage === 'building'
+              ? [reviewKey, nextLessonKey, practice[0], practice[1]]
+              : [reviewKey, nextLessonKey, practice[0], practice[1]];
+    const size =
+      stageSteps[returning || firstSteps ? 'warm-up' : stage] +
+      (reviewKey && stage === 'warm-up' && !returning && !firstSteps ? 1 : 0);
     const keys: ActivityKey[] = [];
     for (const key of ordered) {
       if (key && !keys.some((existing) => existing.split(':')[0] === key.split(':')[0]))
