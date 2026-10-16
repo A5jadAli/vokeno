@@ -14,6 +14,7 @@ import { levelCheckSentences } from '@/features/audio/spoken-texts';
 export default function LevelCheckScreen() {
   const router = useRouter();
   const [track, setTrack] = useSelectedLanguage();
+  const colors = trackColors[track];
   const check = levelCheckSentences[track];
   const speech = useLessonAudio(track);
 
@@ -46,7 +47,10 @@ export default function LevelCheckScreen() {
 
         <View style={styles.wave}>
           {[14, 31, 57, 86, 45, 96, 61, 34, 69, 24, 43, 16].map((height, index) => (
-            <View key={index} style={[styles.waveBar, { height }]} />
+            <View
+              key={index}
+              style={[styles.waveBar, { height, backgroundColor: colors.accent }]}
+            />
           ))}
         </View>
         <View style={styles.micArea}>
@@ -55,8 +59,8 @@ export default function LevelCheckScreen() {
             onPress={() => router.push(`/conversation?track=${track}&practice=diagnostic`)}
             style={({ pressed }) => [styles.micHalo, pressed && styles.pressed]}
           >
-            <View style={styles.mic}>
-              <MaterialCommunityIcons color={Palette.ink} name="microphone" size={35} />
+            <View style={[styles.mic, { backgroundColor: colors.accent }]}>
+              <MaterialCommunityIcons color={colors.onAccent} name="microphone" size={35} />
             </View>
           </Pressable>
           <Text style={styles.listenText}>Tap to start your spoken check</Text>

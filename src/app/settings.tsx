@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Brand, Palette, VokaFonts } from '@/constants/theme';
 import { useAuthSession } from '@/features/auth/use-auth-session';
 import { type CoachTone, useCoachingStore } from '@/features/coaching/store';
 import { downloadAvailableUpdate, restartWithDownloadedUpdate } from '@/features/updates/ota';
@@ -76,7 +76,7 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.body}>
-        <Eyebrow color={Palette.orange}>Coaching</Eyebrow>
+        <Eyebrow color={Brand.accent}>Coaching</Eyebrow>
         <Text style={styles.title}>Choose how Vokeno pushes you</Text>
         <Text style={styles.description}>
           Tough feedback is your choice, and it is only ever about your practice.
@@ -98,7 +98,7 @@ export default function SettingsScreen() {
 
         {remindersSupported ? (
           <>
-            <Eyebrow color={Palette.orange}>Daily reminder</Eyebrow>
+            <Eyebrow color={Brand.accent}>Daily reminder</Eyebrow>
             <Text style={styles.description}>
               One reminder around the time you choose (your phone may send it a little later to save
               battery), skipped on days you have already practised. If you are away for a week,
@@ -110,7 +110,7 @@ export default function SettingsScreen() {
           </>
         ) : null}
 
-        <Eyebrow color={Palette.orange}>Account &amp; app</Eyebrow>
+        <Eyebrow color={Brand.accent}>Account &amp; app</Eyebrow>
         <View style={styles.card}>
           {isPermanent ? (
             <SettingsRow
@@ -150,7 +150,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.privacyNote}>
-          <MaterialCommunityIcons color={Palette.orange} name="shield-lock-outline" size={22} />
+          <MaterialCommunityIcons color={Brand.accent} name="shield-lock-outline" size={22} />
           <Text style={styles.privacyText}>
             Supabase authorises live practice. Microphone audio travels directly to OpenAI over an
             encrypted connection. Vokeno stops the stream when you end or leave the conversation.

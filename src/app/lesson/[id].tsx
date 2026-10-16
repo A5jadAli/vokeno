@@ -248,11 +248,12 @@ export default function ListeningLessonScreen() {
               onPress={checkAnswer}
               style={({ pressed }) => [
                 styles.checkButton,
+                { backgroundColor: colors.accent },
                 selectedAnswer === undefined && styles.disabled,
                 pressed && styles.pressed,
               ]}
             >
-              <Text style={styles.checkText}>Check answer</Text>
+              <Text style={[styles.checkText, { color: colors.onAccent }]}>Check answer</Text>
             </Pressable>
           )}
         </View>

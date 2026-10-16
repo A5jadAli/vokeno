@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Brand, Palette, VokaFonts } from '@/constants/theme';
 import {
   isGoogleSignInEnabled,
   isOAuthRedirectHandled,
@@ -259,9 +259,9 @@ export default function AuthScreen() {
       </View>
       <View style={styles.body}>
         <View style={styles.icon}>
-          <MaterialCommunityIcons color={Palette.ink} name="account-voice" size={34} />
+          <MaterialCommunityIcons color={Brand.onAccent} name="account-voice" size={34} />
         </View>
-        <Eyebrow color={Palette.orange}>Your VOKENO account</Eyebrow>
+        <Eyebrow color={Brand.accent}>Your VOKENO account</Eyebrow>
         <Text style={styles.title}>
           {mode === 'sign-in'
             ? 'Welcome back'
@@ -451,7 +451,7 @@ export default function AuthScreen() {
               pressed && styles.pressed,
             ]}
           >
-            {loading ? <ActivityIndicator color={Palette.ink} /> : null}
+            {loading ? <ActivityIndicator color={Brand.onAccent} /> : null}
             <Text style={styles.primaryText}>
               {mode === 'sign-in'
                 ? 'Sign in'
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
   body: { flex: 1, paddingHorizontal: 24, paddingTop: 18 },
   icon: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
+    backgroundColor: Brand.accent,
     borderRadius: 20,
     height: 60,
     justifyContent: 'center',
@@ -623,7 +623,7 @@ const styles = StyleSheet.create({
   },
   primary: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
+    backgroundColor: Brand.accent,
     borderRadius: 18,
     flexDirection: 'row',
     gap: 8,
@@ -632,7 +632,7 @@ const styles = StyleSheet.create({
     minHeight: 58,
   },
   primaryDisabled: { opacity: 0.55 },
-  primaryText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
+  primaryText: { color: Brand.onAccent, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
   consentText: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,

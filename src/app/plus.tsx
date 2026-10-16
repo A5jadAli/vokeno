@@ -6,7 +6,7 @@ import { ActivityIndicator, AppState, Pressable, StyleSheet, Text, View } from '
 
 import { PrimaryButton } from '@/components/lesson-ui';
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Brand, Palette, VokaFonts } from '@/constants/theme';
 import { useAuthSession } from '@/features/auth/use-auth-session';
 import {
   fetchPlusAccess,
@@ -152,7 +152,7 @@ function PlusContent() {
         <View style={[styles.icon, state?.isPlus && styles.activeIcon]}>
           <MaterialCommunityIcons color={Palette.ink} name="creation" size={32} />
         </View>
-        <Eyebrow color={Palette.orange}>
+        <Eyebrow color={Brand.onDark}>
           {state?.isPlus
             ? 'Active subscription'
             : state && unavailable
@@ -225,13 +225,13 @@ function PlusContent() {
               ]
           ).map((benefit) => (
             <View key={benefit} style={styles.benefit}>
-              <MaterialCommunityIcons color={Palette.orange} name="check-circle" size={21} />
+              <MaterialCommunityIcons color={Brand.onDark} name="check-circle" size={21} />
               <Text style={styles.benefitText}>{benefit}</Text>
             </View>
           ))}
         </View>
         {pending && !state ? (
-          <ActivityIndicator color={Palette.orange} style={styles.loader} />
+          <ActivityIndicator color={Brand.onDark} style={styles.loader} />
         ) : null}
         {!showManage ? (
           <View style={styles.primaryWrap}>
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   activeIcon: { width: 48, height: 48, marginBottom: 16 },
   icon: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
+    backgroundColor: Brand.onDark,
     borderRadius: 20,
     height: 64,
     justifyContent: 'center',

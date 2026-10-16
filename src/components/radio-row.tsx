@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Brand, Palette, VokaFonts } from '@/constants/theme';
 
 /**
  * One choice in a pick-one list inside a settings card, like WhatsApp's settings rows: label,
@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 22,
   },
-  radioSelected: { borderColor: Palette.orange },
-  radioDot: { backgroundColor: Palette.orange, borderRadius: 99, height: 12, width: 12 },
+  radioSelected: { borderColor: Brand.accent },
+  radioDot: { backgroundColor: Brand.accent, borderRadius: 99, height: 12, width: 12 },
   copy: { flex: 1, gap: 2 },
   label: { color: Palette.ink, fontFamily: VokaFonts.bodyMedium, fontSize: 16 },
   description: {

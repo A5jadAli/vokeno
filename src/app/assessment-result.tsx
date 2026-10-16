@@ -14,6 +14,7 @@ export default function AssessmentResultScreen() {
   const [track] = useSelectedLanguage();
   const assessment = useAssessmentStore((state) => state.assessments[track]);
   const hasHydrated = useAssessmentStore((state) => state.hasHydrated);
+  const colors = trackColors[track];
 
   return (
     <AppScreen backgroundColor={Palette.ink} dark showNav={false}>
@@ -25,13 +26,15 @@ export default function AssessmentResultScreen() {
       <View style={styles.body}>
         {!hasHydrated ? (
           <>
-            <Eyebrow color={Palette.orange}>Loading result</Eyebrow>
+            <Eyebrow color={colors.onDark}>Loading result</Eyebrow>
             <Text style={styles.title}>Checking your saved assessment…</Text>
           </>
         ) : assessment ? (
           <>
-            <View style={styles.levelCircle}>
-              <Text style={styles.level}>{assessment.estimatedLevel}</Text>
+            <View style={[styles.levelCircle, { backgroundColor: colors.accent }]}>
+              <Text style={[styles.level, { color: colors.onAccent }]}>
+                {assessment.estimatedLevel}
+              </Text>
             </View>
             <Eyebrow color={trackColors[track].onDark}>
               {languageDetails[track].name} · {assessment.confidence} confidence
@@ -42,11 +45,13 @@ export default function AssessmentResultScreen() {
             <ResultList
               icon="check-circle-outline"
               items={assessment.strengths}
+              color={colors.onDark}
               title="Strengths"
             />
             <ResultList
               icon="arrow-up-circle-outline"
               items={assessment.priorities}
+              color={colors.onDark}
               title="Next priorities"
             />
             <Text style={styles.disclaimer}>
@@ -56,8 +61,8 @@ export default function AssessmentResultScreen() {
           </>
         ) : (
           <>
-            <View style={styles.icon}>
-              <MaterialCommunityIcons color={Palette.ink} name="account-voice" size={38} />
+            <View style={[styles.icon, { backgroundColor: colors.accent }]}>
+              <MaterialCommunityIcons color={colors.onAccent} name="account-voice" size={38} />
             </View>
             <Eyebrow color={trackColors[track].onDark}>No result yet</Eyebrow>
             <Text style={styles.title}>Complete a real conversation first.</Text>
@@ -73,10 +78,14 @@ export default function AssessmentResultScreen() {
             }
             accessibilityRole="button"
             onPress={() => router.replace('/level-check')}
-            style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+            style={({ pressed }) => [
+              styles.button,
+              { backgroundColor: colors.accent },
+              pressed && styles.pressed,
+            ]}
           >
-            <MaterialCommunityIcons color={Palette.ink} name="microphone" size={21} />
-            <Text style={styles.buttonText}>
+            <MaterialCommunityIcons color={colors.onAccent} name="microphone" size={21} />
+            <Text style={[styles.buttonText, { color: colors.onAccent }]}>
               {assessment ? 'Retake check' : 'Start spoken check'}
             </Text>
           </Pressable>
@@ -90,7 +99,9 @@ function ResultList({
   icon,
   items,
   title,
+  color,
 }: {
+  color: string;
   icon: 'arrow-up-circle-outline' | 'check-circle-outline';
   items: string[];
   title: string;
@@ -100,7 +111,7 @@ function ResultList({
       <Text style={styles.resultTitle}>{title}</Text>
       {items.map((item) => (
         <View key={item} style={styles.resultRow}>
-          <MaterialCommunityIcons color={Palette.orange} name={icon} size={18} />
+          <MaterialCommunityIcons color={color} name={icon} size={18} />
           <Text style={styles.resultText}>{item}</Text>
         </View>
       ))}

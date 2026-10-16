@@ -16,6 +16,18 @@ export const Palette = {
   soft: 'rgba(19, 18, 17, 0.08)',
 } as const;
 
+/**
+ * The Vokeno brand: ink and cream, so it never competes with a language's own colour (English
+ * orange, German yellow, Spanish violet and any added later). On cream surfaces the brand is ink;
+ * on dark surfaces it is cream. Language screens use trackColors instead.
+ */
+export const Brand = {
+  accent: Palette.ink,
+  onAccent: Palette.cream,
+  onDark: Palette.cream,
+  onDarkInk: Palette.ink,
+} as const;
+
 // Plus Jakarta Sans for everything; Bricolage Grotesque only for the VOKENO wordmark.
 export const VokaFonts = {
   displayExtraBold: 'BricolageGrotesque_800ExtraBold',

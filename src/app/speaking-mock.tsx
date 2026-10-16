@@ -124,7 +124,7 @@ function SpeakingMock({ track }: { track: 'DE' | 'EN' }) {
         ) : null}
 
         <View style={styles.card}>
-          <Text style={styles.cardKicker}>
+          <Text style={[styles.cardKicker, { color: trackColors[track].accent }]}>
             {card.part === 'ielts-2'
               ? 'Task card'
               : card.part === 'goethe-plan'

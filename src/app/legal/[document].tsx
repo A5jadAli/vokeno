@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { documents } from '@/features/legal/documents';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Brand, Palette, VokaFonts } from '@/constants/theme';
 
 export default function LegalScreen() {
   const { document } = useLocalSearchParams<{ document?: string }>();
@@ -12,7 +12,7 @@ export default function LegalScreen() {
     <AppScreen showNav={false}>
       <View style={styles.header}>
         <HeaderBack />
-        <Eyebrow color={Palette.orange}>VOKENO</Eyebrow>
+        <Eyebrow color={Brand.accent}>VOKENO</Eyebrow>
         <View style={styles.spacer} />
       </View>
       <View style={styles.body}>

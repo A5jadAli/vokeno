@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Brand, Palette, VokaFonts } from '@/constants/theme';
 import { useAssessmentStore } from '@/features/assessment/store';
 import { deleteCurrentAccount } from '@/features/auth/account';
 import { supabase } from '@/features/auth/supabase';
@@ -125,7 +125,7 @@ export default function ProfileScreen() {
       >
         <View style={styles.planGlow} />
         <View>
-          <Eyebrow color={Palette.orange}>Vokeno Plus</Eyebrow>
+          <Eyebrow color={Brand.onDark}>Vokeno Plus</Eyebrow>
           <Text style={styles.planTitle}>Make room for more practice</Text>
           {[
             'Explore live practice plans',
@@ -255,7 +255,7 @@ export default function ProfileScreen() {
 
       <View style={styles.identityNote}>
         <View style={styles.identityIcon}>
-          <MaterialCommunityIcons color={Palette.orange} name="account-lock-outline" size={23} />
+          <MaterialCommunityIcons color={Brand.accent} name="account-lock-outline" size={23} />
         </View>
         <View style={styles.identityCopy}>
           <Eyebrow>Private by design</Eyebrow>
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   benefit: { alignItems: 'center', flexDirection: 'row', gap: 12, marginTop: 10 },
   benefitCheck: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
+    backgroundColor: Brand.onDark,
     borderRadius: 99,
     height: 22,
     justifyContent: 'center',
