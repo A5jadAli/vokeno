@@ -150,7 +150,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.privacyNote}>
-          <MaterialCommunityIcons color={Brand.accent} name="shield-lock-outline" size={22} />
+          <MaterialCommunityIcons color={Brand.onDark} name="shield-lock-outline" size={22} />
           <Text style={styles.privacyText}>
             Supabase authorises live practice. Microphone audio travels directly to OpenAI over an
             encrypted connection. Vokeno stops the stream when you end or leave the conversation.

@@ -255,7 +255,7 @@ export default function ProfileScreen() {
 
       <View style={styles.identityNote}>
         <View style={styles.identityIcon}>
-          <MaterialCommunityIcons color={Brand.accent} name="account-lock-outline" size={23} />
+          <MaterialCommunityIcons color={Brand.onAccent} name="account-lock-outline" size={23} />
         </View>
         <View style={styles.identityCopy}>
           <Eyebrow>Private by design</Eyebrow>
