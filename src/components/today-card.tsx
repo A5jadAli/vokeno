@@ -131,9 +131,12 @@ export function TodayCard({
         </Animated.View>
       ) : null}
 
-      {goal ? <GoalCard goal={goal} track={track} /> : null}
-
-      <Text style={styles.intro}>{plan.footnote}</Text>
+      {/* The goal sets the pace when there is one; otherwise a word on the habit. */}
+      {goal ? (
+        <GoalCard goal={goal} track={track} />
+      ) : (
+        <Text style={styles.intro}>{plan.footnote}</Text>
+      )}
 
       {current ? (
         <Focus step={current} track={track} progress={progress} onOpen={() => open(current)} />
