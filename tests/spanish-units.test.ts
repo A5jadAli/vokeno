@@ -84,15 +84,16 @@ describe('Spanish Unit 1 practice and review', () => {
       );
     }
     // The final session retrieves the existing set instead of inflating the review queue.
-    expect(unit1.map((lesson) => lesson.phrases.length)).toEqual([5, 5, 5, 0]);
+    expect(unit1.map((lesson) => lesson.phrases.length)).toEqual([7, 5, 5, 0]);
     expect(
       new Set(unit1.flatMap((lesson) => lesson.phrases.map((phrase) => phraseKey(phrase.target))))
         .size,
-    ).toBe(15);
+    ).toBe(17);
     expect(seedCards(unit1[3], freshFoundationEntry(), 100).cards).toEqual([]);
   });
 
   it('retains earned intervals by phrase when old phrases appear in a different order', () => {
+    const newInUnit1 = ['Buenas tardes.', 'Buenas noches.'];
     const progress: FoundationProgress = {};
     for (const [index, id] of predecessors.entries()) {
       const old = foundationLessons.find((lesson) => lesson.id === id)!;
@@ -108,12 +109,13 @@ describe('Spanish Unit 1 practice and review', () => {
         const previous = old.phrases.findIndex(
           (item) => phraseKey(item.target) === phraseKey(phrase.target),
         );
-        expect(previous).toBeGreaterThanOrEqual(0);
-        expect(seeded.cards[i]).toEqual(cards[previous]);
+        // The afternoon and evening greetings are new in Unit 1; everything else keeps its interval.
+        if (previous < 0) expect(newInUnit1).toContain(phrase.target);
+        else expect(seeded.cards[i]).toEqual(cards[previous]);
       }
       progress[next.id] = { ...finished(), ...seeded };
     }
-    expect(reviewSummary(progress, 'ES', 100).learning).toBe(15);
+    expect(reviewSummary(progress, 'ES', 100).learning).toBe(17);
     expect(reviewSummary(progress, 'ES', 100).due).toBe(0);
     const [lesson] = unit1;
     const recentFailure = { ...progress[lesson.id], cards: [[0, 101] as [number, number]] };
@@ -156,10 +158,10 @@ describe('Spanish Unit 1 practice and review', () => {
   });
 });
 
-describe('Spanish Units 1 to 3 as one beginner path', () => {
-  it('advances through twelve sessions, preserves unit boundaries and then offers existing practice', () => {
-    expect(spanishA1Units).toHaveLength(12);
-    expect(getTrackLessons('ES').slice(0, 12)).toEqual(spanishA1Units);
+describe('Spanish Units 1 to 4 as one beginner path', () => {
+  it('advances through sixteen sessions, preserves unit boundaries and then offers existing practice', () => {
+    expect(spanishA1Units).toHaveLength(16);
+    expect(getTrackLessons('ES').slice(0, 16)).toEqual(spanishA1Units);
     const progress: FoundationProgress = {};
     for (const [index, lesson] of spanishA1Units.entries()) {
       expect(lesson.unit.number).toBe(Math.floor(index / 4) + 1);
@@ -170,9 +172,9 @@ describe('Spanish Units 1 to 3 as one beginner path', () => {
     expect(findNextLesson(progress, 'ES')?.lesson.id).toBe('es-sounds');
     expect(
       courseUnits('ES', progress)
-        .slice(0, 3)
+        .slice(0, 4)
         .map((unit) => unit.done),
-    ).toEqual([4, 4, 4]);
+    ).toEqual([4, 4, 4, 4]);
   });
 
   it('keeps synthesis sessions free of new cards and schedules the unique taught set once', () => {

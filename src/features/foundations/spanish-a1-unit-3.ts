@@ -1,22 +1,24 @@
 import { defineUnit } from './types';
 
+// Numbers have a unit of their own: digits, ages and phone numbers read the Mexican way, in
+// pairs. Spelling, email and the full registration form follow in Unit 4.
 export const spanishA1Unit3 = defineUnit(
   'ES',
   'A1',
   {
     id: 'es-a1-u3',
     number: 3,
-    icon: 'card-account-details-outline',
-    title: 'Get the details right',
-    canDo: 'Give an age, spell a name and check contact details, including a corrected number.',
+    icon: 'numeric',
+    title: 'Numbers and your phone number',
+    canDo: 'Give your age and phone number, and correct a number someone gets wrong.',
   },
   [
     {
       id: 'es-a1-u3-words',
       session: 'Words',
       title: 'Make sure they have your number',
-      outcome: 'Read and say numbers from zero to twenty and recognise contact labels.',
-      minutes: 9,
+      outcome: 'Say numbers from zero to twenty and read a phone number digit by digit.',
+      minutes: 7,
       steps: [
         {
           kind: 'rule',
@@ -113,7 +115,7 @@ export const spanishA1Unit3 = defineUnit(
           prompt: 'Write 16 as one Spanish word.',
           answerKind: 'text',
           accepted: ['dieciséis'],
-          hint: 'Start with dieci and end with séis. It is one word.',
+          hint: 'One word: dieci + seis, with an accent on the é: dieciséis.',
           explanation: 'Dieciséis has an accent on é. The accent marks the stressed syllable.',
         },
         {
@@ -126,37 +128,14 @@ export const spanishA1Unit3 = defineUnit(
         },
         {
           kind: 'teach',
-          title: 'Labels you will meet on a form',
+          title: 'The number they ask for',
           items: [
-            {
-              target: 'el nombre',
-              meaning: 'given name / first name',
-              note: 'On a form with a separate apellido field, nombre asks for the given name.',
-            },
-            {
-              target: 'el apellido',
-              meaning: 'surname / family name',
-              note: 'Some people have more than one surname. Keep the details the person gives you.',
-            },
             {
               target: 'el número de teléfono',
               meaning: 'telephone number',
-              note: 'Teléfono has an accent. You may also see teléfono móvil or celular for a mobile phone.',
-            },
-            {
-              target: 'el correo electrónico',
-              meaning: 'email / email address',
-              note: 'On a contact form this asks for an email address. Later you will practise arroba and punto.',
+              note: 'Teléfono has an accent. A mobile is el celular in Mexico and el móvil in Spain.',
             },
           ],
-        },
-        {
-          kind: 'choose',
-          context: 'Nombre: Ana\nApellido: Soto',
-          prompt: 'Which part is Ana’s surname?',
-          options: ['Ana', 'Soto', 'Nombre'],
-          answer: 1,
-          explanation: 'Apellido labels the surname, Soto. Nombre labels the given name, Ana.',
         },
         {
           kind: 'rule',
@@ -172,16 +151,6 @@ export const spanishA1Unit3 = defineUnit(
           accepted: ['5501000038'],
           hint: 'There are ten digits, read in five groups of two. Replay one group at a time.',
           explanation: 'The number is 55 0100 0038. The final pair is tres ocho, or 38.',
-        },
-        {
-          kind: 'match',
-          prompt: 'Choose the field for each detail.',
-          pairs: [
-            ['Nombre', 'Your given name'],
-            ['Apellido', 'Your surname'],
-            ['Número de teléfono', 'Your phone number'],
-            ['Correo electrónico', 'Your email address'],
-          ],
         },
         {
           kind: 'speak',
@@ -206,17 +175,17 @@ export const spanishA1Unit3 = defineUnit(
     {
       id: 'es-a1-u3-grammar',
       session: 'Grammar',
-      title: 'Your age and your contact details',
-      outcome:
-        'Use tener for age, build numbers through thirty and choose a question for a personal detail.',
-      minutes: 9,
+      title: 'Your age, your number',
+      outcome: 'Use tener for age, count to thirty and ask for a phone number.',
+      minutes: 8,
       steps: [
         {
           kind: 'choose',
-          prompt: 'A form asks for apellido. Which detail belongs there?',
-          options: ['Your age', 'Your email address', 'Your surname'],
-          answer: 2,
-          explanation: 'Apellido asks for a surname. You will add age and contact questions next.',
+          prompt: 'Someone reads a code: cero, cinco, dos. Which digits do you write?',
+          options: ['052', '502', '025'],
+          answer: 0,
+          explanation:
+            'Cero, cinco, dos is 052. Keep the zero at the start and the order as heard.',
         },
         {
           kind: 'teach',
@@ -225,7 +194,7 @@ export const spanishA1Unit3 = defineUnit(
             {
               target: 'Tengo veinte años.',
               meaning: 'I am twenty years old.',
-              note: 'Spanish uses tengo, literally I have, for age. Keep ñ in años.',
+              note: 'Spanish uses tengo, literally I have, for age. Keep the ñ: without it, años becomes a very different word.',
             },
             {
               target: '¿Cuántos años tienes?',
@@ -237,7 +206,7 @@ export const spanishA1Unit3 = defineUnit(
         {
           kind: 'rule',
           title: 'Age: tengo, tienes, tiene',
-          body: 'For one person: yo tengo, tú tienes, él/ella tiene. Usted also uses tiene. For age, use the number followed by años. You can practise with an invented person instead of sharing your age.',
+          body: 'For one person: yo tengo, tú tienes, él/ella tiene. Usted also uses tiene. For age, use the number followed by años. On a form, edad means age. You can practise with an invented person instead of sharing your age.',
           table: [
             ['yo', 'tengo'],
             ['tú', 'tienes'],
@@ -298,7 +267,7 @@ export const spanishA1Unit3 = defineUnit(
           prompt: 'Write 26 as one Spanish word.',
           answerKind: 'text',
           accepted: ['veintiséis'],
-          hint: 'Use veinti + séis, joined as one word.',
+          hint: 'One word: veinti + seis, with an accent on the é: veintiséis.',
           explanation: 'Veintiséis has an accent on é, like dieciséis.',
         },
         {
@@ -312,7 +281,7 @@ export const spanishA1Unit3 = defineUnit(
         },
         {
           kind: 'teach',
-          title: 'Ask for a detail',
+          title: 'Ask for a number',
           items: [
             {
               target: '¿Cuál es tu número de teléfono?',
@@ -320,52 +289,27 @@ export const spanishA1Unit3 = defineUnit(
               note: 'Tu without an accent means your. Tú with an accent means you.',
             },
             {
-              target: '¿Cuál es su correo electrónico?',
-              meaning: 'What is your email address? (usted)',
-              note: 'When addressing someone with usted. Su can refer to other people too; context tells you whose.',
-            },
-            {
-              target: 'Mi apellido es García.',
-              meaning: 'My surname is García.',
-              note: 'Mi means my. Keep the accent in García when copying the name.',
+              target: '¿Me das tu número?',
+              meaning: 'Can I have your number? (tú)',
+              note: 'Friendly and very common between peers in Mexico. With usted: ¿Me da su número?',
             },
           ],
         },
         {
-          kind: 'rule',
-          title: 'Match the question to the detail',
-          body: 'On a form, edad means age. Cuántos asks how many in ¿Cuántos años tienes? Cuál asks which value in ¿Cuál es tu número de teléfono? Cómo asks how, as in ¿Cómo se escribe? Mi means my, tu means your with tú, and su can mean your with usted. It can also mean his, her or their; ask if the owner is unclear.',
-          table: [
-            ['mi apellido', 'my surname'],
-            ['tu apellido', 'your surname: tú'],
-            ['su apellido', 'your surname: usted; context may indicate someone else'],
-          ],
-        },
-        {
-          kind: 'match',
-          prompt: 'Choose a question that asks for the missing information.',
-          pairs: [
-            ['¿Cuántos años tienes?', 'Edad'],
-            ['¿Cuál es tu número de teléfono?', 'Teléfono'],
-            ['¿Cuál es su correo electrónico?', 'Correo electrónico'],
-            ['¿Cómo se escribe?', 'Spelling'],
-          ],
-        },
-        {
           kind: 'choose',
-          prompt: 'Which phrase means “your surname” when speaking to a classmate using tú?',
-          options: ['mi apellido', 'tu apellido', 'tú apellido'],
-          answer: 1,
-          explanation:
-            'Tu apellido uses the possessive tu without an accent. Tú with an accent is the subject pronoun you.',
-        },
-        {
-          kind: 'choose',
-          context: 'Nombre: Eva\nApellido: Ríos\nEdad: 23',
+          context: 'Nombre: Eva\nEdad: 23',
           prompt: 'Which sentence gives Eva’s age?',
           options: ['Es veintitrés años.', 'Tengo veintitrés años.', 'Tiene veintitrés años.'],
           answer: 2,
           explanation: 'Tiene is the form for Eva. Tengo would mean the speaker’s own age.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'A classmate asks “¿Me das tu número?” What do they want?',
+          options: ['Your phone number', 'Your age', 'Your name'],
+          answer: 0,
+          explanation:
+            '¿Me das tu número? asks for your phone number. Answer with the digits, slowly.',
         },
         {
           kind: 'type',
@@ -379,21 +323,16 @@ export const spanishA1Unit3 = defineUnit(
         {
           kind: 'speak',
           prompt:
-            'Choose an invented name, surname and age between 20 and 30. Introduce yourself, give the age and ask a classmate for their phone number.',
-          lines: [
-            'Me llamo Ana.',
-            'Mi apellido es García.',
-            'Tengo veintiún años.',
-            '¿Cuál es tu número de teléfono?',
-          ],
+            'Choose an invented name and an age between 20 and 30. Introduce yourself, give the age and ask a classmate for their phone number.',
+          lines: ['Me llamo Ana.', 'Tengo veintiún años.', '¿Cuál es tu número de teléfono?'],
           mission: {
             checks: [
               'Use tengo for your character’s age.',
               'Use the correct number form before años.',
-              'Keep tú and tu in their different jobs.',
+              'Ask for a phone number.',
             ],
             twist:
-              'Now talk about the character instead of speaking as them. Change tengo to tiene, then ask a receptionist for their email using usted.',
+              'Now talk about the character instead of speaking as them. Change tengo to tiene, then ask a friend for their number the casual way.',
           },
         },
       ],
@@ -401,10 +340,10 @@ export const spanishA1Unit3 = defineUnit(
     {
       id: 'es-a1-u3-talk',
       session: 'Real talk',
-      title: 'Spell it and check it back',
+      title: 'Did you say fifteen or fifty?',
       outcome:
-        'Understand common letter names, distinguish fifteen from fifty and correct contact details.',
-      minutes: 11,
+        'Count to one hundred, follow a number read in pairs and correct a number taken down wrong.',
+      minutes: 8,
       steps: [
         {
           kind: 'rule',
@@ -429,6 +368,15 @@ export const spanishA1Unit3 = defineUnit(
           answer: 0,
           explanation:
             'Cincuenta is 50. Quince is 15. Replay both number lists if you need another comparison.',
+        },
+        {
+          kind: 'choose',
+          prompt: 'Listen. Sixty or seventy?',
+          audio: 'setenta',
+          options: ['60', '70', '17'],
+          answer: 1,
+          explanation:
+            'Setenta is 70: listen for the t in se-TEN-ta. Sesenta, 60, has an s: se-SEN-ta.',
         },
         {
           kind: 'rule',
@@ -462,105 +410,27 @@ export const spanishA1Unit3 = defineUnit(
         },
         {
           kind: 'rule',
-          title: 'Spell a name: a to i',
-          body: 'Letter names help someone write a name correctly. The Spanish alphabet has 27 letters, including ñ. Work through three small groups, then use just the letters you need for a name.',
-          table: [
-            ['a', 'a'],
-            ['b', 'be'],
-            ['c', 'ce'],
-            ['d', 'de'],
-            ['e', 'e'],
-            ['f', 'efe'],
-            ['g', 'ge'],
-            ['h', 'hache'],
-            ['i', 'i'],
-          ],
-          examples: ['a, be, ce, de, e, efe, ge, hache, i'],
-        },
-        {
-          kind: 'choose',
-          prompt: 'Listen to a letter name. Which letter is it?',
-          audio: 'hache',
-          options: ['a', 'g', 'h'],
-          answer: 2,
-          explanation:
-            'Hache names h. The letter name is spoken, even though h is silent in a word such as hola.',
-        },
-        {
-          kind: 'rule',
-          title: 'Spell a name: j to q',
-          body: 'N and ñ are different letters. Keep ñ when writing a surname: it is a different letter from n. On many phone keyboards, holding n offers ñ.',
-          table: [
-            ['j', 'jota'],
-            ['k', 'ka'],
-            ['l', 'ele'],
-            ['m', 'eme'],
-            ['n', 'ene'],
-            ['ñ', 'eñe'],
-            ['o', 'o'],
-            ['p', 'pe'],
-            ['q', 'cu'],
-          ],
-          examples: ['jota, ka, ele, eme, ene, eñe, o, pe, cu'],
+          title: 'Phone numbers in pairs',
+          body: 'In Mexico many people read a phone number in pairs: cincuenta y cinco for 55, doce for 12. Digit by digit is also fine. If a pair is unclear, ask for the digits one by one.',
+          examples: ['cincuenta y cinco, doce, treinta y cuatro, cincuenta y seis, cincuenta'],
         },
         {
           kind: 'type',
-          prompt: 'Listen to three letter names and write the name they spell.',
-          audio: 'a, ene, a',
-          answerKind: 'text',
-          accepted: ['Ana'],
-          hint: 'Write one letter for each letter name. Ene is n.',
-          explanation:
-            'A, ene, a spells Ana. The same spelling strategy works for unfamiliar names.',
-        },
-        {
-          kind: 'rule',
-          title: 'Spell a name: r to z',
-          body: 'Letter names vary. You may hear ve corta for v, doble u for w and i griega for y. Uve, uve doble and ye are also valid. B and v do not represent different sounds in ordinary Spanish, so a clarifying name can help. Ch and ll are pairs of letters, not extra alphabet letters.',
-          table: [
-            ['r', 'erre'],
-            ['s', 'ese'],
-            ['t', 'te'],
-            ['u', 'u'],
-            ['v', 'uve / ve corta'],
-            ['w', 'doble u / uve doble'],
-            ['x', 'equis'],
-            ['y', 'ye / i griega'],
-            ['z', 'zeta'],
-          ],
-          examples: ['erre, ese, te, u, uve, doble u, equis, ye, zeta'],
-        },
-        {
-          kind: 'choose',
-          prompt: 'Someone says “doble u” when spelling. Which letter should you write?',
-          options: ['w', 'u', 'v'],
-          answer: 0,
-          explanation: 'Doble u is a common name for w. Uve doble also names w.',
+          prompt: 'Listen to a number read in pairs. Type all ten digits. Spaces are allowed.',
+          audio: 'cincuenta y cinco, cuarenta, veintiuno, noventa, trece',
+          answerKind: 'digits',
+          accepted: ['5540219013'],
+          hint: 'Five pairs. Write each pair as two digits.',
+          explanation: 'The number is 55 40 21 90 13. Cuarenta is 40 and trece is 13.',
         },
         {
           kind: 'teach',
-          title: 'Email symbols and checking',
+          title: 'Check it back',
           items: [
-            {
-              target: 'arroba',
-              meaning: '@',
-              note: 'Use arroba when reading an email address aloud.',
-            },
-            {
-              target: 'punto',
-              meaning: '.',
-              note: 'A dot in an email address. The dot is part of the address, not sentence punctuation.',
-            },
-            {
-              target: 'guion',
-              meaning: '-',
-              note: 'A hyphen. Guion is written without an accent.',
-            },
-            { target: 'guion bajo', meaning: '_', note: 'An underscore, different from a hyphen.' },
             {
               target: '¿Así está bien?',
               meaning: 'Is it correct like this?',
-              note: 'Say it when showing the written details for confirmation.',
+              note: 'Say it when showing or reading back details for confirmation.',
             },
           ],
         },
@@ -568,17 +438,11 @@ export const spanishA1Unit3 = defineUnit(
           kind: 'scene',
           title: 'One correction at the class desk',
           intro:
-            'Ana gives a fictional surname and checks the end of her phone number. The receptionist repeats it incorrectly, so Ana corrects just the part that needs changing.',
+            'Ana gives her phone number at the class desk. The receptionist reads the end back wrong, so Ana corrects just the part that needs changing.',
           lines: [
             {
               speaker: 'Recepcionista',
-              text: '¿Cómo se escribe tu apellido?',
-              meaning: 'How is your surname spelled?',
-            },
-            { speaker: 'Ana', text: 'Soto. Ese, o, te, o.', meaning: 'Soto. S, o, t, o.' },
-            {
-              speaker: 'Recepcionista',
-              text: '¿Tu número termina en quince?',
+              text: '¿Su número termina en quince?',
               meaning: 'Does your number end in fifteen?',
             },
             {
@@ -593,7 +457,7 @@ export const spanishA1Unit3 = defineUnit(
             },
             { speaker: 'Ana', text: 'Sí, gracias.', meaning: 'Yes, thank you.' },
           ],
-          note: 'Termina en means ends in. Switching from a pair to single digits can make a correction clearer.',
+          note: 'The receptionist uses usted, so su means your. Termina en means ends in. Switching from a pair to single digits makes a correction clearer.',
         },
         {
           kind: 'type',
@@ -605,58 +469,31 @@ export const spanishA1Unit3 = defineUnit(
           explanation: 'The correction is 50. Do not keep the earlier guess, 15.',
         },
         {
-          kind: 'type',
-          prompt:
-            'Listen to the surname being spelled. Write the five-letter surname, including ñ.',
-          audio: 'eme, u, eñe, o, zeta',
-          answerKind: 'text',
-          accepted: ['Muñoz'],
-          hint: 'Eme is m; eñe is ñ. Keep all five letters.',
-          explanation:
-            'The letters spell Muñoz. Munoz changes a letter and is not the same spelling.',
-        },
-        {
-          kind: 'match',
-          prompt: 'Match the name of each email symbol.',
-          pairs: [
-            ['arroba', '@'],
-            ['punto', '.'],
-            ['guion', '-'],
-            ['guion bajo', '_'],
-          ],
-        },
-        {
-          kind: 'rule',
-          title: 'An email address has no spaces',
-          body: 'In ana.soto@example.com, say the name parts, punto for the dot and arroba for @. Example.com is a domain reserved for examples. Copy the address exactly; a missing dot can send it somewhere else.',
-          examples: ['ana punto soto, arroba, example punto com'],
-        },
-        {
-          kind: 'type',
-          context: 'The ending is @example.com.',
-          prompt:
-            'Listen and type the full fictional email address. Use symbols, not the words arroba and punto.',
-          audio: 'luz, arroba, example punto com',
-          answerKind: 'email',
-          accepted: ['luz@example.com'],
-          hint: 'Join the name before arroba to the supplied ending. Do not add spaces.',
-          explanation:
-            'Luz, arroba, example punto com gives luz@example.com. Email punctuation must stay in place.',
+          kind: 'choose',
+          prompt: 'Listen. How does the number end?',
+          audio: 'Termina en sesenta.',
+          options: ['60', '70', '16'],
+          answer: 0,
+          explanation: 'Sesenta is 60. Setenta, with a t, is 70; dieciséis is 16.',
         },
         {
           kind: 'speak',
           prompt:
-            'Spell the fictional surname Soto, then correct the end of a phone number from 15 to 50. Finish by asking if the written details are correct.',
-          lines: ['Ese, o, te, o.', 'No, en cincuenta. Cinco, cero.', '¿Así está bien?'],
-          tip: 'Read letter names and digits clearly, with pauses. If a pair is confusing, say each digit separately.',
+            'Read this fictional number in pairs: 55 12 34 56 50. The receptionist reads the end back as 15: correct it to 50 and check it back.',
+          lines: [
+            'cincuenta y cinco, doce, treinta y cuatro, cincuenta y seis, cincuenta',
+            'No, en cincuenta. Cinco, cero.',
+            '¿Así está bien?',
+          ],
+          tip: 'Read pairs and digits clearly, with pauses. If a pair is confusing, say each digit separately.',
           mission: {
             checks: [
-              'Spell the letters rather than only repeating the name.',
-              'Correct 15 to 50.',
+              'Read the number in pairs.',
+              'Correct 15 to 50, with single digits if it helps.',
               'Ask for confirmation.',
             ],
             twist:
-              'Now spell Muñoz, including ñ. Change a different final pair from 38 to 24, then check it back.',
+              'Now the receptionist hears setenta instead of sesenta. Correct it the same way.',
           },
         },
       ],
@@ -664,23 +501,23 @@ export const spanishA1Unit3 = defineUnit(
     {
       id: 'es-a1-u3-task',
       session: 'Exam task',
-      title: 'Register for the language exchange',
+      title: 'Leave your number at the desk',
       outcome:
-        'Complete personal fields accurately and use a spoken correction before confirming the details.',
-      minutes: 7,
+        'Take down an age and a phone number, and use a correction instead of the old number.',
+      minutes: 6,
       steps: [
         {
           kind: 'rule',
-          title: 'A small registration task',
-          body: 'Use a fictional person’s details to complete a short form. Nombre, apellido, edad, teléfono and correo electrónico are the fields you have practised. This is an A1 form exercise, not the full DELE writing task. No real contact details are needed.',
+          title: 'A small check-in',
+          body: 'Use a fictional person’s details. You will hear numbers, write them down and use a correction. This is practice towards A1 listening and forms, not a full DELE task. No real contact details are needed.',
         },
         {
           kind: 'choose',
-          context: 'Me llamo Vera Muñoz. Soy de Chile. Vivo en Puebla. Tengo veintiséis años.',
-          prompt: 'Which pair gives Vera’s surname and age?',
-          options: ['Vera, 26', 'Muñoz, 26', 'Muñoz, 16'],
+          context: 'Me llamo Vera. Soy de Chile. Vivo en Puebla. Tengo veintiséis años.',
+          prompt: 'How old is Vera?',
+          options: ['16', '26', '62'],
           answer: 1,
-          explanation: 'Muñoz is the surname. Veintiséis is 26, not 16.',
+          explanation: 'Veintiséis is 26. Dieciséis would be 16.',
         },
         {
           kind: 'type',
@@ -693,32 +530,17 @@ export const spanishA1Unit3 = defineUnit(
             'Siete, cero, cuatro, uno gives 7041. Correct order matters as much as recognising each digit.',
         },
         {
-          kind: 'choose',
-          context: 'Correo electrónico: vera.munoz@example.com',
-          prompt: 'Which copy keeps the exact address?',
-          options: ['vera.munoz@example.com', 'veramunoz@example.com', 'vera.munoz.example.com'],
-          answer: 0,
-          explanation:
-            'The first copy keeps both the dot in the name and @. Surnames can contain ñ even when a chosen email address uses n; copy each supplied detail as written.',
-        },
-        {
           kind: 'form',
-          prompt: 'Complete Vera’s registration. Listen for her corrected phone number.',
+          prompt: 'Complete Vera’s details. Listen for her new phone number.',
           context:
-            'Me llamo Vera Muñoz. Tengo veintiséis años.\nCorreo electrónico: vera.munoz@example.com\nOld phone number: 55 0100 0024\nVera gives the new number in the audio. Use the new number in Teléfono.',
+            'Me llamo Vera. Tengo veintiséis años.\nOld phone number: 55 0100 0024\nVera gives the new number in the audio. Use the new number in Teléfono.',
           audio: 'Mi número es cinco cinco, cero uno, cero cero, cero cero, cuatro ocho.',
           fields: [
             {
               label: 'Nombre',
               kind: 'text',
               accepted: ['Vera'],
-              hint: 'Use the given name, without the surname.',
-            },
-            {
-              label: 'Apellido',
-              kind: 'text',
-              accepted: ['Muñoz'],
-              hint: 'Use the surname and keep ñ.',
+              hint: 'Use the given name.',
             },
             {
               label: 'Edad (en cifras)',
@@ -732,27 +554,9 @@ export const spanishA1Unit3 = defineUnit(
               accepted: ['5501000048'],
               hint: 'Use the ten digits in the new audio. The old number on the card has a different ending.',
             },
-            {
-              label: 'Correo electrónico',
-              kind: 'email',
-              accepted: ['vera.munoz@example.com'],
-              hint: 'Copy the full address, including the dot and @. It uses n in munoz.',
-            },
           ],
           explanation:
-            'The updated number is 55 0100 0048. You kept the five fields separate and used the correction instead of copying the old phone number.',
-        },
-        {
-          kind: 'choose',
-          prompt: 'The receptionist reads back the wrong surname. What helps you fix it?',
-          options: [
-            'Say goodbye immediately.',
-            'Repeat your age.',
-            'Ask to correct it and spell the surname.',
-          ],
-          answer: 2,
-          explanation:
-            'Spelling identifies the letters that need changing. Correcting a detail is a useful communication strategy.',
+            'The new number is 55 0100 0048. You used the correction instead of copying the old phone number.',
         },
         {
           kind: 'type',
@@ -768,22 +572,28 @@ export const spanishA1Unit3 = defineUnit(
             'Tiene is the form for Luis. Before años, treinta y uno becomes treinta y un.',
         },
         {
+          kind: 'type',
+          prompt: 'Listen to a phone number read in pairs. Type all ten digits.',
+          audio: 'Mi número es cincuenta y cinco, veinte, treinta, catorce, noventa y nueve.',
+          answerKind: 'digits',
+          accepted: ['5520301499'],
+          hint: 'Five pairs: write each pair as two digits.',
+          explanation: 'The number is 55 20 30 14 99. Catorce is 14; noventa y nueve is 99.',
+        },
+        {
           kind: 'choose',
-          prompt: 'Listen. What should you do next?',
-          audio: '¿Cómo se escribe?',
-          options: ['Give a price.', 'Spell the detail you just gave.', 'Say where you live.'],
-          answer: 1,
-          explanation:
-            '¿Cómo se escribe? requests spelling. You used it in Unit 1; now you can respond with letter names.',
+          prompt: 'Listen. What does the person want?',
+          audio: '¿Me das tu número?',
+          options: ['Your phone number.', 'Your age.', 'To say goodbye.'],
+          answer: 0,
+          explanation: '¿Me das tu número? asks for your phone number in a friendly way.',
         },
         {
           kind: 'speak',
           prompt:
-            'Register an invented person. Give a name, spell a surname, give an age and read a fictional phone number. Imagine one digit is copied wrongly: correct it and check the result.',
+            'Check in as an invented person: give a name, an age and a fictional phone number. Imagine one digit is copied wrongly: correct it and check the result.',
           lines: [
             'Me llamo Ana.',
-            'Mi apellido es Soto.',
-            'Ese, o, te, o.',
             'Tengo veintiún años.',
             'cinco cinco, cero uno, cero cero, cero cero, dos cuatro',
             '¿Así está bien?',
@@ -791,11 +601,10 @@ export const spanishA1Unit3 = defineUnit(
           mission: {
             checks: [
               'Give each requested detail.',
-              'Use letter names and keep ñ if your surname has it.',
-              'Correct the wrong digit and ask for confirmation.',
+              'Correct the wrong digit.',
+              'Ask for confirmation.',
             ],
-            twist:
-              'The receptionist uses usted and asks for an email address instead. Give ana.soto@example.com aloud, including its symbols.',
+            twist: 'This time read the phone number in pairs, the way many people in Mexico do.',
           },
         },
       ],

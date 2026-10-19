@@ -1,8 +1,9 @@
 import { defineUnit } from './types';
 import { spanishA1Unit2 } from './spanish-a1-unit-2';
 import { spanishA1Unit3 } from './spanish-a1-unit-3';
+import { spanishA1Unit4 } from './spanish-a1-unit-4';
 
-// The first three units are available for the native-review pilot.
+// The first four units are available for the native-review pilot.
 // Familiar recorded phrases are deliberately retrieved in new situations. The final task
 // introduces no new review cards. Scripts and existing audio still need native-teacher review.
 const unit1 = defineUnit(
@@ -47,6 +48,16 @@ const unit1 = defineUnit(
               target: 'Buenos días.',
               meaning: 'Good morning.',
               note: 'Useful when entering a shop or meeting someone in the morning.',
+            },
+            {
+              target: 'Buenas tardes.',
+              meaning: 'Good afternoon.',
+              note: 'From about midday until it gets dark.',
+            },
+            {
+              target: 'Buenas noches.',
+              meaning: 'Good evening. / Good night.',
+              note: 'After dark. It works for hello and for goodbye.',
             },
             {
               target: 'Hasta luego.',
@@ -100,7 +111,7 @@ const unit1 = defineUnit(
           kind: 'match',
           prompt: 'Give each phrase a job.',
           pairs: [
-            ['Hola.', 'Greet someone'],
+            ['Buenas tardes.', 'Greet someone in the afternoon'],
             ['Por favor.', 'Make a request polite'],
             ['Gracias.', 'Thank someone'],
             ['Hasta luego.', 'Say goodbye'],
@@ -116,11 +127,11 @@ const unit1 = defineUnit(
         },
         {
           kind: 'choose',
-          prompt:
-            'You arrive in the afternoon. Which greeting from this session works at any time?',
-          options: ['Buenos días.', 'Hasta luego.', 'Hola.'],
-          answer: 2,
-          explanation: 'Hola works throughout the day. Buenos días refers to the morning.',
+          prompt: 'You arrive at your class at four in the afternoon. Which greeting fits?',
+          options: ['Buenos días.', 'Buenas tardes.', 'Buenas noches.'],
+          answer: 1,
+          explanation:
+            'Buenas tardes fits the afternoon. Buenos días is for the morning and buenas noches for after dark. Hola works at any time.',
         },
         {
           kind: 'speak',
@@ -130,8 +141,7 @@ const unit1 = defineUnit(
           tip: 'Listen to the vowels, then try the phrases without reading.',
           mission: {
             checks: ['Greet on arrival.', 'Thank the person and close the exchange.'],
-            twist:
-              'Now imagine arriving in the afternoon. Choose the greeting that works at any time.',
+            twist: 'Now imagine arriving in the afternoon. Change the greeting to match the time.',
           },
         },
       ],
@@ -489,4 +499,4 @@ const unit1 = defineUnit(
   ],
 );
 
-export const spanishA1Units = [...unit1, ...spanishA1Unit2, ...spanishA1Unit3];
+export const spanishA1Units = [...unit1, ...spanishA1Unit2, ...spanishA1Unit3, ...spanishA1Unit4];

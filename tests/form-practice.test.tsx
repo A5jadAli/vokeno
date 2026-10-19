@@ -11,7 +11,7 @@ import { spanishA1Units } from '@/features/foundations/spanish-a1-units';
 
 jest.mock('expo-router', () => ({ useRouter: () => ({}) }));
 const form = spanishA1Units
-  .find((lesson) => lesson.id === 'es-a1-u3-task')!
+  .find((lesson) => lesson.id === 'es-a1-u4-task')!
   .steps.find((step): step is FormStep => step.kind === 'form')!;
 const audio = () =>
   ({

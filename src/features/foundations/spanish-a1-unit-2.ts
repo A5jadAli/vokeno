@@ -488,7 +488,7 @@ export const spanishA1Unit2 = defineUnit(
           kind: 'speak',
           prompt:
             'Introduce a fictional friend. Give their name, origin and one language. Then speak as that friend and ask the other person a question.',
-          lines: ['Esta es Ana.', 'Es de España.', 'Habla inglés.', '¿Y tú?'],
+          lines: ['Esta es Lucía.', 'Es de España.', 'Habla inglés.', '¿Y tú?'],
           mission: {
             checks: [
               'Use es or habla for the friend.',

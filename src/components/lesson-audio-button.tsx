@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Palette, VokaFonts } from '@/constants/theme';
 import type { LessonAudio } from '@/features/audio/use-lesson-audio';
+import { useAccentColors } from '@/components/accent-context';
 
 /** Label and status space stay mounted, so starting/stopping never moves the target. */
 export function LessonAudioButton({
@@ -120,6 +121,9 @@ export function AudioIconButton({
   const active = speech.activeText === text && speech.activeRate === rate && speech.busy;
   const loading = active && speech.loading;
   const accent = tone === 'accent';
+  // The accent play button takes the language's colour on a language screen.
+  const colors = useAccentColors();
+  const filled = accent && !active && colors;
   return (
     <Pressable
       accessibilityRole="button"
@@ -133,7 +137,9 @@ export function AudioIconButton({
         styles.round,
         { width: size, height: size },
         accent && styles.roundAccent,
+        filled && { backgroundColor: colors.accent },
         active && styles.roundActive,
+        active && colors && { backgroundColor: colors.tint, borderColor: colors.accent },
         pressed && styles.pressed,
       ]}
     >
@@ -143,7 +149,7 @@ export function AudioIconButton({
         <MaterialCommunityIcons
           name={active ? 'stop' : slow ? 'tortoise' : 'volume-high'}
           size={Math.round(size * 0.46)}
-          color={Palette.ink}
+          color={filled ? colors.onAccent : Palette.ink}
         />
       )}
     </Pressable>

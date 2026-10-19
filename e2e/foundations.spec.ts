@@ -57,7 +57,7 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
-test('Spanish Units 1 to 3 guide a beginner through twelve sessions with saved forms and listening help', async ({
+test('Spanish Units 1 to 4 guide a beginner through sixteen sessions with saved forms and listening help', async ({
   page,
 }, testInfo) => {
   test.setTimeout(420_000);
@@ -75,19 +75,22 @@ test('Spanish Units 1 to 3 guide a beginner through twelve sessions with saved f
           await page.getByRole('textbox', { name: field.label, exact: true }).fill(value);
         }
         await page.reload();
-        await expect(page.getByRole('textbox', { name: 'Apellido', exact: true })).toHaveValue(
-          'Muñoz',
-        );
+        // Drafts survive a reload, including ñ in a surname where the form has one.
+        if (step.fields.some((field) => field.label === 'Apellido'))
+          await expect(page.getByRole('textbox', { name: 'Apellido', exact: true })).toHaveValue(
+            'Muñoz',
+          );
         await expect(page.getByRole('textbox', { name: 'Teléfono', exact: true })).toHaveValue(
           '5501000024',
         );
         await page.getByRole('button', { name: 'Check', exact: true }).click();
         await expect(page.getByText('Check the marked fields', { exact: true })).toBeVisible();
-        await expect(page.getByText(step.fields[3].hint, { exact: true })).toBeVisible();
+        const phone = step.fields.find((field) => field.label === 'Teléfono')!;
+        await expect(page.getByText(phone.hint, { exact: true })).toBeVisible();
         await expect(page.getByRole('textbox', { name: 'Teléfono', exact: true })).toBeFocused();
         await page.getByRole('textbox', { name: 'Teléfono', exact: true }).scrollIntoViewIfNeeded();
         await page.screenshot({
-          path: testInfo.outputPath('spanish-form-feedback.png'),
+          path: testInfo.outputPath(`spanish-form-feedback-${lesson.id}.png`),
           fullPage: true,
         });
         helped += 1;

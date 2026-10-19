@@ -1,9 +1,10 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { createContext, useContext, type ComponentProps, type PropsWithChildren } from 'react';
+import { type ComponentProps, type PropsWithChildren } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View, type TextInputProps } from 'react-native';
 import Animated, { FadeIn, SlideInDown, ZoomIn } from 'react-native-reanimated';
 
+import { useAccentColors } from '@/components/accent-context';
 import { AudioIconButton } from '@/components/lesson-audio-button';
 import { ProgressFill, Tactile } from '@/components/motion';
 import { Palette, VokaFonts } from '@/constants/theme';
@@ -60,7 +61,7 @@ const feedbackLooks = {
 
 /** Close control, a thin progress bar and an optional label, as in modern lesson players. */
 export function LessonTopBar({ progress, label }: { progress: number; label?: string }) {
-  const accent = useContext(PrimaryAccentContext);
+  const accent = useAccentColors();
   const router = useRouter();
   const value = Math.max(0, Math.min(1, progress));
   return (
@@ -90,18 +91,7 @@ export function LessonTopBar({ progress, label }: { progress: number; label?: st
   );
 }
 
-type AccentColors = { accent: string; onAccent: string; onDark: string; tint: string };
-
-/**
- * A language screen's colours. A screen about one language wraps its content in `PrimaryAccent`
- * with that language's colours: main buttons, the progress bar and highlighted cards follow
- * them. Outside a wrapper, the brand yellow is used.
- */
-const PrimaryAccentContext = createContext<AccentColors | null>(null);
-
-export function PrimaryAccent({ colors, children }: PropsWithChildren<{ colors: AccentColors }>) {
-  return <PrimaryAccentContext.Provider value={colors}>{children}</PrimaryAccentContext.Provider>;
-}
+export { PrimaryAccent } from '@/components/accent-context';
 
 export function PrimaryButton({
   title,
@@ -122,7 +112,7 @@ export function PrimaryButton({
   accessibilityRole?: 'button' | 'link';
   busy?: boolean;
 }) {
-  const accent = useContext(PrimaryAccentContext);
+  const accent = useAccentColors();
   const look = {
     yellow: {
       face: accent?.accent ?? Palette.yellow,
@@ -308,7 +298,7 @@ export function InfoCard({
   tone = 'white',
 }: PropsWithChildren<{ icon: IconName; title: string; tone?: 'white' | 'yellow' | 'ink' }>) {
   const dark = tone === 'ink';
-  const accent = useContext(PrimaryAccentContext);
+  const accent = useAccentColors();
   return (
     <View
       style={[

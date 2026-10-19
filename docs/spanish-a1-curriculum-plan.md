@@ -1,14 +1,14 @@
 # Spanish A1: curriculum and learning journey
 
-Research and repository review: 18 October 2026. Status: **curriculum specification; Units 1–3 are now implemented locally, with native review pending**. The remaining units, checkpoints and exam system are planned. See the [implementation milestones](spanish-a1-milestones.md) for delivered work and open gates; this document is not a certification claim.
+Research and repository review: 18 October 2026. Status: **curriculum specification; Units 1–4 are now implemented locally, with native review pending**. The remaining units, checkpoints and exam system are planned. See the [implementation milestones](spanish-a1-milestones.md) for delivered work and open gates; this document is not a certification claim.
 
 The user selected **standard DELE A1** and delegated the choice of Spanish variety. The primary audience remains beginners learning for everyday life. This plan preserves the app's current design and adds a rigorous route towards exam preparation.
 
 ## Recommendation
 
-Build **24 units, four sessions per unit**, with six cumulative checkpoints, deliberate spaced retrieval, linked listening and productive practice, and three original full exam forms. Keep Mexican Spanish as the main production model; introduce carefully scaffolded Spanish-from-Spain comprehension throughout the course. Use the existing Today → Course → Practice → Progress journey.
+Build **25 units, four sessions per unit**, with six cumulative checkpoints, deliberate spaced retrieval, linked listening and productive practice, and three original full exam forms. Keep Mexican Spanish as the main production model; introduce carefully scaffolded Spanish-from-Spain comprehension throughout the course. Use the existing Today → Course → Practice → Progress journey.
 
-Twenty-four is an instructional design decision, not a CEFR requirement. It gives pronunciation, personal information, time, forms, messages and unscripted interaction more space than a literal translation of the German syllabus. Review the first three implemented units before adding Unit 4, as requested. Then pilot the first four units and checkpoint before committing to the final session lengths. Split an overloaded session rather than compressing essential practice to meet a unit count.
+Twenty-five is an instructional design decision, not a CEFR requirement. It gives pronunciation, personal information, time, forms, messages and unscripted interaction more space than a literal translation of the German syllabus. The plan originally had 24 units; the 18 October review split the overloaded numbers-and-spelling unit into Unit 3 (numbers) and Unit 4 (spelling and forms), so later units moved up by one. Review the four implemented units before adding Unit 5. Then pilot the first five units and checkpoint before committing to the final session lengths. Split an overloaded session rather than compressing essential practice to meet a unit count.
 
 The intended outcome is **reliable, natural A1 communication, with evidence of readiness for DELE A1 tasks**. A1 still allows hesitation, limited language and help from a cooperative interlocutor. Accent elimination, unrestricted native-speed comprehension and native-level fluency are not appropriate completion criteria. The CEFR prioritises intelligibility and successful communication; its A1 interaction and fluency descriptors explicitly allow repetition and pauses. [CEFR Companion Volume, sections 3.3 and 5.2–5.3](https://rm.coe.int/common-european-framework-of-reference-for-languages-learning-teaching/16809ea0d4).
 
@@ -16,11 +16,11 @@ The intended outcome is **reliable, natural A1 communication, with evidence of r
 
 ### The planning package
 
-- [Unit specifications](spanish-a1-units-plan.md): all 96 session briefs, progression, pronunciation, real-world missions and checkpoint routing.
+- [Unit specifications](spanish-a1-units-plan.md): all 100 session briefs, progression, pronunciation, real-world missions and checkpoint routing.
 - [Coverage register](spanish-a1-coverage.md): planned teaching, recycling and evidence for language and exam requirements; source-audit rules.
 - [Assessment and native-review specification](spanish-a1-assessment-review.md): exam blueprint, review gates, authoring example and implementation backlog.
 
-These documents specify the whole course. Units 1–3 are now authored in the local catalogue; the remaining specification is still planned. No native-speaker approval is claimed. “Mapped” means assigned in a plan; “covered” will require approved content and evidence.
+These documents specify the whole course. Units 1–4 are now authored in the local catalogue; the remaining specification is still planned. No native-speaker approval is claimed. “Mapped” means assigned in a plan; “covered” will require approved content and evidence.
 
 ### Relationship to existing project decisions
 
@@ -66,9 +66,9 @@ There is a specific exam reason to add Spain exposure: the indexed official gene
 
 Implement the choice as follows:
 
-- Units 1–4: Mexican production, with one supported alternate voice and an explanation that varieties differ. No second conjugation chart to memorise on day one.
-- Units 5–12: recognise common Spain alternatives in context: `zumo/jugo`, `camarero/mesero`, `móvil/celular`, `piso/departamento`, `ordenador/computadora`. Show one relevant alternative at a time, with a region label.
-- Units 13–24: regular peninsular listening; recognise `vosotros`, its high-frequency forms and possessives; continue accepting consistent `ustedes` production. Teach the difference between `billete`, `boleto` and event `entrada` in their actual contexts.
+- Units 1–5: Mexican production, with one supported alternate voice and an explanation that varieties differ. No second conjugation chart to memorise on day one.
+- Units 6–13: recognise common Spain alternatives in context: `zumo/jugo`, `camarero/mesero`, `móvil/celular`, `piso/departamento`, `ordenador/computadora`. Show one relevant alternative at a time, with a region label.
+- Units 14–25: regular peninsular listening; recognise `vosotros`, its high-frequency forms and possessives; continue accepting consistent `ustedes` production. Teach the difference between `billete`, `boleto` and event `entrada` in their actual contexts.
 - Before exam simulations: explicitly familiarise learners with the exam's input variety and instructions. Mock audio must follow the verified exam specification, independently of the everyday cast.
 - Do not call regional forms errors, require a Castilian /θ/, treat all Spain accents as identical, or introduce unlabelled slang. `Vale` is useful recognition; `órale`, `mande` and similar expressions need context and are optional enrichment.
 - Prefer standard written forms even when audio links or reduces sounds. Do not teach exaggerated phonetic spellings as the correct way to write Spanish.
@@ -79,7 +79,7 @@ The existing cast includes Ana, Omar, Lucía, Diego and service roles. Reuse it,
 
 Each unit has one practical destination and four short sessions. Every session should have one primary outcome, a small amount of new language and retrieval of something already learned. Target roughly 5–8 minutes, then verify with beginners. Use the existing 10–14 varied-step pattern as a starting budget, not as a reason to add filler.
 
-Units 3 (numbers/spelling), 9 (time/dates) and 11 (present-person forms) are particular overload risks. Their broad briefs require small practice sets distributed across linked activities and later retrieval. Do not interpret “numbers to 100” as a requirement to present 101 new cards in a session. If the pilot shows that a prerequisite cannot be taught comfortably within the four slots, expand the teaching sequence and revise the plan's counts.
+Units 10 (time/dates) and 12 (present-person forms) are particular overload risks. Unit 3 had the same problem with numbers and spelling together; it was split into Units 3 and 4 after review. Their broad briefs require small practice sets distributed across linked activities and later retrieval. Do not interpret “numbers to 100” as a requirement to present 101 new cards in a session. If the pilot shows that a prerequisite cannot be taught comfortably within the four slots, expand the teaching sequence and revise the plan's counts.
 
 | Session   | Learning sequence                                                                                                    | Evidence                                                                                                                     |
 | --------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
@@ -106,7 +106,7 @@ Alternate story episodes with independent contexts so learners do not succeed on
 
 ### Workload and completeness
 
-Ninety-six sessions at 5–8 minutes represent only **8–12.8 hours of first-pass guided activity**. That arithmetic is not a proficiency estimate. Budget additional distributed listening, reading, retrieval, interaction, writing and remediation; the amount depends on the learner. Do not advertise an invented universal “hours to fluency” figure.
+One hundred sessions at 5–8 minutes represent only **8.3–13.3 hours of first-pass guided activity**. That arithmetic is not a proficiency estimate. Budget additional distributed listening, reading, retrieval, interaction, writing and remediation; the amount depends on the learner. Do not advertise an invented universal “hours to fluency” figure.
 
 The authoring package also requires, beyond those sessions:
 
@@ -143,9 +143,9 @@ Keep the existing short placement check as a starting-point recommendation. Its 
 ## Delivery sequence
 
 1. **Freeze the reference specification.** Resolve the source checks in the review document; have an ELE curriculum reviewer confirm A1/A2 boundaries and the current general DELE format. Assign each coverage requirement an owner.
-2. **Build a four-unit pilot.** Author and review Units 1–4, their audio, linked practice and CP1. Implement only the missing features needed by that pilot. Test the experience with beginners and native reviewers before scaling.
-3. **Build Units 5–12.** Add basic A1 writing, image/reading task support, unit-aware practice and delayed evidence. Review each four-unit batch before publication.
-4. **Build Units 13–24.** Expand regional listening and productive tasks; check that late units retrieve earlier language rather than introducing a final rush of grammar.
+2. **Build a five-unit pilot.** Author and review Units 1–5, their audio, linked practice and CP1. Implement only the missing features needed by that pilot. Test the experience with beginners and native reviewers before scaling.
+3. **Build Units 6–13.** Add basic A1 writing, image/reading task support, unit-aware practice and delayed evidence. Review each four-unit batch before publication.
+4. **Build Units 14–25.** Expand regional listening and productive tasks; check that late units retrieve earlier language rather than introducing a final rush of grammar.
 5. **Validate assessment.** Complete the full-mock runner and original forms, obtain trained human ratings, calibrate recommendations and test unknown variants. Native fluency alone is not examiner training.
 6. **Publish claims supported by evidence.** Keep a partial route labelled as such during rollout. “All units available,” “course reviewed” and “learner ready to attempt an exam” are separate states.
 

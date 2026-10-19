@@ -184,7 +184,11 @@
     "es-a1-u3-words",
     "es-a1-u3-grammar",
     "es-a1-u3-talk",
-    "es-a1-u3-task"
+    "es-a1-u3-task",
+    "es-a1-u4-words",
+    "es-a1-u4-grammar",
+    "es-a1-u4-talk",
+    "es-a1-u4-task"
   ],
   "listening": [
     "coffee-run",

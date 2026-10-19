@@ -1,8 +1,8 @@
 # Spanish A1: assessment, native review and implementation
 
-Companion to the [curriculum plan](spanish-a1-curriculum-plan.md), [96 session briefs](spanish-a1-units-plan.md) and [coverage register](spanish-a1-coverage.md). Status: specification for implementation and review, 18 October 2026.
+Companion to the [curriculum plan](spanish-a1-curriculum-plan.md), [100 session briefs](spanish-a1-units-plan.md) and [coverage register](spanish-a1-coverage.md). Status: specification for implementation and review, 18 October 2026.
 
-Implementation now includes Units 1–3, optional speaking models, dictation and a five-field registration precursor. See the [implementation ledger](spanish-a1-milestones.md) and [three-unit review packet](spanish-a1-units-1-3-review.md). No assessed oral evidence, complete checkpoint, full DELE W1 runner or DELE mock has been implemented. The tables below remain the specification for those later capabilities.
+Implementation now includes Units 1–4, optional speaking models, dictation, a three-field details form in Unit 3 and a five-field registration precursor in Unit 4. See the [implementation ledger](spanish-a1-milestones.md) and [pilot review packet](spanish-a1-units-1-3-review.md). No assessed oral evidence, complete checkpoint, full DELE W1 runner or DELE mock has been implemented. The tables below remain the specification for those later capabilities.
 
 ## Exam blueprint
 
@@ -80,7 +80,7 @@ Use feedback tied to an observable action. “Your Spanish is weak” and a sing
 
 This is an original **draft example**, not native-approved teaching content or an exam item. It shows the desired combination of natural language, manageable scope and transfer.
 
-### Unit 5: order and check
+### Unit 6: order and check
 
 **Situation:** a customer orders at a café. The menu shows coffee 40 pesos and bread roll 25 pesos. Audio should not read currency symbols mechanically. Preteach `con/sin`, the menu nouns and the service question as a chunk.
 
