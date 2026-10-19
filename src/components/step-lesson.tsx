@@ -19,6 +19,9 @@ import {
 } from '@/components/lesson-ui';
 import { ProgressFill, Tactile } from '@/components/motion';
 import { SessionFooter } from '@/components/session-footer';
+import { SpeakingPractice } from '@/components/speaking-practice';
+import { FormPractice } from '@/components/form-practice';
+import { ListeningPrompt } from '@/components/listening-prompt';
 import { AppScreen } from '@/components/voka-ui';
 import { Palette, VokaFonts } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
@@ -32,6 +35,7 @@ import {
 } from '@/features/foundations/catalog';
 import {
   freshFoundationEntry,
+  foundationDraftLimit,
   MAX_DRAFT_LENGTH,
   MAX_FOUNDATION_ATTEMPTS,
   type FoundationEntry,
@@ -42,7 +46,8 @@ import { lessonLines, stepLines } from '@/features/audio/inventory';
 import { languageDetails, trackColors } from '@/features/language/config';
 import { useLanguageSelection } from '@/features/language/selection';
 import { useLessonAudio, type LessonAudio } from '@/features/audio/use-lesson-audio';
-import { REVIEW_INTERVALS, seedCards } from '@/features/review/schedule';
+import { seedCards } from '@/features/review/schedule';
+import { formFieldCorrect } from '@/features/foundations/form-practice';
 
 type Result = { tone: 'correct' | 'wrong' | 'close'; title: string; message?: string };
 const PRAISE = ['Nice!', 'Exactly!', 'Well done!', 'Spot on!', 'Correct!'];
@@ -102,10 +107,11 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
     setAttemptKey((key) => key + 1);
   };
   const markFirstTry = (correct: boolean) => {
-    if (entry.firstTry[gradedIndex] !== undefined) return;
-    const firstTry = [...entry.firstTry];
+    const latest = useCoachingStore.getState().foundations[lesson.id] ?? entry;
+    if (latest.firstTry[gradedIndex] !== undefined) return;
+    const firstTry = [...latest.firstTry];
     firstTry[gradedIndex] = correct;
-    update({ firstTry });
+    save(lesson.id, { ...latest, firstTry, updatedAt: new Date().toISOString() });
   };
   const finish = (spoken: boolean) => {
     resetTransient();
@@ -114,7 +120,7 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
     update({
       step: steps.length,
       draft: '',
-      ...seedCards(lesson, entry),
+      ...seedCards(lesson, entry, undefined, useCoachingStore.getState().foundations),
       attempts: [
         ...entry.attempts,
         {
@@ -189,7 +195,7 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
             icon="arrow-right"
             onPress={() => advance()}
           />
-        ) : result && step.kind !== 'type' ? (
+        ) : result && step.kind !== 'type' && step.kind !== 'form' ? (
           <PrimaryButton
             tone="red"
             title="Try again"
@@ -242,10 +248,11 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
                 draft={entry.draft}
                 onDraft={(draft) => {
                   setResult(null);
-                  update({ draft: draft.slice(0, MAX_DRAFT_LENGTH) });
+                  update({ draft: draft.slice(0, foundationDraftLimit(lesson, index)) });
                 }}
                 setReady={setReady}
                 report={report}
+                onHelp={() => markFirstTry(false)}
                 setResult={setResult}
               />
             </Animated.View>
@@ -275,6 +282,7 @@ type StepProps = {
   onDraft: (draft: string) => void;
   setReady: (ready: { check: () => void } | null) => void;
   report: (correct: boolean, title: string, message: string, firstTry?: boolean) => void;
+  onHelp: () => void;
   setResult: (result: Result | null) => void;
 };
 
@@ -296,7 +304,20 @@ function StepView(props: StepProps) {
     case 'match':
       return <MatchStep {...props} step={step} />;
     case 'speak':
-      return <SpeakStep {...props} step={step} />;
+      return <SpeakingPractice step={step} speech={props.speech} />;
+    case 'form':
+      return (
+        <FormPractice
+          step={step}
+          draft={props.draft}
+          onDraft={props.onDraft}
+          setReady={props.setReady}
+          report={props.report}
+          complete={props.result?.tone === 'correct'}
+          speech={props.speech}
+          onHelp={props.onHelp}
+        />
+      );
   }
 }
 
@@ -711,14 +732,25 @@ function TypeStep({
   setResult,
   mistakes,
   report,
+  speech,
+  onHelp,
 }: StepProps & { step: Of<'type'> }) {
   const correctNow = result?.tone === 'correct';
   const check = (value: string) => {
     Keyboard.dismiss();
-    const grade = gradeFoundationWriting(
-      { track: lesson.track, writing: { accepted: step.accepted } },
-      value,
-    );
+    const grade = step.answerKind
+      ? {
+          status: formFieldCorrect(
+            { kind: step.answerKind, accepted: step.accepted, label: '', hint: '' },
+            value,
+          )
+            ? ('correct' as const)
+            : ('wrong' as const),
+        }
+      : gradeFoundationWriting(
+          { track: lesson.track, writing: { accepted: step.accepted } },
+          value,
+        );
     if (grade.status === 'correct' || grade.status === 'accents')
       return report(
         true,
@@ -757,10 +789,13 @@ function TypeStep({
       <Text accessibilityRole="header" style={lessonText.prompt}>
         {step.prompt}
       </Text>
+      {step.audio ? (
+        <ListeningPrompt text={step.audio} speech={speech} complete={correctNow} onHelp={onHelp} />
+      ) : null}
       <TextInput
         accessibilityLabel={`Your ${languageName} answer`}
         {...answerInputProps}
-        autoCapitalize="sentences"
+        autoCapitalize={step.answerKind ? 'none' : 'sentences'}
         maxLength={MAX_DRAFT_LENGTH}
         multiline
         placeholder={`Type in ${languageName}`}
@@ -869,34 +904,6 @@ function MatchStep({ step, lesson, report }: StepProps & { step: Of<'match'> }) 
   );
 }
 
-function SpeakStep({ step, speech }: StepProps & { step: Of<'speak'> }) {
-  return (
-    <View style={styles.stack}>
-      <Text style={lessonText.meta}>Say it</Text>
-      <Text accessibilityRole="header" style={lessonText.prompt}>
-        Speak out loud
-      </Text>
-      <InfoCard icon="account-voice" title="Your task" tone="ink">
-        {step.prompt}
-      </InfoCard>
-      {step.lines.map((line) => (
-        <View key={line} style={styles.example}>
-          <Text style={styles.exampleText}>{line}</Text>
-          <AudioIconButton speech={speech} text={line} label={`Hear: ${line}`} />
-        </View>
-      ))}
-      {step.tip ? (
-        <InfoCard icon="waveform" title="Sound and rhythm">
-          {step.tip}
-        </InfoCard>
-      ) : null}
-      <Text style={lessonText.small}>
-        Say it first, then play it to compare. Nothing is recorded here.
-      </Text>
-    </View>
-  );
-}
-
 function Complete({
   lesson,
   graded,
@@ -928,12 +935,22 @@ function Complete({
         </Text>
       </View>
       <Animated.View entering={FadeInDown.delay(180).springify()} style={styles.stats}>
-        <Stat label="New words" value={String(lesson.phrases.length)} />
-        <Stat label="Speaking" value={spoken ? 'Done' : 'Skipped'} />
-        <Stat label="Review" value={`In ${REVIEW_INTERVALS[0]} day`} />
+        <Stat label="Review phrases" value={String(lesson.phrases.length)} />
+        <Stat label="Speaking" value={spoken ? 'Practised' : 'Skipped'} />
+        <Stat
+          label="Phrase review"
+          value={lesson.phrases.length ? 'Scheduled' : 'No new phrases'}
+        />
       </Animated.View>
       <UnitStep lesson={lesson} />
-      <Text style={lessonText.lead}>Saved. Your new words come back for review tomorrow.</Text>
+      <InfoCard icon="check-circle-outline" title="What you practised">
+        {lesson.outcome}
+      </InfoCard>
+      <Text style={lessonText.lead}>
+        {lesson.phrases.length
+          ? 'Saved. New phrases come back for review tomorrow; earlier review progress is kept.'
+          : 'Saved. This session reused earlier language. Your existing review schedule continues.'}
+      </Text>
       <TextButton title="Practise this lesson again" onPress={onRetry} />
     </>
   );

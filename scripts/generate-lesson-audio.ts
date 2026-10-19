@@ -2,10 +2,12 @@
 // and adds it to src/features/audio/clips.json with the moment the voice stops. Safe to stop and
 // run again: it resumes.
 //
-//   LESSON_AUDIO_TOKEN=… npx tsx --tsconfig tsconfig.json scripts/generate-lesson-audio.ts
+//   npx tsx --tsconfig tsconfig.json scripts/generate-lesson-audio.ts
 //
 // Needs EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY (from .env.local).
-import { readFileSync, writeFileSync } from 'node:fs';
+// Keep LESSON_AUDIO_TOKEN in ignored .env.audio.local or supply it through the environment.
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { parseEnv } from 'node:util';
 
 import { AUDIO_BUCKET, clipKey, fullDirection, spokenForm } from '@/features/audio/clips';
 import { spokenLines } from '@/features/audio/inventory';
@@ -27,7 +29,10 @@ const env = Object.fromEntries(
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL ?? env.EXPO_PUBLIC_SUPABASE_URL;
 const apikey =
   process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-const token = process.env.LESSON_AUDIO_TOKEN;
+const audioEnv = existsSync('.env.audio.local')
+  ? parseEnv(readFileSync('.env.audio.local', 'utf8'))
+  : {};
+const token = process.env.LESSON_AUDIO_TOKEN ?? audioEnv.LESSON_AUDIO_TOKEN;
 if (!url || !apikey || !token) throw new Error('Set LESSON_AUDIO_TOKEN and the Supabase URL/key.');
 
 // Each recorded clip, with the second at which the voice stops (0 until it is measured).
@@ -121,6 +126,7 @@ async function main() {
   process.stdout.write(
     failed ? `Done with ${failed} failures; run again to retry.\n` : 'All clips recorded.\n',
   );
+  if (failed) process.exitCode = 1;
 }
 
 void main();

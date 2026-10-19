@@ -6,16 +6,18 @@ import {
   type StepLesson,
 } from '../src/features/foundations/catalog';
 import { placementStages } from '../src/features/placement/items';
+import { spanishA1Units } from '../src/features/foundations/spanish-a1-units';
 import { chooseLanguage } from './nav';
 
 const unitSessions = foundationLessons.filter(
-  (lesson): lesson is StepLesson => lesson.format === 'steps',
+  (lesson): lesson is StepLesson => lesson.format === 'steps' && lesson.track === 'DE',
 );
 const markedSteps = (lesson: StepLesson) =>
-  lesson.steps.filter((step) => ['choose', 'build', 'type', 'match'].includes(step.kind)).length;
+  lesson.steps.filter((step) => ['choose', 'build', 'type', 'match', 'form'].includes(step.kind))
+    .length;
 
 /** Answers one unit step correctly and moves on. */
-async function playStep(page: Page, step: LessonStep, spoke = true) {
+async function playStep(page: Page, step: LessonStep, spoke = true, language = 'German') {
   const next = page.getByRole('button', { name: 'Continue', exact: true });
   if (step.kind === 'speak')
     return page
@@ -33,7 +35,10 @@ async function playStep(page: Page, step: LessonStep, spoke = true) {
         .first()
         .click();
   if (step.kind === 'type')
-    await page.getByRole('textbox', { name: 'Your German answer' }).fill(step.accepted[0]);
+    await page.getByRole('textbox', { name: `Your ${language} answer` }).fill(step.accepted[0]);
+  if (step.kind === 'form')
+    for (const field of step.fields)
+      await page.getByRole('textbox', { name: field.label, exact: true }).fill(field.accepted[0]);
   if (step.kind === 'match')
     for (const [left, right] of step.pairs) {
       await page.getByRole('button', { name: left, exact: true }).click();
@@ -50,6 +55,91 @@ test.beforeEach(async ({ page }) => {
       ? route.continue()
       : route.abort(),
   );
+});
+
+test('Spanish Units 1 to 3 guide a beginner through twelve sessions with saved forms and listening help', async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(420_000);
+  await page.goto('/');
+  await chooseLanguage(page, 'Spanish');
+  await page.getByRole('button', { name: `Start lesson: ${spanishA1Units[0].title}` }).click();
+  for (const [index, lesson] of spanishA1Units.entries()) {
+    await expect(page).toHaveURL(new RegExp(`/foundation/${lesson.id}$`));
+    await expect(page.getByRole('heading', { name: lesson.title })).toBeVisible();
+    let helped = 0;
+    for (const step of lesson.steps) {
+      if (step.kind === 'form') {
+        for (const field of step.fields) {
+          const value = field.label === 'Teléfono' ? '5501000024' : field.accepted[0];
+          await page.getByRole('textbox', { name: field.label, exact: true }).fill(value);
+        }
+        await page.reload();
+        await expect(page.getByRole('textbox', { name: 'Apellido', exact: true })).toHaveValue(
+          'Muñoz',
+        );
+        await expect(page.getByRole('textbox', { name: 'Teléfono', exact: true })).toHaveValue(
+          '5501000024',
+        );
+        await page.getByRole('button', { name: 'Check', exact: true }).click();
+        await expect(page.getByText('Check the marked fields', { exact: true })).toBeVisible();
+        await expect(page.getByText(step.fields[3].hint, { exact: true })).toBeVisible();
+        await expect(page.getByRole('textbox', { name: 'Teléfono', exact: true })).toBeFocused();
+        await page.getByRole('textbox', { name: 'Teléfono', exact: true }).scrollIntoViewIfNeeded();
+        await page.screenshot({
+          path: testInfo.outputPath('spanish-form-feedback.png'),
+          fullPage: true,
+        });
+        helped += 1;
+      }
+      if (step.kind === 'type' && step.audio === 'cero, nueve, seis') {
+        await expect(page.getByText(step.audio, { exact: true })).toHaveCount(0);
+        await page.getByRole('button', { name: 'Read instead', exact: true }).click();
+        await expect(page.getByText(step.audio, { exact: true })).toBeVisible();
+        await page.reload();
+        helped += 1;
+      }
+      if (step.kind === 'speak') {
+        await expect(
+          page.getByRole('button', { name: `Hear: ${step.lines[0]}`, exact: true }),
+        ).toHaveCount(0);
+        await page.getByRole('button', { name: 'Show an example', exact: true }).click();
+        await expect(
+          page.getByRole('button', { name: `Hear: ${step.lines[0]}`, exact: true }),
+        ).toBeVisible();
+        await page.getByRole('button', { name: 'Try a different situation' }).click();
+        await expect(page.getByText(step.mission!.twist, { exact: true })).toBeVisible();
+        await expect(
+          page.getByRole('button', { name: `Hear: ${step.lines[0]}`, exact: true }),
+        ).toHaveCount(0);
+        if (index === 0)
+          await page.screenshot({
+            path: testInfo.outputPath('spanish-speaking.png'),
+            fullPage: true,
+          });
+      }
+      await playStep(page, step, false, 'Spanish');
+    }
+    await expect(
+      page.getByText(`${markedSteps(lesson) - helped}/${markedSteps(lesson)} right first time`),
+    ).toBeVisible();
+    await expect(page.getByText('Skipped', { exact: true })).toBeVisible();
+    if (index < spanishA1Units.length - 1) {
+      await page
+        .getByRole('button', { name: `One more: ${spanishA1Units[index + 1].title}` })
+        .click();
+    }
+  }
+  await expect(page.getByText('Unit complete.', { exact: true })).toBeVisible();
+  await expect(page.getByText('No new phrases', { exact: true })).toBeVisible();
+  const next = foundationLessons.find((lesson) => lesson.id === 'es-sounds')!;
+  await page.getByRole('button', { name: `One more: ${next.title}` }).click();
+  await expect(page).toHaveURL(/\/foundation\/es-sounds$/);
+  await page.goto('/practice?track=ES');
+  const phraseCount = spanishA1Units.reduce((sum, lesson) => sum + lesson.phrases.length, 0);
+  await expect(
+    page.getByText(`${phraseCount} phrases scheduled. Next review tomorrow.`),
+  ).toBeVisible();
 });
 
 test('a complete beginner gets correction, a persistent draft, evidence and a next lesson', async ({

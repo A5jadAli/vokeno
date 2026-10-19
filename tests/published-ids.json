@@ -172,7 +172,19 @@
     "de-a1-u20-party",
     "de-a1-u20-review",
     "de-a1-u20-real",
-    "de-a1-u20-exam"
+    "de-a1-u20-exam",
+    "es-a1-u1-words",
+    "es-a1-u1-grammar",
+    "es-a1-u1-talk",
+    "es-a1-u1-task",
+    "es-a1-u2-words",
+    "es-a1-u2-grammar",
+    "es-a1-u2-talk",
+    "es-a1-u2-task",
+    "es-a1-u3-words",
+    "es-a1-u3-grammar",
+    "es-a1-u3-talk",
+    "es-a1-u3-task"
   ],
   "listening": [
     "coffee-run",

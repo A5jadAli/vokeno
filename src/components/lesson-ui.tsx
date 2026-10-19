@@ -168,17 +168,20 @@ export function TextButton({
   onPress,
   icon,
   disabled = false,
+  expanded,
 }: {
   title: string;
   onPress: () => void;
   icon?: IconName;
   disabled?: boolean;
+  expanded?: boolean;
 }) {
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={title}
-      accessibilityState={{ disabled }}
+      accessibilityState={{ disabled, expanded }}
+      aria-expanded={expanded}
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [

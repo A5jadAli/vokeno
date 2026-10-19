@@ -4,6 +4,7 @@ import { germanA2Lessons } from './german-a2';
 import { germanB1Lessons } from './german-b1';
 import { spanishA1Lessons } from './spanish-a1';
 import { spanishA2Lessons } from './spanish-a2';
+import { spanishA1Units } from './spanish-a1-units';
 import { germanA1Units } from './german-a1-units';
 import type { ClassicLesson, FoundationLesson, LessonLevel, LessonTrack } from './types';
 
@@ -30,6 +31,7 @@ export const germanLessons = [
 export const foundationLessons: FoundationLesson[] = [
   ...germanLessons,
   ...englishLessons,
+  ...spanishA1Units,
   ...spanishA1Lessons,
   ...spanishA2Lessons,
 ];

@@ -10,7 +10,7 @@ export function learningRecommendation(
       return {
         title: 'Your first useful Spanish exchange',
         why: 'Greet someone, ask politely and leave with a complete exchange.',
-        href: '/foundation/es-first-words',
+        href: '/foundation/es-a1-u1-words',
       };
     if (ability === 'basics')
       return {

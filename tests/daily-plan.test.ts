@@ -22,7 +22,7 @@ const completed = (dueDay?: number, at = '2026-10-01T10:00:00.000Z') => ({
   cards: dueDay === undefined ? undefined : [[1, dueDay] as [number, number]],
 });
 /** A learner who has finished the first Spanish lesson, so sessions can grow. */
-const started: FoundationProgress = { 'es-first-words': completed() };
+const started: FoundationProgress = { 'es-a1-u1-words': completed() };
 
 function plan(overrides: Partial<TodayPlanInput> = {}) {
   return buildTodayPlan({
@@ -39,14 +39,14 @@ function plan(overrides: Partial<TodayPlanInput> = {}) {
 describe('spaced review comes first', () => {
   it('the day after the first lesson: review its words, then the next lesson', () => {
     const today = dayNumberOf(TODAY);
-    const day2 = plan({ progress: { 'es-first-words': completed(today) }, log: activeDays(1) });
+    const day2 = plan({ progress: { 'es-a1-u1-words': completed(today) }, log: activeDays(1) });
     expect(day2.stage).toBe('warm-up');
     expect(day2.steps.map((step) => step.kind)).toEqual(['review', 'lesson']);
   });
 
   it('in an established routine, review still comes before new words', () => {
     const today = dayNumberOf(TODAY);
-    const routine = plan({ progress: { 'es-first-words': completed(today) }, log: activeDays(8) });
+    const routine = plan({ progress: { 'es-a1-u1-words': completed(today) }, log: activeDays(8) });
     expect(routine.steps[0].kind).toBe('review');
     expect(routine.steps[1].kind).toBe('lesson');
   });
@@ -57,7 +57,7 @@ describe('a brand-new learner', () => {
     const today = plan();
     expect(today.stage).toBe('warm-up');
     expect(today.steps).toHaveLength(1);
-    expect(today.steps[0]).toMatchObject({ kind: 'lesson', href: '/foundation/es-first-words' });
+    expect(today.steps[0]).toMatchObject({ kind: 'lesson', href: '/foundation/es-a1-u1-words' });
     expect(today.doneCount).toBe(0);
     expect(today.footnote).toMatch(/one step a day/);
   });
@@ -115,6 +115,7 @@ describe('review', () => {
   const today = dayNumberOf(TODAY);
   const progress: FoundationProgress = Object.fromEntries(
     getTrackLessons('ES')
+      .filter((lesson) => lesson.phrases.length > 0)
       .slice(0, 12)
       .map((lesson) => [lesson.id, completed(today - 1)]),
   );
@@ -136,7 +137,7 @@ describe('review', () => {
   });
 
   it('uses singular wording for a single phrase', () => {
-    const one: FoundationProgress = { 'es-first-words': completed(today) };
+    const one: FoundationProgress = { 'es-a1-u1-words': completed(today) };
     const review = plan({ progress: one, log: activeDays(5) }).steps.find(
       (step) => step.kind === 'review',
     );
@@ -184,7 +185,7 @@ describe('completing the day', () => {
 
   it('offers the next lesson as an optional extra once every step is done', () => {
     const today = plan({ progress: finishedToday, session });
-    expect(today.bonus).toMatchObject({ kind: 'lesson', href: '/foundation/es-names' });
+    expect(today.bonus).toMatchObject({ kind: 'lesson', href: '/foundation/es-a1-u1-words' });
     expect(today.bonus?.done).toBe(false);
   });
 
@@ -254,7 +255,7 @@ describe('one language at a time', () => {
   });
 
   it('ticks the Spanish lesson for the Spanish lesson finished', () => {
-    const today = plan({ activities: { [TODAY]: ['lesson:es-first-words'] } });
+    const today = plan({ activities: { [TODAY]: ['lesson:es-a1-u1-words'] } });
     expect(today.steps.find((step) => step.kind === 'lesson')?.done).toBe(true);
   });
 });

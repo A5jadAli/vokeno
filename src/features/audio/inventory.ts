@@ -31,7 +31,8 @@ export function stepLines(track: LanguageTrack, step: LessonStep): SpokenLine[] 
       add(track, line.real, line.speaker);
     });
   if (step.kind === 'teach') step.items.forEach((item) => add(track, item.target));
-  if (step.kind === 'choose') add(track, step.audio);
+  if (step.kind === 'choose' || step.kind === 'type' || step.kind === 'form')
+    add(track, step.audio);
   if (step.kind === 'speak') step.lines.forEach((line) => add(track, line));
   if (step.kind === 'rule') step.examples?.forEach((example) => add(track, example));
   // A correct word-order answer is read back.

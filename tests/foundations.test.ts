@@ -75,17 +75,26 @@ describe('guided lesson content', () => {
   });
 
   it('builds Spanish from A1 to A2 in level order with audio-checked tasks', () => {
-    const spanish = classicPath('ES');
-    expect(spanish).toHaveLength(getTrackLessons('ES').length);
-    expect(spanish[0].id).toBe('es-first-words');
+    const spanish = getTrackLessons('ES');
+    expect(spanish[0].id).toBe('es-a1-u1-words');
     for (const level of ['A1', 'A2'] as const)
       expect(spanish.filter((lesson) => lesson.level === level).length).toBeGreaterThanOrEqual(12);
     expect(spanish.map((lesson) => lesson.level)).toEqual(
       [...spanish.map((lesson) => lesson.level)].sort((a, b) => levelRank[a] - levelRank[b]),
     );
-    expect(spanish.every((lesson) => lesson.checks.some((check) => check.audio))).toBe(true);
-    expect(spanish.every((lesson) => lesson.pronunciation)).toBe(true);
-    const prices = spanish.find((lesson) => lesson.id === 'es-prices')!;
+    expect(
+      spanish.every((lesson) =>
+        lesson.format === 'steps'
+          ? lesson.steps.some(
+              (step) =>
+                (step.kind === 'choose' || step.kind === 'type' || step.kind === 'form') &&
+                step.audio,
+            )
+          : lesson.checks.some((check) => check.audio),
+      ),
+    ).toBe(true);
+    expect(classicPath('ES').every((lesson) => lesson.pronunciation)).toBe(true);
+    const prices = classicPath('ES').find((lesson) => lesson.id === 'es-prices')!;
     expect(checkFoundationWriting(prices, 'Cuanto cuesta?')).toBe(true);
     expect(checkFoundationWriting(prices, 'Cuanto cuestan?')).toBe(false);
   });

@@ -15,6 +15,16 @@ export const isFinished = (entry: FoundationEntry | undefined) => Boolean(entry?
 export const isInProgress = (lesson: FoundationLesson, entry: FoundationEntry | undefined) =>
   Boolean(entry && entry.step > 0 && entry.step < finalStep(lesson));
 
+/** Retiring a lesson must not strand someone's unfinished first attempt. */
+function savedEarlierLessons(track: LanguageTrack, progress: FoundationProgress) {
+  return allTrackLessons(track).filter(
+    (lesson) =>
+      lesson.retired &&
+      !isFinished(progress[lesson.id]) &&
+      isInProgress(lesson, progress[lesson.id]),
+  );
+}
+
 export type NextLesson = {
   lesson: FoundationLesson;
   /** resume: a session left part-way; start: the next one in the course. */
@@ -46,7 +56,7 @@ export function findNextLesson(
 ): NextLesson | null {
   const lessons = getTrackLessons(track);
   // Only first runs count: replaying a finished lesson must not take over "what next".
-  const resume = lessons
+  const resume = [...lessons, ...savedEarlierLessons(track, progress)]
     .filter(
       (lesson) => !isFinished(progress[lesson.id]) && isInProgress(lesson, progress[lesson.id]),
     )
@@ -90,6 +100,16 @@ export type UnitSummary = {
 /** The course grouped the way learners see it: units, then the older lessons of each level. */
 export function courseUnits(track: LanguageTrack, progress: FoundationProgress): UnitSummary[] {
   const groups: UnitSummary[] = [];
+  const saved = savedEarlierLessons(track, progress);
+  if (saved.length)
+    groups.push({
+      id: `${track}-saved-lessons`,
+      title: 'Saved lessons',
+      label: 'Saved lessons',
+      canDo: 'Finish your earlier lesson, then continue with the updated course.',
+      lessons: saved,
+      done: 0,
+    });
   for (const lesson of getTrackLessons(track)) {
     const id = lesson.format === 'steps' ? lesson.unit.id : `${track}-${lesson.level}-lessons`;
     let group = groups.find((item) => item.id === id);
@@ -147,7 +167,7 @@ export function coursePosition(
     lessonNumber: next && unit ? unit.lessons.indexOf(next.lesson) + 1 : undefined,
     finishedLessons: lessons.filter((lesson) => isFinished(progress[lesson.id])).length,
     totalLessons: lessons.length,
-    started: lessons.some(
+    started: allTrackLessons(track).some(
       (lesson) => isFinished(progress[lesson.id]) || (progress[lesson.id]?.step ?? 0) > 0,
     ),
   };

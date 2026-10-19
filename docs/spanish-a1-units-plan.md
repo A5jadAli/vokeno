@@ -1,0 +1,388 @@
+# Spanish A1: 24 units and 96 session briefs
+
+Companion to the [curriculum plan](spanish-a1-curriculum-plan.md). This is an authoring specification. **Units 1–3 are implemented locally and awaiting native review; Units 4–24 remain proposed.** See the [implementation ledger](spanish-a1-milestones.md) for exact session IDs, delivered changes and open review gates. Scripts, item banks, media and answer variants require review.
+
+## Authoring contract
+
+Use stable unit IDs `es-a1-u1` through `es-a1-u24`; session IDs append `-words`, `-grammar`, `-talk`, `-task`. The labels remain Words, Grammar, Real talk and Exam task, matching German. Each table row is one session. Reordering a published lesson must not change its ID.
+
+Default prerequisite: the preceding unit's teaching sequence, with a short catch-up option for learners placed later. A checkpoint recommendation must not become a permanent progression lock. All new assessed language must have been introduced; incidental scene language must be supported and excluded from required recall until taught.
+
+The sequences, examples, missions and quantities here are Vokeno design proposals. Cross-check their level assignment using the [coverage register](spanish-a1-coverage.md). **Core** means intended productive A1 content subject to that check. **Chunk** means a limited useful expression, not mastery of its entire grammar system. **Extension** means optional A2 preparation, excluded from core mastery scoring. Familiar everyday topics can contain language above A1: topic alone never determines level.
+
+For each unit author:
+
+- A small new productive set, a separate receptive set and explicit reused concept IDs. Begin the pilot with roughly 4–7 new chunks per teaching segment; revise the load from observation.
+- At least one short reading, a multi-turn listening scene, a changed-detail production task and a later retrieval assignment.
+- Natural Spanish, English help, literal clarification only where useful, accepted alternatives, plausible distractors and feedback explaining the communicative consequence.
+- One pronunciation/orthography focus, revisited later; do not put the entire sound system into a single initial lesson.
+- A normal accessible learning version and a separate unseen evidence version. No answers visible before the evidence attempt.
+
+`R1–R4`, `L1–L4`, `W1–W2` and `O1–O3` refer to the [exam blueprint](spanish-a1-assessment-review.md#exam-blueprint). Early mini-tasks practise the underlying skill; they are not miniature official scores. CP1–CP6 are additional cumulative activities, outside the 96 short sessions.
+
+## Phase 1: Meet people and share your details
+
+### Unit 1: Hola: make your first exchange
+
+**Can do:** greet someone, give a name, thank them and request repetition. Starting context: meet Ana at a neighbourhood language exchange. Use fictional details if preferred.
+
+Implementation adjustment: Unit 1 also teaches `soy de + place` as a limited origin chunk and a context-bound `usted` name question. This permits a coherent replacement of the earlier names lesson. Unit 2 develops those chunks further. The [implemented four sessions](../src/features/foundations/spanish-a1-units.ts) use the same everyday outcomes with slightly revised titles.
+
+| Session   | Brief                                                                                                                                                                    |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Words     | “Your first hello”: hear and use `hola`, time-appropriate greetings, `gracias`, `por favor`, `hasta luego`; complete a greeting rather than memorising an isolated list. |
+| Grammar   | “Your name and a question back”: `me llamo…`, `¿Cómo te llamas?`, `soy…` as limited patterns; distinguish a statement from a question.                                   |
+| Real talk | “Keep going when you miss a word”: `No entiendo`, `¿Puede repetir, por favor?`, `Más despacio, por favor`; practise a genuine repair turn.                               |
+| Exam task | “Introduce yourself”: O1 precursor with a name and greeting, then one unpredictable name question; identify greeting purpose in a brief audio.                           |
+
+**Sound/writing:** five stable vowels; ¿…? and ¡…!; hear phrase boundaries. **Recycle in:** U2, U3, U5, U18. **Evidence:** respond after the model is hidden; requesting help counts as a successful strategy.
+
+### Unit 2: Who you are and where you live
+
+**Can do:** exchange origin, residence, language and a basic occupation. Begin regular present forms in useful first/second-person sentences; full charts come gradually.
+
+| Session   | Brief                                                                                                                                           |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “A few facts about you”: country/city, language, nationality and common occupation words; offer personal vocabulary choices.                    |
+| Grammar   | “Soy de, vivo en, hablo”: present `ser`, `vivir`, `hablar`; subject pronouns and their frequent omission; `de/en`; basic nationality agreement. |
+| Real talk | “Meet someone and introduce a friend”: friendly `tú`, contextual `usted`, `¿Y tú?`/`¿Y usted?`; simple third-person introduction.               |
+| Exam task | “Choose the right profile”: R1 precursor with a short personal message; expand O1 to name, origin and residence using new details.              |
+
+**Sound/writing:** syllables and stress in names/nationalities; lowercase language and nationality names. **Recycle:** U4, U11, U23. **Evidence:** distinguish where someone is from from where they live.
+
+### Unit 3: Numbers, spelling and contact details
+
+**Can do:** give age and contact details, spell a name and correct a number.
+
+| Session   | Brief                                                                                                                                                |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “Make sure they have your number”: productive 0–30, structured practice with tens to 100; telephone digits, `arroba`, `punto`, `nombre`, `apellido`. |
+| Grammar   | “Tengo… años”: age with `tener`; `cuántos`, `cuál`, `cómo`; introduce `mi/tu/su` in contact details without a full possessive system.                |
+| Real talk | “Did you say fifteen or fifty?”: spell, group digits, repeat and correct; alphabet names and common alternatives; listen to more than one voice.     |
+| Exam task | “Register your details”: W1 precursor with labelled personal fields; capture an audio correction and check the completed form.                       |
+
+**Sound/writing:** alphabet including ñ; contrast stress in number words; accents in taught numbers and questions. **Recycle:** U6, U9, U16, U22. **Evidence:** accurate contact information in a new form; no requirement to share a real phone number.
+
+Implementation adjustment for Units 2–3: the [three-unit review packet](spanish-a1-units-1-3-review.md) records the delivered sequence. Unit 3 distributes digits/10–20 in Words, 21–30 and age in Grammar, then tens/combinations to 100, alphabet and email symbols in Real talk. Its last session uses an interactive five-field practice form with a spoken correction. This is a W1 precursor, not the full DELE task. Review pacing before expansion.
+
+### Unit 4: Family, friends and people around you
+
+**Can do:** identify and describe someone using a few relevant details, without assumptions about the learner's household.
+
+| Session   | Brief                                                                                                                                                       |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “Who is who?”: relationships, age, basic appearance/personality; descriptions respectful enough for real introductions.                                     |
+| Grammar   | “My friend, our family”: noun/adjective agreement, articles, `tener`, possessives; distinguish `su` from information identifying whose person/object it is. |
+| Real talk | “Introduce two people”: identify someone in a small group; ask and answer a follow-up; short `este/esta` introduction.                                      |
+| Exam task | “Tell us about someone”: O2 precursor from a simple cue card; write a few original sentences; read a profile with changed names/relationships.              |
+
+**Sound/writing:** `ll/y`, ñ and gender/number endings; plural spelling in taught words. **Recycle:** U7, U11, U23. **CP1 after U4:** meet a new person, interpret a profile, supply contact fields and give a short introduction. Route number errors to U3, identity patterns to U2, repair difficulty to U1.
+
+## Phase 2: Buy things and describe your home
+
+### Unit 5: At a café
+
+**Can do:** order a simple drink/snack, state a preference, understand the total and close politely.
+
+| Session   | Brief                                                                                                                                      |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Words     | “Choose your order”: a small menu, drinks, snacks, portions and `la cuenta`; teach nouns with their articles.                              |
+| Grammar   | “One coffee, without sugar”: `un/una`, numbers, `con/sin`, basic `quiero`/`¿Tiene…?` patterns; revisit agreement.                          |
+| Real talk | “Order and check”: server asks an unannounced choice question; learner confirms a quantity or corrects the order; natural polite ellipsis. |
+| Exam task | “Which order is theirs?”: L1 image-choice precursor and menu reading; use an unseen order and total.                                       |
+
+**Sound/writing:** word linking with clear vowels; `qu/c` in known words. **Recycle:** U6, U18, U24. **Regional exposure:** `jugo/zumo`, with context. **Evidence:** handle a changed order without copying a fixed script.
+
+### Unit 6: At the market
+
+**Can do:** ask quantities and prices, understand a purchase and check the amount.
+
+| Session   | Brief                                                                                                                                            |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Words     | “Fill a small shopping bag”: high-utility foods and containers; structured hundreds/thousands for prices and addresses, not a giant number list. |
+| Grammar   | “How much and how many?”: plurals, `cuánto/a/os/as`, `mucho/poco`, `de` in quantities; quantity expressions as useful chunks.                    |
+| Real talk | “A different price”: ask the seller to repeat, confirm units and price, decline politely and pay; change one item on the list.                   |
+| Exam task | “Match the shop to the message”: R2 and L2 precursors with signs/images and extra alternatives; distinguish number from unit.                    |
+
+**Sound/writing:** number contrasts and syllable stress; currency labels/decimal notation with explicit locale. **Recycle:** U7, U14, U21. **Evidence:** obtain the intended quantity and budget; no assumed currency from `$` alone.
+
+### Unit 7: Clothes and personal things
+
+**Can do:** identify an item by colour/size, say whose it is and make a simple choice.
+
+| Session   | Brief                                                                                                                                              |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “Find the right item”: clothes, everyday possessions, colours, size and price; receptive shop labels.                                              |
+| Grammar   | “This one and that one”: demonstratives including supported recognition of `aquel`; adjective position/agreement and `muy`; reinforce possessives. |
+| Real talk | “Ask for your size”: request a colour/size, reject an unsuitable option politely; recognise a Spain shop voice without changing production model.  |
+| Exam task | “Whose bag is it?”: R3 description matching and L1 detail selection; describe a lost item in a short original response.                            |
+
+**Sound/writing:** `r/rr` perception and supported production, revisited later; avoid pass/fail based on trill perfection. **Recycle:** U16, U18, U24. **Extension:** comparative `más… que` may be noticed, but its full system belongs beyond core A1.
+
+### Unit 8: Where you live
+
+**Can do:** describe a home, say what is there and locate familiar objects.
+
+| Session   | Brief                                                                                                                                                                      |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “A place to stay”: rooms, a small furniture set and useful housing-ad terms; map a simple floor plan.                                                                      |
+| Grammar   | “Hay, está, es”: existence, location and basic description; `en`, `aquí/allí`, location phrases; recycle articles. Avoid the false permanent/temporary rule for ser/estar. |
+| Real talk | “Where is the key?”: an information-gap floor plan and one housemate question; recognise `piso/departamento`.                                                              |
+| Exam task | “Choose a room”: R3 short-ad matching; write a basic home description, then answer an O3-style follow-up.                                                                  |
+
+**Sound/writing:** `b/v` share a phoneme; do not describe every realisation as the same “soft b.” **Recycle:** U13, U16, U22. **CP2 after U8:** buy an item and locate something in a new home; route agreement to U4/U7, quantities to U6, location to U8.
+
+## Phase 3: Organise your everyday life
+
+### Unit 9: Time, dates and opening hours
+
+**Can do:** ask when something happens, read a schedule and agree on an exact date/time.
+
+| Session   | Brief                                                                                                                                    |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “Find a time that works”: weekdays, months, parts of the day, dates and opening hours; ordinal recognition for familiar numbered labels. |
+| Grammar   | “Es la una; son las dos”: clock patterns, `a/de… a…`, `el/los` with weekdays; distinguish event time from current time.                  |
+| Real talk | “Confirm the appointment”: say date and time back; recognise 12/24-hour formats and regional ways of expressing the time.                |
+| Exam task | “Which place is open?”: R4 timetable precursor and L4 detail selection; enter an appointment correctly.                                  |
+
+**Sound/writing:** `j/g` before e/i; day/month lowercase; clarify ambiguous numeric dates rather than guessing. **Recycle:** U10, U14, U19, U21. **Evidence:** discriminate closing time from meeting time.
+
+### Unit 10: A normal day
+
+**Can do:** describe a simple daily routine and ask another person about theirs.
+
+| Session   | Brief                                                                                                                                                   |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “Morning to evening”: a limited routine set, everyday meals and basic frequency phrases.                                                                |
+| Grammar   | “What I do, what you do”: consolidate present -ar/-er/-ir; introduce high-frequency reflexive routines with `me/te/se`; sequence with basic connectors. |
+| Real talk | “Same day, different routine”: compare information from two people's schedules through questions; respond to an unfamiliar follow-up.                   |
+| Exam task | “Match the person and the routine”: L3 beginnings/endings precursor; give an O2-style routine description without a written script.                     |
+
+**Sound/writing:** stress in present-tense forms; preserve unstressed vowels; distinguish question words from statements. **Recycle:** U11, U15, U23. **Evidence:** communicate at least three actual routine details plus one question; this is a product practice target, not an official word/utterance requirement.
+
+### Unit 11: Work, study and learning Spanish
+
+**Can do:** give basic work/study information and understand simple classroom instructions.
+
+| Session   | Brief                                                                                                                                                                |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “Where and what you study or do”: common workplaces, subjects and learning materials; include alternatives to paid employment.                                       |
+| Grammar   | “We study; they work”: broaden present-person forms, `ser` with professions and article use; selected frequent irregulars in context, not a single overloaded chart. |
+| Real talk | “Ask the teacher for help”: ask a word's meaning/spelling, confirm a page or time, recognise classroom imperatives as chunks.                                        |
+| Exam task | “Choose a class”: R2/R3 short notices and course information; complete a learning-interest field and explain a choice simply.                                        |
+
+**Sound/writing:** `g/gu/gü` and silent h in familiar vocabulary; names/abbreviations on forms. **Recycle:** U18, U22, U23. **Evidence:** identify the correct class by day, place and interest, not by matching one repeated word.
+
+### Unit 12: Free time and preferences
+
+**Can do:** say what activities you like, ask about another person's interests and choose something to do.
+
+| Session   | Brief                                                                                                                      |
+| --------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “Your kind of free time”: sports, music, books, films and small cultural activities; learner chooses relevant examples.    |
+| Grammar   | “Me gusta / me gustan”: noun/infinitive complements, `te/le/nos`, agreement; `también/tampoco` in a supported exchange.    |
+| Real talk | “Find a shared interest”: ask a preference, respond and suggest a suitable activity using familiar present/chunk patterns. |
+| Exam task | “A person and a hobby”: O2/O3 mini-pair plus R4 event information; respond with different preferences from the model.      |
+
+**Sound/writing:** intonation for interest, questions and neutral replies; linking `me gusta`. **Recycle:** U19, U21, U23. **CP3 after U12:** combine a schedule, a profile, a short written reply and a work/routine/hobby conversation. Diagnose comprehension and production separately.
+
+## Phase 4: Move around and travel
+
+### Unit 13: Your neighbourhood
+
+**Can do:** locate a service, understand a short route and check where to go.
+
+| Session   | Brief                                                                                                                                           |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “Find what you need”: streets, common services, landmarks and direction words on a simple map.                                                  |
+| Grammar   | “From here to the station”: retrieve hay/estar; `a`, `de`, `al/del`, destination and location; useful direction commands as recognition chunks. |
+| Real talk | “Ask, listen, check”: get attention politely, request directions, confirm a landmark; two short route variants with different voices.           |
+| Exam task | “Match the place and the notice”: L2/R2 precursors; follow a new route using labels and audio.                                                  |
+
+**Sound/writing:** hear linked article/preposition phrases without changing their written forms. **Recycle:** U14, U18, U24. **Evidence:** reach the correct destination; complete imperative paradigms are not a hidden requirement.
+
+### Unit 14: Public transport
+
+**Can do:** choose a service, ask its time/destination and buy an appropriate ticket.
+
+| Session   | Brief                                                                                                                               |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “The right bus or train”: destination, departure, arrival, ticket, return/single as supported chunks, platform/stop labels.         |
+| Grammar   | “Voy a…; va a…”: present `ir`, destination with `a`, `en/a pie`, `para` in a destination/purpose chunk; retrieve time and quantity. |
+| Real talk | “Before you get on”: ask whether this service goes to the destination and confirm a time/price; compare `boleto/billete`.           |
+| Exam task | “Read the departures; hear the change”: R4 and L4 detail work; use a corrected number or time with plausible distractors.           |
+
+**Sound/writing:** listen for stress and pauses around times/platform numbers; written vs spoken schedules. **Recycle:** U16, U21, U24. **Evidence:** correct ticket and service; complex disruption negotiation is A2 extension.
+
+### Unit 15: Weather, seasons and a day out
+
+**Can do:** understand basic weather information and choose suitable clothes/activity.
+
+| Session   | Brief                                                                                                                                              |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “What is it like outside?”: seasons, everyday weather, familiar places in nature and a few temperature expressions.                                |
+| Grammar   | “Hace…; hay…; está…”: weather patterns and impersonal expressions; select useful present forms such as `llueve`; no full impersonal-verb taxonomy. |
+| Real talk | “Choose today's outing”: interpret a short weather exchange and make a simple choice; recognise a peninsular forecast voice.                       |
+| Exam task | “Choose the matching forecast”: L1/L2 images and short R4 notices; send a brief factual weather/place update.                                      |
+
+**Sound/writing:** natural phrase grouping and question intonation; numbers with units. **Recycle:** U19, U21, U24. **Evidence:** understand a changed location/day; weather expertise is unnecessary.
+
+### Unit 16: At a hotel
+
+**Can do:** give booking details, understand basic facilities and report a simple immediate problem.
+
+| Session   | Brief                                                                                                                                             |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “Your room and stay”: reservation, room, nights, key, reception and essential facilities; `reserva/reservación` recognised.                       |
+| Grammar   | “What is there; what is missing?”: retrieve hay/estar/tener, negation and polite question patterns; use `no funciona` as a limited problem chunk. |
+| Real talk | “Check in and ask”: receptionist requests unannounced personal details; ask where breakfast/reception is and clarify one misunderstanding.        |
+| Exam task | “Complete the registration”: W1-style form and L4 details; assess correct field interpretation, not just spelling a rehearsed sentence.           |
+
+**Sound/writing:** names, accents, dates and numbers with unfamiliar voices; ordinal floor labels. **Recycle:** U18, U22, U24. **CP4 after U16:** a short trip combining timetable, route, hotel form and conversation. Recycle U3 contact accuracy and U8 location.
+
+## Phase 5: Get help and stay in touch
+
+### Unit 17: Wellbeing and asking for help
+
+**Can do:** say a basic need, locate help and understand simple follow-up questions.
+
+| Session   | Brief                                                                                                                                                                                        |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “Find help”: doctor/pharmacy/help labels and a limited need/condition set; keep detailed anatomy and symptom discussion for A2.                                                              |
+| Grammar   | “Necesito…; ¿Puede…?”: useful need/help chunks; revisit personal information and location. `Me duele…` is supported extension unless the source-level audit approves the intended treatment. |
+| Real talk | “Explain enough to get help”: state the need, give location, request repetition; practise with a supportive service worker.                                                                  |
+| Exam task | “Choose the appropriate notice”: R2/L2 service information and a short contact form; identify whom/where to ask.                                                                             |
+
+**Sound/writing:** intelligible stressed syllables in key requests; distinguish statements and urgent requests. **Recycle:** U18, U22, U24. **Evidence:** communicate the need safely. Teach language, not diagnosis, medication or local emergency-number assumptions.
+
+### Unit 18: Everyday services and the phone
+
+**Can do:** ask opening times or a simple service question, give contact details and check a reply.
+
+| Session   | Brief                                                                                                                                            |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Words     | “Post office, information desk and phone”: high-utility service signs and contact words; recognise `móvil/celular` and `ordenador/computadora`.  |
+| Grammar   | “Ask one clear question”: retrieve question words, present forms, negation and polite address; basic modal expressions already taught as chunks. |
+| Real talk | “Without seeing the speaker”: short phone turn, identification, repair and confirmation; audio remains clear and A1-accessible.                  |
+| Exam task | “Listen and select the right details”: L3/L4 practice plus a service notice; no transcription-only substitute for selection formats.             |
+
+**Sound/writing:** words across boundaries; letter names and number contrasts under modest listening variation. **Recycle:** U20, U22, U24. **Evidence:** confirm the correct detail after a misunderstanding; complex complaints/contracts excluded.
+
+### Unit 19: Invitations and simple plans
+
+**Can do:** understand a simple invitation, accept/decline politely and agree on a time/place.
+
+| Session   | Brief                                                                                                                                                                                                        |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Words     | “Make a small plan”: invitation, time/place and polite acceptance/refusal expressions; retrieve hobbies and food.                                                                                            |
+| Grammar   | “A useful reply”: `puedo/no puedo`, `quiero`, and simple connectors in taught contexts. `Vamos a…`/`voy a + infinitive` may be useful chunks; broader future grammar is marked extension pending PCIC audit. |
+| Real talk | “Find a plan that works”: preferences differ; ask a follow-up, decline one option and confirm another.                                                                                                       |
+| Exam task | “Reply to the invitation”: W2 precursor addressing every requested point; hear and select a changed meeting detail.                                                                                          |
+
+**Sound/writing:** invitation vs confirmation intonation; ¿…? in short messages. **Recycle:** U20, U21, U24. **Evidence:** the recipient knows the final plan. Do not demand elaborate excuses, conditional politeness or subjunctive production.
+
+### Unit 20: Short messages people can act on
+
+**Can do:** write a clear short message with the requested details and an appropriate opening/closing.
+
+| Session   | Brief                                                                                                                                        |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “A message, not an essay”: practical opening/closing and information phrases; readable standard spelling even in chat.                       |
+| Grammar   | “Join the details”: recycle basic connectors, reference and pronoun choices; `y/e`, `o/u`; short reasons only within taught language.        |
+| Real talk | “Text and voice-note repair”: message plus spoken follow-up; confirm which day/time was intended.                                            |
+| Exam task | “Answer the whole message”: W2 original response, self-check content points, then revise after feedback; assess an unseen prompt separately. |
+
+**Sound/writing:** accents, ñ, opening punctuation, spacing and appropriate layout; distinguish meaning-changing errors from minor slips. **Recycle:** U21, U22, U24. **CP5 after U20:** combine help, service information and a message/conversation; use a new prompt rather than a memorised model.
+
+## Phase 6: Transfer, confidence and the exam bridge
+
+### Unit 21: Choose an outing from real information
+
+**Can do:** use a small cultural programme to choose an affordable, suitable activity and tell someone the plan.
+
+| Session   | Brief                                                                                                                                              |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “Read only what matters”: retrieve event labels; a few needed museum/theatre/cinema/entry terms and accessibility labels.                          |
+| Grammar   | “Bring known language together”: targeted retrieval of prices, times, location, likes and quantity; no new mandatory grammar system.               |
+| Real talk | “Plan with someone from Spain”: clear peninsular input; recognise frequent `vosotros` forms and regional alternatives while replying consistently. |
+| Exam task | “Search a cultural programme”: R4 multi-part factual information and a W2 reply; maintain shared stimulus/response navigation.                     |
+
+**Sound/writing:** supported seseo/distinción comparison and unfamiliar speaker adaptation. **Recycle:** U23/U24 and delayed review. **Evidence:** integrate two constraints, such as time and budget; do not reward guessing from a single keyword.
+
+### Unit 22: Forms and simple public transactions
+
+**Can do:** understand the fields of an unfamiliar simple form, supply relevant details and ask a clarification question.
+
+| Session   | Brief                                                                                                                                                |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “Read the field before writing”: retrieve personal details, address, nationality, interests and date vocabulary; supported alternate field labels.   |
+| Grammar   | “Say exactly what is needed”: revisit agreement, numbers, present forms and concise phrases; distinguish a name field from a full sentence response. |
+| Real talk | “At the registration desk”: ask what a field means, spell a surname, correct an entry and finish politely.                                           |
+| Exam task | “A form and a message”: paired W1/W2 practice using original material; gradually practise the shared writing time budget outside the short lesson.   |
+
+**Sound/writing:** alphabetical information, dates, formatting and legibility; no real documents required. **Recycle:** U24 and delayed review. **Evidence:** adapt to a new form layout and relevant fictional identity; do not copy the whole model into every field.
+
+### Unit 23: Talk about your world
+
+**Can do:** introduce yourself, give a short organised description and answer related questions with appropriate help.
+
+| Session   | Brief                                                                                                                                                        |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Words     | “Choose what is useful for you”: personalise existing identity, routine, home, work/study and leisure language; fill only genuine essential vocabulary gaps. |
+| Grammar   | “Make your meaning clear”: targeted consolidation from the learner's errors; present person, agreement, questions and basic linking.                         |
+| Real talk | “A different question each time”: supported interviewer turns on familiar topics, including a repair request; avoid an invariant memorised interview.        |
+| Exam task | “Introduction, topic, conversation”: practise O1–O3 transitions; full timed delivery is a separate longer activity with human/validated feedback.            |
+
+**Sound/writing:** phrasing, comprehensibility and recovery after hesitation; record a fresh response before hearing a model. **Recycle:** U24 and delayed review. **Evidence:** answer a follow-up absent from the rehearsal, without treating pauses as failure.
+
+### Unit 24: A day you can manage
+
+**Can do:** combine familiar skills in new situations and understand what to practise next.
+
+| Session   | Brief                                                                                                                                                                                 |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Words     | “Use what you already know”: retrieve high-value language across contexts; no last-minute large vocabulary list.                                                                      |
+| Grammar   | “Fix your recurring difficulty”: adaptive small sets drawn from taught content; build a useful response after feedback.                                                               |
+| Real talk | “Your choices change the day”: a route/order/meeting mission with changed details, a misunderstanding and a final confirmation.                                                       |
+| Exam task | “Know the exam, know your next step”: work through representative task instructions and response mechanics; schedule full practice rather than claiming this short session is a mock. |
+
+**Sound/writing:** new voices and prompts using familiar language; small final orthography check. **CP6 after U24:** unseen four-skill transfer, then a personalised recommendation. Learner chooses ordinary A1 consolidation, the exam route or available A2 starter content.
+
+## Checkpoint and retrieval schedule
+
+Every checkpoint covers reading, listening, writing and speaking in a small set of connected tasks. Offer it as a clearly timed longer activity, or split it into saved skill sessions. A split or assisted attempt is useful practice; record its conditions. Collect evidence after a delay as well as immediately after teaching. CP6 is not a substitute for a full mock.
+
+| Checkpoint | Introduced material | Deliberate older retrieval                              | Immediate next action                                      |
+| ---------- | ------------------- | ------------------------------------------------------- | ---------------------------------------------------------- |
+| CP1        | U1–4                | Greetings/name repeated across contexts                 | Personal details, number or repair micro-practice; then U5 |
+| CP2        | U5–8                | U1 courtesy, U3 numbers, U4 agreement                   | Order, quantity or location practice; then U9              |
+| CP3        | U9–12               | U2 identity, U3 contact, U5 requests                    | Time, routine or preference practice; then U13             |
+| CP4        | U13–16              | U3 form details, U6 price, U8 location, U9 time         | Travel/form/listening practice; then U17                   |
+| CP5        | U17–20              | U1 repair, U9 time, U11 learning context, U12 interests | Requested message points or service conversation; then U21 |
+| CP6        | U21–24              | Sample all earlier phases using unseen stimuli          | Weak-skill practice, mock familiarisation, or A2 starter   |
+
+For each checkpoint, author a parallel reattempt with new names, amounts, speakers, images and wording. Changing only the answer order is not an unseen task. Later assessment pools must sample early content too. A remembered story outcome must never reveal the test answer.
+
+## Spanish A1 legacy migration
+
+Keep all published IDs and histories. These mappings designate where an old starting-point link can resume; they **do not** award an entire new unit as mastered. Resolve current saved runs before retiring content; retain legacy review access and avoid double-seeding equivalent cards. A learner who completed the starter path should receive a short bridge/diagnostic, not a demand to repeat everything or an automatic A1 pass.
+
+| Existing lesson  | Proposed replacement starting point                                                   |
+| ---------------- | ------------------------------------------------------------------------------------- |
+| `es-first-words` | `es-a1-u1-words`                                                                      |
+| `es-names`       | `es-a1-u1-grammar` (implemented in M1; origin/language expansion continues in U2)     |
+| `es-repair`      | `es-a1-u1-talk`                                                                       |
+| `es-sounds`      | `es-a1-u1-words`, plus pronunciation diagnostic/review; sound teaching is distributed |
+| `es-prices`      | `es-a1-u6-words`; offer U3 number catch-up                                            |
+| `es-family`      | `es-a1-u4-words`                                                                      |
+| `es-cafe`        | `es-a1-u5-words`                                                                      |
+| `es-time`        | `es-a1-u9-words`; routine continues in U10                                            |
+| `es-market`      | `es-a1-u6-words`                                                                      |
+| `es-directions`  | `es-a1-u13-words`; location prerequisite U8                                           |
+| `es-transport`   | `es-a1-u14-words`                                                                     |
+| `es-likes`       | `es-a1-u12-words`                                                                     |
+| `es-hotel`       | `es-a1-u16-words`                                                                     |
+| `es-help`        | `es-a1-u17-words`; retain U1 repair link                                              |
+| `es-messages`    | `es-a1-u20-words`; invitation prerequisite U19                                        |
+
+Retire a legacy lesson in a public release only when its approved replacement and necessary catch-up path are published. M1 prepares the first three replacements in the local working implementation; their native-review gates remain open. An unfinished earlier first run stays accessible under Saved lessons. A partial rollout must not leave `replacedBy` pointing to an unavailable ID. Keep A2 lessons in A2; audit overlap, but do not use a broad current “A2” label as a reason to omit simple A1 housing, service or help functions.

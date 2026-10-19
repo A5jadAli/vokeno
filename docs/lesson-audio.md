@@ -17,15 +17,17 @@ Every line the app speaks is a pre-recorded clip in a natural AI voice. Each cha
 
 1. Edit the lesson as usual.
 2. Run `npm test`. `tests/audio.test.ts` lists every line that has no clip.
-3. Record the missing clips:
+3. Store `LESSON_AUDIO_TOKEN` in the ignored `.env.audio.local` file (or supply it through the process environment). The generator reads this file directly; do not put admin secrets in an `EXPO_PUBLIC_` variable. Configure the same token in the linked Supabase project, then record the missing clips:
 
    ```sh
-   LESSON_AUDIO_TOKEN=… npx tsx --tsconfig tsconfig.json scripts/generate-lesson-audio.ts
+   npx tsx --tsconfig tsconfig.json scripts/generate-lesson-audio.ts
    ```
 
    The script sends batches of up to 8 lines to the admin-only `lesson-audio` edge function. The function calls OpenAI `gpt-4o-mini-tts` and uploads the result. The script can be stopped and run again; it resumes where it left off.
 
 4. Commit the updated `clips.json` with the lesson change.
+
+`npx --yes supabase login` signs into the CLI without a global install. To set the token securely, use `npx supabase secrets set --env-file .env.audio.local --project-ref <verified-project-ref>` after checking the project matches `.env.local`. Keep only the audio token in that file and never paste it into chat or commit it.
 
 `LESSON_AUDIO_TOKEN` is set as a Supabase function secret, and the function rejects any request without it. Never commit it. The edge function also needs the `OPENAI_API_KEY` secret.
 

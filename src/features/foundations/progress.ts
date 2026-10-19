@@ -1,10 +1,15 @@
 import { foundationLessons } from './catalog';
+import { MAX_FORM_DRAFT_LENGTH } from './form-practice';
 import { finalStep, gradedCount, MAX_LESSON_CHECKS, type FoundationLesson } from './types';
 
 // Keep the per-lesson history short: cloud state for every lesson must stay under 256 KB
 // (about 1 KB per lesson in the worst case).
 export const MAX_FOUNDATION_ATTEMPTS = 4;
 export const MAX_DRAFT_LENGTH = 160;
+export const foundationDraftLimit = (lesson: FoundationLesson, step: number) =>
+  lesson.format === 'steps' && lesson.steps[step]?.kind === 'form'
+    ? MAX_FORM_DRAFT_LENGTH
+    : MAX_DRAFT_LENGTH;
 
 export type FoundationAttempt = { at: string; correctFirstTry: number; spoken: boolean };
 export type FoundationEntry = {
@@ -165,7 +170,7 @@ export function parseFoundationProgress(value: unknown): FoundationProgress {
       draft:
         stale || entry.step >= (lesson.format === 'steps' ? last : 3)
           ? ''
-          : entry.draft.slice(0, MAX_DRAFT_LENGTH),
+          : entry.draft.slice(0, foundationDraftLimit(lesson, entry.step)),
       writingMistakes: Math.min(entry.writingMistakes, 1000),
       updatedAt: entry.updatedAt,
       attempts,

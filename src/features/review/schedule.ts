@@ -39,9 +39,36 @@ export type ReviewItem = {
  * Adds a new card (due tomorrow) for every phrase that has none. Existing cards are kept, and
  * every card is labelled with its phrase so it survives later changes to the lesson.
  */
-export function seedCards(lesson: FoundationLesson, entry: FoundationEntry, today = dayNumber()) {
+export function seedCards(
+  lesson: FoundationLesson,
+  entry: FoundationEntry,
+  today = dayNumber(),
+  progress: FoundationProgress = {},
+) {
+  // A rebuilt lesson must not restart already-earned intervals from its retired predecessors.
+  // Limit inheritance to the same track and exact phrase identity. Keep an existing new card
+  // authoritative; a later mistake there must not be overwritten by older successful practice.
+  const inherited = new Map<string, [number, number]>();
+  for (const previous of allTrackLessons(lesson.track).filter((item) => item.retired)) {
+    const saved = progress[previous.id];
+    previous.phrases.forEach((phrase, index) => {
+      const key = phraseKey(phrase.target);
+      const savedIndex = saved?.cardKeys ? saved.cardKeys.indexOf(key) : index;
+      const card = saved?.cards?.[savedIndex];
+      if (!card) return;
+      const known = inherited.get(key);
+      // If old lessons disagree, retain the more cautious strength and earlier review date.
+      inherited.set(
+        key,
+        known ? [Math.min(known[0], card[0]), Math.min(known[1], card[1])] : [...card],
+      );
+    });
+  }
   const cards = lesson.phrases.map(
-    (_, index) => entry.cards?.[index] ?? ([0, today + REVIEW_INTERVALS[0]] as [number, number]),
+    (phrase, index) =>
+      entry.cards?.[index] ??
+      inherited.get(phraseKey(phrase.target)) ??
+      ([0, today + REVIEW_INTERVALS[0]] as [number, number]),
   );
   return { cards, cardKeys: lesson.phrases.map((phrase) => phraseKey(phrase.target)) };
 }

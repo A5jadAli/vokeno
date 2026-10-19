@@ -5,6 +5,8 @@ import { defineLessons } from './types';
 export const spanishA1Lessons = defineLessons('ES', [
   {
     id: 'es-first-words',
+    retired: true,
+    replacedBy: 'es-a1-u1-words',
     level: 'A1',
     title: 'Your first useful exchange',
     outcome: 'Greet someone, make a polite request and say thank you.',
@@ -63,6 +65,8 @@ export const spanishA1Lessons = defineLessons('ES', [
   },
   {
     id: 'es-names',
+    retired: true,
+    replacedBy: 'es-a1-u1-grammar',
     level: 'A1',
     title: 'Meet someone',
     outcome: 'Say your name and where you are from, then ask back.',
@@ -117,6 +121,8 @@ export const spanishA1Lessons = defineLessons('ES', [
   },
   {
     id: 'es-repair',
+    retired: true,
+    replacedBy: 'es-a1-u1-talk',
     level: 'A1',
     title: 'Keep the conversation going',
     outcome: 'Ask for repetition or slower speech when you lose the thread.',

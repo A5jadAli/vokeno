@@ -98,14 +98,46 @@ export type LessonStep =
       explanation: string;
       /** A short text (form, message) the answer comes from. */
       context?: string;
+      /** Dictation: replay is available without displaying the answer. */
+      audio?: string;
+      /** Details and spelling exercises need exact characters instead of phrase tolerance. */
+      answerKind?: 'text' | 'digits' | 'email';
+    }
+  | {
+      kind: 'form';
+      prompt: string;
+      context: string;
+      audio?: string;
+      /** Up to five short fields containing fictional supplied details. */
+      fields: {
+        label: string;
+        accepted: string[];
+        kind: 'text' | 'digits' | 'email';
+        hint: string;
+      }[];
+      explanation: string;
     }
   | { kind: 'match'; prompt: string; pairs: [target: string, meaning: string][] }
-  | { kind: 'speak'; prompt: string; lines: string[]; tip?: string };
+  | {
+      kind: 'speak';
+      prompt: string;
+      lines: string[];
+      tip?: string;
+      /** Optional self-practice cues, never a scored speaking assessment. */
+      mission?: { checks: string[]; twist: string };
+    };
 
-export type GradedStep = Extract<LessonStep, { kind: 'choose' | 'build' | 'type' | 'match' }>;
+export type GradedStep = Extract<
+  LessonStep,
+  { kind: 'choose' | 'build' | 'type' | 'match' | 'form' }
+>;
 
 export const isGradedStep = (step: LessonStep): step is GradedStep =>
-  step.kind === 'choose' || step.kind === 'build' || step.kind === 'type' || step.kind === 'match';
+  step.kind === 'choose' ||
+  step.kind === 'build' ||
+  step.kind === 'type' ||
+  step.kind === 'match' ||
+  step.kind === 'form';
 
 /** A short session inside a unit: about five minutes of varied steps. */
 export type StepLesson = LessonBase & {

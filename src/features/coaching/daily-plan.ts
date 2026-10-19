@@ -110,7 +110,9 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
       key,
       title: lesson.title,
       why: finished
-        ? 'Done. Its words are in your review.'
+        ? lesson.phrases.length
+          ? 'Done. Its words are in your review.'
+          : 'Done. Your phrase review continues.'
         : resuming
           ? 'Pick up where you left off.'
           : lesson.outcome,

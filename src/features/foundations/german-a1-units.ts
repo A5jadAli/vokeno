@@ -381,6 +381,10 @@ const unit1 = defineUnit(
             'Introduce yourself to Maria and ask her name. Use your own name instead of Alex.',
           lines: ['Hallo, ich bin Alex.', 'Wie heißt du?', 'Freut mich!'],
           tip: 'In heiße and heißt, ei sounds like English “eye” and ß is a sharp s: HEI-se.',
+          mission: {
+            checks: ['Did you give your name?', 'Did you ask Maria her name?'],
+            twist: 'Now meet Frau Schulz at an office. Greet her and ask her name using Sie.',
+          },
         },
       ],
     },
@@ -394,10 +398,10 @@ const unit1 = defineUnit(
         {
           kind: 'rule',
           title: 'du or Sie?',
-          body: 'German has two words for “you”. Sie is for adults you do not know, offices, doctors and older people. Du is for friends, family, children, and most people under about 30 in relaxed places. Many gyms, cafés, apps and workplaces use du too. When you are not sure, start with Sie. The other person may offer du: “Wir können uns duzen.”',
+          body: 'German distinguishes familiar du and formal Sie. Use du with friends, family and children. With an unfamiliar adult in a formal setting, Sie is a useful starting point. Some workplaces, cafés and social groups use du from the start; follow their invitation or established practice. Age alone does not decide. If you are unsure, start with Sie. The other person may offer du: “Wir können uns duzen.”',
           table: [
-            ['du', 'friends, family, children, most young people'],
-            ['Sie', 'strangers, officials, doctors, older people'],
+            ['du', 'friends, family, children; groups that use du'],
+            ['Sie', 'unfamiliar adults in formal settings, unless du is agreed'],
             ['ihr', 'two or more people you call du'],
           ],
         },
@@ -407,20 +411,19 @@ const unit1 = defineUnit(
           options: ['A police officer', 'Your flatmate Lena', 'A child in the park'],
           answer: 0,
           explanation:
-            'Officials and adults you do not know get Sie. Flatmates and children get du.',
+            'Sie is the usual starting point with an unfamiliar police officer. Du fits a friend or a child. Follow the relationship and setting, not just age.',
         },
         {
           kind: 'choose',
-          prompt: 'At a party, you meet Lena’s friend. He is about 25. What do you say?',
+          prompt: 'At a party, Lena says everyone here uses du. How do you ask her friend’s name?',
           options: ['Hi, wie heißt du?', 'Guten Tag, wie heißen Sie?', 'Wer sind Sie?'],
           answer: 0,
-          explanation:
-            'At a party with people your age, du is normal. Sie would sound strangely distant.',
+          explanation: 'Lena has told you the group uses du, so Wie heißt du? fits this situation.',
         },
         {
           kind: 'scene',
           title: 'On the stairs',
-          intro: 'Alex meets the neighbour, Frau Wagner, on the stairs. She is about 70.',
+          intro: 'Alex meets a new neighbour, Frau Wagner. She starts the conversation using Sie.',
           lines: [
             {
               speaker: 'Frau Wagner',
@@ -567,6 +570,14 @@ const unit1 = defineUnit(
             'Someone speaks too fast. Ask them to repeat and slow down, then show you understood.',
           lines: ['Wie bitte?', 'Noch mal, bitte. Langsamer, bitte.', 'Ach so! Danke.'],
           tip: 'The ch in ach comes from the back of the throat, like a soft hiss. It is never a k.',
+          mission: {
+            checks: [
+              'Did you ask for repetition or slower speech?',
+              'Did you show when you understood?',
+            ],
+            twist:
+              'You are speaking to an unfamiliar person at an office. Ask politely for repetition, then thank them.',
+          },
         },
       ],
     },
@@ -662,7 +673,7 @@ const unit1 = defineUnit(
         {
           kind: 'speak',
           prompt:
-            'Start your exam introduction: greet the examiner, say your name, and ask theirs politely. Use your own name.',
+            'Practise a greeting and your name for the introduction. Then practise asking someone’s name politely for everyday life; this extra question is not an exam instruction.',
           lines: ['Guten Tag!', 'Mein Name ist Alex.', 'Und wie heißen Sie?'],
         },
       ],
@@ -10916,7 +10927,7 @@ const unit20 = defineUnit(
         {
           kind: 'rule',
           title: 'The Goethe-Zertifikat A1',
-          body: 'The exam has four parts: Hören (about 20 minutes), Lesen (25 minutes), Schreiben (20 minutes) and Sprechen (about 15 minutes, in a small group). You pass with 60 percent. This session has one task from each part; the full mock exams come next.',
+          body: 'The exam has four parts: Hören (about 20 minutes), Lesen (25 minutes), Schreiben (20 minutes) and Sprechen (about 15 minutes, in a small group). You pass with 60 percent. This session is a short warm-up with one task from each part. Full mock exams are not available in the app yet.',
         },
         {
           kind: 'choose',

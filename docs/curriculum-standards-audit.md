@@ -1,5 +1,7 @@
 # Curriculum standards audit (October 2026)
 
+**Spanish planning update, 18 October 2026:** see the [Spanish A1 curriculum plan](spanish-a1-curriculum-plan.md), including 24 proposed units, DELE-specific assessment and a native-review coverage register. The measured counts below describe the earlier audit snapshot; consult the new plan for current Spanish/German catalogue counts and Spanish-specific implementation decisions.
+
 **Question:** if Vokeno labels lessons A1, A2 or B1, does finishing them actually bring a learner to that level, and could they pass the matching exam?
 
 **Answer today: no, for any language.** The lessons teach useful situations at the right difficulty, but they cover only a small part of what each level requires. A learner who finished our German "A2" lessons and sat the Goethe-Zertifikat A2 would very likely fail. This document records the evidence and the plan to make every level label true and verifiable.
