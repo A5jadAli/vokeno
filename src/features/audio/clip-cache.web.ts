@@ -13,4 +13,7 @@ export function playerFor(_key: string, _uri: string): AudioPlayer {
   throw new Error('Voice clips are not played on the web');
 }
 
-export async function warmClips(_clips: { key: string; url: string }[], _ready?: number) {}
+export async function warmClips(
+  _clips: { key: string; url: string; fallbackUrl?: string }[],
+  _ready?: number,
+) {}

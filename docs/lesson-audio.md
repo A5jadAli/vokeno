@@ -25,7 +25,13 @@ Every line the app speaks is a pre-recorded clip in a natural AI voice. Each cha
 
    The script sends batches of up to 8 lines to the admin-only `lesson-audio` edge function. The function calls OpenAI `gpt-4o-mini-tts` and uploads the result. The script can be stopped and run again; it resumes where it left off.
 
+   When recording ends, the generator runs `scripts/normalize-lesson-audio.ts`. It gives every clip without one a loudness-normalised copy (−19 LUFS, −1.5 dBTP, same 24 kHz mono MP3) in the bucket's `n1/` folder, uploaded through the linked Supabase CLI. It needs ffmpeg. You can also run it on its own; it skips clips that already have a copy.
+
 4. Commit the updated `clips.json` with the lesson change.
+
+## Loudness
+
+The speech model returns voices at different levels; before normalisation a receptionist could be about 9 dB louder than the learner's friend in the same scene. The app plays the `n1/` copy (`LOUDNESS_FOLDER` in `clips.ts`) and falls back to the original recording if that copy cannot be downloaded. Originals are never changed, so builds that predate normalisation keep playing them. The folder name is part of the device cache key, so devices download the new copies instead of reusing cached originals. To change the target level, use a new folder name (for example `n2`) rather than overwriting: the CLI cannot replace existing files, and a new name also refreshes device caches.
 
 `npx --yes supabase login` signs into the CLI without a global install. To set the token securely, use `npx supabase secrets set --env-file .env.audio.local --project-ref <verified-project-ref>` after checking the project matches `.env.local`. Keep only the audio token in that file and never paste it into chat or commit it.
 

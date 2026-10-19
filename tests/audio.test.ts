@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 
 import { describe, expect, it } from '@jest/globals';
 
-import { clipKey } from '@/features/audio/clips';
+import { AUDIO_BUCKET, clipKey, findClip, LOUDNESS_FOLDER } from '@/features/audio/clips';
 import { lessonLines, scenarioLines, spokenLines } from '@/features/audio/inventory';
 import { castingFor, characters } from '@/features/audio/voices';
 import { foundationLessons } from '@/features/foundations/catalog';
@@ -74,5 +74,24 @@ describe('AI voices', () => {
     expect(clipKey('DE', 'Gut, danke.', castingFor('DE', 'Jonas'))).not.toBe(key);
     expect(clipKey('ES', 'Gut, danke.', lena)).not.toBe(key);
     expect(key).toMatch(/^[0-9a-z]{14}$/);
+  });
+});
+
+describe('loudness-normalised clips', () => {
+  it('plays the normalised copy, keeps the original as a fallback and renames the device copy', () => {
+    const previous = process.env.EXPO_PUBLIC_SUPABASE_URL;
+    process.env.EXPO_PUBLIC_SUPABASE_URL = 'https://example.supabase.co';
+    try {
+      const clip = findClip('ES', 'Buenas tardes.')!;
+      const key = clipKey('ES', 'Buenas tardes.', castingFor('ES'));
+      const take = Math.round(manifest.clips[key] * 100);
+      const bucket = `https://example.supabase.co/storage/v1/object/public/${AUDIO_BUCKET}`;
+      expect(clip.url).toBe(`${bucket}/${LOUDNESS_FOLDER}/${key}.mp3?take=${take}`);
+      expect(clip.fallbackUrl).toBe(`${bucket}/${key}.mp3?take=${take}`);
+      // A device that cached the original downloads the normalised copy instead of reusing it.
+      expect(clip.key).toBe(`${key}.${LOUDNESS_FOLDER}.${take}`);
+    } finally {
+      process.env.EXPO_PUBLIC_SUPABASE_URL = previous;
+    }
   });
 });

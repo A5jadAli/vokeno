@@ -167,6 +167,21 @@ describe('lessons', () => {
   });
 });
 
+describe('a content update during the day', () => {
+  it('replaces a lesson retired since today’s session was saved', () => {
+    const session = { day: TODAY, keys: ['lesson:es-first-words' as const] };
+    const today = plan({ session });
+    expect(today.steps[0]).toMatchObject({ kind: 'lesson', href: '/foundation/es-a1-u1-words' });
+    expect(today.snapshot.keys).toEqual(['lesson:es-a1-u1-words']);
+  });
+
+  it('keeps a retired lesson that was already finished today, so the tick stays', () => {
+    const session = { day: TODAY, keys: ['lesson:es-first-words' as const] };
+    const today = plan({ session, activities: { [TODAY]: ['lesson:es-first-words'] } });
+    expect(today.steps[0]).toMatchObject({ href: '/foundation/es-first-words', done: true });
+  });
+});
+
 describe('completing the day', () => {
   const session = { day: TODAY, keys: ['lesson:es-first-words' as const] };
   const finishedToday: FoundationProgress = {

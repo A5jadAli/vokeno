@@ -6,6 +6,7 @@
 //
 // Needs EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY (from .env.local).
 // Keep LESSON_AUDIO_TOKEN in ignored .env.audio.local or supply it through the environment.
+import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { parseEnv } from 'node:util';
 
@@ -127,6 +128,10 @@ async function main() {
     failed ? `Done with ${failed} failures; run again to retry.\n` : 'All clips recorded.\n',
   );
   if (failed) process.exitCode = 1;
+  // New clips get a loudness-normalised copy too, so every voice plays at the same level.
+  execFileSync('npx', ['tsx', '--tsconfig', 'tsconfig.json', 'scripts/normalize-lesson-audio.ts'], {
+    stdio: 'inherit',
+  });
 }
 
 void main();

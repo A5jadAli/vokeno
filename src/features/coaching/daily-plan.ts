@@ -14,6 +14,7 @@ import {
   coursePosition,
   lessonMinutes,
   lessonsAhead,
+  pathStart,
   type CoursePosition,
 } from '@/features/journey/course';
 import { suggestedConversation, suggestedScenario } from '@/features/journey/practice';
@@ -242,8 +243,14 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
     return keys.length ? keys : [practice[0] ?? speakingKey];
   };
 
-  const keys =
-    input.session?.day === today && input.session.keys.length ? input.session.keys : fresh();
+  // Today's saved session keeps its items, except a lesson retired since it was saved (a content
+  // update arrived during the day): that becomes the lesson that replaced it, unless it is done.
+  const saved = (input.session?.day === today ? input.session.keys : []).map((key): ActivityKey =>
+    key.startsWith('lesson:') && !done(key)
+      ? `lesson:${pathStart(track, key.slice('lesson:'.length))}`
+      : key,
+  );
+  const keys = saved.length ? [...new Set(saved)] : fresh();
   const steps = keys.map(stepFor).filter((step): step is PlanStep => Boolean(step));
   const doneCount = steps.filter((step) => step.done).length;
   const bonus =

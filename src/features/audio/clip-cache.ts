@@ -4,7 +4,7 @@ import { createAudioPlayer, type AudioPlayer } from 'expo-audio';
 import { Directory, File, Paths } from 'expo-file-system';
 
 /** key names one recording of a line: a re-recorded line gets a new key. */
-type Clip = { key: string; url: string };
+type Clip = { key: string; url: string; fallbackUrl?: string };
 
 export const clipsSupported = true;
 
@@ -23,8 +23,17 @@ export function ensureClip(clip: Clip): Promise<string> {
   if (!pending) {
     pending = (async () => {
       if (!folder.exists) folder.create({ intermediates: true, idempotent: true });
-      const saved = await File.downloadFileAsync(clip.url, local(clip.key), { idempotent: true });
-      return saved.uri;
+      try {
+        const saved = await File.downloadFileAsync(clip.url, local(clip.key), { idempotent: true });
+        return saved.uri;
+      } catch (error) {
+        // No normalised copy yet: the original recording still beats the device voice.
+        if (!clip.fallbackUrl) throw error;
+        const saved = await File.downloadFileAsync(clip.fallbackUrl, local(clip.key), {
+          idempotent: true,
+        });
+        return saved.uri;
+      }
     })().finally(() => downloads.delete(clip.key));
     downloads.set(clip.key, pending);
   }

@@ -38,7 +38,7 @@ export type NextLesson = {
  * 3. Any lesson still unstarted, for example ones skipped by placement.
  */
 /** A saved starting point, moved to the unit lesson that replaced it if it was retired. */
-function pathStart(track: LanguageTrack, startAt?: string) {
+export function pathStart(track: LanguageTrack, startAt?: string) {
   const lessons = allTrackLessons(track);
   let id = startAt;
   for (let hop = 0; hop < 3; hop++) {
