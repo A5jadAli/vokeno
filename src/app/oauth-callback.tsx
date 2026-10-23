@@ -6,7 +6,7 @@ import { ActivityIndicator, Platform, StyleSheet, Text, View } from 'react-nativ
 
 import { ActionBar, lessonText, PrimaryButton } from '@/components/lesson-ui';
 import { AppScreen } from '@/components/voka-ui';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius, space } from '@/constants/theme';
 import { completeGoogleSignIn, startGoogleSignIn } from '@/features/auth/google';
 
 /** Where Google sign-in returns to. Finishes the session, then moves on to the profile. */
@@ -99,15 +99,21 @@ export default function OAuthCallbackScreen() {
 }
 
 const styles = StyleSheet.create({
-  body: { alignItems: 'center', flex: 1, gap: 14, justifyContent: 'center', padding: 28 },
+  body: {
+    alignItems: 'center',
+    flex: 1,
+    gap: space(4),
+    justifyContent: 'center',
+    padding: space(7),
+  },
   center: { textAlign: 'center' },
   badge: {
     alignItems: 'center',
-    backgroundColor: Palette.yellow,
-    borderRadius: 99,
+    backgroundColor: Palette.canvas,
+    borderRadius: Radius.pill,
     height: 88,
     justifyContent: 'center',
-    marginBottom: 8,
+    marginBottom: space(2),
     width: 88,
   },
 });

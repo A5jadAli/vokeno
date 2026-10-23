@@ -4,7 +4,17 @@ import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow } from '@/components/voka-ui';
-import { Brand, Feedback, Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  Brand,
+  Feedback,
+  FontSize,
+  LineHeight,
+  OnDark,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { useAssessmentStore } from '@/features/assessment/store';
 import { deleteCurrentAccount } from '@/features/auth/account';
 import { supabase } from '@/features/auth/supabase';
@@ -139,9 +149,11 @@ export default function ProfileScreen() {
               <Text style={styles.benefitText}>{benefit}</Text>
             </View>
           ))}
-          <Text style={[styles.price, { textDecorationLine: 'underline' }]}>
-            View plans and availability
-          </Text>
+          {/* The card's action, drawn as a button: cream on dark, like every action there. */}
+          <View style={styles.planButton}>
+            <Text style={styles.planButtonText}>See plans</Text>
+            <MaterialCommunityIcons color={Palette.ink} name="arrow-right" size={18} />
+          </View>
         </View>
       </Pressable>
 
@@ -197,11 +209,7 @@ export default function ProfileScreen() {
             onPress={handleDeleteAccount}
             style={({ pressed }) => [styles.settingRow, pressed && styles.pressed]}
           >
-            <MaterialCommunityIcons
-              color={Feedback.wrongTextLight}
-              name="delete-outline"
-              size={20}
-            />
+            <MaterialCommunityIcons color={Feedback.wrongText} name="delete-outline" size={20} />
             <Text style={[styles.settingLabel, styles.dangerText]}>Delete account</Text>
             <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
           </Pressable>
@@ -296,15 +304,15 @@ const styles = StyleSheet.create({
   profileHeader: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
-    paddingHorizontal: 22,
-    paddingTop: 18,
+    gap: space(3),
+    paddingHorizontal: space(6),
+    paddingTop: space(4),
   },
   profileCopy: { flex: 1 },
   avatar: {
     alignItems: 'center',
     backgroundColor: Palette.ink,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     height: 52,
     justifyContent: 'center',
     width: 52,
@@ -312,30 +320,30 @@ const styles = StyleSheet.create({
   avatarText: {
     color: Palette.cream,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 18,
+    fontSize: FontSize.heading,
   },
-  name: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22 },
-  badges: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 8 },
+  name: { color: Palette.ink, fontFamily: VokaFonts.displayExtraBold, fontSize: FontSize.title },
+  badges: { flexDirection: 'row', flexWrap: 'wrap', gap: space(2), marginTop: space(2) },
   badge: {
-    backgroundColor: withAlpha(Palette.ink, 0.08),
-    borderRadius: 99,
+    backgroundColor: Palette.soft,
+    borderRadius: Radius.pill,
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
-    paddingHorizontal: 11,
-    paddingVertical: 5,
+    fontSize: FontSize.caption,
+    paddingHorizontal: space(3),
+    paddingVertical: space(1),
   },
   planCard: {
     backgroundColor: Palette.ink,
-    borderRadius: 28,
-    marginHorizontal: 18,
-    marginTop: 26,
+    borderRadius: Radius.xl,
+    marginHorizontal: space(4),
+    marginTop: space(6),
     overflow: 'hidden',
-    padding: 24,
+    padding: space(6),
   },
   planGlow: {
-    backgroundColor: withAlpha(Palette.cream, 0.08),
-    borderRadius: 99,
+    backgroundColor: OnDark.fill,
+    borderRadius: Radius.pill,
     height: 150,
     position: 'absolute',
     right: -40,
@@ -345,55 +353,63 @@ const styles = StyleSheet.create({
   planTitle: {
     color: Palette.cream,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
-    lineHeight: 34,
-    marginBottom: 12,
-    marginTop: 10,
+    fontSize: FontSize.title,
+    lineHeight: LineHeight.title,
+    marginBottom: space(3),
+    marginTop: space(2),
   },
-  benefit: { alignItems: 'center', flexDirection: 'row', gap: 12, marginTop: 10 },
+  benefit: { alignItems: 'center', flexDirection: 'row', gap: space(3), marginTop: space(2) },
   benefitCheck: {
     alignItems: 'center',
     backgroundColor: Brand.onDark,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     height: 22,
     justifyContent: 'center',
     width: 22,
   },
-  benefitText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  price: {
-    color: withAlpha(Palette.cream, 0.45),
-    fontFamily: VokaFonts.bodyMedium,
-    fontSize: 12,
-    marginTop: 10,
-    textAlign: 'center',
+  benefitText: {
+    color: Palette.cream,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
   },
+  planButton: {
+    alignItems: 'center',
+    backgroundColor: Palette.cream,
+    borderRadius: Radius.lg,
+    flexDirection: 'row',
+    gap: space(2),
+    justifyContent: 'center',
+    marginTop: space(4),
+    minHeight: 48,
+  },
+  planButtonText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
   accountButton: {
     alignItems: 'center',
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 20,
+    borderRadius: Radius.xl,
     borderWidth: 1,
     flexDirection: 'row',
-    gap: 12,
-    marginHorizontal: 18,
-    marginTop: 14,
-    padding: 16,
+    gap: space(3),
+    marginHorizontal: space(4),
+    marginTop: space(4),
+    padding: space(4),
   },
   accountCopy: { flex: 1 },
   accountButtonDisabled: { opacity: 0.55 },
-  accountTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
+  accountTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
   accountDescription: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    marginTop: 3,
+    fontSize: FontSize.caption,
+    marginTop: space(1),
   },
   settings: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 22,
+    borderRadius: Radius.xl,
     borderWidth: 1,
-    margin: 18,
+    margin: space(4),
     overflow: 'hidden',
   },
   settingRow: {
@@ -401,28 +417,33 @@ const styles = StyleSheet.create({
     borderBottomColor: Palette.line,
     borderBottomWidth: 1,
     flexDirection: 'row',
-    gap: 14,
+    gap: space(4),
     minHeight: 58,
-    paddingHorizontal: 18,
+    paddingHorizontal: space(4),
   },
-  settingLabel: { color: Palette.ink, flex: 1, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  settingValue: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: 13 },
-  dangerText: { color: Feedback.wrongTextLight },
+  settingLabel: {
+    color: Palette.ink,
+    flex: 1,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
+  },
+  settingValue: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: FontSize.label },
+  dangerText: { color: Feedback.wrongText },
   identityNote: {
     alignItems: 'center',
     backgroundColor: Palette.soft,
-    borderRadius: 20,
+    borderRadius: Radius.xl,
     flexDirection: 'row',
-    gap: 12,
-    marginBottom: 28,
-    marginHorizontal: 18,
+    gap: space(3),
+    marginBottom: space(7),
+    marginHorizontal: space(4),
     marginTop: -4,
-    padding: 16,
+    padding: space(4),
   },
   identityIcon: {
     alignItems: 'center',
     backgroundColor: Palette.ink,
-    borderRadius: 14,
+    borderRadius: Radius.md,
     height: 44,
     justifyContent: 'center',
     width: 44,
@@ -431,9 +452,9 @@ const styles = StyleSheet.create({
   identityText: {
     color: Palette.secondary,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 4,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(1),
   },
   pressed: { opacity: 0.7, transform: [{ scale: 0.99 }] },
 });

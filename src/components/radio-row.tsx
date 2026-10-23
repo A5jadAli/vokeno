@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Brand, Palette, VokaFonts } from '@/constants/theme';
+import { Brand, FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 
 /**
  * One choice in a pick-one list inside a settings card, like WhatsApp's settings rows: label,
@@ -48,31 +48,31 @@ const styles = StyleSheet.create({
   row: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 14,
+    gap: space(4),
     minHeight: 56,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: space(4),
+    paddingVertical: space(3),
   },
   divider: { borderBottomColor: Palette.line, borderBottomWidth: 1 },
   radio: {
     alignItems: 'center',
     borderColor: Palette.muted,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     borderWidth: 1.5,
     height: 22,
     justifyContent: 'center',
     width: 22,
   },
   radioSelected: { borderColor: Brand.accent },
-  radioDot: { backgroundColor: Brand.accent, borderRadius: 99, height: 12, width: 12 },
-  copy: { flex: 1, gap: 2 },
-  label: { color: Palette.ink, fontFamily: VokaFonts.bodyMedium, fontSize: 16 },
+  radioDot: { backgroundColor: Brand.accent, borderRadius: Radius.pill, height: 12, width: 12 },
+  copy: { flex: 1, gap: space(0.5) },
+  label: { color: Palette.ink, fontFamily: VokaFonts.bodyMedium, fontSize: FontSize.body },
   description: {
     color: Palette.secondary,
     fontFamily: VokaFonts.body,
-    fontSize: 14,
-    lineHeight: 19,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
   },
-  value: { color: Palette.secondary, fontFamily: VokaFonts.bodyMedium, fontSize: 14 },
+  value: { color: Palette.secondary, fontFamily: VokaFonts.bodyMedium, fontSize: FontSize.label },
   pressed: { opacity: 0.7 },
 });

@@ -6,7 +6,15 @@ import Animated, { ZoomIn } from 'react-native-reanimated';
 
 import { ActionBar, InfoCard, lessonText, PrimaryButton, TextButton } from '@/components/lesson-ui';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
-import { Feedback, Palette, VokaFonts } from '@/constants/theme';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { emailProviderName, openEmailInbox } from '@/features/auth/email-app';
 import { supabase } from '@/features/auth/supabase';
 import { haptic } from '@/features/feedback/haptics';
@@ -191,36 +199,41 @@ export default function VerifyEmailScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: { paddingHorizontal: 16, paddingTop: 8 },
-  body: { gap: 18, paddingBottom: 32, paddingHorizontal: 20, paddingTop: 8 },
-  center: { alignItems: 'center', gap: 10, paddingTop: 12 },
+  header: { paddingHorizontal: space(4), paddingTop: space(2) },
+  body: {
+    gap: space(4),
+    paddingBottom: space(8),
+    paddingHorizontal: space(5),
+    paddingTop: space(2),
+  },
+  center: { alignItems: 'center', gap: space(2), paddingTop: space(3) },
   centerText: { textAlign: 'center' },
   badge: {
     alignItems: 'center',
-    backgroundColor: Palette.yellow,
-    borderRadius: 99,
+    backgroundColor: Palette.canvas,
+    borderRadius: Radius.pill,
     height: 96,
     justifyContent: 'center',
-    marginBottom: 6,
+    marginBottom: space(2),
     width: 96,
   },
   ok: { backgroundColor: Feedback.correctSoft },
   email: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 16,
+    fontSize: FontSize.body,
     textAlign: 'center',
   },
-  steps: { gap: 10 },
-  step: { alignItems: 'flex-start', flexDirection: 'row', gap: 10 },
+  steps: { gap: space(2) },
+  step: { alignItems: 'flex-start', flexDirection: 'row', gap: space(2) },
   stepNumber: {
     backgroundColor: Palette.ink,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     color: Palette.cream,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 13,
+    fontSize: FontSize.label,
     height: 24,
-    lineHeight: 20,
+    lineHeight: LineHeight.label,
     overflow: 'hidden',
     textAlign: 'center',
     width: 24,
@@ -229,18 +242,18 @@ const styles = StyleSheet.create({
     color: Palette.ink,
     flex: 1,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
   },
   notice: {
-    backgroundColor: Feedback.correctBgAlt,
-    borderRadius: 14,
+    backgroundColor: Feedback.correctBg,
+    borderRadius: Radius.md,
     color: Feedback.correctText,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 14,
-    lineHeight: 21,
-    padding: 12,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    padding: space(3),
   },
-  noticeError: { backgroundColor: Feedback.wrongBgAlt, color: Feedback.wrongText },
-  links: { gap: 8 },
+  noticeError: { backgroundColor: Feedback.wrongBg, color: Feedback.wrongText },
+  links: { gap: space(2) },
 });

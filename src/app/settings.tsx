@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Brand, Palette, VokaFonts } from '@/constants/theme';
+import { Brand, FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import { useAuthSession } from '@/features/auth/use-auth-session';
 import { type CoachTone, useCoachingStore } from '@/features/coaching/store';
 import { downloadAvailableUpdate, restartWithDownloadedUpdate } from '@/features/updates/ota';
@@ -189,33 +189,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 18,
+    padding: space(4),
   },
-  headerTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
+  headerTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.heading },
   headerSpacer: { width: 40 },
-  body: { paddingBottom: 28, paddingHorizontal: 20 },
+  body: { paddingBottom: space(7), paddingHorizontal: space(5) },
   title: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 22,
-    lineHeight: 28,
-    marginTop: 8,
+    fontSize: FontSize.title,
+    lineHeight: LineHeight.title,
+    marginTop: space(2),
   },
   description: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 14,
-    marginTop: 8,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    marginBottom: space(4),
+    marginTop: space(2),
   },
   card: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 22,
+    borderRadius: Radius.xl,
     borderWidth: 1,
-    marginBottom: 25,
-    marginTop: 10,
+    marginBottom: space(6),
+    marginTop: space(2),
     overflow: 'hidden',
   },
   row: {
@@ -223,32 +223,41 @@ const styles = StyleSheet.create({
     borderBottomColor: Palette.line,
     borderBottomWidth: 1,
     flexDirection: 'row',
-    gap: 13,
+    gap: space(3),
     minHeight: 60,
-    paddingHorizontal: 17,
+    paddingHorizontal: space(4),
   },
   versionRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 13,
+    gap: space(3),
     minHeight: 60,
-    paddingHorizontal: 17,
+    paddingHorizontal: space(4),
   },
-  rowLabel: { color: Palette.ink, flex: 1, fontFamily: VokaFonts.bodyMedium, fontSize: 16 },
-  rowValue: { color: Palette.secondary, fontFamily: VokaFonts.bodyMedium, fontSize: 14 },
+  rowLabel: {
+    color: Palette.ink,
+    flex: 1,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.body,
+  },
+  rowValue: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.label,
+  },
   privacyNote: {
     backgroundColor: Palette.ink,
-    borderRadius: 20,
+    borderRadius: Radius.xl,
     flexDirection: 'row',
-    gap: 12,
-    padding: 17,
+    gap: space(3),
+    padding: space(4),
   },
   privacyText: {
     color: Palette.cream,
     flex: 1,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
   },
   pressed: { opacity: 0.7 },
 });

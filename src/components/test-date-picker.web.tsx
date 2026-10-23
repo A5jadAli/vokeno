@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import { FontSize, OnDark, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 
 export function TestDatePicker({
   minimumDate,
@@ -37,11 +37,11 @@ export function TestDatePicker({
 }
 
 const styles = StyleSheet.create({
-  row: { alignItems: 'center', flexDirection: 'row', gap: 10, justifyContent: 'center' },
+  row: { alignItems: 'center', flexDirection: 'row', gap: space(2), justifyContent: 'center' },
   button: {
     alignItems: 'center',
-    borderColor: withAlpha(Palette.cream, 0.25),
-    borderRadius: 99,
+    borderColor: OnDark.border,
+    borderRadius: Radius.pill,
     borderWidth: 1,
     height: 44,
     justifyContent: 'center',
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   date: {
     color: Palette.cream,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 14,
+    fontSize: FontSize.label,
     minWidth: 170,
     textAlign: 'center',
   },

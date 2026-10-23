@@ -5,7 +5,7 @@ import { PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
 import { LessonAudioButton } from '@/components/lesson-audio-button';
-import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import { FontSize, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import { useLessonAudio } from '@/features/audio/use-lesson-audio';
 import { vocabularyDeck } from '@/features/audio/spoken-texts';
 import { useCoachingStore } from '@/features/coaching/store';
@@ -82,7 +82,7 @@ export default function VocabularyScreen() {
             </View>
           </View>
         </Pressable>
-        <View style={{ alignSelf: 'stretch', marginTop: 12 }}>
+        <View style={{ alignSelf: 'stretch', marginTop: space(3) }}>
           <LessonAudioButton speech={speech} text={current.word} label={`Hear ${current.word}`} />
         </View>
         <View style={styles.swipeHint}>
@@ -101,7 +101,7 @@ export default function VocabularyScreen() {
           style={({ pressed }) => [styles.nextButton, pressed && styles.pressed]}
         >
           <Text style={styles.nextButtonText}>{isLast ? 'Finish deck' : 'Next card'}</Text>
-          <MaterialCommunityIcons color={Palette.ink} name="chevron-right" size={21} />
+          <MaterialCommunityIcons color={Palette.cream} name="chevron-right" size={21} />
         </Pressable>
         <Text style={styles.hint}>Practise it with the live coach</Text>
         <Pressable
@@ -109,7 +109,7 @@ export default function VocabularyScreen() {
           onPress={() => router.push('/conversation?track=DE')}
           style={({ pressed }) => [styles.mic, pressed && styles.pressed]}
         >
-          <MaterialCommunityIcons color={Palette.yellow} name="microphone" size={34} />
+          <MaterialCommunityIcons color={Palette.lime} name="microphone" size={34} />
         </Pressable>
       </View>
     </AppScreen>
@@ -121,80 +121,90 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 18,
+    padding: space(4),
   },
   spacer: { width: 40 },
-  progressDots: { flexDirection: 'row', gap: 5 },
-  dot: { backgroundColor: withAlpha(Palette.ink, 0.15), borderRadius: 99, height: 8, width: 8 },
-  dotDone: { backgroundColor: Palette.yellow },
+  progressDots: { flexDirection: 'row', gap: space(1) },
+  dot: { backgroundColor: Palette.handle, borderRadius: Radius.pill, height: 8, width: 8 },
+  dotDone: { backgroundColor: Palette.yellowDeep },
   dotCurrent: { backgroundColor: Palette.ink },
-  content: { alignItems: 'center', flex: 1, paddingHorizontal: 22 },
+  content: { alignItems: 'center', flex: 1, paddingHorizontal: space(6) },
   card: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 30,
+    borderRadius: Radius.xl,
     borderWidth: 1,
-    marginTop: 4,
-    padding: 28,
+    marginTop: space(1),
+    padding: space(7),
     width: '100%',
   },
   cardTop: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
   article: {
-    backgroundColor: withAlpha(Palette.yellow, 0.25),
-    borderRadius: 99,
+    backgroundColor: Palette.yellowTint,
+    borderRadius: Radius.pill,
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    fontSize: FontSize.caption,
+    paddingHorizontal: space(3),
+    paddingVertical: space(2),
   },
   word: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
-    marginTop: 20,
+    fontSize: FontSize.display,
+    marginTop: space(5),
   },
   pronunciation: {
     color: Palette.muted,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 15,
-    marginTop: 8,
+    fontSize: FontSize.body,
+    marginTop: space(2),
   },
-  divider: { backgroundColor: Palette.line, height: 1, marginVertical: 22 },
-  translationRow: { alignItems: 'center', flexDirection: 'row', gap: 14 },
+  divider: { backgroundColor: Palette.line, height: 1, marginVertical: space(6) },
+  translationRow: { alignItems: 'center', flexDirection: 'row', gap: space(4) },
   receipt: {
     alignItems: 'center',
     backgroundColor: Palette.soft,
-    borderRadius: 12,
+    borderRadius: Radius.md,
     height: 46,
     justifyContent: 'center',
     width: 46,
   },
-  translation: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22 },
-  example: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: 12, marginTop: 3 },
-  hint: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 12, marginTop: 22 },
-  swipeHint: { alignItems: 'center', flexDirection: 'row', gap: 6 },
+  translation: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.title },
+  example: {
+    color: Palette.muted,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.caption,
+    marginTop: space(1),
+  },
+  hint: {
+    color: Palette.muted,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.caption,
+    marginTop: space(6),
+  },
+  swipeHint: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
   nextButton: {
     alignItems: 'center',
-    backgroundColor: Palette.yellow,
-    borderRadius: 16,
+    backgroundColor: Palette.ink,
+    borderRadius: Radius.lg,
     flexDirection: 'row',
-    gap: 5,
+    gap: space(1),
     justifyContent: 'center',
-    marginTop: 18,
+    marginTop: space(4),
     minHeight: 50,
-    paddingHorizontal: 24,
+    paddingHorizontal: space(6),
   },
-  nextButtonText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
+  nextButtonText: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
   mic: {
     alignItems: 'center',
     backgroundColor: Palette.ink,
-    borderColor: withAlpha(Palette.yellow, 0.35),
-    borderRadius: 99,
+    borderColor: Palette.ink,
+    borderRadius: Radius.pill,
     borderWidth: 12,
     height: 104,
     justifyContent: 'center',
-    marginTop: 18,
+    marginTop: space(4),
     width: 104,
   },
   pressed: { opacity: 0.75, transform: [{ scale: 0.98 }] },

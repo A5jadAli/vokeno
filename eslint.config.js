@@ -16,19 +16,27 @@ module.exports = defineConfig([
     },
   },
   {
-    // Colours come from src/constants/theme.ts, so a palette change is one edit there.
+    // Colours, sizes, corners and spacing come from src/constants/theme.ts, so a change is one edit there.
     files: ['src/**/*.{ts,tsx}'],
     ignores: ['src/constants/theme.ts'],
     rules: {
       'no-restricted-syntax': [
         'error',
         {
-          selector: 'Literal[value=/#[0-9a-fA-F]{3,8}\\b|rgba?\\(/]',
-          message: 'Use a colour token from @/constants/theme (withAlpha for opacity).',
+          // Whole-string colours only, so lesson text such as "#123" is not flagged.
+          selector:
+            'Literal[value=/^(#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgba?\\(.*\\))$/]',
+          message: 'Use a colour token from @/constants/theme.',
         },
         {
-          selector: 'TemplateElement[value.raw=/#[0-9a-fA-F]{3,8}\\b|rgba?\\(/]',
-          message: 'Use a colour token from @/constants/theme (withAlpha for opacity).',
+          selector: 'TemplateElement[value.raw=/#[0-9a-fA-F]{6}\\b|rgba?\\(/]',
+          message: 'Use a colour token from @/constants/theme.',
+        },
+        {
+          // Sizes, corners and spacing come from FontSize, Radius and space() in the theme.
+          selector:
+            'Property[key.name=/^(fontSize|lineHeight|borderRadius|border(Top|Bottom)(Left|Right)Radius|(padding|margin)(Top|Bottom|Left|Right|Horizontal|Vertical)?|gap|rowGap|columnGap)$/] > Literal[value>0]',
+          message: 'Use FontSize, LineHeight, Radius or space() from @/constants/theme.',
         },
       ],
     },

@@ -2,7 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import { Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { answerInputProps, lessonText } from '@/components/lesson-ui';
-import { Feedback, Palette, VokaFonts } from '@/constants/theme';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { ListeningPrompt } from '@/components/listening-prompt';
 import type { LessonAudio } from '@/features/audio/use-lesson-audio';
 import {
@@ -117,22 +125,27 @@ export function FormPractice({
 }
 
 const styles = StyleSheet.create({
-  stack: { gap: 16 },
-  field: { gap: 8 },
-  context: { backgroundColor: Palette.white, borderRadius: 16, padding: 16 },
-  label: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 16 },
+  stack: { gap: space(4) },
+  field: { gap: space(2) },
+  context: { backgroundColor: Palette.white, borderRadius: Radius.lg, padding: space(4) },
+  label: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.body },
   input: {
     borderColor: Palette.line,
     borderWidth: 2,
-    borderRadius: 14,
+    borderRadius: Radius.md,
     minHeight: 52,
-    padding: 14,
+    padding: space(4),
     backgroundColor: Palette.white,
     color: Palette.ink,
     fontFamily: VokaFonts.body,
-    fontSize: 17,
+    fontSize: FontSize.heading,
   },
-  wrong: { borderColor: Feedback.wrongInk },
-  correct: { borderColor: Feedback.correctInk },
-  hint: { color: Feedback.wrongInk, fontFamily: VokaFonts.body, fontSize: 14, lineHeight: 21 },
+  wrong: { borderColor: Feedback.wrongText },
+  correct: { borderColor: Feedback.correctText },
+  hint: {
+    color: Feedback.wrongText,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
 });

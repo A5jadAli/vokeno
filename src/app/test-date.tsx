@@ -5,7 +5,16 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { TestDatePicker } from '@/components/test-date-picker';
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Dark, Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  Dark,
+  FontSize,
+  LineHeight,
+  OnDark,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { defaultGoalLevel, goalLevels } from '@/features/coaching/goal-plan';
 import { useCoachingStore, testDateFor } from '@/features/coaching/store';
 import { exams, levelLabel } from '@/features/foundations/level-status';
@@ -77,7 +86,7 @@ export default function TestDateScreen() {
                   accessibilityState={{ checked: chosen }}
                   accessibilityLabel={`${languageDetails[track].name} ${levelLabel(track, item)}${exam ? `, ${exam}` : ''}`}
                   onPress={() => setLevel(item)}
-                  style={[styles.level, chosen && { backgroundColor: colors.onDark }]}
+                  style={[styles.level, chosen && { backgroundColor: Palette.cream }]}
                 >
                   <Text style={[styles.levelText, chosen && styles.levelTextChosen]}>{item}</Text>
                   {exam ? (
@@ -122,9 +131,9 @@ export default function TestDateScreen() {
         <Pressable
           accessibilityRole="button"
           onPress={save}
-          style={[styles.saveButton, { backgroundColor: colors.accent }]}
+          style={[styles.saveButton, { backgroundColor: Palette.cream }]}
         >
-          <Text style={[styles.saveText, { color: colors.onAccent }]}>Save goal</Text>
+          <Text style={[styles.saveText, { color: Palette.ink }]}>Save goal</Text>
         </Pressable>
         {savedDate ? (
           <Pressable
@@ -147,78 +156,83 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 18,
+    padding: space(4),
   },
-  headerTitle: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
+  headerTitle: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.heading },
   spacer: { width: 40 },
-  body: { padding: 24, paddingTop: 30 },
+  body: { padding: space(6), paddingTop: space(8) },
   icon: {
     alignItems: 'center',
-    borderRadius: 20,
+    borderRadius: Radius.xl,
     height: 64,
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: space(5),
     width: 64,
   },
   title: {
     color: Palette.cream,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
-    lineHeight: 34,
-    marginTop: 9,
+    fontFamily: VokaFonts.displayExtraBold,
+    fontSize: FontSize.display,
+    lineHeight: LineHeight.display,
+    marginTop: space(2),
   },
   copy: {
-    color: withAlpha(Palette.cream, 0.63),
+    color: OnDark.textSecondary,
     fontFamily: VokaFonts.body,
-    fontSize: 13,
-    lineHeight: 20,
-    marginTop: 11,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    marginTop: space(3),
   },
   dateButton: {
     alignItems: 'center',
     backgroundColor: Dark.raised,
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     flexDirection: 'row',
-    gap: 11,
-    marginTop: 25,
+    gap: space(3),
+    marginTop: space(6),
     minHeight: 60,
-    paddingHorizontal: 16,
+    paddingHorizontal: space(4),
   },
-  dateButtonText: { color: Palette.cream, flex: 1, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
+  dateButtonText: {
+    color: Palette.cream,
+    flex: 1,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+  },
   pickerCard: {
     backgroundColor: Dark.raised,
-    borderRadius: 20,
-    marginTop: 24,
+    borderRadius: Radius.xl,
+    marginTop: space(6),
     overflow: 'hidden',
-    padding: 14,
+    padding: space(4),
   },
   saveButton: {
     alignItems: 'center',
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     justifyContent: 'center',
-    marginTop: 25,
+    marginTop: space(6),
     minHeight: 58,
   },
-  saveText: { fontFamily: VokaFonts.bodyBold, fontSize: 16 },
-  levels: { flexDirection: 'row', gap: 8, marginTop: 22 },
+  saveText: { fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
+  levels: { flexDirection: 'row', gap: space(2), marginTop: space(6) },
   level: {
     alignItems: 'center',
     backgroundColor: Dark.raised,
-    borderRadius: 16,
+    borderRadius: Radius.lg,
     flex: 1,
-    gap: 2,
+    gap: space(0.5),
     minHeight: 60,
     justifyContent: 'center',
-    paddingHorizontal: 6,
+    paddingHorizontal: space(2),
   },
-  levelText: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 17 },
-  levelExam: { color: withAlpha(Palette.cream, 0.6), fontFamily: VokaFonts.body, fontSize: 11 },
+  levelText: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.heading },
+  levelExam: { color: OnDark.textFaint, fontFamily: VokaFonts.body, fontSize: FontSize.caption },
   levelTextChosen: { color: Palette.ink },
   removeText: {
-    color: withAlpha(Palette.cream, 0.72),
+    color: OnDark.textSecondary,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 14,
-    paddingVertical: 18,
+    fontSize: FontSize.label,
+    paddingVertical: space(4),
     textAlign: 'center',
   },
 });

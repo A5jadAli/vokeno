@@ -6,7 +6,16 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { SessionFooter } from '@/components/session-footer';
 import { AnswerChoice } from '@/components/answer-choice';
-import { Feedback, Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  OnDark,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { optionOrder } from '@/features/foundations/catalog';
 import { getScenario, type SubtitleMode } from '@/features/listening/scenarios';
 import { useProgressStore } from '@/features/progress/store';
@@ -96,7 +105,7 @@ export default function ListeningLessonScreen() {
 
       <View style={styles.player}>
         {speech.error ? (
-          <Text accessibilityRole="alert" style={{ color: Palette.cream, padding: 12 }}>
+          <Text accessibilityRole="alert" style={{ color: Palette.cream, padding: space(3) }}>
             {speech.error}
           </Text>
         ) : null}
@@ -111,15 +120,15 @@ export default function ListeningLessonScreen() {
             onPress={() => (speech.busy ? speech.stop() : void replay())}
             style={({ pressed }) => [
               styles.playButton,
-              { backgroundColor: colors.accent },
+              { backgroundColor: Palette.cream },
               pressed && styles.pressed,
             ]}
           >
             {speech.loading ? (
-              <ActivityIndicator color={colors.onAccent} />
+              <ActivityIndicator color={Palette.ink} />
             ) : (
               <MaterialCommunityIcons
-                color={colors.onAccent}
+                color={Palette.ink}
                 name={isPlaying ? 'stop' : 'play'}
                 size={31}
               />
@@ -144,14 +153,14 @@ export default function ListeningLessonScreen() {
               setIsSlow(!isSlow);
               if (speech.busy) void replay(!isSlow);
             }}
-            style={[styles.control, isSlow && { backgroundColor: colors.accent }]}
+            style={[styles.control, isSlow && { backgroundColor: Palette.cream }]}
           >
             <MaterialCommunityIcons
               color={isSlow ? Palette.ink : Palette.cream}
               name="speedometer-slow"
               size={17}
             />
-            <Text style={[styles.controlText, isSlow && { color: colors.onAccent }]}>Slow</Text>
+            <Text style={[styles.controlText, isSlow && { color: Palette.ink }]}>Slow</Text>
           </Pressable>
           <Pressable
             accessibilityRole="button"
@@ -248,12 +257,12 @@ export default function ListeningLessonScreen() {
               onPress={checkAnswer}
               style={({ pressed }) => [
                 styles.checkButton,
-                { backgroundColor: colors.accent },
+                { backgroundColor: Palette.cream },
                 selectedAnswer === undefined && styles.disabled,
                 pressed && styles.pressed,
               ]}
             >
-              <Text style={[styles.checkText, { color: colors.onAccent }]}>Check answer</Text>
+              <Text style={[styles.checkText, { color: Palette.ink }]}>Check answer</Text>
             </Pressable>
           )}
         </View>
@@ -280,107 +289,136 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
-    paddingHorizontal: 18,
-    paddingVertical: 12,
+    gap: space(3),
+    paddingHorizontal: space(4),
+    paddingVertical: space(3),
   },
   headerTitle: { flex: 1 },
   headerSpacer: { width: 40 },
-  title: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 18, marginTop: 3 },
-  player: { paddingHorizontal: 18, paddingTop: 12 },
-  playerTop: { alignItems: 'center', flexDirection: 'row', gap: 18 },
+  title: {
+    color: Palette.cream,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.heading,
+    marginTop: space(1),
+  },
+  player: { paddingHorizontal: space(4), paddingTop: space(3) },
+  playerTop: { alignItems: 'center', flexDirection: 'row', gap: space(4) },
   audioStatus: {
     color: Palette.cream,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 10,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(2),
   },
   playButton: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
-    borderRadius: 99,
+    backgroundColor: Palette.cream,
+    borderRadius: Radius.pill,
     height: 66,
     justifyContent: 'center',
     width: 66,
   },
-  waveform: { alignItems: 'center', flex: 1, flexDirection: 'row', gap: 4, height: 58 },
-  waveBar: { backgroundColor: withAlpha(Palette.cream, 0.2), borderRadius: 99, flex: 1 },
+  waveform: { alignItems: 'center', flex: 1, flexDirection: 'row', gap: space(1), height: 58 },
+  waveBar: { backgroundColor: OnDark.fillStrong, borderRadius: Radius.pill, flex: 1 },
   waveBarActive: { backgroundColor: Palette.cream },
-  controls: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 20 },
+  controls: { flexDirection: 'row', flexWrap: 'wrap', gap: space(2), marginTop: space(5) },
   control: {
     minHeight: 44,
     alignItems: 'center',
-    backgroundColor: withAlpha(Palette.cream, 0.1),
-    borderRadius: 99,
+    backgroundColor: OnDark.fillStrong,
+    borderRadius: Radius.pill,
     flexDirection: 'row',
-    gap: 6,
-    paddingHorizontal: 13,
-    paddingVertical: 9,
+    gap: space(2),
+    paddingHorizontal: space(3),
+    paddingVertical: space(2),
   },
-  controlText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  subtitleArea: { justifyContent: 'center', minHeight: 150, paddingVertical: 22 },
-  speaker: {
-    color: Palette.orange,
+  controlText: {
+    color: Palette.cream,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
+    fontSize: FontSize.label,
+  },
+  subtitleArea: { justifyContent: 'center', minHeight: 150, paddingVertical: space(6) },
+  speaker: {
+    color: Palette.cream,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.caption,
   },
   subtitle: {
     color: Palette.cream,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
-    lineHeight: 35,
-    marginTop: 8,
+    fontSize: FontSize.display,
+    lineHeight: LineHeight.display,
+    marginTop: space(2),
   },
   subtitleOff: {
-    color: withAlpha(Palette.cream, 0.48),
+    color: OnDark.textFaint,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 15,
+    fontSize: FontSize.body,
     textAlign: 'center',
   },
   lightPanel: {
     backgroundColor: Palette.cream,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    padding: 22,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
+    padding: space(6),
   },
-  phraseList: { gap: 18, marginTop: 16 },
-  phraseRow: { alignItems: 'flex-start', gap: 6 },
+  phraseList: { gap: space(4), marginTop: space(4) },
+  phraseRow: { alignItems: 'flex-start', gap: space(2) },
   heardPill: {
-    backgroundColor: Palette.orange,
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
+    backgroundColor: Palette.cream,
+    borderRadius: Radius.lg,
+    paddingHorizontal: space(3),
+    paddingVertical: space(2),
   },
-  heardText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15, lineHeight: 21 },
-  phraseCopy: { alignSelf: 'stretch', gap: 2 },
+  heardText: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
+  phraseCopy: { alignSelf: 'stretch', gap: space(0.5) },
   fullPhrase: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
   },
-  meaning: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, lineHeight: 20 },
-  questionBlock: { borderTopColor: Palette.line, borderTopWidth: 1, marginTop: 24, paddingTop: 22 },
+  meaning: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
+  questionBlock: {
+    borderTopColor: Palette.line,
+    borderTopWidth: 1,
+    marginTop: space(6),
+    paddingTop: space(6),
+  },
   question: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 22,
-    lineHeight: 27,
-    marginTop: 8,
+    fontSize: FontSize.title,
+    lineHeight: LineHeight.title,
+    marginTop: space(2),
   },
-  answers: { gap: 8, marginTop: 15 },
-  feedback: { fontFamily: VokaFonts.bodySemiBold, fontSize: 12, lineHeight: 18, marginTop: 12 },
-  feedbackCorrect: { color: Feedback.correctTextLightAlt },
-  feedbackWrong: { color: Feedback.wrongTextBright },
+  answers: { gap: space(2), marginTop: space(4) },
+  feedback: {
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(3),
+  },
+  feedbackCorrect: { color: Feedback.correctText },
+  feedbackWrong: { color: Feedback.wrongText },
   checkButton: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
-    borderRadius: 18,
-    marginTop: 14,
-    padding: 17,
+    backgroundColor: Palette.cream,
+    borderRadius: Radius.lg,
+    marginTop: space(4),
+    padding: space(4),
   },
-  checkText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
+  checkText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
   disabled: { opacity: 0.35 },
   pressed: { opacity: 0.72 },
 });

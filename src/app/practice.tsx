@@ -6,7 +6,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { TabHeader } from '@/components/tab-header';
 import { AppScreen } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import { testDateFor, useCoachingStore } from '@/features/coaching/store';
 import { examMockUnitIds, getCurriculumUnits } from '@/features/curriculum/catalog';
 import { getTrackLessons } from '@/features/foundations/catalog';
@@ -304,42 +304,56 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 22,
+    borderRadius: Radius.xl,
     borderWidth: 1,
     flexDirection: 'row',
-    gap: 14,
-    marginHorizontal: 18,
-    marginTop: 8,
-    padding: 16,
+    gap: space(4),
+    marginHorizontal: space(4),
+    marginTop: space(2),
+    padding: space(4),
   },
   reviewIcon: {
     alignItems: 'center',
-    borderRadius: 16,
+    borderRadius: Radius.lg,
     height: 52,
     justifyContent: 'center',
     width: 52,
   },
-  reviewTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18, lineHeight: 24 },
-  copy: { flex: 1, gap: 2 },
-  eyebrow: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
-  meta: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, lineHeight: 20 },
-  section: { gap: 10, marginHorizontal: 18, marginTop: 24 },
-  sectionTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
-  group: { backgroundColor: Palette.white, borderRadius: 20, overflow: 'hidden' },
+  reviewTitle: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.heading,
+    lineHeight: LineHeight.heading,
+  },
+  copy: { flex: 1, gap: space(0.5) },
+  eyebrow: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.caption,
+  },
+  meta: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
+  section: { gap: space(2), marginHorizontal: space(4), marginTop: space(6) },
+  sectionTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.heading },
+  group: { backgroundColor: Palette.white, borderRadius: Radius.xl, overflow: 'hidden' },
   row: {
     alignItems: 'center',
     borderBottomColor: Palette.line,
     borderBottomWidth: 1,
     flexDirection: 'row',
-    gap: 12,
+    gap: space(3),
     minHeight: 64,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingHorizontal: space(4),
+    paddingVertical: space(3),
   },
   rowIcon: {
     alignItems: 'center',
     backgroundColor: Palette.soft,
-    borderRadius: 12,
+    borderRadius: Radius.md,
     height: 40,
     justifyContent: 'center',
     width: 40,
@@ -347,16 +361,16 @@ const styles = StyleSheet.create({
   rowTitle: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 16,
-    lineHeight: 22,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
   },
   more: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 6,
+    gap: space(2),
     justifyContent: 'center',
     minHeight: 52,
   },
-  moreText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
+  moreText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.body },
   pressed: { opacity: 0.7 },
 });

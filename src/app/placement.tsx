@@ -17,7 +17,15 @@ import {
   PrimaryAccent,
 } from '@/components/lesson-ui';
 import { AppScreen } from '@/components/voka-ui';
-import { Feedback, Palette, VokaFonts } from '@/constants/theme';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { optionOrder } from '@/features/foundations/catalog';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { useLessonAudio } from '@/features/audio/use-lesson-audio';
@@ -159,7 +167,7 @@ function PlacementCheck({
               or an exam score.
             </Text>
           </View>
-          <InfoCard icon="compass-outline" title={result.recommendation.title} tone="yellow">
+          <InfoCard icon="compass-outline" title={result.recommendation.title} tone="tint">
             {result.recommendation.why}
           </InfoCard>
           {missed.length ? (
@@ -235,7 +243,7 @@ function PlacementCheck({
             />
           </View>
         ) : null}
-        <View style={{ gap: 10 }}>
+        <View style={{ gap: space(2) }}>
           {optionOrder(item.id, item.options.length).map((choice) => (
             <AnswerChoice
               key={item.options[choice]}
@@ -256,25 +264,39 @@ function PlacementCheck({
 }
 
 const styles = StyleSheet.create({
-  body: { gap: 16, paddingBottom: 32, paddingHorizontal: 20, paddingTop: 8 },
-  center: { alignItems: 'center', gap: 12, paddingTop: 12 },
+  body: {
+    gap: space(4),
+    paddingBottom: space(8),
+    paddingHorizontal: space(5),
+    paddingTop: space(2),
+  },
+  center: { alignItems: 'center', gap: space(3), paddingTop: space(3) },
   badge: {
     alignItems: 'center',
-    backgroundColor: Palette.yellow,
-    borderRadius: 99,
+    backgroundColor: Palette.canvas,
+    borderRadius: Radius.pill,
     height: 96,
     justifyContent: 'center',
     width: 96,
   },
-  badgeText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 28 },
-  listen: { alignItems: 'center', flexDirection: 'row', gap: 16 },
-  missed: { backgroundColor: Palette.white, borderRadius: 18, gap: 8, padding: 16 },
+  badgeText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.display },
+  listen: { alignItems: 'center', flexDirection: 'row', gap: space(4) },
+  missed: {
+    backgroundColor: Palette.white,
+    borderRadius: Radius.lg,
+    gap: space(2),
+    padding: space(4),
+  },
   missedPrompt: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 16,
-    lineHeight: 23,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
   },
-  missedAnswer: { alignItems: 'center', flexDirection: 'row', gap: 6 },
-  missedAnswerText: { color: Feedback.correctText, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
+  missedAnswer: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
+  missedAnswerText: {
+    color: Feedback.correctText,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+  },
 });

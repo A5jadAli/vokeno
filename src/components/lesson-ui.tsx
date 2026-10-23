@@ -7,7 +7,17 @@ import Animated, { FadeIn, SlideInDown, ZoomIn } from 'react-native-reanimated';
 import { useAccentColors } from '@/components/accent-context';
 import { AudioIconButton } from '@/components/lesson-audio-button';
 import { ProgressFill, Tactile } from '@/components/motion';
-import { Feedback, Palette, Selection, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  OnDark,
+  Palette,
+  Radius,
+  Selection,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import type { LessonAudio } from '@/features/audio/use-lesson-audio';
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
@@ -28,19 +38,23 @@ export const answerInputProps: TextInputProps = {
 const feedbackLooks = {
   correct: {
     bg: Feedback.correctBg,
-    accent: Feedback.correctAccent,
-    ink: Feedback.correctInk,
+    accent: Feedback.correctFill,
+    onAccent: Palette.white,
+    ink: Feedback.correctText,
     icon: 'check-bold',
   },
   wrong: {
     bg: Feedback.wrongBg,
-    accent: Feedback.wrongAccent,
-    ink: Feedback.wrongInk,
+    accent: Feedback.wrongFill,
+    onAccent: Palette.white,
+    ink: Feedback.wrongText,
     icon: 'close-thick',
   },
   close: {
     bg: Feedback.closeBg,
     accent: Feedback.closeAccent,
+    // White on this amber is 2.24:1; ink reads at 8:1.
+    onAccent: Palette.ink,
     ink: Feedback.closeInk,
     icon: 'lightbulb-on',
   },
@@ -67,11 +81,7 @@ export function LessonTopBar({ progress, label }: { progress: number; label?: st
         accessibilityValue={{ min: 0, max: 100, now: Math.round(value * 100) }}
         style={styles.track}
       >
-        <ProgressFill
-          value={value}
-          color={accent?.accent ?? Palette.yellow}
-          track={withAlpha(Palette.ink, 0.1)}
-        />
+        <ProgressFill value={value} color={accent?.deep ?? Palette.ink} track={Palette.soft} />
       </View>
       {label ? <Text style={styles.topLabel}>{label}</Text> : null}
     </View>
@@ -84,7 +94,7 @@ export function PrimaryButton({
   title,
   onPress,
   disabled = false,
-  tone = 'yellow',
+  tone = 'primary',
   icon,
   accessibilityLabel,
   accessibilityRole,
@@ -93,22 +103,16 @@ export function PrimaryButton({
   title: string;
   onPress: () => void;
   disabled?: boolean;
-  tone?: 'yellow' | 'green' | 'red' | 'ink';
+  /** Every action is ink. `secondary` is the quieter of two side-by-side choices. */
+  tone?: 'primary' | 'secondary';
   icon?: IconName;
   accessibilityLabel?: string;
   accessibilityRole?: 'button' | 'link';
   busy?: boolean;
 }) {
-  const accent = useAccentColors();
   const look = {
-    yellow: {
-      face: accent?.accent ?? Palette.yellow,
-      lip: Selection.lip,
-      ink: accent?.onAccent ?? Palette.ink,
-    },
-    green: { face: Feedback.correctAccent, lip: Feedback.correctLip, ink: Palette.white },
-    red: { face: Feedback.wrongAccent, lip: Feedback.wrongLip, ink: Palette.white },
-    ink: { face: Palette.ink, lip: Palette.black, ink: Palette.cream },
+    primary: { face: Palette.ink, ink: Palette.cream, border: undefined },
+    secondary: { face: Palette.white, ink: Palette.ink, border: Palette.border },
   }[tone];
   const face = disabled ? Palette.disabled : look.face;
   const ink = disabled ? Palette.muted : look.ink;
@@ -120,9 +124,9 @@ export function PrimaryButton({
       disabled={disabled}
       onPress={onPress}
       face={face}
-      lip={look.lip}
-      radius={16}
-      depth={4}
+      borderColor={look.border}
+      borderWidth={look.border ? 1.5 : 0}
+      radius={Radius.lg}
     >
       <View style={styles.primary}>
         <Text
@@ -204,7 +208,7 @@ export function ActionBar({
             entering={ZoomIn.delay(90).springify().damping(11)}
             style={[styles.feedbackBadge, { backgroundColor: look.accent }]}
           >
-            <MaterialCommunityIcons name={look.icon} size={22} color={Palette.white} />
+            <MaterialCommunityIcons name={look.icon} size={22} color={look.onAccent} />
           </Animated.View>
           <Text accessibilityRole="header" style={[styles.feedbackTitle, { color: look.ink }]}>
             {feedback.title}
@@ -230,7 +234,7 @@ export function ActionRow({
   title,
   subtitle,
   onPress,
-  accent = Palette.yellow,
+  accent = Palette.soft,
   selected = false,
   trailing,
   choice = false,
@@ -255,7 +259,7 @@ export function ActionRow({
       onPress={onPress}
       style={({ pressed }) => [
         styles.row,
-        selected && { borderColor: accent, backgroundColor: Selection.faceSoft },
+        selected && { borderColor: Selection.border, backgroundColor: Selection.face },
         pressed && styles.softPressed,
       ]}
     >
@@ -264,7 +268,7 @@ export function ActionRow({
           <MaterialCommunityIcons name={icon} size={22} color={Palette.ink} />
         </View>
       ) : null}
-      <View style={{ flex: 1, gap: 2 }}>
+      <View style={{ flex: 1, gap: space(0.5) }}>
         <Text style={styles.rowTitle}>{title}</Text>
         {subtitle ? <Text style={styles.rowSubtitle}>{subtitle}</Text> : null}
       </View>
@@ -283,14 +287,14 @@ export function InfoCard({
   title,
   children,
   tone = 'white',
-}: PropsWithChildren<{ icon: IconName; title: string; tone?: 'white' | 'yellow' | 'ink' }>) {
+}: PropsWithChildren<{ icon: IconName; title: string; tone?: 'white' | 'tint' | 'ink' }>) {
   const dark = tone === 'ink';
   const accent = useAccentColors();
   return (
     <View
       style={[
         styles.info,
-        tone === 'yellow' && { backgroundColor: accent?.tint ?? Selection.face },
+        tone === 'tint' && { backgroundColor: accent?.tint ?? Palette.canvas },
         dark && { backgroundColor: Palette.ink },
       ]}
     >
@@ -298,14 +302,12 @@ export function InfoCard({
         <MaterialCommunityIcons
           name={icon}
           size={20}
-          color={dark ? (accent?.onDark ?? Palette.yellow) : Palette.ink}
+          color={dark ? (accent?.onDark ?? Palette.cream) : Palette.ink}
         />
         <Text style={[styles.infoTitle, dark && { color: Palette.cream }]}>{title}</Text>
       </View>
       {typeof children === 'string' ? (
-        <Text style={[styles.infoText, dark && { color: withAlpha(Palette.cream, 0.8) }]}>
-          {children}
-        </Text>
+        <Text style={[styles.infoText, dark && { color: OnDark.textSecondary }]}>{children}</Text>
       ) : (
         children
       )}
@@ -350,131 +352,197 @@ export function SectionLabel({ children }: { children: string }) {
 export const lessonText = StyleSheet.create({
   title: {
     color: Palette.ink,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
-    lineHeight: 34,
+    fontFamily: VokaFonts.displayExtraBold,
+    fontSize: FontSize.display,
+    lineHeight: LineHeight.display,
   },
-  lead: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 16, lineHeight: 24 },
-  prompt: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22, lineHeight: 29 },
-  meta: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 13, lineHeight: 18 },
-  small: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 19 },
+  lead: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
+  prompt: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.title,
+    lineHeight: LineHeight.title,
+  },
+  meta: {
+    color: Palette.muted,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
+  small: {
+    color: Palette.muted,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
 });
 
 const styles = StyleSheet.create({
   topBar: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    gap: space(3),
+    paddingHorizontal: space(4),
+    paddingVertical: space(2),
   },
   close: { alignItems: 'center', height: 44, justifyContent: 'center', width: 36 },
   track: { flex: 1, flexDirection: 'row' },
-  topLabel: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
+  topLabel: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.caption,
+  },
   primary: {
     alignItems: 'center',
-    borderRadius: 16,
+    borderRadius: Radius.lg,
     flexDirection: 'row',
-    gap: 8,
+    gap: space(2),
     justifyContent: 'center',
     minHeight: 56,
-    paddingHorizontal: 20,
+    paddingHorizontal: space(5),
   },
-  primaryText: { fontFamily: VokaFonts.bodyBold, fontSize: 16 },
+  primaryText: { fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
   // A plain text action, like secondary actions in WhatsApp or Instagram: no fill, so it never
   // looks like an answer option or a second primary button.
   textButton: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 6,
+    gap: space(2),
     justifyContent: 'center',
-    borderRadius: 12,
+    borderRadius: Radius.md,
     minHeight: 44,
-    paddingHorizontal: 12,
+    paddingHorizontal: space(3),
   },
-  textButtonLabel: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
-  softPressed: { backgroundColor: withAlpha(Palette.ink, 0.12) },
+  textButtonLabel: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.body,
+  },
+  softPressed: { backgroundColor: Palette.pressed },
   actionBar: {
     backgroundColor: Palette.cream,
-    gap: 12,
-    paddingBottom: 14,
-    paddingHorizontal: 18,
-    paddingTop: 14,
+    gap: space(3),
+    paddingBottom: space(4),
+    paddingHorizontal: space(4),
+    paddingTop: space(4),
   },
   actionBorder: { borderTopColor: Palette.line, borderTopWidth: 1 },
   sheet: {
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    boxShadow: `0 -6px 24px ${withAlpha(Palette.ink, 0.1)}`,
-    gap: 16,
-    paddingTop: 20,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
+    boxShadow: `0 -6px 24px ${Palette.shadow}`,
+    gap: space(4),
+    paddingTop: space(5),
   },
-  feedbackCopy: { gap: 8 },
-  feedbackHeading: { alignItems: 'center', flexDirection: 'row', gap: 12 },
+  feedbackCopy: { gap: space(2) },
+  feedbackHeading: { alignItems: 'center', flexDirection: 'row', gap: space(3) },
   feedbackBadge: {
     alignItems: 'center',
-    borderRadius: 20,
+    borderRadius: Radius.xl,
     height: 40,
     justifyContent: 'center',
     width: 40,
   },
-  feedbackTitle: { flex: 1, fontFamily: VokaFonts.bodyBold, fontSize: 22, letterSpacing: -0.3 },
-  feedbackMessage: { fontFamily: VokaFonts.bodyMedium, fontSize: 15, lineHeight: 22 },
-  info: { backgroundColor: Palette.white, borderRadius: 20, gap: 8, padding: 16 },
-  infoHeading: { alignItems: 'center', flexDirection: 'row', gap: 8 },
-  infoTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
-  infoText: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 15, lineHeight: 22 },
+  feedbackTitle: {
+    flex: 1,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.title,
+    letterSpacing: -0.3,
+  },
+  feedbackMessage: {
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
+  info: {
+    backgroundColor: Palette.white,
+    borderRadius: Radius.xl,
+    gap: space(2),
+    padding: space(4),
+  },
+  infoHeading: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
+  infoTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
+  infoText: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
   phrase: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 20,
+    borderRadius: Radius.xl,
     borderWidth: 1,
-    gap: 8,
-    padding: 16,
+    gap: space(2),
+    padding: space(4),
   },
-  phraseRow: { alignItems: 'flex-start', flexDirection: 'row', gap: 12 },
-  phraseCopy: { flex: 1, gap: 4 },
+  phraseRow: { alignItems: 'flex-start', flexDirection: 'row', gap: space(3) },
+  phraseCopy: { flex: 1, gap: space(1) },
   phraseTarget: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 18,
-    lineHeight: 25,
+    fontSize: FontSize.heading,
+    lineHeight: LineHeight.heading,
   },
   phraseMeaning: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 15,
-    lineHeight: 21,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
   },
-  phraseAudio: { flexDirection: 'row', gap: 8 },
-  phraseUse: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 19 },
-  section: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16, marginTop: 8 },
+  phraseAudio: { flexDirection: 'row', gap: space(2) },
+  phraseUse: {
+    color: Palette.muted,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
+  section: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+    marginTop: space(2),
+  },
   row: {
     alignItems: 'center',
     backgroundColor: Palette.white,
     borderColor: 'transparent',
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     borderWidth: 2,
     flexDirection: 'row',
-    gap: 12,
+    gap: space(3),
     minHeight: 64,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingHorizontal: space(4),
+    paddingVertical: space(3),
   },
   rowIcon: {
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: Radius.md,
     height: 40,
     justifyContent: 'center',
     width: 40,
   },
-  rowTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16, lineHeight: 22 },
+  rowTitle: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
   rowSubtitle: {
     color: Palette.secondary,
     fontFamily: VokaFonts.body,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
   },
-  rowTrailing: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
+  rowTrailing: {
+    color: Palette.muted,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
+  },
   pressed: { opacity: 0.75 },
 });

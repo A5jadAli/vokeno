@@ -1,12 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
-import {
-  languageDetails,
-  languageTracks,
-  trackColors,
-  type LanguageTrack,
-} from '@/features/language/config';
+import { FontSize, OnDark, Palette, Radius, Selection, space, VokaFonts } from '@/constants/theme';
+import { languageDetails, languageTracks, type LanguageTrack } from '@/features/language/config';
 
 /**
  * The one language picker used across the app: a row of chips, like the filter chips in
@@ -43,7 +38,6 @@ export function LanguageSwitch({
     >
       {languageTracks.map((item) => {
         const selected = item === track;
-        const colors = trackColors[item];
         return (
           <Pressable
             key={item}
@@ -62,7 +56,10 @@ export function LanguageSwitch({
             style={({ pressed }) => [
               styles.chip,
               dark ? styles.chipDark : styles.chipLight,
-              selected && { backgroundColor: colors.accent, borderColor: colors.accent },
+              selected &&
+                (dark
+                  ? { backgroundColor: Palette.cream, borderColor: Palette.cream }
+                  : { backgroundColor: Selection.border, borderColor: Selection.border }),
               pressed && !selected && styles.pressed,
               disabled && !selected && styles.disabled,
             ]}
@@ -71,7 +68,7 @@ export function LanguageSwitch({
               style={[
                 styles.label,
                 { color: dark ? Palette.cream : Palette.ink },
-                selected && { color: colors.onAccent },
+                selected && { color: dark ? Palette.ink : Palette.cream },
               ]}
             >
               {show === 'code' ? item : languageDetails[item].nativeName}
@@ -84,21 +81,21 @@ export function LanguageSwitch({
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  row: { flexDirection: 'row', flexWrap: 'wrap', gap: space(2) },
   chip: {
     alignItems: 'center',
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     borderWidth: 1,
     justifyContent: 'center',
     minHeight: 36,
-    paddingHorizontal: 14,
+    paddingHorizontal: space(4),
   },
   chipLight: { backgroundColor: Palette.white, borderColor: Palette.line },
   chipDark: {
-    backgroundColor: withAlpha(Palette.white, 0.06),
-    borderColor: withAlpha(Palette.white, 0.14),
+    backgroundColor: OnDark.fill,
+    borderColor: OnDark.line,
   },
-  label: { fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
+  label: { fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.label },
   pressed: { opacity: 0.7 },
   disabled: { opacity: 0.45 },
 });

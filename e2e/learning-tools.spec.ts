@@ -118,7 +118,7 @@ test('AI writing feedback shows criteria, corrections and an improved version', 
 
 test('starting ability and exam goal change the recommended practice', async ({ page }) => {
   await page.goto('/learning-plan');
-  await page.getByRole('tab', { name: 'English', exact: true }).click();
+  await page.getByRole('radio', { name: 'English', exact: true }).click();
   await page.getByRole('radio', { name: 'I know some words and short phrases' }).click();
   await page.getByRole('radio', { name: 'IELTS General Training', exact: true }).click();
   await page.reload();

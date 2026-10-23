@@ -4,7 +4,16 @@ import { useEffect, useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Brand, Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  Brand,
+  FontSize,
+  LineHeight,
+  OnDark,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { downloadAvailableUpdate, restartWithDownloadedUpdate } from '@/features/updates/ota';
 
 const UPDATE_SNOOZE_KEY = '@voka/update-snoozed-until';
@@ -79,12 +88,12 @@ const styles = StyleSheet.create({
   },
   banner: {
     backgroundColor: Palette.ink,
-    borderRadius: 22,
+    borderRadius: Radius.xl,
     elevation: 7,
     flexDirection: 'row',
-    gap: 13,
-    padding: 16,
-    shadowColor: Palette.black,
+    gap: space(3),
+    padding: space(4),
+    shadowColor: Palette.ink,
     shadowOffset: { height: 5, width: 0 },
     shadowOpacity: 0.22,
     shadowRadius: 12,
@@ -92,27 +101,27 @@ const styles = StyleSheet.create({
   icon: {
     alignItems: 'center',
     backgroundColor: Brand.onDark,
-    borderRadius: 13,
+    borderRadius: Radius.md,
     height: 42,
     justifyContent: 'center',
     width: 42,
   },
   copy: { flex: 1 },
-  title: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
+  title: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.label },
   notes: {
-    color: withAlpha(Palette.cream, 0.64),
+    color: OnDark.textSecondary,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 17,
-    marginTop: 3,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(1),
   },
-  actions: { alignItems: 'center', flexDirection: 'row', gap: 18, marginTop: 12 },
-  later: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
+  actions: { alignItems: 'center', flexDirection: 'row', gap: space(4), marginTop: space(3) },
+  later: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.caption },
   updateButton: {
     backgroundColor: Brand.onDark,
-    borderRadius: 99,
-    paddingHorizontal: 18,
-    paddingVertical: 8,
+    borderRadius: Radius.pill,
+    paddingHorizontal: space(4),
+    paddingVertical: space(2),
   },
-  updateText: { color: Brand.onDarkInk, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
+  updateText: { color: Brand.onDarkInk, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.label },
 });

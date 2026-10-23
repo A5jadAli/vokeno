@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { AudioIconButton } from '@/components/lesson-audio-button';
-import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import { FontSize, LineHeight, OnDark, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import type { CallReview } from '@/features/conversation/backend';
 import type { LessonAudio } from '@/features/audio/use-lesson-audio';
 import type { UnitCallPhrase } from '../../supabase/functions/_shared/unit-calls';
@@ -52,7 +52,7 @@ export function CallReviewCard({
             <MaterialCommunityIcons
               name={item.used ? 'check' : 'circle-outline'}
               size={14}
-              color={item.used ? accent : withAlpha(Palette.cream, 0.5)}
+              color={item.used ? accent : OnDark.textFaint}
             />
             <Text style={styles.chipText}>{item.say}</Text>
           </View>
@@ -128,51 +128,56 @@ export function CallReviewCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: withAlpha(Palette.cream, 0.06),
-    borderColor: withAlpha(Palette.cream, 0.14),
-    borderRadius: 20,
+    backgroundColor: OnDark.fill,
+    borderColor: OnDark.line,
+    borderRadius: Radius.xl,
     borderWidth: 1,
-    gap: 10,
-    padding: 16,
+    gap: space(2),
+    padding: space(4),
   },
-  title: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
+  title: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.heading },
   label: {
-    color: withAlpha(Palette.cream, 0.6),
+    color: OnDark.textFaint,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
+    fontSize: FontSize.caption,
     letterSpacing: 0.6,
-    marginTop: 6,
+    marginTop: space(2),
     textTransform: 'uppercase',
   },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space(2) },
   chip: {
     alignItems: 'center',
-    borderColor: withAlpha(Palette.cream, 0.2),
-    borderRadius: 99,
+    borderColor: OnDark.border,
+    borderRadius: Radius.pill,
     borderWidth: 1,
     flexDirection: 'row',
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    gap: space(2),
+    paddingHorizontal: space(2),
+    paddingVertical: space(2),
   },
-  chipText: { color: Palette.cream, fontFamily: VokaFonts.bodyMedium, fontSize: 13 },
+  chipText: { color: Palette.cream, fontFamily: VokaFonts.bodyMedium, fontSize: FontSize.label },
   note: {
-    color: withAlpha(Palette.cream, 0.7),
+    color: OnDark.textSecondary,
     fontFamily: VokaFonts.body,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
   },
-  body: { color: Palette.cream, fontFamily: VokaFonts.body, fontSize: 15, lineHeight: 22 },
-  correction: { gap: 4, paddingVertical: 4 },
-  said: {
-    color: withAlpha(Palette.cream, 0.55),
+  body: {
+    color: Palette.cream,
     fontFamily: VokaFonts.body,
-    fontSize: 15,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
+  correction: { gap: space(1), paddingVertical: space(1) },
+  said: {
+    color: OnDark.textFaint,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.body,
     textDecorationLine: 'line-through',
   },
-  betterRow: { alignItems: 'center', flexDirection: 'row', gap: 10 },
-  better: { flex: 1, fontFamily: VokaFonts.bodyBold, fontSize: 17 },
-  why: { color: withAlpha(Palette.cream, 0.7), fontFamily: VokaFonts.body, fontSize: 13 },
-  link: { alignItems: 'center', flexDirection: 'row', gap: 6, minHeight: 44 },
-  linkText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
+  betterRow: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
+  better: { flex: 1, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.heading },
+  why: { color: OnDark.textSecondary, fontFamily: VokaFonts.body, fontSize: FontSize.label },
+  link: { alignItems: 'center', flexDirection: 'row', gap: space(2), minHeight: 44 },
+  linkText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.label },
 });

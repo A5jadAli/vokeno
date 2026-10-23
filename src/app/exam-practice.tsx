@@ -4,6 +4,7 @@ import { Linking, StyleSheet, Text, View } from 'react-native';
 import { ActionRow, InfoCard, lessonText, SectionLabel } from '@/components/lesson-ui';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
 import { useCoachingStore } from '@/features/coaching/store';
+import { space } from '@/constants/theme';
 
 export default function ExamPracticeScreen() {
   const router = useRouter();
@@ -95,7 +96,12 @@ export default function ExamPracticeScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: { paddingHorizontal: 16, paddingTop: 8 },
-  body: { gap: 14, paddingBottom: 40, paddingHorizontal: 20, paddingTop: 8 },
-  group: { gap: 8 },
+  header: { paddingHorizontal: space(4), paddingTop: space(2) },
+  body: {
+    gap: space(4),
+    paddingBottom: space(10),
+    paddingHorizontal: space(5),
+    paddingTop: space(2),
+  },
+  group: { gap: space(2) },
 });

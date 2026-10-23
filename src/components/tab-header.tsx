@@ -6,7 +6,15 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { BottomSheet } from '@/components/bottom-sheet';
 
-import { Palette, VokaFonts } from '@/constants/theme';
+import {
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  Selection,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { useAuthSession } from '@/features/auth/use-auth-session';
 import { useCoachingStore } from '@/features/coaching/store';
 import { coursePosition } from '@/features/journey/course';
@@ -148,7 +156,7 @@ export function LanguagePicker({
                       }}
                       style={({ pressed }) => [
                         styles.row,
-                        selected && { borderColor: trackColors[item].accent },
+                        selected && { borderColor: Selection.border },
                         pressed && styles.pressed,
                       ]}
                     >
@@ -185,66 +193,91 @@ export function LanguagePicker({
 }
 
 const styles = StyleSheet.create({
-  header: { gap: 10, paddingBottom: 6, paddingHorizontal: 20, paddingTop: 8 },
+  header: {
+    gap: space(2),
+    paddingBottom: space(2),
+    paddingHorizontal: space(5),
+    paddingTop: space(2),
+  },
   headerRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
-  headerEnd: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  headerEnd: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
   eyebrow: {
     color: Palette.secondary,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 14,
-    marginBottom: 2,
+    fontSize: FontSize.label,
+    marginBottom: space(0.5),
   },
-  title: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 30, lineHeight: 36 },
+  title: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.displayExtraBold,
+    fontSize: FontSize.display,
+    lineHeight: LineHeight.display,
+  },
   picker: {
     alignItems: 'center',
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     borderWidth: 1,
     flexDirection: 'row',
-    gap: 6,
+    gap: space(2),
     minHeight: 44,
-    paddingLeft: 12,
-    paddingRight: 8,
+    paddingLeft: space(3),
+    paddingRight: space(2),
   },
-  dot: { borderRadius: 99, height: 10, width: 10 },
-  pickerText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
+  dot: { borderRadius: Radius.pill, height: 10, width: 10 },
+  pickerText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.label },
   account: {
     alignItems: 'center',
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     borderWidth: 1,
     height: 44,
     justifyContent: 'center',
     width: 44,
   },
-  initials: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
+  initials: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.label },
   pressed: { opacity: 0.7 },
-  sheetTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22, marginTop: 4 },
-  list: { gap: 8 },
+  sheetTitle: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.title,
+    marginTop: space(1),
+  },
+  list: { gap: space(2) },
   row: {
     alignItems: 'center',
     backgroundColor: Palette.white,
     borderColor: 'transparent',
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     borderWidth: 2,
     flexDirection: 'row',
-    gap: 12,
+    gap: space(3),
     minHeight: 72,
-    padding: 12,
+    padding: space(3),
   },
   badge: {
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: Radius.md,
     height: 40,
     justifyContent: 'center',
     width: 40,
   },
-  badgeText: { fontFamily: VokaFonts.bodyBold, fontSize: 13 },
-  rowCopy: { flex: 1, gap: 2 },
-  rowTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
+  badgeText: { fontFamily: VokaFonts.bodyBold, fontSize: FontSize.label },
+  rowCopy: { flex: 1, gap: space(0.5) },
+  rowTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
   native: { color: Palette.secondary, fontFamily: VokaFonts.bodyMedium },
-  rowMeta: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, lineHeight: 20 },
-  footnote: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 19 },
+  rowMeta: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
+  footnote: {
+    color: Palette.muted,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
 });

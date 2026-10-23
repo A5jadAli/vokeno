@@ -4,7 +4,15 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { LanguageSwitch } from '@/components/language-switch';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
-import { Feedback, Palette, VokaFonts } from '@/constants/theme';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { languageDetails } from '@/features/language/config';
 import { useSelectedLanguage } from '@/features/language/selection';
@@ -71,7 +79,7 @@ export default function CoachMemoryScreen() {
           {mistakes.length ? (
             mistakes.map((item) => (
               <View key={item.better} style={styles.row}>
-                <View style={{ flex: 1, gap: 2 }}>
+                <View style={{ flex: 1, gap: space(0.5) }}>
                   <Text style={styles.rowText}>{item.better}</Text>
                   <Text style={styles.rowMeta}>
                     You said “{item.said}”{item.count > 1 ? ` · ${item.count} times` : ''}
@@ -137,23 +145,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 18,
+    padding: space(4),
   },
-  headerTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
+  headerTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.heading },
   headerSpacer: { width: 40 },
-  body: { gap: 12, paddingBottom: 32, paddingHorizontal: 20 },
-  title: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 24, lineHeight: 30 },
+  body: { gap: space(3), paddingBottom: space(8), paddingHorizontal: space(5) },
+  title: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.displayExtraBold,
+    fontSize: FontSize.display,
+    lineHeight: LineHeight.display,
+  },
   description: {
     color: Palette.secondary,
     fontFamily: VokaFonts.body,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
   },
-  section: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16, marginTop: 10 },
+  section: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+    marginTop: space(2),
+  },
   card: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 20,
+    borderRadius: Radius.xl,
     borderWidth: 1,
     overflow: 'hidden',
   },
@@ -162,32 +180,47 @@ const styles = StyleSheet.create({
     borderBottomColor: Palette.line,
     borderBottomWidth: 1,
     flexDirection: 'row',
-    gap: 10,
+    gap: space(2),
     minHeight: 56,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: space(4),
+    paddingVertical: space(2),
   },
-  rowText: { color: Palette.ink, flex: 1, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
-  rowMeta: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13 },
+  rowText: {
+    color: Palette.ink,
+    flex: 1,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.body,
+  },
+  rowMeta: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: FontSize.label },
   remove: { alignItems: 'center', height: 44, justifyContent: 'center', width: 44 },
-  empty: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, padding: 16 },
+  empty: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    padding: space(4),
+  },
   clear: {
-    color: Feedback.danger,
+    color: Feedback.wrongFill,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 15,
-    paddingVertical: 14,
+    fontSize: FontSize.body,
+    paddingVertical: space(4),
     textAlign: 'center',
   },
-  confirm: { backgroundColor: Palette.white, borderRadius: 18, gap: 12, padding: 16 },
-  confirmRow: { flexDirection: 'row', gap: 10 },
+  confirm: {
+    backgroundColor: Palette.white,
+    borderRadius: Radius.lg,
+    gap: space(3),
+    padding: space(4),
+  },
+  confirmRow: { flexDirection: 'row', gap: space(2) },
   button: {
     alignItems: 'center',
-    borderRadius: 14,
+    borderRadius: Radius.md,
     flex: 1,
     justifyContent: 'center',
     minHeight: 48,
   },
   secondary: { backgroundColor: Palette.soft },
-  danger: { backgroundColor: Feedback.danger },
-  buttonText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
+  danger: { backgroundColor: Feedback.wrongFill },
+  buttonText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
 });

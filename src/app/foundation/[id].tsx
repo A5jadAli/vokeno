@@ -21,7 +21,15 @@ import {
 import { SessionFooter } from '@/components/session-footer';
 import { StepLessonPlayer } from '@/components/step-lesson';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
-import { Feedback, Palette, Selection, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import {
   foundationLessons,
@@ -227,7 +235,6 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
           />
         ) : correctNow ? (
           <PrimaryButton
-            tone="green"
             title={index === checks.length - 1 ? 'Continue' : 'Next question'}
             accessibilityLabel={
               index === checks.length - 1 ? 'Continue to writing' : 'Next question'
@@ -239,7 +246,6 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
           />
         ) : result ? (
           <PrimaryButton
-            tone="red"
             title="Try again"
             onPress={() => {
               setResult(null);
@@ -256,7 +262,6 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
       <ActionBar feedback={result ?? undefined}>
         {correctNow ? (
           <PrimaryButton
-            tone="green"
             title="Continue"
             accessibilityLabel="Continue to speaking practice"
             onPress={() => advance(3)}
@@ -313,7 +318,7 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
               ) : null}
               <SectionLabel>Key phrases</SectionLabel>
               <PhraseList lesson={lesson} speech={speech} />
-              <InfoCard icon="lightbulb-on-outline" title="How it works" tone="yellow">
+              <InfoCard icon="lightbulb-on-outline" title="How it works" tone="tint">
                 {lesson.notice}
               </InfoCard>
               {lesson.pronunciation ? (
@@ -419,7 +424,7 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
                 style={[
                   styles.input,
                   result?.tone === 'correct' && { borderColor: Feedback.correctFill },
-                  result?.tone === 'wrong' && { borderColor: Feedback.wrongBorder },
+                  result?.tone === 'wrong' && { borderColor: Feedback.wrongText },
                 ]}
                 value={entry.draft}
                 editable={!correctNow}
@@ -563,7 +568,7 @@ function ReadingCard({
 
 function PhraseList({ lesson, speech }: { lesson: ClassicLesson; speech: LessonAudio }) {
   return (
-    <View style={{ gap: 10 }}>
+    <View style={{ gap: space(2) }}>
       {lesson.phrases.map((phrase) => (
         <PhraseCard key={phrase.target} phrase={phrase} speech={speech} />
       ))}
@@ -581,67 +586,72 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
-  body: { gap: 16, paddingBottom: 32, paddingHorizontal: 20, paddingTop: 8 },
+  body: {
+    gap: space(4),
+    paddingBottom: space(8),
+    paddingHorizontal: space(5),
+    paddingTop: space(2),
+  },
   alert: {
-    backgroundColor: Selection.face,
-    borderRadius: 14,
+    backgroundColor: Palette.canvas,
+    borderRadius: Radius.md,
     color: Palette.ink,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 14,
-    lineHeight: 21,
-    padding: 12,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    padding: space(3),
   },
-  listenBlock: { alignItems: 'center', flexDirection: 'row', gap: 14 },
-  options: { gap: 10 },
+  listenBlock: { alignItems: 'center', flexDirection: 'row', gap: space(4) },
+  options: { gap: space(2) },
   input: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     borderWidth: 2,
     color: Palette.ink,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 18,
+    fontSize: FontSize.heading,
     minHeight: 120,
-    padding: 16,
+    padding: space(4),
     textAlignVertical: 'top',
   },
-  readingRow: { alignItems: 'flex-start', flexDirection: 'row', gap: 12 },
+  readingRow: { alignItems: 'flex-start', flexDirection: 'row', gap: space(3) },
   readingText: {
     color: Palette.ink,
     flex: 1,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
   },
   toggle: {
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: withAlpha(Palette.ink, 0.06),
-    borderRadius: 99,
+    backgroundColor: Palette.soft,
+    borderRadius: Radius.pill,
     flexDirection: 'row',
-    gap: 6,
+    gap: space(2),
     minHeight: 36,
-    paddingHorizontal: 12,
+    paddingHorizontal: space(3),
   },
-  toggleText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  celebrate: { alignItems: 'center', gap: 10, paddingTop: 16 },
+  toggleText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.label },
+  celebrate: { alignItems: 'center', gap: space(2), paddingTop: space(4) },
   badge: {
     alignItems: 'center',
-    backgroundColor: Palette.yellow,
-    borderRadius: 99,
+    backgroundColor: Palette.canvas,
+    borderRadius: Radius.pill,
     height: 88,
     justifyContent: 'center',
     width: 88,
   },
-  score: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 16 },
-  stats: { flexDirection: 'row', gap: 10 },
+  score: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.body },
+  stats: { flexDirection: 'row', gap: space(2) },
   stat: {
     alignItems: 'center',
     backgroundColor: Palette.white,
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     flex: 1,
-    gap: 2,
-    paddingVertical: 14,
+    gap: space(0.5),
+    paddingVertical: space(4),
   },
-  statValue: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
+  statValue: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.heading },
 });

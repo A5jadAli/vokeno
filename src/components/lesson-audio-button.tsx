@@ -1,6 +1,15 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Dark, Palette, Selection, VokaFonts } from '@/constants/theme';
+import {
+  Dark,
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  Selection,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import type { LessonAudio } from '@/features/audio/use-lesson-audio';
 import { useAccentColors } from '@/components/accent-context';
 
@@ -70,37 +79,51 @@ export function LessonAudioButton({
   );
 }
 const styles = StyleSheet.create({
-  container: { gap: 8 },
+  container: { gap: space(2) },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    backgroundColor: Palette.soft,
-    borderRadius: 14,
+    gap: space(3),
+    // White with a border, so it reads as a control rather than a disabled grey block.
+    backgroundColor: Palette.white,
+    borderRadius: Radius.md,
     borderWidth: 2,
-    borderColor: 'transparent',
-    padding: 12,
+    borderColor: Palette.border,
+    padding: space(3),
     minHeight: 76,
   },
-  dark: { backgroundColor: Dark.raisedAlt },
-  active: { backgroundColor: Selection.faceStrong, borderColor: Palette.yellow },
+  dark: { backgroundColor: Dark.raised, borderColor: 'transparent' },
+  active: { backgroundColor: Selection.faceStrong, borderColor: Selection.border },
   pressed: { opacity: 0.8 },
   icon: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },
-  copy: { flex: 1, gap: 4 },
-  label: { fontFamily: VokaFonts.bodySemiBold, fontSize: 15, lineHeight: 22 },
-  status: { fontFamily: VokaFonts.body, fontSize: 12, lineHeight: 18 },
-  error: { fontFamily: VokaFonts.body, color: Palette.secondary, fontSize: 14, lineHeight: 21 },
+  copy: { flex: 1, gap: space(1) },
+  label: {
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
+  status: {
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+  },
+  error: {
+    fontFamily: VokaFonts.body,
+    color: Palette.secondary,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
   round: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 999,
+    borderRadius: Radius.pill,
     backgroundColor: Palette.soft,
   },
-  roundAccent: { backgroundColor: Palette.yellow },
+  roundAccent: { backgroundColor: Palette.ink },
   roundActive: {
     backgroundColor: Selection.faceStrong,
     borderWidth: 2,
-    borderColor: Palette.yellow,
+    borderColor: Selection.border,
   },
 });
 
@@ -141,9 +164,8 @@ export function AudioIconButton({
         styles.round,
         { width: size, height: size },
         accent && styles.roundAccent,
-        filled && { backgroundColor: colors.accent },
+        filled && { backgroundColor: Palette.ink },
         active && styles.roundActive,
-        active && colors && { backgroundColor: colors.tint, borderColor: colors.accent },
         pressed && styles.pressed,
       ]}
     >
@@ -153,7 +175,7 @@ export function AudioIconButton({
         <MaterialCommunityIcons
           name={active ? 'stop' : slow ? 'tortoise' : 'volume-high'}
           size={Math.round(size * 0.46)}
-          color={filled ? colors.onAccent : Palette.ink}
+          color={accent && !active ? Palette.cream : Palette.ink}
         />
       )}
     </Pressable>

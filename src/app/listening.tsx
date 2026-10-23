@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { getScenarios } from '@/features/listening/scenarios';
 import { languageDetails, trackColors } from '@/features/language/config';
@@ -40,7 +40,7 @@ export default function ListeningLibrary() {
             <View style={styles.iconTile}>
               <MaterialCommunityIcons name="lightning-bolt-outline" size={24} color={Palette.ink} />
             </View>
-            <View style={{ flex: 1, gap: 2 }}>
+            <View style={{ flex: 1, gap: space(0.5) }}>
               <Text style={styles.cardTitle}>Start with a short warm-up</Text>
               <Text style={styles.copy}>
                 One sentence, one question. Replay as often as you need.
@@ -73,7 +73,7 @@ export default function ListeningLibrary() {
                 color={Palette.ink}
               />
             </View>
-            <View style={{ flex: 1, gap: 2 }}>
+            <View style={{ flex: 1, gap: space(0.5) }}>
               <Text style={styles.meta}>
                 {scenario.level} · {scenario.duration}
                 {completed.includes(scenario.id) ? ' · Practised' : ''}
@@ -91,26 +91,36 @@ export default function ListeningLibrary() {
   );
 }
 const styles = StyleSheet.create({
-  header: { padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 },
-  body: { paddingHorizontal: 22, paddingBottom: 28, gap: 14 },
-  title: { fontFamily: VokaFonts.bodyBold, color: Palette.ink, fontSize: 28 },
-  copy: { fontFamily: VokaFonts.body, color: Palette.secondary, fontSize: 14, lineHeight: 21 },
+  header: { padding: space(4), flexDirection: 'row', alignItems: 'center', gap: space(4) },
+  body: { paddingHorizontal: space(6), paddingBottom: space(7), gap: space(4) },
+  title: { fontFamily: VokaFonts.displayExtraBold, color: Palette.ink, fontSize: FontSize.display },
+  copy: {
+    fontFamily: VokaFonts.body,
+    color: Palette.secondary,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
   iconTile: {
     alignItems: 'center',
-    backgroundColor: Palette.orangeTintStrong,
-    borderRadius: 14,
+    backgroundColor: Palette.orangeTint,
+    borderRadius: Radius.md,
     height: 52,
     justifyContent: 'center',
     width: 52,
   },
-  meta: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
-  cardTitle: { fontFamily: VokaFonts.bodyBold, fontSize: 16, lineHeight: 22, color: Palette.ink },
+  meta: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.label },
+  cardTitle: {
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+    color: Palette.ink,
+  },
   card: {
     alignItems: 'center',
     backgroundColor: Palette.white,
-    borderRadius: 20,
+    borderRadius: Radius.xl,
     flexDirection: 'row',
-    gap: 14,
-    padding: 14,
+    gap: space(4),
+    padding: space(4),
   },
 });

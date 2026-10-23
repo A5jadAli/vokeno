@@ -1,6 +1,6 @@
 import { createContext, Fragment, useContext, type PropsWithChildren } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 
 import { useCloudSync } from '@/features/sync/use-cloud-sync';
 
@@ -43,8 +43,8 @@ export function CloudSyncProvider({ children }: PropsWithChildren) {
               alignItems: 'center',
               backgroundColor: Palette.ink,
               justifyContent: 'center',
-              padding: 28,
-              gap: 20,
+              padding: space(7),
+              gap: space(5),
             }}
           >
             {localError ? (
@@ -54,8 +54,8 @@ export function CloudSyncProvider({ children }: PropsWithChildren) {
                   style={{
                     color: Palette.cream,
                     fontFamily: VokaFonts.bodyMedium,
-                    fontSize: 16,
-                    lineHeight: 24,
+                    fontSize: FontSize.body,
+                    lineHeight: LineHeight.body,
                     textAlign: 'center',
                   }}
                 >
@@ -65,15 +65,19 @@ export function CloudSyncProvider({ children }: PropsWithChildren) {
                   accessibilityRole="button"
                   onPress={retry}
                   style={{
-                    backgroundColor: Palette.yellow,
-                    borderRadius: 16,
+                    backgroundColor: Palette.ink,
+                    borderRadius: Radius.lg,
                     minHeight: 52,
                     justifyContent: 'center',
-                    paddingHorizontal: 24,
+                    paddingHorizontal: space(6),
                   }}
                 >
                   <Text
-                    style={{ color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 }}
+                    style={{
+                      color: Palette.cream,
+                      fontFamily: VokaFonts.bodyBold,
+                      fontSize: FontSize.body,
+                    }}
                   >
                     Try again
                   </Text>
@@ -82,7 +86,7 @@ export function CloudSyncProvider({ children }: PropsWithChildren) {
             ) : (
               <ActivityIndicator
                 accessibilityLabel="Opening your learning progress"
-                color={Palette.yellow}
+                color={Palette.ink}
               />
             )}
           </View>

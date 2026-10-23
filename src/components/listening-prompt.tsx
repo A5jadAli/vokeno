@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { AudioIconButton } from '@/components/lesson-audio-button';
 import { InfoCard, lessonText, TextButton } from '@/components/lesson-ui';
 import type { LessonAudio } from '@/features/audio/use-lesson-audio';
+import { space } from '@/constants/theme';
 
 /** Reading support keeps a dictation accessible without recording it as unaided listening. */
 export function ListeningPrompt({
@@ -62,6 +63,6 @@ export function ListeningPrompt({
   );
 }
 const styles = StyleSheet.create({
-  stack: { gap: 12 },
-  audio: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  stack: { gap: space(3) },
+  audio: { flexDirection: 'row', alignItems: 'center', gap: space(3) },
 });

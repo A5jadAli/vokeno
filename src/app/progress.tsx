@@ -8,7 +8,7 @@ import { StreakStrip } from '@/components/streak-strip';
 import { SyncStatusNotice } from '@/components/sync-status';
 import { TabHeader } from '@/components/tab-header';
 import { AppScreen } from '@/components/voka-ui';
-import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import { FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import { testDateFor, useCoachingStore } from '@/features/coaching/store';
 import { curriculumUnits } from '@/features/curriculum/catalog';
 import { useHabits } from '@/features/habits/use-habits';
@@ -61,8 +61,8 @@ export default function ProgressScreen() {
         </Text>
         <ProgressFill
           value={position.finishedLessons / Math.max(1, position.totalLessons)}
-          color={colors.accent}
-          track={withAlpha(Palette.ink, 0.08)}
+          color={colors.deep}
+          track={Palette.soft}
           height={10}
         />
         <Text style={styles.meta}>
@@ -78,8 +78,8 @@ export default function ProgressScreen() {
               <View style={styles.unitBar}>
                 <ProgressFill
                   value={unit.done / unit.lessons.length}
-                  color={colors.accent}
-                  track={withAlpha(Palette.ink, 0.06)}
+                  color={colors.deep}
+                  track={Palette.soft}
                   height={6}
                 />
               </View>
@@ -218,69 +218,104 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 22,
+    borderRadius: Radius.xl,
     borderWidth: 1,
-    gap: 10,
-    marginHorizontal: 18,
-    marginTop: 10,
-    padding: 18,
+    gap: space(2),
+    marginHorizontal: space(4),
+    marginTop: space(2),
+    padding: space(4),
   },
-  eyebrow: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
-  big: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22, lineHeight: 28 },
-  meta: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, lineHeight: 20 },
-  unitList: { gap: 8, marginTop: 4 },
-  unitRow: { alignItems: 'center', flexDirection: 'row', gap: 10 },
-  unitName: { color: Palette.ink, flex: 1.4, fontFamily: VokaFonts.bodyMedium, fontSize: 13 },
+  eyebrow: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
+  },
+  big: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.title,
+    lineHeight: LineHeight.title,
+  },
+  meta: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
+  unitList: { gap: space(2), marginTop: space(1) },
+  unitRow: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
+  unitName: {
+    color: Palette.ink,
+    flex: 1.4,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.label,
+  },
   unitBar: { flex: 1, flexDirection: 'row' },
   unitCount: {
     color: Palette.secondary,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
+    fontSize: FontSize.caption,
     minWidth: 28,
     textAlign: 'right',
   },
-  link: { alignItems: 'center', flexDirection: 'row', gap: 4, minHeight: 44 },
-  linkText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
-  stats: { flexDirection: 'row', gap: 10, marginHorizontal: 18, marginTop: 12 },
-  stat: { backgroundColor: Palette.white, borderRadius: 18, flex: 1, gap: 2, padding: 14 },
-  statValue: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22 },
-  statLabel: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
-  statDetail: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 12 },
+  link: { alignItems: 'center', flexDirection: 'row', gap: space(1), minHeight: 44 },
+  linkText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.body },
+  stats: { flexDirection: 'row', gap: space(2), marginHorizontal: space(4), marginTop: space(3) },
+  stat: {
+    backgroundColor: Palette.white,
+    borderRadius: Radius.lg,
+    flex: 1,
+    gap: space(0.5),
+    padding: space(3),
+  },
+  statValue: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.title },
+  statLabel: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.caption },
+  statDetail: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: FontSize.caption },
   sectionTitle: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 18,
-    marginHorizontal: 20,
-    marginTop: 24,
+    fontSize: FontSize.heading,
+    marginHorizontal: space(5),
+    marginTop: space(6),
   },
   note: {
     color: Palette.secondary,
     fontFamily: VokaFonts.body,
-    fontSize: 13,
-    lineHeight: 19,
-    marginHorizontal: 22,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    marginHorizontal: space(6),
   },
   row: { alignItems: 'center', flexDirection: 'row' },
-  rowCopy: { flex: 1, gap: 2 },
-  rowTitle: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 16 },
-  signal: { borderTopColor: Palette.line, borderTopWidth: 1, gap: 2, paddingTop: 10 },
-  others: { gap: 8, marginHorizontal: 18, marginTop: 10, marginBottom: 18 },
+  rowCopy: { flex: 1, gap: space(0.5) },
+  rowTitle: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.body },
+  signal: {
+    borderTopColor: Palette.line,
+    borderTopWidth: 1,
+    gap: space(0.5),
+    paddingTop: space(2),
+  },
+  others: {
+    gap: space(2),
+    marginHorizontal: space(4),
+    marginTop: space(2),
+    marginBottom: space(4),
+  },
   other: {
     alignItems: 'center',
     backgroundColor: Palette.white,
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     flexDirection: 'row',
-    gap: 12,
+    gap: space(3),
     minHeight: 64,
-    padding: 12,
+    padding: space(3),
   },
   badge: {
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: Radius.md,
     height: 40,
     justifyContent: 'center',
     width: 40,
   },
-  badgeText: { fontFamily: VokaFonts.bodyBold, fontSize: 13 },
+  badgeText: { fontFamily: VokaFonts.bodyBold, fontSize: FontSize.label },
   pressed: { opacity: 0.7 },
 });

@@ -1,11 +1,17 @@
 import { createContext, useContext, type PropsWithChildren } from 'react';
 
-export type AccentColors = { accent: string; onAccent: string; onDark: string; tint: string };
+export type AccentColors = {
+  accent: string;
+  onAccent: string;
+  deep: string;
+  onDark: string;
+  tint: string;
+};
 
 /**
  * A language screen's colours. A screen about one language wraps its content in `PrimaryAccent`
- * with that language's colours: main buttons, the progress bar, play buttons and highlighted cards
- * follow them. Outside a wrapper, the brand yellow is used.
+ * with that language's colours: the progress bar, badges and highlighted cards follow them. Main
+ * buttons stay ink in every language. Outside a wrapper, those marks are ink too.
  */
 const PrimaryAccentContext = createContext<AccentColors | null>(null);
 

@@ -22,7 +22,16 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Dark, Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  Dark,
+  FontSize,
+  LineHeight,
+  OnDark,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { useLanguageSelection } from '@/features/language/selection';
 import { focusedInputScrollOffset } from './keyboard-scroll';
 
@@ -147,7 +156,7 @@ export function BottomNav({ active, dark = false }: { active?: NavKey; dark?: bo
   const track = useLanguageSelection((state) => state.track);
   const foreground = dark ? Palette.cream : Palette.ink;
   // At least 3:1 against the bar, so unselected destinations stay readable.
-  const muted = dark ? withAlpha(Palette.cream, 0.7) : Palette.secondary;
+  const muted = dark ? OnDark.textSecondary : Palette.secondary;
 
   return (
     <SafeAreaView
@@ -195,6 +204,52 @@ export function BottomNav({ active, dark = false }: { active?: NavKey; dark?: bo
         })}
       </View>
     </SafeAreaView>
+  );
+}
+
+/**
+ * The one segmented control: a choice between a few views of the same thing. The chosen option
+ * is ink with cream text everywhere, like every other selection in the app.
+ */
+export function Segmented<T extends string | boolean>({
+  options,
+  value,
+  onChange,
+}: {
+  options: { value: T; label: string; detail?: string; accessibilityLabel?: string }[];
+  value: T;
+  onChange: (value: T) => void;
+}) {
+  return (
+    <View accessibilityRole="tablist" style={styles.segmented}>
+      {options.map((option) => {
+        const selected = option.value === value;
+        return (
+          <Pressable
+            key={String(option.value)}
+            accessibilityRole="tab"
+            accessibilityLabel={option.accessibilityLabel}
+            accessibilityState={{ selected }}
+            aria-selected={selected}
+            onPress={() => onChange(option.value)}
+            style={({ pressed }) => [
+              styles.segment,
+              selected && styles.segmentSelected,
+              pressed && !selected && styles.pressed,
+            ]}
+          >
+            <Text style={[styles.segmentLabel, selected && styles.segmentLabelSelected]}>
+              {option.label}
+            </Text>
+            {option.detail ? (
+              <Text style={[styles.segmentDetail, selected && styles.segmentDetailSelected]}>
+                {option.detail}
+              </Text>
+            ) : null}
+          </Pressable>
+        );
+      })}
+    </View>
   );
 }
 
@@ -253,7 +308,7 @@ export function HeaderBack({
       }}
       style={({ pressed }) => [
         styles.back,
-        { backgroundColor: dark ? withAlpha(Palette.cream, 0.1) : Palette.soft },
+        { backgroundColor: dark ? OnDark.fillStrong : Palette.soft },
         pressed && styles.pressed,
       ]}
     >
@@ -277,24 +332,64 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 68,
     justifyContent: 'space-around',
-    paddingHorizontal: 8,
+    paddingHorizontal: space(2),
   },
-  navButton: { alignItems: 'center', flex: 1, gap: 2, justifyContent: 'center', minHeight: 56 },
+  navButton: {
+    alignItems: 'center',
+    flex: 1,
+    gap: space(0.5),
+    justifyContent: 'center',
+    minHeight: 56,
+  },
   navIconWrap: {
     alignItems: 'center',
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     height: 32,
     justifyContent: 'center',
     width: 56,
   },
-  navLabel: { fontFamily: VokaFonts.bodyMedium, fontSize: 12 },
+  navLabel: { fontFamily: VokaFonts.bodyMedium, fontSize: FontSize.caption },
   navLabelSelected: { fontFamily: VokaFonts.bodySemiBold },
   roundIcon: { alignItems: 'center', justifyContent: 'center' },
+  segmented: {
+    backgroundColor: Palette.soft,
+    borderRadius: Radius.lg,
+    flexDirection: 'row',
+    gap: space(1),
+    padding: space(1),
+  },
+  segment: {
+    alignItems: 'center',
+    borderRadius: Radius.md,
+    flex: 1,
+    justifyContent: 'center',
+    minHeight: 44,
+    paddingHorizontal: space(2),
+    paddingVertical: space(1),
+  },
+  segmentSelected: { backgroundColor: Palette.ink },
+  segmentLabel: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
+    textAlign: 'center',
+  },
+  segmentLabelSelected: { color: Palette.cream },
+  segmentDetail: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.caption,
+  },
+  segmentDetailSelected: { color: OnDark.textSecondary },
   pressed: { opacity: 0.66, transform: [{ scale: 0.97 }] },
-  eyebrow: { fontFamily: VokaFonts.bodySemiBold, fontSize: 13, lineHeight: 18 },
+  eyebrow: {
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
   back: {
     alignItems: 'center',
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     height: 40,
     justifyContent: 'center',
     width: 40,

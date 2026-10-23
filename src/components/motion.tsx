@@ -13,13 +13,11 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { Palette, withAlpha } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 
 type TactileProps = PropsWithChildren<{
   face: string;
-  lip: string;
   radius?: number;
-  depth?: number;
   borderColor?: string;
   borderWidth?: number;
   disabled?: boolean;
@@ -37,12 +35,11 @@ type TactileProps = PropsWithChildren<{
 
 /**
  * A flat pressable surface, like buttons in WhatsApp or Instagram: Android shows its ripple and
- * every platform gets a slight press-in scale. `lip` and `depth` are accepted for compatibility
- * and ignored, since raised 3D buttons read as dated.
+ * every platform gets a slight press-in scale.
  */
 export function Tactile({
   face,
-  radius = 16,
+  radius = Radius.lg,
   borderColor,
   borderWidth = 0,
   disabled = false,
@@ -71,9 +68,7 @@ export function Tactile({
         aria-checked={ariaChecked}
         aria-disabled={disabled}
         // Drawn in the foreground so the ripple shows on top of the coloured face.
-        android_ripple={
-          disabled ? undefined : { color: withAlpha(Palette.ink, 0.08), foreground: true }
-        }
+        android_ripple={disabled ? undefined : { color: Palette.soft, foreground: true }}
         disabled={disabled}
         onPress={onPress}
         onPressIn={() => {
@@ -123,9 +118,17 @@ export function ProgressFill({
   return (
     <View
       onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
-      style={{ backgroundColor: track, borderRadius: 99, flex: 1, height, overflow: 'hidden' }}
+      style={{
+        backgroundColor: track,
+        borderRadius: Radius.pill,
+        flex: 1,
+        height,
+        overflow: 'hidden',
+      }}
     >
-      <Animated.View style={[{ backgroundColor: color, borderRadius: 99, height }, style]} />
+      <Animated.View
+        style={[{ backgroundColor: color, borderRadius: Radius.pill, height }, style]}
+      />
     </View>
   );
 }

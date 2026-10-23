@@ -2,7 +2,15 @@ import { useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { RadioRow } from '@/components/radio-row';
-import { Feedback, Palette, VokaFonts } from '@/constants/theme';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import {
   remindersSupported,
   requestReminderPermission,
@@ -112,26 +120,26 @@ export function ReminderPicker({ variant }: { variant: 'chips' | 'list' }) {
 }
 
 const styles = StyleSheet.create({
-  wrap: { gap: 8 },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  wrap: { gap: space(2) },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space(2) },
   chip: {
     borderColor: Palette.line,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     borderWidth: 1,
     justifyContent: 'center',
     minHeight: 36,
-    paddingHorizontal: 14,
+    paddingHorizontal: space(4),
   },
   chipSelected: { backgroundColor: Palette.ink, borderColor: Palette.ink },
-  chipText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
+  chipText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.label },
   chipTextSelected: { color: Palette.cream },
   blocked: {
     color: Feedback.wrongText,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
   },
-  blockedInCard: { padding: 16 },
+  blockedInCard: { padding: space(4) },
   link: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, textDecorationLine: 'underline' },
   pressed: { opacity: 0.7 },
 });

@@ -2,18 +2,26 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Feedback, Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import type { GoalPlan, GoalStatus } from '@/features/coaching/goal-plan';
 import { levelLabel } from '@/features/foundations/level-status';
 import { parseDateOnly } from '@/features/profile/test-date';
 import { languageDetails, trackColors, type LanguageTrack } from '@/features/language/config';
 
 const statusStyle: Record<GoalStatus, { label: string; bg: string; ink: string }> = {
-  'on-track': { label: 'On track', bg: Feedback.correctBg, ink: Feedback.correctInk },
-  behind: { label: 'Behind', bg: Feedback.behindBg, ink: Feedback.behindInk },
-  tight: { label: 'Very tight', bg: Feedback.wrongBg, ink: Feedback.wrongInk },
-  ready: { label: 'Level done', bg: Feedback.correctBg, ink: Feedback.correctInk },
-  today: { label: 'Exam day', bg: Feedback.correctBg, ink: Feedback.correctInk },
+  'on-track': { label: 'On track', bg: Feedback.correctBg, ink: Feedback.correctText },
+  behind: { label: 'Behind', bg: Feedback.behindBg, ink: Feedback.closeInk },
+  tight: { label: 'Very tight', bg: Feedback.wrongBg, ink: Feedback.wrongText },
+  ready: { label: 'Level done', bg: Feedback.correctBg, ink: Feedback.correctText },
+  today: { label: 'Exam day', bg: Feedback.correctBg, ink: Feedback.correctText },
   passed: { label: 'Date passed', bg: Palette.neutralChip, ink: Palette.ink },
 };
 
@@ -108,7 +116,7 @@ export function GoalCard({ goal, track }: { goal: GoalPlan; track: LanguageTrack
             </View>
             <View style={styles.track}>
               <View
-                style={[styles.fill, { backgroundColor: colors.accent, width: `${share * 100}%` }]}
+                style={[styles.fill, { backgroundColor: colors.deep, width: `${share * 100}%` }]}
               />
             </View>
           </View>
@@ -165,52 +173,67 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 24,
+    borderRadius: Radius.xl,
     borderWidth: 1,
-    gap: 12,
-    marginBottom: 12,
-    marginHorizontal: 18,
-    padding: 16,
+    gap: space(3),
+    marginBottom: space(3),
+    marginHorizontal: space(4),
+    padding: space(4),
   },
-  main: { gap: 12 },
-  exam: { alignItems: 'center', borderRadius: 14, flexDirection: 'row', gap: 10, padding: 12 },
-  examTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
-  top: { alignItems: 'center', flexDirection: 'row', gap: 12 },
+  main: { gap: space(3) },
+  exam: {
+    alignItems: 'center',
+    borderRadius: Radius.md,
+    flexDirection: 'row',
+    gap: space(2),
+    padding: space(3),
+  },
+  examTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.label },
+  top: { alignItems: 'center', flexDirection: 'row', gap: space(3) },
   icon: {
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: Radius.md,
     height: 40,
     justifyContent: 'center',
     width: 40,
   },
-  copy: { flex: 1, gap: 2 },
-  headline: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
-  meta: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13 },
-  pill: { borderRadius: 99, paddingHorizontal: 10, paddingVertical: 5 },
-  pillText: { fontFamily: VokaFonts.bodyBold, fontSize: 12 },
-  week: { gap: 6 },
+  copy: { flex: 1, gap: space(0.5) },
+  headline: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
+  meta: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: FontSize.label },
+  pill: { borderRadius: Radius.pill, paddingHorizontal: space(2), paddingVertical: space(1) },
+  pillText: { fontFamily: VokaFonts.bodyBold, fontSize: FontSize.caption },
+  week: { gap: space(2) },
   weekTop: { flexDirection: 'row', justifyContent: 'space-between' },
-  weekLabel: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
-  weekCount: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
+  weekLabel: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.label },
+  weekCount: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
+  },
   track: {
-    backgroundColor: withAlpha(Palette.ink, 0.08),
-    borderRadius: 99,
+    backgroundColor: Palette.soft,
+    borderRadius: Radius.pill,
     height: 8,
     overflow: 'hidden',
   },
-  fill: { borderRadius: 99, height: 8 },
-  advice: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 18 },
+  fill: { borderRadius: Radius.pill, height: 8 },
+  advice: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
   prompt: {
     alignItems: 'center',
     alignSelf: 'stretch',
     borderColor: Palette.line,
-    borderRadius: 16,
+    borderRadius: Radius.lg,
     borderWidth: 1,
     flexDirection: 'row',
-    gap: 12,
+    gap: space(3),
     minHeight: 60,
-    padding: 12,
+    padding: space(3),
   },
-  promptTitle: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
+  promptTitle: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.body },
   pressed: { opacity: 0.7 },
 });

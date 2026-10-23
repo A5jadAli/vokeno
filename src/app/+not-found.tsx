@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { ActionBar, lessonText, PrimaryButton } from '@/components/lesson-ui';
 import { AppScreen } from '@/components/voka-ui';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius, space } from '@/constants/theme';
 
 export default function NotFoundScreen() {
   const router = useRouter();
@@ -37,15 +37,21 @@ export default function NotFoundScreen() {
 }
 
 const styles = StyleSheet.create({
-  body: { alignItems: 'center', flex: 1, gap: 12, justifyContent: 'center', padding: 28 },
+  body: {
+    alignItems: 'center',
+    flex: 1,
+    gap: space(3),
+    justifyContent: 'center',
+    padding: space(7),
+  },
   center: { textAlign: 'center' },
   badge: {
     alignItems: 'center',
-    backgroundColor: Palette.yellow,
-    borderRadius: 99,
+    backgroundColor: Palette.canvas,
+    borderRadius: Radius.pill,
     height: 88,
     justifyContent: 'center',
-    marginBottom: 8,
+    marginBottom: space(2),
     width: 88,
   },
 });

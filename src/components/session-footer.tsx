@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Animated, { ZoomIn } from 'react-native-reanimated';
 
 import { ActionBar, PrimaryButton, TextButton } from '@/components/lesson-ui';
-import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import { FontSize, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import { useHabits } from '@/features/habits/use-habits';
 import { trackColors, type LanguageTrack } from '@/features/language/config';
 
@@ -83,15 +83,19 @@ export function SessionFooter({
 }
 
 const styles = StyleSheet.create({
-  status: { alignItems: 'center', flexDirection: 'row', gap: 10, justifyContent: 'center' },
-  dots: { flexDirection: 'row', gap: 6 },
+  status: { alignItems: 'center', flexDirection: 'row', gap: space(2), justifyContent: 'center' },
+  dots: { flexDirection: 'row', gap: space(2) },
   dot: {
     alignItems: 'center',
-    backgroundColor: withAlpha(Palette.ink, 0.1),
-    borderRadius: 99,
+    backgroundColor: Palette.pressed,
+    borderRadius: Radius.pill,
     height: 18,
     justifyContent: 'center',
     width: 18,
   },
-  statusText: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
+  statusText: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
+  },
 });

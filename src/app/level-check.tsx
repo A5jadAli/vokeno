@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { LessonAudioButton } from '@/components/lesson-audio-button';
-import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import { FontSize, LineHeight, OnDark, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { trackColors } from '@/features/language/config';
 import { useLessonAudio } from '@/features/audio/use-lesson-audio';
@@ -14,7 +14,6 @@ import { levelCheckSentences } from '@/features/audio/spoken-texts';
 export default function LevelCheckScreen() {
   const router = useRouter();
   const [track, setTrack] = useSelectedLanguage();
-  const colors = trackColors[track];
   const check = levelCheckSentences[track];
   const speech = useLessonAudio(track);
 
@@ -35,7 +34,7 @@ export default function LevelCheckScreen() {
           track={track}
         />
         <Text style={styles.sentence}>{check.sentence}</Text>
-        <View style={{ marginTop: 20 }}>
+        <View style={{ marginTop: space(5) }}>
           <LessonAudioButton
             speech={speech}
             text={check.sentence}
@@ -45,26 +44,20 @@ export default function LevelCheckScreen() {
           />
         </View>
 
-        <View style={styles.wave}>
-          {[14, 31, 57, 86, 45, 96, 61, 34, 69, 24, 43, 16].map((height, index) => (
-            <View
-              key={index}
-              style={[styles.waveBar, { height, backgroundColor: colors.accent }]}
-            />
-          ))}
-        </View>
+        {/* No waveform here: a voice line only appears when someone is actually speaking. */}
+        <View style={styles.spaceAbove} />
         <View style={styles.micArea}>
           <Pressable
             accessibilityLabel="Start spoken level check"
             onPress={() => router.push(`/conversation?track=${track}&practice=diagnostic`)}
             style={({ pressed }) => [
               styles.micHalo,
-              { backgroundColor: `${colors.accent}2E` },
+              { backgroundColor: OnDark.fillStrong },
               pressed && styles.pressed,
             ]}
           >
-            <View style={[styles.mic, { backgroundColor: colors.accent }]}>
-              <MaterialCommunityIcons color={colors.onAccent} name="microphone" size={35} />
+            <View style={[styles.mic, { backgroundColor: Palette.lime }]}>
+              <MaterialCommunityIcons color={Palette.ink} name="microphone" size={35} />
             </View>
           </Pressable>
           <Text style={styles.listenText}>Tap to start your spoken check</Text>
@@ -90,84 +83,68 @@ const styles = StyleSheet.create({
   topRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
-    paddingHorizontal: 18,
-    paddingTop: 12,
+    gap: space(3),
+    paddingHorizontal: space(4),
+    paddingTop: space(3),
   },
   duration: {
-    color: withAlpha(Palette.cream, 0.5),
+    color: OnDark.textFaint,
     flex: 1,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
+    fontSize: FontSize.caption,
     textAlign: 'center',
   },
   spacer: { width: 40 },
-  body: { flex: 1, paddingHorizontal: 24, paddingTop: 34 },
-  wave: {
-    alignItems: 'flex-end',
-    flex: 1,
-    flexDirection: 'row',
-    gap: 4,
-    justifyContent: 'center',
-    minHeight: 120,
-    paddingBottom: 6,
-  },
-  waveBar: {
-    backgroundColor: Palette.orange,
-    borderRadius: 9,
-    height: 50,
-    maxHeight: 96,
-    opacity: 0.8,
-    width: 5,
-  },
-  micArea: { alignItems: 'center', paddingBottom: 42 },
+  body: { flex: 1, gap: space(3), paddingHorizontal: space(6), paddingTop: space(8) },
+  spaceAbove: { flex: 1, minHeight: space(10) },
+  micArea: { alignItems: 'center', paddingBottom: space(10) },
   micHalo: {
     alignItems: 'center',
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     height: 128,
     justifyContent: 'center',
     width: 128,
   },
   mic: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
-    borderRadius: 99,
+    backgroundColor: Palette.lime,
+    borderRadius: Radius.pill,
     height: 104,
     justifyContent: 'center',
     width: 104,
   },
   listenText: {
-    color: withAlpha(Palette.cream, 0.72),
+    color: OnDark.textSecondary,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 14,
-    marginTop: 14,
+    fontSize: FontSize.label,
+    marginTop: space(4),
   },
   privacy: {
-    color: withAlpha(Palette.cream, 0.4),
+    color: OnDark.textFaint,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    marginTop: 6,
+    fontSize: FontSize.caption,
+    marginTop: space(2),
   },
   placementLink: {
-    backgroundColor: withAlpha(Palette.cream, 0.1),
-    borderRadius: 14,
+    backgroundColor: OnDark.fillStrong,
+    borderRadius: Radius.md,
     justifyContent: 'center',
-    marginTop: 14,
+    marginTop: space(4),
     minHeight: 48,
-    paddingHorizontal: 18,
+    paddingHorizontal: space(4),
   },
   placementText: {
     color: Palette.cream,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 14,
+    fontSize: FontSize.label,
     textAlign: 'center',
   },
   pressed: { opacity: 0.72, transform: [{ scale: 0.98 }] },
   sentence: {
     color: Palette.cream,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
-    lineHeight: 34,
-    marginTop: 14,
+    fontSize: FontSize.display,
+    lineHeight: LineHeight.display,
+    marginTop: space(4),
   },
 });

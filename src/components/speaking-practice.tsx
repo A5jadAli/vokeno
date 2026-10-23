@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { AudioIconButton } from '@/components/lesson-audio-button';
 import { InfoCard, lessonText, TextButton } from '@/components/lesson-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import type { LessonAudio } from '@/features/audio/use-lesson-audio';
 import type { LessonStep } from '@/features/foundations/types';
 
@@ -88,23 +88,23 @@ export function SpeakingPractice({
 }
 
 const styles = StyleSheet.create({
-  stack: { gap: 14 },
-  checks: { gap: 6 },
+  stack: { gap: space(4) },
+  checks: { gap: space(2) },
   example: {
     alignItems: 'center',
     backgroundColor: Palette.white,
-    borderRadius: 16,
+    borderRadius: Radius.lg,
     flexDirection: 'row',
-    gap: 10,
-    paddingLeft: 16,
-    paddingRight: 8,
-    paddingVertical: 12,
+    gap: space(2),
+    paddingLeft: space(4),
+    paddingRight: space(2),
+    paddingVertical: space(3),
   },
   exampleText: {
     color: Palette.ink,
     flex: 1,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 18,
-    lineHeight: 26,
+    fontSize: FontSize.heading,
+    lineHeight: LineHeight.heading,
   },
 });

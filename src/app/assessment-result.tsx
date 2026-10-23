@@ -4,7 +4,16 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { ReportContent } from '@/components/report-content';
-import { Dark, Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  Dark,
+  FontSize,
+  LineHeight,
+  OnDark,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { useAssessmentStore } from '@/features/assessment/store';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { languageDetails, trackColors } from '@/features/language/config';
@@ -20,7 +29,7 @@ export default function AssessmentResultScreen() {
     <AppScreen backgroundColor={Palette.ink} dark showNav={false}>
       <View style={styles.header}>
         <HeaderBack dark />
-        <Eyebrow color={withAlpha(Palette.cream, 0.55)}>Assessment results</Eyebrow>
+        <Eyebrow color={OnDark.textFaint}>Assessment results</Eyebrow>
         <View style={styles.spacer} />
       </View>
       <View style={styles.body}>
@@ -80,12 +89,12 @@ export default function AssessmentResultScreen() {
             onPress={() => router.replace('/level-check')}
             style={({ pressed }) => [
               styles.button,
-              { backgroundColor: colors.accent },
+              { backgroundColor: Palette.lime },
               pressed && styles.pressed,
             ]}
           >
-            <MaterialCommunityIcons color={colors.onAccent} name="microphone" size={21} />
-            <Text style={[styles.buttonText, { color: colors.onAccent }]}>
+            <MaterialCommunityIcons color={Palette.ink} name="microphone" size={21} />
+            <Text style={[styles.buttonText, { color: Palette.ink }]}>
               {assessment ? 'Retake check' : 'Start spoken check'}
             </Text>
           </Pressable>
@@ -123,79 +132,79 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
-    paddingHorizontal: 18,
-    paddingTop: 12,
+    gap: space(3),
+    paddingHorizontal: space(4),
+    paddingTop: space(3),
   },
   spacer: { width: 40 },
-  body: { flex: 1, padding: 24, paddingTop: 42 },
+  body: { flex: 1, padding: space(6), paddingTop: space(10) },
   icon: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
-    borderRadius: 24,
+    backgroundColor: Palette.cream,
+    borderRadius: Radius.xl,
     height: 72,
     justifyContent: 'center',
-    marginBottom: 22,
+    marginBottom: space(6),
     width: 72,
   },
   levelCircle: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
-    borderRadius: 99,
+    backgroundColor: Palette.cream,
+    borderRadius: Radius.pill,
     height: 82,
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: space(5),
     width: 82,
   },
-  level: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 28 },
+  level: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.display },
   title: {
     color: Palette.cream,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
-    lineHeight: 34,
-    marginTop: 10,
+    fontFamily: VokaFonts.displayExtraBold,
+    fontSize: FontSize.display,
+    lineHeight: LineHeight.display,
+    marginTop: space(2),
   },
   copy: {
-    color: withAlpha(Palette.cream, 0.68),
+    color: OnDark.textSecondary,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 14,
-    lineHeight: 21,
-    marginTop: 12,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    marginTop: space(3),
   },
   resultCard: {
     backgroundColor: Dark.raised,
-    borderRadius: 20,
-    gap: 10,
-    marginTop: 18,
-    padding: 16,
+    borderRadius: Radius.xl,
+    gap: space(2),
+    marginTop: space(4),
+    padding: space(4),
   },
-  resultTitle: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
-  resultRow: { alignItems: 'flex-start', flexDirection: 'row', gap: 9 },
+  resultTitle: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
+  resultRow: { alignItems: 'flex-start', flexDirection: 'row', gap: space(2) },
   resultText: {
-    color: withAlpha(Palette.cream, 0.72),
+    color: OnDark.textSecondary,
     flex: 1,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
   },
   disclaimer: {
-    color: withAlpha(Palette.cream, 0.4),
+    color: OnDark.textFaint,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 16,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(4),
   },
   button: {
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: Palette.orange,
-    borderRadius: 99,
+    backgroundColor: Palette.lime,
+    borderRadius: Radius.pill,
     flexDirection: 'row',
-    gap: 8,
-    marginTop: 24,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
+    gap: space(2),
+    marginTop: space(6),
+    paddingHorizontal: space(5),
+    paddingVertical: space(4),
   },
-  buttonText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
+  buttonText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.label },
   pressed: { opacity: 0.72, transform: [{ scale: 0.98 }] },
 });

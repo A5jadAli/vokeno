@@ -10,29 +10,26 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { Tactile } from '@/components/motion';
-import { Feedback, Palette, Selection, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  Selection,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { haptic } from '@/features/feedback/haptics';
 
+// A choice is marked by shape as well as colour: an empty or filled radio before checking, then a
+// tick or a cross. Selection is ink in every language, so it never looks like a language colour
+// or like "nearly right".
 const looks = {
-  idle: {
-    face: Palette.white,
-    border: withAlpha(Palette.ink, 0.12),
-    lip: withAlpha(Palette.ink, 0.14),
-    ink: Palette.ink,
-  },
-  selected: { face: Selection.face, border: Palette.yellow, lip: Selection.lip, ink: Palette.ink },
-  correct: {
-    face: Feedback.correctBg,
-    border: Feedback.correctAccent,
-    lip: Feedback.correctAccent,
-    ink: Feedback.correctInk,
-  },
-  incorrect: {
-    face: Feedback.wrongBg,
-    border: Feedback.wrongAccent,
-    lip: Feedback.wrongAccent,
-    ink: Feedback.wrongInk,
-  },
+  idle: { face: Palette.white, border: Palette.border, ink: Palette.ink },
+  selected: { face: Selection.face, border: Selection.border, ink: Palette.ink },
+  correct: { face: Feedback.correctBg, border: Feedback.correctFill, ink: Feedback.correctText },
+  incorrect: { face: Feedback.wrongBg, border: Feedback.wrongFill, ink: Feedback.wrongText },
 } as const;
 
 export function AnswerChoice({
@@ -90,10 +87,9 @@ export function AnswerChoice({
         disabled={disabled}
         face={look.face}
         faceTestID="answer-face"
-        lip={look.lip}
         borderColor={look.border}
         borderWidth={2}
-        radius={18}
+        radius={Radius.lg}
         onPress={() => {
           if (!selected) haptic.select();
           onPress();
@@ -101,13 +97,19 @@ export function AnswerChoice({
       >
         <View style={styles.row}>
           <Text style={[styles.label, { color: look.ink }]}>{label}</Text>
-          {result ? (
-            <MaterialCommunityIcons
-              name={result === 'correct' ? 'check-circle' : 'close-circle'}
-              size={24}
-              color={look.border}
-            />
-          ) : null}
+          <MaterialCommunityIcons
+            name={
+              result === 'correct'
+                ? 'check-circle'
+                : result === 'incorrect'
+                  ? 'close-circle'
+                  : selected
+                    ? 'radiobox-marked'
+                    : 'radiobox-blank'
+            }
+            size={24}
+            color={result || selected ? look.border : Palette.handle}
+          />
         </View>
       </Tactile>
     </Animated.View>
@@ -118,10 +120,15 @@ const styles = StyleSheet.create({
   row: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
+    gap: space(3),
     minHeight: 58,
-    paddingHorizontal: 18,
-    paddingVertical: 14,
+    paddingHorizontal: space(4),
+    paddingVertical: space(4),
   },
-  label: { flex: 1, fontFamily: VokaFonts.bodySemiBold, fontSize: 16, lineHeight: 23 },
+  label: {
+    flex: 1,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
 });

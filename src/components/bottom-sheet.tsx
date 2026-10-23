@@ -11,7 +11,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import { Palette, withAlpha } from '@/constants/theme';
+import { Palette, Radius, space } from '@/constants/theme';
 
 const OPEN_SPRING = { damping: 26, stiffness: 260, mass: 0.9 };
 
@@ -96,7 +96,7 @@ export function BottomSheet({
         <GestureDetector gesture={pan}>
           <Animated.View
             onLayout={(event) => setHeight(event.nativeEvent.layout.height)}
-            style={[styles.sheet, { paddingBottom: 18 + insets.bottom }, sheetStyle]}
+            style={[styles.sheet, { paddingBottom: space(4) + insets.bottom }, sheetStyle]}
           >
             <View accessibilityLabel="Drag down to close" style={styles.handleArea}>
               <View style={styles.grabber} />
@@ -111,19 +111,19 @@ export function BottomSheet({
 
 const styles = StyleSheet.create({
   root: { flex: 1, justifyContent: 'flex-end' },
-  backdrop: { ...StyleSheet.absoluteFill, backgroundColor: withAlpha(Palette.ink, 0.45) },
+  backdrop: { ...StyleSheet.absoluteFill, backgroundColor: Palette.scrim },
   fill: { flex: 1 },
   sheet: {
     backgroundColor: Palette.cream,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    gap: 12,
-    paddingHorizontal: 18,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
+    gap: space(3),
+    paddingHorizontal: space(4),
   },
-  handleArea: { alignItems: 'center', paddingBottom: 4, paddingTop: 10 },
+  handleArea: { alignItems: 'center', paddingBottom: space(1), paddingTop: space(2) },
   grabber: {
-    backgroundColor: withAlpha(Palette.ink, 0.22),
-    borderRadius: 99,
+    backgroundColor: Palette.handle,
+    borderRadius: Radius.pill,
     height: 5,
     width: 40,
   },

@@ -16,7 +16,15 @@ import {
 } from '@/components/lesson-ui';
 import { SessionFooter } from '@/components/session-footer';
 import { AppScreen } from '@/components/voka-ui';
-import { Feedback, Palette, VokaFonts } from '@/constants/theme';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { freshFoundationEntry } from '@/features/foundations/progress';
 import { useSelectedLanguage } from '@/features/language/selection';
@@ -158,11 +166,7 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
       }
     >
       {outcome ? (
-        <PrimaryButton
-          tone={outcome === 'correct' ? 'green' : 'red'}
-          title="Continue"
-          onPress={nextItem}
-        />
+        <PrimaryButton title="Continue" onPress={nextItem} />
       ) : (
         <PrimaryButton
           title="Check"
@@ -180,7 +184,8 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
         <View style={styles.selfGrade}>
           <View style={{ flex: 1 }}>
             <PrimaryButton
-              tone="red"
+              tone="secondary"
+              icon="close"
               title="Not yet"
               onPress={() => {
                 grade(false);
@@ -190,7 +195,7 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
           </View>
           <View style={{ flex: 1 }}>
             <PrimaryButton
-              tone="green"
+              icon="check"
               title="I knew it"
               onPress={() => {
                 grade(true);
@@ -247,7 +252,7 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
           </>
         ) : null}
         {objective ? (
-          <View style={{ gap: 10 }}>
+          <View style={{ gap: space(2) }}>
             {item.options.map((option, index) => (
               <AnswerChoice
                 key={option}
@@ -305,40 +310,45 @@ function Stat({ label, value }: { label: string; value: number }) {
 }
 
 const styles = StyleSheet.create({
-  body: { gap: 16, paddingBottom: 32, paddingHorizontal: 20, paddingTop: 8 },
-  center: { alignItems: 'center', gap: 14, padding: 24, paddingTop: 40 },
+  body: {
+    gap: space(4),
+    paddingBottom: space(8),
+    paddingHorizontal: space(5),
+    paddingTop: space(2),
+  },
+  center: { alignItems: 'center', gap: space(4), padding: space(6), paddingTop: space(10) },
   badge: {
     alignItems: 'center',
-    backgroundColor: Palette.yellow,
-    borderRadius: 99,
+    backgroundColor: Palette.canvas,
+    borderRadius: Radius.pill,
     height: 88,
     justifyContent: 'center',
     width: 88,
   },
-  stats: { alignSelf: 'stretch', flexDirection: 'row', gap: 10 },
+  stats: { alignSelf: 'stretch', flexDirection: 'row', gap: space(2) },
   stat: {
     alignItems: 'center',
     backgroundColor: Palette.white,
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     flex: 1,
-    paddingVertical: 14,
+    paddingVertical: space(4),
   },
-  statValue: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22 },
-  listen: { alignItems: 'center', flexDirection: 'row', gap: 16, justifyContent: 'center' },
+  statValue: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.title },
+  listen: { alignItems: 'center', flexDirection: 'row', gap: space(4), justifyContent: 'center' },
   answer: {
     alignItems: 'center',
-    backgroundColor: Feedback.correctBgAlt,
-    borderRadius: 20,
+    backgroundColor: Feedback.correctBg,
+    borderRadius: Radius.xl,
     flexDirection: 'row',
-    gap: 12,
-    padding: 16,
+    gap: space(3),
+    padding: space(4),
   },
   answerText: {
     color: Palette.ink,
     flex: 1,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 18,
-    lineHeight: 24,
+    fontSize: FontSize.heading,
+    lineHeight: LineHeight.heading,
   },
-  selfGrade: { flexDirection: 'row', gap: 10 },
+  selfGrade: { flexDirection: 'row', gap: space(2) },
 });

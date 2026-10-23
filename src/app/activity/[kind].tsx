@@ -4,7 +4,16 @@ import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Feedback, Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  OnDark,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { useLessonAudio } from '@/features/audio/use-lesson-audio';
 import { listeningWarmUpSample } from '@/features/audio/spoken-texts';
 import { AnswerChoice } from '@/components/answer-choice';
@@ -41,9 +50,7 @@ function ActivityHeader({
             style={[
               styles.progressBar,
               {
-                backgroundColor: dark
-                  ? withAlpha(Palette.cream, 0.15)
-                  : withAlpha(Palette.ink, 0.15),
+                backgroundColor: dark ? OnDark.fillStrong : Palette.handle,
               },
               item < progress && styles.progressDone,
             ]}
@@ -96,7 +103,7 @@ function ListeningActivity() {
     <AppScreen footer={footer} showNav={false}>
       <ActivityHeader progress={feedback && selected === 1 ? 1 : 0} total={1} />
       {speech.error ? (
-        <Text accessibilityRole="alert" style={{ padding: 18, color: Palette.ink }}>
+        <Text accessibilityRole="alert" style={{ padding: space(4), color: Palette.ink }}>
           {speech.error}
         </Text>
       ) : null}
@@ -132,8 +139,8 @@ function ListeningActivity() {
             style={{
               color: Palette.cream,
               fontFamily: VokaFonts.body,
-              fontSize: 12,
-              lineHeight: 18,
+              fontSize: FontSize.caption,
+              lineHeight: LineHeight.caption,
             }}
           >
             {speech.loading
@@ -230,18 +237,22 @@ function Waveform() {
 
 const styles = StyleSheet.create({
   headerSpacer: { width: 40 },
-  progressBars: { flexDirection: 'row', gap: 4 },
-  progressBar: { borderRadius: 99, height: 5, width: 20 },
-  progressDone: { backgroundColor: Palette.orange },
-  activityBody: { flex: 1, paddingHorizontal: 18, paddingTop: 12 },
-  primaryActionText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
+  progressBars: { flexDirection: 'row', gap: space(1) },
+  progressBar: { borderRadius: Radius.pill, height: 5, width: 20 },
+  progressDone: { backgroundColor: Palette.ink },
+  activityBody: { flex: 1, paddingHorizontal: space(4), paddingTop: space(3) },
+  primaryActionText: {
+    color: Palette.cream,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.heading,
+  },
   pressed: { opacity: 0.7 },
   actionDisabled: { opacity: 0.45 },
-  audioCard: { backgroundColor: Palette.ink, borderRadius: 26, padding: 20 },
+  audioCard: { backgroundColor: Palette.ink, borderRadius: Radius.xl, padding: space(5) },
   pauseButton: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
-    borderRadius: 99,
+    backgroundColor: Palette.cream,
+    borderRadius: Radius.pill,
     height: 60,
     justifyContent: 'center',
     width: 60,
@@ -249,69 +260,70 @@ const styles = StyleSheet.create({
   wave: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 4,
+    gap: space(1),
     height: 50,
-    marginLeft: 72,
+    marginLeft: space(18),
     marginTop: -54,
   },
-  waveBar: { backgroundColor: Palette.cream, borderRadius: 9, flex: 1 },
-  waveMuted: { backgroundColor: withAlpha(Palette.cream, 0.25) },
-  audioControls: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 18 },
+  waveBar: { backgroundColor: Palette.cream, borderRadius: Radius.sm, flex: 1 },
+  waveMuted: { backgroundColor: OnDark.fillStrong },
+  audioControls: { flexDirection: 'row', flexWrap: 'wrap', gap: space(2), marginTop: space(4) },
   audioControl: { minHeight: 44, justifyContent: 'center' },
   audioTranscript: {
-    color: withAlpha(Palette.cream, 0.72),
+    color: OnDark.textSecondary,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 14,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(4),
   },
   slowChip: {
-    backgroundColor: Palette.orange,
-    borderRadius: 99,
+    backgroundColor: Palette.cream,
+    borderRadius: Radius.pill,
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 12,
-    paddingHorizontal: 13,
-    paddingVertical: 8,
+    fontSize: FontSize.caption,
+    paddingHorizontal: space(3),
+    paddingVertical: space(2),
   },
   audioChip: {
-    backgroundColor: withAlpha(Palette.cream, 0.12),
-    borderRadius: 99,
+    backgroundColor: OnDark.fillStrong,
+    borderRadius: Radius.pill,
     color: Palette.cream,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
-    paddingHorizontal: 13,
-    paddingVertical: 8,
+    fontSize: FontSize.caption,
+    paddingHorizontal: space(3),
+    paddingVertical: space(2),
   },
-  questionBlock: { marginTop: 28 },
+  questionBlock: { marginTop: space(7) },
   question: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
-    marginTop: 8,
+    fontSize: FontSize.title,
+    lineHeight: LineHeight.title,
+    marginTop: space(2),
   },
-  answers: { gap: 10, marginTop: 18 },
+  answers: { gap: space(2), marginTop: space(4) },
   answerFeedback: {
-    color: Feedback.wrongTextLight,
+    color: Feedback.wrongText,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 14,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(4),
   },
-  answerFeedbackCorrect: { color: Feedback.correctTextMuted },
+  answerFeedbackCorrect: { color: Feedback.correctText },
   checkButton: {
     alignItems: 'center',
-    backgroundColor: Palette.orange,
-    borderRadius: 18,
+    backgroundColor: Palette.ink,
+    borderRadius: Radius.lg,
     justifyContent: 'center',
-    margin: 18,
+    margin: space(4),
     minHeight: 60,
   },
   header: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 18,
-    paddingVertical: 12,
+    paddingHorizontal: space(4),
+    paddingVertical: space(3),
   },
 });

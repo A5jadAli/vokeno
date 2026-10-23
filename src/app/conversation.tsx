@@ -22,7 +22,17 @@ import { haptic } from '@/features/feedback/haptics';
 import { ReportContent } from '@/components/report-content';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Dark, Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  Dark,
+  Feedback,
+  FontSize,
+  LineHeight,
+  OnDark,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { useAssessmentStore } from '@/features/assessment/store';
 import { useCoachingStore } from '@/features/coaching/store';
 import {
@@ -577,15 +587,22 @@ export default function ConversationScreen() {
     setMuted(next);
   };
 
+  const voiceLive = status === 'listening' || status === 'speaking';
   return (
     <AppScreen activeNav="practice" backgroundColor={Palette.ink} dark>
       <View style={styles.header}>
         <HeaderBack dark />
-        <Text style={styles.logo}>VOKENO LIVE</Text>
-        <View style={styles.livePill}>
-          <View style={styles.liveDot} />
-          <Text style={styles.liveText}>BETA</Text>
-        </View>
+        {/* Named for what it is; nothing here claims to be live before a call starts. */}
+        <Text numberOfLines={1} style={styles.logo}>
+          {unitCall
+            ? `Call with ${unitCall.addressedAs ?? unitCall.character}`
+            : examCard
+              ? 'Speaking mock'
+              : diagnostic
+                ? 'Level check'
+                : 'Live practice'}
+        </Text>
+        <View style={styles.headerSpacer} />
       </View>
 
       <View style={styles.body}>
@@ -601,7 +618,7 @@ export default function ConversationScreen() {
         <Text style={styles.description}>{mode.description}</Text>
         <Text style={styles.description}>
           {unitCall
-            ? `Three minutes with ${unitCall.character}. Corrections are on. Stop any time; the microphone stops when you leave.`
+            ? `Three minutes with ${unitCall.addressedAs ?? unitCall.character}. Corrections are on. Stop any time; the microphone stops when you leave.`
             : 'Up to five minutes. Stop any time; the microphone stops when you leave.'}
         </Text>
 
@@ -622,18 +639,20 @@ export default function ConversationScreen() {
         ) : null}
 
         {!diagnostic && !unit && !unitCall ? (
-          <LanguageSwitch
-            disabled={active || permissionPending}
-            groupLabel="Conversation language"
-            itemLabel={(name) => `${name} conversation`}
-            onChange={(item) => {
-              setTrack(item);
-              setError('');
-              setStatus('idle');
-            }}
-            tone="dark"
-            track={track}
-          />
+          <View style={styles.languageRow}>
+            <LanguageSwitch
+              disabled={active || permissionPending}
+              groupLabel="Conversation language"
+              itemLabel={(name) => `${name} conversation`}
+              onChange={(item) => {
+                setTrack(item);
+                setError('');
+                setStatus('idle');
+              }}
+              tone="dark"
+              track={track}
+            />
+          </View>
         ) : null}
 
         {examCard ? <ExamCardPanel card={examCard} active={active} /> : null}
@@ -653,16 +672,17 @@ export default function ConversationScreen() {
           </View>
         ) : null}
 
-        <View style={[styles.stage, { borderColor: `${mode.accent}55` }]}>
+        <View style={[styles.stage, { borderColor: OnDark.border }]}>
+          {/* Lime only while a voice is live; it pulses only while the coach is speaking. */}
           <PulseOrb
-            color={mode.accent}
-            pulsing={['connecting', 'joining', 'speaking'].includes(status) || permissionPending}
+            color={voiceLive ? Palette.lime : OnDark.fillStrong}
+            pulsing={status === 'speaking'}
           >
             {['connecting', 'joining'].includes(status) || permissionPending ? (
-              <ActivityIndicator color={trackColors[track].onAccent} size="large" />
+              <ActivityIndicator color={Palette.cream} size="large" />
             ) : (
               <MaterialCommunityIcons
-                color={trackColors[track].onAccent}
+                color={voiceLive ? Palette.ink : Palette.cream}
                 name={status === 'listening' ? 'microphone' : 'account-voice'}
                 size={42}
               />
@@ -721,17 +741,13 @@ export default function ConversationScreen() {
               onPress={start}
               style={({ pressed }) => [
                 styles.startButton,
-                { backgroundColor: mode.accent },
+                { backgroundColor: Palette.lime },
                 (assessmentPending || permissionPending) && styles.disabled,
                 pressed && styles.pressed,
               ]}
             >
-              <MaterialCommunityIcons
-                color={trackColors[track].onAccent}
-                name="microphone"
-                size={22}
-              />
-              <Text style={[styles.startText, { color: trackColors[track].onAccent }]}>
+              <MaterialCommunityIcons color={Palette.ink} name="microphone" size={22} />
+              <Text style={[styles.startText, { color: Palette.ink }]}>
                 {permissionPending
                   ? 'Checking microphone…'
                   : assessmentPending
@@ -764,7 +780,7 @@ export default function ConversationScreen() {
                   setError('Open your phone settings, then Vokeno, Permissions and Microphone.'),
                 )
               }
-              style={{ padding: 16 }}
+              style={{ padding: space(4) }}
             >
               <Text
                 style={{
@@ -786,7 +802,7 @@ export default function ConversationScreen() {
             <Pressable
               accessibilityRole="button"
               onPress={() => router.push('/plus' as Href)}
-              style={{ padding: 16 }}
+              style={{ padding: space(4) }}
             >
               <Text style={{ color: Palette.cream, textDecorationLine: 'underline' }}>
                 See Vokeno Plus
@@ -798,7 +814,7 @@ export default function ConversationScreen() {
               accessibilityRole="button"
               disabled={assessmentPending}
               onPress={() => void calculateAssessment()}
-              style={{ padding: 16 }}
+              style={{ padding: space(4) }}
             >
               <Text style={{ color: Palette.cream, textDecorationLine: 'underline' }}>
                 {error
@@ -843,10 +859,12 @@ export default function ConversationScreen() {
             <Text style={styles.captionHint}>Follow along without losing the conversation.</Text>
           </View>
           <Switch
-            thumbColor={Palette.white}
+            // React Native Web colours the knob from activeThumbColor when on (teal by default).
+            {...{ activeThumbColor: Palette.ink }}
+            thumbColor={captions ? Palette.ink : Palette.cream}
             accessibilityLabel="Show live captions"
             onValueChange={setCaptions}
-            trackColor={{ false: Dark.switchOff, true: mode.accent }}
+            trackColor={{ false: Dark.switchOff, true: Palette.cream }}
             value={captions}
           />
         </View>
@@ -903,106 +921,107 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'stretch',
     backgroundColor: Palette.cream,
-    borderRadius: 16,
+    borderRadius: Radius.lg,
     flexDirection: 'row',
-    gap: 8,
+    gap: space(2),
     justifyContent: 'center',
-    marginTop: 10,
+    marginTop: space(2),
     minHeight: 52,
-    paddingHorizontal: 16,
+    paddingHorizontal: space(4),
   },
-  sessionLinkText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
+  sessionLinkText: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.body,
+  },
   header: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 18,
-    paddingVertical: 14,
+    paddingHorizontal: space(4),
+    paddingVertical: space(4),
   },
-  logo: { color: Palette.cream, fontFamily: VokaFonts.displayExtraBold, fontSize: 16 },
-  livePill: {
-    alignItems: 'center',
-    backgroundColor: withAlpha(Palette.cream, 0.1),
-    borderRadius: 99,
-    flexDirection: 'row',
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
+  logo: {
+    color: Palette.cream,
+    flexShrink: 1,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+    textAlign: 'center',
   },
-  liveDot: { backgroundColor: Dark.live, borderRadius: 99, height: 7, width: 7 },
-  liveText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
-  body: { paddingBottom: 34, paddingHorizontal: 20, paddingTop: 15 },
+  headerSpacer: { width: 40 },
+  body: { paddingBottom: space(8), paddingHorizontal: space(5), paddingTop: space(4) },
   title: {
     color: Palette.cream,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
-    lineHeight: 34,
-    marginTop: 8,
+    fontFamily: VokaFonts.displayExtraBold,
+    fontSize: FontSize.display,
+    lineHeight: LineHeight.display,
+    marginTop: space(2),
   },
   description: {
-    color: withAlpha(Palette.cream, 0.67),
+    color: OnDark.textSecondary,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 13,
-    lineHeight: 20,
-    marginTop: 9,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    marginTop: space(2),
   },
-  practiceHeading: { alignItems: 'center', flexDirection: 'row', gap: 8 },
+  languageRow: { marginTop: space(4) },
+  practiceHeading: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
   reportRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 10,
+    gap: space(2),
     justifyContent: 'space-between',
-    marginTop: 14,
+    marginTop: space(4),
   },
   aiNote: {
-    color: withAlpha(Palette.cream, 0.6),
+    color: OnDark.textFaint,
     flex: 1,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
+    fontSize: FontSize.caption,
   },
-  examClock: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
+  examClock: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.label },
   examBullet: {
-    color: withAlpha(Palette.cream, 0.8),
+    color: OnDark.textSecondary,
     fontFamily: VokaFonts.body,
-    fontSize: 14,
-    lineHeight: 21,
-    marginTop: 6,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    marginTop: space(2),
   },
   examNotes: {
-    color: Palette.yellow,
+    color: OnDark.textSecondary,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 13,
-    lineHeight: 19,
-    marginTop: 8,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    marginTop: space(2),
   },
   practiceFocus: {
     color: Palette.cream,
     flex: 1,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
-    lineHeight: 18,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
   },
-  phraseRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 10 },
+  phraseRow: { flexDirection: 'row', flexWrap: 'wrap', gap: space(2), marginTop: space(2) },
   phraseChip: {
-    backgroundColor: withAlpha(Palette.cream, 0.1),
-    borderRadius: 99,
+    backgroundColor: OnDark.fillStrong,
+    borderRadius: Radius.pill,
     color: Palette.cream,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    fontSize: FontSize.caption,
+    paddingHorizontal: space(2),
+    paddingVertical: space(2),
   },
   stage: {
     alignItems: 'center',
     backgroundColor: Dark.surface,
-    borderRadius: 28,
+    borderRadius: Radius.xl,
     borderWidth: 1,
-    marginTop: 17,
-    padding: 22,
+    marginTop: space(4),
+    padding: space(6),
   },
   orb: {
     alignItems: 'center',
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     height: 82,
     justifyContent: 'center',
     width: 82,
@@ -1010,133 +1029,143 @@ const styles = StyleSheet.create({
   status: {
     color: Palette.cream,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 18,
-    marginTop: 17,
+    fontSize: FontSize.heading,
+    marginTop: space(4),
     textAlign: 'center',
   },
   statusHint: {
-    color: withAlpha(Palette.cream, 0.55),
+    color: OnDark.textFaint,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 7,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(2),
     textAlign: 'center',
   },
   audioRouteHint: {
-    color: withAlpha(Palette.cream, 0.42),
+    color: OnDark.textFaint,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 8,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(2),
     textAlign: 'center',
   },
   startButton: {
     alignItems: 'center',
-    borderRadius: 17,
+    borderRadius: Radius.lg,
     flexDirection: 'row',
-    gap: 9,
+    gap: space(2),
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: space(5),
     minHeight: 54,
-    paddingHorizontal: 22,
+    paddingHorizontal: space(6),
   },
-  startText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
-  controls: { flexDirection: 'row', gap: 13, marginTop: 20 },
+  startText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
+  controls: { flexDirection: 'row', gap: space(3), marginTop: space(5) },
   controlButton: {
     alignItems: 'center',
     backgroundColor: Dark.control,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     height: 52,
     justifyContent: 'center',
     width: 52,
   },
-  endButton: { backgroundColor: Dark.endCall },
+  endButton: { backgroundColor: Feedback.wrongFill },
   error: {
     color: Dark.errorText,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 14,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(4),
     textAlign: 'center',
   },
   captionHeader: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 26,
+    marginTop: space(6),
   },
   captionHint: {
-    color: withAlpha(Palette.cream, 0.5),
+    color: OnDark.textFaint,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    marginTop: 5,
+    fontSize: FontSize.caption,
+    marginTop: space(1),
   },
   transcript: {
     backgroundColor: Dark.surface,
-    borderRadius: 22,
-    gap: 10,
-    marginTop: 12,
+    borderRadius: Radius.xl,
+    gap: space(2),
+    marginTop: space(3),
     minHeight: 100,
-    padding: 15,
+    padding: space(4),
   },
   turn: { alignSelf: 'flex-start', maxWidth: '90%' },
   userTurn: { alignSelf: 'flex-end', alignItems: 'flex-end' },
   turnRole: {
-    color: withAlpha(Palette.cream, 0.4),
+    color: OnDark.textFaint,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
-    marginBottom: 3,
+    fontSize: FontSize.caption,
+    marginBottom: space(1),
   },
   turnText: {
     color: Palette.cream,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 13,
-    lineHeight: 19,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
   },
   emptyTranscript: {
-    color: withAlpha(Palette.cream, 0.45),
+    color: OnDark.textFaint,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
   },
-  coachCard: { backgroundColor: Dark.raised, borderRadius: 22, marginTop: 18, padding: 17 },
-  coachHeading: { alignItems: 'center', flexDirection: 'row', gap: 9 },
-  coachTitle: { color: Palette.cream, flex: 1, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
+  coachCard: {
+    backgroundColor: Dark.raised,
+    borderRadius: Radius.xl,
+    marginTop: space(4),
+    padding: space(4),
+  },
+  coachHeading: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
+  coachTitle: {
+    color: Palette.cream,
+    flex: 1,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+  },
   coachCopy: {
-    color: withAlpha(Palette.cream, 0.58),
+    color: OnDark.textFaint,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 10,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(2),
   },
   signal: {
-    borderTopColor: withAlpha(Palette.cream, 0.1),
+    borderTopColor: OnDark.line,
     borderTopWidth: 1,
-    marginTop: 11,
-    paddingTop: 10,
+    marginTop: space(3),
+    paddingTop: space(2),
   },
-  signalLabel: { fontFamily: VokaFonts.bodyBold, fontSize: 13 },
+  signalLabel: { fontFamily: VokaFonts.bodyBold, fontSize: FontSize.label },
   signalReason: {
-    color: withAlpha(Palette.cream, 0.58),
+    color: OnDark.textFaint,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 3,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(1),
   },
   privacy: {
-    color: withAlpha(Palette.cream, 0.35),
+    color: OnDark.textFaint,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 12,
-    marginTop: 14,
+    fontSize: FontSize.caption,
+    marginTop: space(4),
     textAlign: 'center',
   },
   pressed: { opacity: 0.7, transform: [{ scale: 0.99 }] },
   disabled: { opacity: 0.5 },
   practiceCard: {
-    backgroundColor: withAlpha(Palette.cream, 0.08),
-    borderRadius: 18,
-    marginTop: 15,
-    padding: 14,
+    backgroundColor: OnDark.fill,
+    borderRadius: Radius.lg,
+    marginTop: space(4),
+    padding: space(4),
   },
 });
 
@@ -1157,11 +1186,11 @@ function ExamCardPanel({ card, active }: { card: SpeakingCard; active: boolean }
   return (
     <View style={styles.practiceCard}>
       <View style={styles.practiceHeading}>
-        <MaterialCommunityIcons color={Palette.yellow} name="card-text-outline" size={18} />
+        <MaterialCommunityIcons color={Palette.cream} name="card-text-outline" size={18} />
         <Text style={styles.practiceFocus}>{card.title}</Text>
         <Text
           accessibilityLabel={`Speaking time ${formatClock(elapsed)} of ${formatClock(limit)}`}
-          style={[styles.examClock, elapsed >= limit && { color: Palette.yellow }]}
+          style={[styles.examClock, elapsed >= limit && { color: Dark.errorText }]}
         >
           {formatClock(elapsed)} / {formatClock(limit)}
         </Text>

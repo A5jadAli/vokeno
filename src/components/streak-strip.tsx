@@ -1,7 +1,7 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Palette, VokaFonts } from '@/constants/theme';
+import { FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import type { StreakSummary, WeekDayState } from '@/features/habits/practice-log';
 import { trackColors, type LanguageTrack } from '@/features/language/config';
 
@@ -42,7 +42,12 @@ export function StreakChip({ streak, onPress }: { streak: StreakSummary; onPress
       onPress={onPress}
       style={({ pressed }) => [styles.chip, lit && styles.chipLit, pressed && styles.pressed]}
     >
-      <MaterialCommunityIcons color={lit ? Palette.orange : Palette.muted} name="fire" size={20} />
+      {/* Lit and unlit differ by shape, not only colour: a filled flame, or an outline. */}
+      <Ionicons
+        color={lit ? Palette.ink : Palette.muted}
+        name={lit ? 'flame' : 'flame-outline'}
+        size={20}
+      />
       <Text style={styles.chipNumber}>{streak.current}</Text>
     </Pressable>
   );
@@ -68,9 +73,9 @@ export function StreakStrip({
       {showCount ? (
         <View style={styles.top}>
           <View accessible accessibilityLabel={streakLabel(streak)} style={styles.count}>
-            <MaterialCommunityIcons
-              color={lit ? Palette.orange : Palette.muted}
-              name="fire"
+            <Ionicons
+              color={lit ? Palette.ink : Palette.muted}
+              name={lit ? 'flame' : 'flame-outline'}
               size={24}
             />
             <Text style={styles.number}>{streak.current}</Text>
@@ -93,7 +98,7 @@ export function StreakStrip({
               style={[
                 styles.dot,
                 day.state === 'done' && { backgroundColor: colors.accent },
-                day.state === 'today' && { borderColor: colors.accent, borderWidth: 2 },
+                day.state === 'today' && { borderColor: colors.deep, borderWidth: 2 },
                 day.state === 'rest' && styles.rest,
                 (day.state === 'future' || day.state === 'before') && styles.future,
               ]}
@@ -119,43 +124,48 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     borderWidth: 1,
-    gap: 12,
-    marginHorizontal: 18,
-    padding: 16,
+    gap: space(3),
+    marginHorizontal: space(4),
+    padding: space(4),
   },
   top: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
-  count: { alignItems: 'baseline', flexDirection: 'row', gap: 4 },
-  number: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22 },
-  unit: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  best: { color: Palette.secondary, fontFamily: VokaFonts.bodyMedium, fontSize: 13 },
+  count: { alignItems: 'baseline', flexDirection: 'row', gap: space(1) },
+  number: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.title },
+  unit: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.label },
+  best: { color: Palette.secondary, fontFamily: VokaFonts.bodyMedium, fontSize: FontSize.label },
   week: { flexDirection: 'row', justifyContent: 'space-between' },
-  day: { alignItems: 'center', gap: 4 },
+  day: { alignItems: 'center', gap: space(1) },
   dot: {
     alignItems: 'center',
     backgroundColor: Palette.soft,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     height: 30,
     justifyContent: 'center',
     width: 30,
   },
   rest: { backgroundColor: Palette.canvas },
   future: { backgroundColor: 'transparent', borderColor: Palette.line, borderWidth: 1 },
-  label: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
+  label: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.caption },
   labelToday: { color: Palette.ink },
-  caption: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 18 },
+  caption: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
   chip: {
     alignItems: 'center',
     backgroundColor: Palette.white,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     flexDirection: 'row',
-    gap: 4,
+    gap: space(1),
     height: 44,
-    paddingLeft: 12,
-    paddingRight: 14,
+    paddingLeft: space(3),
+    paddingRight: space(4),
   },
-  chipLit: { backgroundColor: Palette.orangeTint },
-  chipNumber: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 17 },
+  chipLit: { backgroundColor: Palette.white },
+  chipNumber: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.heading },
   pressed: { opacity: 0.7 },
 });

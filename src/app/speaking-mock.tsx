@@ -12,8 +12,16 @@ import {
   TextButton,
   PrimaryAccent,
 } from '@/components/lesson-ui';
-import { AppScreen } from '@/components/voka-ui';
-import { Feedback, Palette, VokaFonts } from '@/constants/theme';
+import { AppScreen, Segmented } from '@/components/voka-ui';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { formatClock, useMockNotes } from '@/features/speaking-mock/store';
 import {
@@ -150,7 +158,6 @@ function SpeakingMock({ track, exam }: { track: 'DE' | 'EN' | 'ES'; exam: Exam }
                 remaining === 0 ? 'Time is up: start speaking' : 'Start speaking now'
               }
               icon="microphone"
-              tone={remaining === 0 ? 'green' : 'yellow'}
               onPress={start}
             />
           ) : (
@@ -175,28 +182,18 @@ function SpeakingMock({ track, exam }: { track: 'DE' | 'EN' | 'ES'; exam: Exam }
         </Text>
         <Text style={lessonText.small}>Speaking practice only, not a full exam result.</Text>
         {parts.length > 1 && !preparing ? (
-          <View accessibilityRole="tablist" style={styles.tabs}>
-            {parts.map((value) => (
-              <Pressable
-                key={value}
-                accessibilityRole="tab"
-                accessibilityState={{ selected: part === value }}
-                onPress={() => {
-                  setPart(value);
-                  setCard(pick(speakingCards.filter((item) => item.part === value)));
-                }}
-                style={[styles.tab, part === value && styles.tabActive]}
-              >
-                <Text style={[styles.tabText, part === value && styles.tabTextActive]}>
-                  {partInfo[value].tab}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
+          <Segmented
+            value={part}
+            onChange={(value) => {
+              setPart(value);
+              setCard(pick(speakingCards.filter((item) => item.part === value)));
+            }}
+            options={parts.map((value) => ({ value, label: partInfo[value].tab }))}
+          />
         ) : null}
 
         <View style={styles.card}>
-          <Text style={[styles.cardKicker, { color: trackColors[track].accent }]}>
+          <Text style={[styles.cardKicker, { color: trackColors[track].deep }]}>
             {partInfo[card.part].kicker}
           </Text>
           <Text style={styles.cardTitle}>{card.title}</Text>
@@ -251,72 +248,80 @@ function SpeakingMock({ track, exam }: { track: 'DE' | 'EN' | 'ES'; exam: Exam }
 }
 
 const styles = StyleSheet.create({
-  body: { gap: 16, paddingBottom: 32, paddingHorizontal: 20, paddingTop: 8 },
-  tabs: {
-    backgroundColor: Palette.soft,
-    borderRadius: 16,
-    flexDirection: 'row',
-    gap: 4,
-    padding: 4,
+  body: {
+    gap: space(4),
+    paddingBottom: space(8),
+    paddingHorizontal: space(5),
+    paddingTop: space(2),
   },
-  tab: { alignItems: 'center', borderRadius: 12, flex: 1, justifyContent: 'center', minHeight: 44 },
-  tabActive: { backgroundColor: Palette.ink },
-  tabText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  tabTextActive: { color: Palette.cream },
   card: {
     backgroundColor: Palette.white,
     borderColor: Palette.ink,
-    borderRadius: 22,
+    borderRadius: Radius.xl,
     borderWidth: 2,
-    gap: 10,
-    padding: 20,
+    gap: space(2),
+    padding: space(5),
   },
-  cardKicker: { color: Palette.orange, fontFamily: VokaFonts.bodyBold, fontSize: 13 },
+  cardKicker: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.label,
+  },
   cardTitle: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
-    fontSize: 22,
-    lineHeight: 28,
+    fontSize: FontSize.title,
+    lineHeight: LineHeight.title,
   },
-  cardSub: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
-  bulletRow: { alignItems: 'flex-start', flexDirection: 'row', gap: 10 },
-  dot: { backgroundColor: Palette.yellow, borderRadius: 99, height: 8, marginTop: 8, width: 8 },
+  cardSub: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.body,
+  },
+  bulletRow: { alignItems: 'flex-start', flexDirection: 'row', gap: space(2) },
+  dot: {
+    backgroundColor: Palette.ink,
+    borderRadius: Radius.pill,
+    height: 8,
+    marginTop: space(2),
+    width: 8,
+  },
   bullet: {
     color: Palette.ink,
     flex: 1,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 16,
-    lineHeight: 23,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
   },
   gloss: {
     color: Palette.secondary,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 14,
-    lineHeight: 21,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
     textDecorationLine: 'underline',
   },
   clock: {
     alignItems: 'center',
     alignSelf: 'center',
-    backgroundColor: Palette.yellow,
-    borderRadius: 99,
+    backgroundColor: Palette.canvas,
+    borderRadius: Radius.pill,
     flexDirection: 'row',
-    gap: 8,
-    paddingHorizontal: 22,
-    paddingVertical: 12,
+    gap: space(2),
+    paddingHorizontal: space(6),
+    paddingVertical: space(3),
   },
-  clockDone: { backgroundColor: Feedback.correctBgAlt },
-  clockText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 28 },
+  clockDone: { backgroundColor: Feedback.correctBg },
+  clockText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.display },
   notes: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     borderWidth: 2,
     color: Palette.ink,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
     minHeight: 140,
-    padding: 14,
+    padding: space(4),
   },
 });

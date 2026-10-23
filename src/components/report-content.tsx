@@ -14,7 +14,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ActionRow, lessonText, PrimaryButton } from '@/components/lesson-ui';
-import { Feedback, Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import { Feedback, FontSize, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import {
   REPORT_REASONS,
   reportAiContent,
@@ -106,7 +106,7 @@ export function ReportContent({
                 <Text style={lessonText.small}>
                   Tell us what went wrong. Your report goes to the Vokeno team.
                 </Text>
-                <View accessibilityRole="radiogroup" style={{ gap: 8 }}>
+                <View accessibilityRole="radiogroup" style={{ gap: space(2) }}>
                   {REPORT_REASONS.map((item) => (
                     <ActionRow
                       key={item.key}
@@ -152,43 +152,43 @@ export function ReportContent({
 }
 
 const styles = StyleSheet.create({
-  trigger: { alignItems: 'center', flexDirection: 'row', gap: 4, minHeight: 32 },
-  triggerText: { fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  scrim: { backgroundColor: withAlpha(Palette.black, 0.45), flex: 1 },
+  trigger: { alignItems: 'center', flexDirection: 'row', gap: space(1), minHeight: 32 },
+  triggerText: { fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.label },
+  scrim: { backgroundColor: Palette.scrim, flex: 1 },
   sheet: {
     backgroundColor: Palette.cream,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    gap: 14,
-    paddingBottom: 28,
-    paddingHorizontal: 20,
-    paddingTop: 10,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
+    gap: space(4),
+    paddingBottom: space(7),
+    paddingHorizontal: space(5),
+    paddingTop: space(2),
   },
   grabber: {
     alignSelf: 'center',
-    backgroundColor: withAlpha(Palette.ink, 0.2),
-    borderRadius: 99,
+    backgroundColor: Palette.handle,
+    borderRadius: Radius.pill,
     height: 5,
-    marginBottom: 6,
+    marginBottom: space(2),
     width: 40,
   },
   input: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 16,
+    borderRadius: Radius.lg,
     borderWidth: 2,
     color: Palette.ink,
     fontFamily: VokaFonts.body,
-    fontSize: 15,
+    fontSize: FontSize.body,
     minHeight: 80,
-    padding: 12,
+    padding: space(3),
   },
-  error: { color: Feedback.wrongText, fontFamily: VokaFonts.bodyMedium, fontSize: 14 },
-  sent: { alignItems: 'center', gap: 12, paddingVertical: 8 },
+  error: { color: Feedback.wrongText, fontFamily: VokaFonts.bodyMedium, fontSize: FontSize.label },
+  sent: { alignItems: 'center', gap: space(3), paddingVertical: space(2) },
   sentIcon: {
     alignItems: 'center',
     backgroundColor: Feedback.correctSoft,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     height: 64,
     justifyContent: 'center',
     width: 64,

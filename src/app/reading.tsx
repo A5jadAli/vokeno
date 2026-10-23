@@ -3,7 +3,15 @@ import { Redirect } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { AnswerChoice } from '@/components/answer-choice';
-import { Palette, Selection, VokaFonts } from '@/constants/theme';
+import {
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  Selection,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { readingLessons } from '@/features/reading/catalog';
 import { useCoachingStore } from '@/features/coaching/store';
 import { useSelectedLanguage } from '@/features/language/selection';
@@ -28,10 +36,12 @@ function EnglishReading() {
   };
   return (
     <AppScreen showNav={false}>
-      <View style={{ padding: 20, gap: 18 }}>
+      <View style={{ padding: space(5), gap: space(4) }}>
         <HeaderBack variant="close" />
         <Eyebrow>Read, check, explain</Eyebrow>
-        <Text style={{ color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 28 }}>
+        <Text
+          style={{ color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.display }}
+        >
           English reading practice
         </Text>
         {readingLessons.map((item, index) => (
@@ -116,14 +126,24 @@ function EnglishReading() {
 }
 
 const styles = StyleSheet.create({
-  passage: { color: Palette.ink, fontFamily: VokaFonts.body, fontSize: 16, lineHeight: 24 },
+  passage: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
   question: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 18,
-    lineHeight: 25,
+    fontSize: FontSize.heading,
+    lineHeight: LineHeight.heading,
   },
-  copy: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, lineHeight: 21 },
+  copy: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
 });
 function Button({
   label,
@@ -148,15 +168,19 @@ function Button({
       onPress={onPress}
       style={({ pressed }) => ({
         minHeight: 48,
-        padding: 16,
-        backgroundColor: primary ? Palette.yellow : selected ? Selection.faceStrong : Palette.white,
-        borderColor: selected ? Palette.yellow : Palette.line,
+        padding: space(4),
+        backgroundColor: primary ? Palette.ink : selected ? Selection.faceStrong : Palette.white,
+        borderColor: selected ? Selection.border : primary ? Palette.ink : Palette.line,
         borderWidth: 2,
-        borderRadius: 16,
+        borderRadius: Radius.lg,
         opacity: disabled || pressed ? 0.7 : 1,
       })}
     >
-      <Text style={{ color: Palette.ink, fontFamily: VokaFonts.bodySemiBold }}>{label}</Text>
+      <Text
+        style={{ color: primary ? Palette.cream : Palette.ink, fontFamily: VokaFonts.bodySemiBold }}
+      >
+        {label}
+      </Text>
     </Pressable>
   );
 }

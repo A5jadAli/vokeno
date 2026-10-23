@@ -20,9 +20,18 @@ import {
   TextButton,
   PrimaryAccent,
 } from '@/components/lesson-ui';
-import { AppScreen, HeaderBack } from '@/components/voka-ui';
+import { AppScreen, HeaderBack, Segmented } from '@/components/voka-ui';
 import { ReportContent } from '@/components/report-content';
-import { Feedback, Palette, Selection, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  Selection,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { isWritingFeedbackConfigured, requestWritingFeedback } from '@/features/writing/feedback';
@@ -37,9 +46,9 @@ import { countWritingWords } from '@/features/writing/validation';
 import { languageDetails, type LanguageTrack, trackColors } from '@/features/language/config';
 
 const ratingStyle = {
-  strong: { bg: Feedback.correctBgAlt, ink: Feedback.correctText },
-  developing: { bg: Selection.face, ink: Feedback.behindInk },
-  'needs work': { bg: Feedback.wrongBgAlt, ink: Feedback.wrongText },
+  strong: { bg: Feedback.correctBg, ink: Feedback.correctText },
+  developing: { bg: Feedback.closeBg, ink: Feedback.closeInk },
+  'needs work': { bg: Feedback.wrongBg, ink: Feedback.wrongText },
 } as const;
 
 const keyboardTip = {
@@ -173,21 +182,11 @@ function WritingPractice({ track }: { track: LanguageTrack }) {
         )}
       </View>
       <View style={styles.body}>
-        <View accessibilityRole="tablist" style={styles.tabs}>
-          {ids.map((id) => (
-            <Pressable
-              key={id}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: taskId === id }}
-              onPress={() => chooseTask(id)}
-              style={[styles.tab, taskId === id && styles.tabActive]}
-            >
-              <Text style={[styles.tabText, taskId === id && styles.tabTextActive]}>
-                {writingTasks[id].label}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
+        <Segmented
+          value={taskId}
+          onChange={chooseTask}
+          options={ids.map((id) => ({ value: id, label: writingTasks[id].label }))}
+        />
 
         <Text accessibilityRole="header" style={lessonText.title}>
           {task.title}
@@ -339,7 +338,7 @@ function WritingPractice({ track }: { track: LanguageTrack }) {
 function FeedbackView({ feedback, track }: { feedback: WritingFeedback; track: LanguageTrack }) {
   const [showImproved, setShowImproved] = useState(false);
   return (
-    <View style={{ gap: 12 }}>
+    <View style={{ gap: space(3) }}>
       <View style={styles.feedbackHeader}>
         <SectionLabel>AI feedback</SectionLabel>
         <ReportContent
@@ -406,7 +405,7 @@ function FeedbackView({ feedback, track }: { feedback: WritingFeedback; track: L
           </Text>
         )}
       </View>
-      <InfoCard icon="flag-checkered" title="Next step" tone="yellow">
+      <InfoCard icon="flag-checkered" title="Next step" tone="tint">
         {feedback.nextStep}
       </InfoCard>
       <Text style={lessonText.small}>AI feedback can be wrong. It is not a score or a level.</Text>
@@ -477,147 +476,188 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    gap: space(3),
+    paddingHorizontal: space(4),
+    paddingVertical: space(2),
   },
-  headerTitle: { color: Palette.ink, flex: 1, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
+  headerTitle: {
+    color: Palette.ink,
+    flex: 1,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+  },
   clock: {
     alignItems: 'center',
-    backgroundColor: Palette.yellow,
-    borderRadius: 99,
+    backgroundColor: Palette.canvas,
+    borderRadius: Radius.pill,
     flexDirection: 'row',
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    gap: space(1),
+    paddingHorizontal: space(3),
+    paddingVertical: space(2),
   },
-  clockDone: { backgroundColor: Feedback.wrongBgAlt },
-  clockText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  body: { gap: 14, paddingBottom: 32, paddingHorizontal: 20 },
-  tabs: {
-    backgroundColor: Palette.soft,
-    borderRadius: 16,
-    flexDirection: 'row',
-    gap: 4,
-    padding: 4,
+  clockDone: { backgroundColor: Feedback.wrongBg },
+  clockText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.label },
+  body: { gap: space(4), paddingBottom: space(8), paddingHorizontal: space(5) },
+  prompt: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
   },
-  tab: { alignItems: 'center', borderRadius: 12, flex: 1, justifyContent: 'center', minHeight: 44 },
-  tabActive: { backgroundColor: Palette.ink },
-  tabText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  tabTextActive: { color: Palette.cream },
-  prompt: { color: Palette.ink, fontFamily: VokaFonts.bodyMedium, fontSize: 16, lineHeight: 24 },
   examToggle: {
     alignItems: 'center',
     backgroundColor: Palette.white,
     borderColor: 'transparent',
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     borderWidth: 2,
     flexDirection: 'row',
-    gap: 12,
-    padding: 14,
+    gap: space(3),
+    padding: space(4),
   },
-  examToggleOn: { borderColor: Palette.yellow },
-  examTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
+  examToggleOn: { borderColor: Selection.border },
+  examTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
   switch: {
-    backgroundColor: withAlpha(Palette.ink, 0.2),
-    borderRadius: 99,
+    backgroundColor: Palette.handle,
+    borderRadius: Radius.pill,
     height: 28,
-    padding: 3,
+    padding: space(1),
     width: 48,
   },
   switchOn: { backgroundColor: Feedback.correctFill },
-  knob: { backgroundColor: Palette.white, borderRadius: 99, height: 22, width: 22 },
+  knob: { backgroundColor: Palette.white, borderRadius: Radius.pill, height: 22, width: 22 },
   knobOn: { transform: [{ translateX: 20 }] },
   input: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     borderWidth: 2,
     color: Palette.ink,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
     maxHeight: 360,
     minHeight: 180,
-    padding: 16,
+    padding: space(4),
   },
-  counter: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  counter: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
   counterTrack: {
-    backgroundColor: withAlpha(Palette.ink, 0.1),
-    borderRadius: 99,
+    backgroundColor: Palette.pressed,
+    borderRadius: Radius.pill,
     flex: 1,
     height: 6,
     overflow: 'hidden',
   },
-  counterFill: { backgroundColor: Palette.yellow, height: '100%' },
-  counterText: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
+  counterFill: { backgroundColor: Palette.ink, height: '100%' },
+  counterText: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.caption,
+  },
   warning: {
-    backgroundColor: Feedback.wrongBgAlt,
-    borderRadius: 14,
+    backgroundColor: Feedback.wrongBg,
+    borderRadius: Radius.md,
     color: Feedback.wrongText,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 14,
-    lineHeight: 21,
-    padding: 12,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    padding: space(3),
   },
   saved: {
-    backgroundColor: Feedback.correctBgAlt,
-    borderRadius: 14,
+    backgroundColor: Feedback.correctBg,
+    borderRadius: Radius.md,
     color: Feedback.correctText,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 14,
-    lineHeight: 21,
-    padding: 12,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    padding: space(3),
   },
   feedbackHeader: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  checklist: { backgroundColor: Palette.white, borderRadius: 18, gap: 10, padding: 14 },
-  checkRow: { flexDirection: 'row', gap: 8 },
-  loading: { alignItems: 'center', flexDirection: 'row', gap: 10, padding: 12 },
-  criterion: { backgroundColor: Palette.white, borderRadius: 18, gap: 8, padding: 14 },
+  checklist: {
+    backgroundColor: Palette.white,
+    borderRadius: Radius.lg,
+    gap: space(2),
+    padding: space(4),
+  },
+  checkRow: { flexDirection: 'row', gap: space(2) },
+  loading: { alignItems: 'center', flexDirection: 'row', gap: space(2), padding: space(3) },
+  criterion: {
+    backgroundColor: Palette.white,
+    borderRadius: Radius.lg,
+    gap: space(2),
+    padding: space(4),
+  },
   criterionTop: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
     minHeight: 32,
   },
-  criterionName: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
+  criterionName: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
   pill: {
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
+    fontSize: FontSize.caption,
     overflow: 'hidden',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: space(2),
+    paddingVertical: space(1),
     textTransform: 'capitalize',
   },
-  correction: { borderTopColor: Palette.line, borderTopWidth: 1, gap: 4, paddingTop: 10 },
+  correction: {
+    borderTopColor: Palette.line,
+    borderTopWidth: 1,
+    gap: space(1),
+    paddingTop: space(2),
+  },
   original: {
     color: Feedback.wrongText,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 15,
+    fontSize: FontSize.body,
     textDecorationLine: 'line-through',
   },
-  corrected: { color: Feedback.correctText, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
-  improved: { color: Palette.ink, fontFamily: VokaFonts.body, fontSize: 15, lineHeight: 22 },
-  chartCard: { backgroundColor: Palette.white, borderRadius: 20, gap: 12, padding: 16 },
-  chart: { alignItems: 'flex-end', flexDirection: 'row', gap: 6, height: 130 },
+  corrected: {
+    color: Feedback.correctText,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+  },
+  improved: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
+  chartCard: {
+    backgroundColor: Palette.white,
+    borderRadius: Radius.xl,
+    gap: space(3),
+    padding: space(4),
+  },
+  chart: { alignItems: 'flex-end', flexDirection: 'row', gap: space(2), height: 130 },
   barColumn: { alignItems: 'center', flex: 1, justifyContent: 'flex-end' },
-  bar: { backgroundColor: Palette.neutralBar, borderRadius: 6, marginVertical: 4, width: '100%' },
-  barPeak: { backgroundColor: Palette.orange },
-  barLabel: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
-  wordChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  bar: {
+    backgroundColor: Palette.neutralBar,
+    borderRadius: Radius.sm,
+    marginVertical: space(1),
+    width: '100%',
+  },
+  barPeak: { backgroundColor: Palette.ink },
+  barLabel: {
+    color: Palette.muted,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.caption,
+  },
+  wordChips: { flexDirection: 'row', flexWrap: 'wrap', gap: space(2) },
   wordChip: {
     backgroundColor: Palette.soft,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 12,
+    fontSize: FontSize.caption,
     overflow: 'hidden',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: space(2),
+    paddingVertical: space(2),
   },
 });

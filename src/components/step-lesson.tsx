@@ -4,6 +4,7 @@ import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 
+import { useAccentColors } from '@/components/accent-context';
 import { AnswerChoice } from '@/components/answer-choice';
 import { AudioIconButton } from '@/components/lesson-audio-button';
 import {
@@ -21,8 +22,16 @@ import { SessionFooter } from '@/components/session-footer';
 import { SpeakingPractice } from '@/components/speaking-practice';
 import { FormPractice } from '@/components/form-practice';
 import { ListeningPrompt } from '@/components/listening-prompt';
-import { AppScreen } from '@/components/voka-ui';
-import { Feedback, Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import { AppScreen, Segmented } from '@/components/voka-ui';
+import {
+  Feedback,
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { haptic } from '@/features/feedback/haptics';
 import {
@@ -197,15 +206,9 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
     footer = (
       <ActionBar feedback={result ?? undefined}>
         {correctNow ? (
-          <PrimaryButton
-            tone="green"
-            title="Continue"
-            icon="arrow-right"
-            onPress={() => advance()}
-          />
+          <PrimaryButton title="Continue" icon="arrow-right" onPress={() => advance()} />
         ) : result && step.kind !== 'type' && step.kind !== 'form' ? (
           <PrimaryButton
-            tone="red"
             title="Try again"
             onPress={() => {
               setResult(null);
@@ -341,6 +344,8 @@ function StepView(props: StepProps) {
 type Of<K extends LessonStep['kind']> = Extract<LessonStep, { kind: K }>;
 
 function SceneStep({ step, speech }: StepProps & { step: Of<'scene'> }) {
+  // The second speaker's bubbles take the language tint: green is kept for right answers.
+  const accent = useAccentColors();
   const hasReal = step.lines.some((line) => line.real);
   const [real, setReal] = useState(false);
   const [english, setEnglish] = useState(false);
@@ -390,25 +395,17 @@ function SceneStep({ step, speech }: StepProps & { step: Of<'scene'> }) {
         </Pressable>
       </View>
       {hasReal ? (
-        <View accessibilityRole="tablist" style={styles.segment}>
-          {[
+        <Segmented
+          value={real}
+          onChange={(value) => {
+            speech.stop();
+            setReal(value);
+          }}
+          options={[
             { value: false, label: 'Careful' },
             { value: true, label: 'As people say it' },
-          ].map((option) => (
-            <Pressable
-              key={option.label}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: real === option.value }}
-              onPress={() => {
-                speech.stop();
-                setReal(option.value);
-              }}
-              style={[styles.segmentItem, real === option.value && styles.segmentActive]}
-            >
-              <Text style={styles.segmentText}>{option.label}</Text>
-            </Pressable>
-          ))}
-        </View>
+          ]}
+        />
       ) : null}
       <View style={styles.bubbles}>
         {step.lines.map((line, lineIndex) => {
@@ -430,7 +427,9 @@ function SceneStep({ step, speech }: StepProps & { step: Of<'scene'> }) {
               <View
                 style={[
                   styles.bubble,
-                  mine ? styles.bubbleMine : styles.bubbleTheirs,
+                  mine
+                    ? [styles.bubbleMine, { backgroundColor: accent?.tint ?? Palette.canvas }]
+                    : styles.bubbleTheirs,
                   active && styles.bubbleActive,
                 ]}
               >
@@ -456,7 +455,7 @@ function SceneStep({ step, speech }: StepProps & { step: Of<'scene'> }) {
         </Text>
       ) : null}
       {step.note ? (
-        <InfoCard icon="lightbulb-on-outline" title="Notice" tone="yellow">
+        <InfoCard icon="lightbulb-on-outline" title="Notice" tone="tint">
           {step.note}
         </InfoCard>
       ) : null}
@@ -671,8 +670,8 @@ function BuildStep({
         }
         style={[
           styles.answerLine,
-          result?.tone === 'correct' && { borderColor: Feedback.correctInk },
-          result?.tone === 'wrong' && { borderColor: Feedback.wrongInk },
+          result?.tone === 'correct' && { borderColor: Feedback.correctText },
+          result?.tone === 'wrong' && { borderColor: Feedback.wrongText },
         ]}
       >
         {picked.length ? (
@@ -724,9 +723,8 @@ function Tile({
   return (
     <Tactile
       face={Palette.white}
-      lip={withAlpha(Palette.ink, 0.14)}
-      radius={12}
-      borderColor={withAlpha(Palette.ink, 0.14)}
+      radius={Radius.md}
+      borderColor={Palette.border}
       borderWidth={1.5}
       disabled={disabled}
       onPress={onPress}
@@ -819,8 +817,8 @@ function TypeStep({
         placeholderTextColor={Palette.muted}
         style={[
           styles.input,
-          correctNow && { borderColor: Feedback.correctInk },
-          result?.tone === 'wrong' && { borderColor: Feedback.wrongInk },
+          correctNow && { borderColor: Feedback.correctText },
+          result?.tone === 'wrong' && { borderColor: Feedback.wrongText },
         ]}
         value={draft}
         editable={!correctNow}
@@ -900,7 +898,9 @@ function MatchStep({ step, lesson, report }: StepProps & { step: Of<'match'> }) 
           isMatched && styles.matchDone,
         ]}
       >
-        <Text style={[styles.matchText, isMatched && { color: Feedback.correctInk }]}>{label}</Text>
+        <Text style={[styles.matchText, isMatched && { color: Feedback.correctText }]}>
+          {label}
+        </Text>
       </Pressable>
     );
   };
@@ -996,10 +996,10 @@ function UnitCallInvite({ lesson }: { lesson: StepLesson }) {
         pressed && styles.pressed,
       ]}
     >
-      <View style={[styles.callIcon, { backgroundColor: colors.accent }]}>
-        <MaterialCommunityIcons name="phone-outline" size={22} color={colors.onAccent} />
+      <View style={[styles.callIcon, { backgroundColor: Palette.ink }]}>
+        <MaterialCommunityIcons name="phone-outline" size={22} color={Palette.lime} />
       </View>
-      <View style={{ flex: 1, gap: 2 }}>
+      <View style={{ flex: 1, gap: space(0.5) }}>
         <Text style={styles.unitStepTitle}>Talk it through with {call.character}</Text>
         <Text style={styles.unitStepNote}>
           A three-minute call using this unit’s phrases.{' '}
@@ -1074,14 +1074,14 @@ function CheckpointResults({
                     : 'circle-half-full'
               }
               size={20}
-              color={strong ? Feedback.correctAccent : Palette.secondary}
+              color={strong ? Feedback.correctFill : Palette.secondary}
             />
             <Text style={styles.resultSkill}>{skillNames[skill]}</Text>
             <Text style={styles.resultValue}>{value}</Text>
           </View>
         );
       })}
-      <Text style={[styles.unitStepTitle, { marginTop: 8 }]}>
+      <Text style={[styles.unitStepTitle, { marginTop: space(2) }]}>
         {lessons.length ? 'Practise next' : 'Nothing to fix'}
       </Text>
       {lessons.length ? (
@@ -1127,227 +1127,272 @@ const styles = StyleSheet.create({
   footerHint: {
     color: Palette.secondary,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 14,
-    paddingVertical: 8,
+    fontSize: FontSize.label,
+    paddingVertical: space(2),
     textAlign: 'center',
   },
-  body: { gap: 16, paddingBottom: 32, paddingHorizontal: 20, paddingTop: 8 },
-  intro: { gap: 6, marginBottom: 4 },
-  stack: { gap: 14 },
+  body: {
+    gap: space(4),
+    paddingBottom: space(8),
+    paddingHorizontal: space(5),
+    paddingTop: space(2),
+  },
+  intro: { gap: space(2), marginBottom: space(1) },
+  stack: { gap: space(4) },
   alert: {
     backgroundColor: Feedback.closeBg,
-    borderRadius: 14,
+    borderRadius: Radius.md,
     color: Palette.ink,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 14,
-    lineHeight: 21,
-    padding: 12,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    padding: space(3),
   },
   pressed: { opacity: 0.75 },
-  sceneControls: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  sceneControls: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
   playAll: {
     alignItems: 'center',
     backgroundColor: Palette.ink,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     flexDirection: 'row',
-    gap: 6,
+    gap: space(2),
     minHeight: 44,
-    paddingHorizontal: 18,
+    paddingHorizontal: space(4),
   },
-  playAllText: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
+  playAllText: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
   chip: {
     alignItems: 'center',
     borderColor: Palette.line,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     borderWidth: 1.5,
     flexDirection: 'row',
-    gap: 6,
+    gap: space(2),
     minHeight: 44,
-    paddingHorizontal: 14,
+    paddingHorizontal: space(4),
   },
   chipOn: { backgroundColor: Palette.white, borderColor: Palette.ink },
-  chipText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  segment: {
-    backgroundColor: Palette.soft,
-    borderRadius: 14,
-    flexDirection: 'row',
-    gap: 4,
-    padding: 4,
-  },
-  segmentItem: {
-    alignItems: 'center',
-    borderRadius: 10,
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 44,
-  },
-  segmentActive: { backgroundColor: Palette.white },
-  segmentText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  bubbles: { gap: 8 },
+  chipText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.label },
+  bubbles: { gap: space(2) },
   bubbleRow: { alignItems: 'flex-start' },
   bubbleRowMine: { alignItems: 'flex-end' },
-  bubble: { borderRadius: 18, gap: 2, maxWidth: '86%', paddingHorizontal: 14, paddingVertical: 10 },
-  bubbleTheirs: { backgroundColor: Palette.white, borderTopLeftRadius: 6 },
-  bubbleMine: { backgroundColor: Palette.bubbleMine, borderTopRightRadius: 6 },
+  bubble: {
+    borderRadius: Radius.lg,
+    gap: space(0.5),
+    maxWidth: '86%',
+    paddingHorizontal: space(4),
+    paddingVertical: space(2),
+  },
+  bubbleTheirs: { backgroundColor: Palette.white, borderTopLeftRadius: Radius.sm },
+  bubbleMine: { borderTopRightRadius: Radius.sm },
   bubbleActive: { borderColor: Palette.ink, borderWidth: 1.5 },
-  speaker: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
+  speaker: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.caption },
   bubbleText: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 16,
-    lineHeight: 23,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
   },
   bubbleChanged: { textDecorationLine: 'underline' },
   bubbleMeaning: {
     color: Palette.secondary,
     fontFamily: VokaFonts.body,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
   },
   card: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     borderWidth: 1,
-    gap: 6,
-    padding: 14,
+    gap: space(2),
+    padding: space(4),
   },
-  cardRow: { alignItems: 'center', flexDirection: 'row', gap: 10 },
-  cardCopy: { flex: 1, gap: 2 },
-  target: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18, lineHeight: 24 },
-  meaning: { color: Palette.ink, fontFamily: VokaFonts.bodyMedium, fontSize: 15, lineHeight: 21 },
-  note: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, lineHeight: 20 },
-  ruleBody: { color: Palette.ink, fontFamily: VokaFonts.body, fontSize: 16, lineHeight: 24 },
-  table: { backgroundColor: Palette.white, borderRadius: 16, overflow: 'hidden' },
+  cardRow: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
+  cardCopy: { flex: 1, gap: space(0.5) },
+  target: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.heading,
+    lineHeight: LineHeight.heading,
+  },
+  meaning: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
+  note: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
+  ruleBody: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
+  table: { backgroundColor: Palette.white, borderRadius: Radius.lg, overflow: 'hidden' },
   tableRow: {
     borderBottomColor: Palette.line,
     borderBottomWidth: 1,
     flexDirection: 'row',
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    gap: space(3),
+    paddingHorizontal: space(4),
+    paddingVertical: space(3),
   },
   tableLast: { borderBottomWidth: 0 },
-  tableLeft: { color: Palette.ink, flex: 1, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
-  tableRight: { color: Palette.secondary, flex: 1, fontFamily: VokaFonts.body, fontSize: 15 },
+  tableLeft: {
+    color: Palette.ink,
+    flex: 1,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+  },
+  tableRight: {
+    color: Palette.secondary,
+    flex: 1,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.body,
+  },
   example: {
     alignItems: 'center',
     backgroundColor: Palette.white,
-    borderRadius: 16,
+    borderRadius: Radius.lg,
     flexDirection: 'row',
-    gap: 10,
-    paddingLeft: 16,
-    paddingRight: 8,
-    paddingVertical: 8,
+    gap: space(2),
+    paddingLeft: space(4),
+    paddingRight: space(2),
+    paddingVertical: space(2),
   },
   exampleText: {
     color: Palette.ink,
     flex: 1,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 16,
-    lineHeight: 23,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
   },
   context: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 16,
+    borderRadius: Radius.lg,
     borderWidth: 1,
-    padding: 16,
+    padding: space(4),
   },
   contextText: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
   },
-  listen: { alignItems: 'center', flexDirection: 'row', gap: 14 },
-  options: { gap: 10 },
+  listen: { alignItems: 'center', flexDirection: 'row', gap: space(4) },
+  options: { gap: space(2) },
   answerLine: {
     alignItems: 'center',
     borderBottomColor: Palette.line,
     borderBottomWidth: 2,
     borderColor: 'transparent',
-    borderRadius: 4,
+    borderRadius: Radius.sm,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: space(2),
     minHeight: 64,
-    paddingVertical: 8,
+    paddingVertical: space(2),
   },
-  placeholder: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: 15 },
-  bank: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center', paddingTop: 8 },
-  tile: { borderRadius: 12, minHeight: 46, paddingHorizontal: 14, justifyContent: 'center' },
+  placeholder: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: FontSize.body },
+  bank: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space(2),
+    justifyContent: 'center',
+    paddingTop: space(2),
+  },
+  tile: {
+    borderRadius: Radius.md,
+    minHeight: 46,
+    paddingHorizontal: space(4),
+    justifyContent: 'center',
+  },
   tileUsed: { backgroundColor: Palette.soft },
-  tileFace: { minHeight: 46, justifyContent: 'center', paddingHorizontal: 14 },
-  tileText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 17 },
+  tileFace: { minHeight: 46, justifyContent: 'center', paddingHorizontal: space(4) },
+  tileText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.heading },
   input: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     borderWidth: 2,
     color: Palette.ink,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 18,
+    fontSize: FontSize.heading,
     minHeight: 110,
-    padding: 16,
+    padding: space(4),
     textAlignVertical: 'top',
   },
-  matchGrid: { flexDirection: 'row', gap: 10 },
-  matchColumn: { flex: 1, gap: 10 },
+  matchGrid: { flexDirection: 'row', gap: space(2) },
+  matchColumn: { flex: 1, gap: space(2) },
   matchCell: {
     alignItems: 'center',
     backgroundColor: Palette.white,
-    borderColor: withAlpha(Palette.ink, 0.12),
-    borderRadius: 14,
+    borderColor: Palette.border,
+    borderRadius: Radius.md,
     borderWidth: 2,
     justifyContent: 'center',
     minHeight: 60,
-    padding: 10,
+    padding: space(2),
   },
   matchActive: { borderColor: Palette.ink },
-  matchWrong: { backgroundColor: Feedback.wrongBg, borderColor: Feedback.wrongInk },
+  matchWrong: { backgroundColor: Feedback.wrongBg, borderColor: Feedback.wrongText },
   matchDone: { backgroundColor: Feedback.correctBg, borderColor: 'transparent' },
   matchText: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 15,
-    lineHeight: 20,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
     textAlign: 'center',
   },
-  celebrate: { alignItems: 'center', gap: 10, paddingTop: 16 },
+  celebrate: { alignItems: 'center', gap: space(2), paddingTop: space(4) },
   badge: {
     alignItems: 'center',
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     height: 88,
     justifyContent: 'center',
     width: 88,
   },
-  score: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 16 },
-  stats: { flexDirection: 'row', gap: 10 },
+  score: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.body },
+  stats: { flexDirection: 'row', gap: space(2) },
   stat: {
     alignItems: 'center',
     backgroundColor: Palette.white,
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     flex: 1,
-    gap: 2,
-    paddingVertical: 14,
+    gap: space(0.5),
+    paddingVertical: space(4),
   },
-  statValue: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
-  unitStep: { backgroundColor: Palette.white, borderRadius: 18, gap: 8, padding: 16 },
-  unitStepTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
-  unitStepRow: { alignItems: 'center', flexDirection: 'row', gap: 10 },
-  unitStepCount: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  unitStepNote: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14 },
+  statValue: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.heading },
+  unitStep: {
+    backgroundColor: Palette.white,
+    borderRadius: Radius.lg,
+    gap: space(2),
+    padding: space(4),
+  },
+  unitStepTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
+  unitStepRow: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
+  unitStepCount: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
+  },
+  unitStepNote: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: FontSize.label },
   callInvite: {
     alignItems: 'center',
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     flexDirection: 'row',
-    gap: 12,
-    padding: 14,
+    gap: space(3),
+    padding: space(4),
   },
   callIcon: {
     alignItems: 'center',
-    borderRadius: 14,
+    borderRadius: Radius.md,
     height: 44,
     justifyContent: 'center',
     width: 44,
@@ -1355,24 +1400,33 @@ const styles = StyleSheet.create({
   results: {
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 20,
+    borderRadius: Radius.xl,
     borderWidth: 1,
-    gap: 10,
-    padding: 16,
+    gap: space(2),
+    padding: space(4),
   },
-  resultRow: { alignItems: 'center', flexDirection: 'row', gap: 10 },
-  resultSkill: { color: Palette.ink, flex: 1, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
-  resultValue: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
+  resultRow: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
+  resultSkill: {
+    color: Palette.ink,
+    flex: 1,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.body,
+  },
+  resultValue: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
+  },
   revisit: {
     alignItems: 'center',
     borderColor: Palette.line,
-    borderRadius: 14,
+    borderRadius: Radius.md,
     borderWidth: 1,
     flexDirection: 'row',
-    gap: 8,
+    gap: space(2),
     minHeight: 56,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: space(3),
+    paddingVertical: space(2),
   },
 });
 
@@ -1395,8 +1449,8 @@ function UnitStep({ lesson }: { lesson: StepLesson }) {
         <ProgressFill
           value={unit.done / total}
           from={firstTime ? (unit.done - 1) / total : unit.done / total}
-          color={trackColors[lesson.track].accent}
-          track={withAlpha(Palette.ink, 0.08)}
+          color={trackColors[lesson.track].deep}
+          track={Palette.soft}
           height={10}
         />
         <Text style={styles.unitStepCount}>

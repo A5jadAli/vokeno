@@ -7,7 +7,15 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { ActionBar, PrimaryButton, TextButton } from '@/components/lesson-ui';
 import { languageAudience } from '@/components/tab-header';
 import { AppScreen } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import {
+  FontSize,
+  LineHeight,
+  Palette,
+  Radius,
+  Selection,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { completeOnboarding } from '@/features/onboarding/storage';
 import { useLanguageSelection } from '@/features/language/selection';
 import { languageDetails, languageTracks, trackColors } from '@/features/language/config';
@@ -81,7 +89,7 @@ export default function OnboardingScreen() {
                   }}
                   style={({ pressed }) => [
                     styles.option,
-                    selected && { borderColor: colors.accent },
+                    selected && { borderColor: Selection.border },
                     pressed && styles.pressed,
                   ]}
                 >
@@ -121,47 +129,62 @@ export default function OnboardingScreen() {
 }
 
 const styles = StyleSheet.create({
-  body: { gap: 16, paddingBottom: 24, paddingHorizontal: 20, paddingTop: 12 },
-  logo: { color: Palette.ink, fontFamily: VokaFonts.displayExtraBold, fontSize: 22 },
-  title: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 28, lineHeight: 34 },
-  options: { gap: 10 },
+  body: {
+    gap: space(4),
+    paddingBottom: space(6),
+    paddingHorizontal: space(5),
+    paddingTop: space(3),
+  },
+  logo: { color: Palette.ink, fontFamily: VokaFonts.displayExtraBold, fontSize: FontSize.title },
+  title: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.displayExtraBold,
+    fontSize: FontSize.display,
+    lineHeight: LineHeight.display,
+  },
+  options: { gap: space(2) },
   option: {
     alignItems: 'center',
     backgroundColor: Palette.white,
     borderColor: 'transparent',
-    borderRadius: 20,
+    borderRadius: Radius.xl,
     borderWidth: 2,
     flexDirection: 'row',
-    gap: 12,
+    gap: space(3),
     minHeight: 76,
-    padding: 14,
+    padding: space(4),
   },
   badge: {
     alignItems: 'center',
-    borderRadius: 14,
+    borderRadius: Radius.md,
     height: 44,
     justifyContent: 'center',
     width: 44,
   },
-  badgeText: { fontFamily: VokaFonts.bodyBold, fontSize: 14 },
-  optionCopy: { flex: 1, gap: 2 },
-  optionTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 17 },
+  badgeText: { fontFamily: VokaFonts.bodyBold, fontSize: FontSize.label },
+  optionCopy: { flex: 1, gap: space(0.5) },
+  optionTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.heading },
   native: { color: Palette.secondary, fontFamily: VokaFonts.bodyMedium },
   optionMeta: {
     color: Palette.secondary,
     fontFamily: VokaFonts.body,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
   },
-  promises: { gap: 10, marginTop: 4 },
-  promise: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  promises: { gap: space(2), marginTop: space(1) },
+  promise: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
   promiseText: {
     color: Palette.ink,
     flex: 1,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 15,
-    lineHeight: 21,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
   },
-  note: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 19 },
+  note: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
   pressed: { opacity: 0.7 },
 });

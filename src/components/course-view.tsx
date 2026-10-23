@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { ProgressFill } from '@/components/motion';
-import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import { FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { getTrackLessons, type FoundationLesson } from '@/features/foundations/catalog';
 import { levelLabel, levelNote } from '@/features/foundations/level-status';
@@ -25,6 +25,7 @@ import {
 } from '@/features/journey/course';
 import { trackColors, type LanguageTrack } from '@/features/language/config';
 import type { LessonLevel } from '@/features/foundations/types';
+import { Segmented } from '@/components/voka-ui';
 
 /** Ends a title as a sentence for screen readers, without doubling “!” or “?”. */
 const sentence = (text: string) => (/[.!?]$/.test(text) ? text : `${text}.`);
@@ -61,27 +62,20 @@ export function CourseView({ track }: { track: LanguageTrack }) {
         </View>
       ) : null}
 
-      <View accessibilityRole="tablist" style={styles.tabs}>
-        {levels.map((value) => {
+      <Segmented
+        value={level}
+        onChange={setPicked}
+        options={levels.map((value) => {
           const tabLessons = lessons.filter((lesson) => lesson.level === value);
           const done = tabLessons.filter((lesson) => isFinished(progress[lesson.id])).length;
-          return (
-            <Pressable
-              key={value}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: level === value }}
-              accessibilityLabel={`${levelLabel(track, value)}: ${done} of ${tabLessons.length} lessons done`}
-              onPress={() => setPicked(value)}
-              style={[styles.tab, level === value && styles.tabActive]}
-            >
-              <Text style={styles.tabText}>{levelLabel(track, value)}</Text>
-              <Text style={styles.tabCount}>
-                {done}/{tabLessons.length}
-              </Text>
-            </Pressable>
-          );
+          return {
+            value,
+            label: levelLabel(track, value),
+            detail: `${done}/${tabLessons.length}`,
+            accessibilityLabel: `${levelLabel(track, value)}: ${done} of ${tabLessons.length} lessons done`,
+          };
         })}
-      </View>
+      />
       {levelNote(track, level) ? (
         <Text style={styles.levelNote}>{levelNote(track, level)}</Text>
       ) : null}
@@ -154,7 +148,7 @@ function UnitCard({
   return (
     <Animated.View
       layout={LinearTransition.duration(220)}
-      style={[styles.unit, current && { borderColor: colors.accent }]}
+      style={[styles.unit, current && { borderColor: colors.deep }]}
     >
       <Pressable
         accessibilityRole="button"
@@ -186,8 +180,8 @@ function UnitCard({
           <View style={styles.unitProgress}>
             <ProgressFill
               value={unit.done / total}
-              color={colors.accent}
-              track={withAlpha(Palette.ink, 0.08)}
+              color={colors.deep}
+              track={Palette.soft}
               height={6}
             />
             <Text style={styles.unitCount}>
@@ -261,86 +255,113 @@ function UnitCard({
 }
 
 const styles = StyleSheet.create({
-  section: { gap: 12, marginHorizontal: 18, marginTop: 6 },
-  banner: { alignItems: 'center', borderRadius: 18, flexDirection: 'row', gap: 12, padding: 14 },
+  section: { gap: space(3), marginHorizontal: space(4), marginTop: space(2) },
+  banner: {
+    alignItems: 'center',
+    borderRadius: Radius.lg,
+    flexDirection: 'row',
+    gap: space(3),
+    padding: space(4),
+  },
   bannerText: {
     color: Palette.ink,
     flex: 1,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
   },
-  tabs: {
-    backgroundColor: Palette.soft,
-    borderRadius: 16,
-    flexDirection: 'row',
-    gap: 4,
-    padding: 4,
+  levelNote: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
   },
-  tab: { alignItems: 'center', borderRadius: 12, flex: 1, justifyContent: 'center', minHeight: 52 },
-  tabActive: { backgroundColor: Palette.white },
-  tabText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
-  tabCount: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
-  levelNote: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 13, lineHeight: 19 },
-  units: { gap: 10 },
+  units: { gap: space(2) },
   unit: {
     backgroundColor: Palette.white,
     borderColor: 'transparent',
-    borderRadius: 20,
+    borderRadius: Radius.xl,
     borderWidth: 2,
     overflow: 'hidden',
   },
-  unitHeader: { alignItems: 'center', flexDirection: 'row', gap: 12, padding: 14 },
+  unitHeader: { alignItems: 'center', flexDirection: 'row', gap: space(3), padding: space(4) },
   unitBadge: {
     alignItems: 'center',
     backgroundColor: Palette.soft,
-    borderRadius: 14,
+    borderRadius: Radius.md,
     height: 40,
     justifyContent: 'center',
     width: 40,
   },
-  unitCopy: { flex: 1, gap: 3 },
-  here: { fontFamily: VokaFonts.bodyBold, fontSize: 12, letterSpacing: 0.3 },
-  unitTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 16, lineHeight: 22 },
-  unitCanDo: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, lineHeight: 20 },
-  unitProgress: { alignItems: 'center', flexDirection: 'row', gap: 8, marginTop: 4 },
-  unitCount: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
+  unitCopy: { flex: 1, gap: space(1) },
+  here: { fontFamily: VokaFonts.bodyBold, fontSize: FontSize.caption, letterSpacing: 0.3 },
+  unitTitle: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
+  unitCanDo: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
+  unitProgress: { alignItems: 'center', flexDirection: 'row', gap: space(2), marginTop: space(1) },
+  unitCount: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.caption,
+  },
   lessons: { borderTopColor: Palette.line, borderTopWidth: 1 },
   lesson: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
+    gap: space(3),
     minHeight: 64,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingHorizontal: space(4),
+    paddingVertical: space(2),
   },
   lessonDivider: { borderTopColor: Palette.line, borderTopWidth: 1 },
   lessonMark: {
     alignItems: 'center',
     borderColor: Palette.line,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     borderWidth: 1.5,
     height: 30,
     justifyContent: 'center',
     width: 30,
   },
-  lessonCopy: { flex: 1, gap: 2 },
-  lessonMeta: { color: Palette.secondary, fontFamily: VokaFonts.bodyMedium, fontSize: 12 },
+  lessonCopy: { flex: 1, gap: space(0.5) },
+  lessonMeta: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.caption,
+  },
   lessonTitle: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
-    fontSize: 15,
-    lineHeight: 21,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
   },
-  lessonAction: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
-  links: { backgroundColor: Palette.white, borderRadius: 18, marginTop: 6 },
+  lessonAction: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
+  },
+  links: { backgroundColor: Palette.white, borderRadius: Radius.lg, marginTop: space(2) },
   link: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
+    gap: space(3),
     minHeight: 56,
-    paddingHorizontal: 16,
+    paddingHorizontal: space(4),
   },
-  linkText: { color: Palette.ink, flex: 1, fontFamily: VokaFonts.bodyMedium, fontSize: 15 },
+  linkText: {
+    color: Palette.ink,
+    flex: 1,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.body,
+  },
   pressed: { opacity: 0.7 },
 });

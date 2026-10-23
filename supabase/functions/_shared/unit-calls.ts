@@ -19,6 +19,8 @@ export type UnitCall = {
   level: 'A1' | 'A2';
   title: string;
   character: string;
+  /** How screens name a character who is a role rather than a person: "the barista". */
+  addressedAs?: string;
   persona: string;
   scene: string;
   learnerGoal: string;
@@ -152,6 +154,7 @@ export const unitCalls: UnitCall[] = [
     level: 'A1',
     title: 'Order at the café',
     character: 'Barista',
+    addressedAs: 'the barista',
     persona: 'A young, friendly barista in a busy Mexico City café, quick but kind.',
     scene: 'The learner orders at the counter. Give prices in pesos when asked.',
     learnerGoal: 'Order a drink and a snack, make one change, check the total and pay.',

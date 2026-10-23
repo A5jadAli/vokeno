@@ -3,10 +3,19 @@ import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import {
+  FontSize,
+  LineHeight,
+  OnDark,
+  Palette,
+  Radius,
+  Selection,
+  space,
+  VokaFonts,
+} from '@/constants/theme';
 import { speakingGoalCopy, type SpeakingGoal, useCoachingStore } from '@/features/coaching/store';
 import { useSelectedLanguage } from '@/features/language/selection';
-import { languageDetails, trackColors } from '@/features/language/config';
+import { trackColors } from '@/features/language/config';
 import { LanguageSwitch } from '@/components/language-switch';
 
 const goals = Object.keys(speakingGoalCopy) as SpeakingGoal[];
@@ -17,7 +26,6 @@ export default function AccentScreen() {
   const preferences = useCoachingStore((state) => state.preferences);
   const hasHydrated = useCoachingStore((state) => state.hasHydrated);
   const setGoal = useCoachingStore((state) => state.setGoal);
-  const accent = languageDetails[track].accent;
 
   if (!hasHydrated) {
     return (
@@ -49,7 +57,6 @@ export default function AccentScreen() {
           groupLabel="Speaking profile language"
           itemLabel={(name) => `${name} speaking profile`}
           onChange={setTrack}
-          tone="dark"
           track={track}
         />
 
@@ -85,15 +92,14 @@ export default function AccentScreen() {
                 accessibilityState={{ checked: selected }}
                 key={goal}
                 onPress={() => setGoal(track, goal)}
-                style={[styles.goalCard, selected && { borderColor: accent, borderWidth: 2 }]}
+                style={[
+                  styles.goalCard,
+                  selected && { borderColor: Selection.border, borderWidth: 2 },
+                ]}
               >
-                <View style={[styles.radio, selected && { backgroundColor: accent }]}>
+                <View style={[styles.radio, selected && { backgroundColor: Selection.border }]}>
                   {selected ? (
-                    <MaterialCommunityIcons
-                      color={trackColors[track].onAccent}
-                      name="check"
-                      size={14}
-                    />
+                    <MaterialCommunityIcons color={Palette.cream} name="check" size={14} />
                   ) : null}
                 </View>
                 <View style={styles.goalCopy}>
@@ -111,16 +117,12 @@ export default function AccentScreen() {
           onPress={() => router.push(`/conversation?track=${track}&practice=diagnostic`)}
           style={({ pressed }) => [
             styles.primaryButton,
-            { backgroundColor: accent },
+            { backgroundColor: Palette.ink },
             pressed && styles.pressed,
           ]}
         >
-          <MaterialCommunityIcons
-            color={trackColors[track].onAccent}
-            name="account-voice"
-            size={21}
-          />
-          <Text style={[styles.primaryText, { color: trackColors[track].onAccent }]}>
+          <MaterialCommunityIcons color={Palette.lime} name="account-voice" size={21} />
+          <Text style={[styles.primaryText, { color: Palette.cream }]}>
             Try a short speaking check
           </Text>
         </Pressable>
@@ -136,89 +138,94 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 14,
-    paddingHorizontal: 18,
-    paddingTop: 10,
+    gap: space(4),
+    paddingHorizontal: space(4),
+    paddingTop: space(2),
   },
-  body: { padding: 22, paddingTop: 20 },
+  body: { padding: space(6), paddingTop: space(5) },
   title: {
     color: Palette.ink,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
-    lineHeight: 34,
+    fontFamily: VokaFonts.displayExtraBold,
+    fontSize: FontSize.display,
+    lineHeight: LineHeight.display,
   },
   intro: {
     color: Palette.secondary,
     fontFamily: VokaFonts.bodyMedium,
-    fontSize: 13,
-    lineHeight: 20,
-    marginTop: 10,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    marginTop: space(2),
   },
   referenceCopy: { flex: 1 },
-  referenceTitle: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
+  referenceTitle: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
   referenceText: {
-    color: withAlpha(Palette.cream, 0.62),
+    color: OnDark.textSecondary,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 5,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(1),
   },
-  goalList: { gap: 10, marginTop: 13 },
+  goalList: { gap: space(2), marginTop: space(3) },
   goalCard: {
     alignItems: 'center',
     backgroundColor: Palette.white,
     borderColor: Palette.line,
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     borderWidth: 1,
     flexDirection: 'row',
-    gap: 13,
+    gap: space(3),
     minHeight: 78,
-    padding: 14,
+    padding: space(4),
   },
   radio: {
     alignItems: 'center',
     borderColor: Palette.muted,
-    borderRadius: 99,
+    borderRadius: Radius.pill,
     borderWidth: 1,
     height: 24,
     justifyContent: 'center',
     width: 24,
   },
   goalCopy: { flex: 1 },
-  goalTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
+  goalTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.label },
   goalDescription: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 3,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(1),
   },
   primaryButton: {
     alignItems: 'center',
-    borderRadius: 18,
+    borderRadius: Radius.lg,
     flexDirection: 'row',
-    gap: 9,
+    gap: space(2),
     justifyContent: 'center',
-    marginTop: 22,
+    marginTop: space(6),
     minHeight: 56,
   },
-  primaryText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
+  primaryText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
   disclaimer: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 9,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
+    marginTop: space(2),
     textAlign: 'center',
   },
   pressed: { opacity: 0.72, transform: [{ scale: 0.99 }] },
-  loading: { color: Palette.muted, fontFamily: VokaFonts.bodyMedium, fontSize: 13, padding: 22 },
+  loading: {
+    color: Palette.muted,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.label,
+    padding: space(6),
+  },
   referenceCard: {
     backgroundColor: Palette.ink,
-    borderRadius: 22,
+    borderRadius: Radius.xl,
     flexDirection: 'row',
-    gap: 13,
-    marginBottom: 24,
-    padding: 18,
+    gap: space(3),
+    marginBottom: space(6),
+    padding: space(4),
   },
 });

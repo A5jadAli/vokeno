@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { documents } from '@/features/legal/documents';
-import { Brand, Palette, VokaFonts } from '@/constants/theme';
+import { Brand, FontSize, LineHeight, Palette, space, VokaFonts } from '@/constants/theme';
 
 export default function LegalScreen() {
   const { document } = useLocalSearchParams<{ document?: string }>();
@@ -34,23 +34,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 18,
+    padding: space(4),
   },
   spacer: { width: 40 },
-  body: { paddingBottom: 36, paddingHorizontal: 22 },
+  body: { paddingBottom: space(9), paddingHorizontal: space(6) },
   title: {
     color: Palette.ink,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: 28,
+    fontFamily: VokaFonts.displayExtraBold,
+    fontSize: FontSize.display,
   },
-  date: { color: Palette.muted, fontFamily: VokaFonts.bodyMedium, fontSize: 12, marginTop: 7 },
-  section: { borderTopColor: Palette.line, borderTopWidth: 1, marginTop: 22, paddingTop: 18 },
-  heading: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 18 },
+  date: {
+    color: Palette.muted,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.caption,
+    marginTop: space(2),
+  },
+  section: {
+    borderTopColor: Palette.line,
+    borderTopWidth: 1,
+    marginTop: space(6),
+    paddingTop: space(4),
+  },
+  heading: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.heading },
   copy: {
     color: Palette.secondary,
     fontFamily: VokaFonts.body,
-    fontSize: 13,
-    lineHeight: 20,
-    marginTop: 7,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    marginTop: space(2),
   },
 });

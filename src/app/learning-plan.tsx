@@ -1,5 +1,5 @@
 import { type Href, useRouter } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import {
   ActionBar,
@@ -10,13 +10,14 @@ import {
   SectionLabel,
 } from '@/components/lesson-ui';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
+import { space } from '@/constants/theme';
 import { learningRecommendation } from '@/features/coaching/recommendation';
 import { useCoachingStore, type StartingAbility, type StudyGoal } from '@/features/coaching/store';
 import { foundationLessons } from '@/features/foundations/catalog';
 import { lessonIdFromHref } from '@/features/journey/course';
 import { useSelectedLanguage } from '@/features/language/selection';
-import { languageDetails, languageTracks } from '@/features/language/config';
+import { languageDetails } from '@/features/language/config';
+import { LanguageSwitch } from '@/components/language-switch';
 
 /** Choose where to start: how much you know decides your first lesson. */
 export default function LearningPlanScreen() {
@@ -75,22 +76,7 @@ export default function LearningPlanScreen() {
           This sets your first lesson. You can change it any time from Course.
         </Text>
 
-        <View accessibilityRole="tablist" style={styles.segment}>
-          {languageTracks.map((value) => (
-            <Pressable
-              key={value}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: track === value }}
-              aria-selected={track === value}
-              onPress={() => setTrack(value)}
-              style={[styles.segmentItem, track === value && styles.segmentActive]}
-            >
-              <Text style={[styles.segmentText, track === value && styles.segmentTextActive]}>
-                {languageDetails[value].name}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
+        <LanguageSwitch groupLabel="Language" onChange={setTrack} role="radio" track={track} />
 
         <View style={styles.group}>
           {abilities.map(([value, label]) => (
@@ -119,7 +105,7 @@ export default function LearningPlanScreen() {
         <InfoCard
           icon="arrow-right-circle-outline"
           title={`You will start with: ${next.title}`}
-          tone="yellow"
+          tone="tint"
         >
           {next.why}
         </InfoCard>
@@ -145,24 +131,12 @@ export default function LearningPlanScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: { paddingHorizontal: 16, paddingTop: 8 },
-  body: { gap: 14, paddingBottom: 32, paddingHorizontal: 20, paddingTop: 8 },
-  group: { gap: 8 },
-  segment: {
-    backgroundColor: withAlpha(Palette.ink, 0.07),
-    borderRadius: 16,
-    flexDirection: 'row',
-    gap: 4,
-    padding: 4,
+  header: { paddingHorizontal: space(4), paddingTop: space(2) },
+  body: {
+    gap: space(4),
+    paddingBottom: space(8),
+    paddingHorizontal: space(5),
+    paddingTop: space(2),
   },
-  segmentItem: {
-    alignItems: 'center',
-    borderRadius: 12,
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 44,
-  },
-  segmentActive: { backgroundColor: Palette.ink },
-  segmentText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
-  segmentTextActive: { color: Palette.cream },
+  group: { gap: space(2) },
 });
