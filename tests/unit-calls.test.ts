@@ -7,6 +7,7 @@ import {
   getUnitCall,
   phrasesUsed,
   sanitiseMemory,
+  spokenCorrections,
   unitCallBrief,
   unitCalls,
 } from '../supabase/functions/_shared/unit-calls';
@@ -50,6 +51,16 @@ describe('lesson-linked unit calls', () => {
     // "quien es" must not match inside "quienes son".
     const used = phrasesUsed(call, ['¿Quienes son tus amigos?']);
     expect(used.find((item) => item.say === '¿Quién es?')?.used).toBe(false);
+  });
+
+  it('drops review corrections that only change accents, capitals or punctuation', () => {
+    const kept = spokenCorrections([
+      { said: 'Cuanto es?', better: '¿Cuánto es?' },
+      { said: 'Puedo pagar con tarjeta?', better: '¿Puedo pagar con tarjeta?' },
+      { said: 'para llevar', better: 'Para llevar, por favor.' },
+      { said: 'con azúcar no', better: 'sin azúcar' },
+    ]);
+    expect(kept.map((item) => item.better)).toEqual(['Para llevar, por favor.', 'sin azúcar']);
   });
 
   it('bounds and cleans memory, and labels it as data in the brief', () => {

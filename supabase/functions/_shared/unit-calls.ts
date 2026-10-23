@@ -182,6 +182,15 @@ export function normaliseSpeech(text: string) {
     .trim()} `;
 }
 
+/**
+ * Corrections that change what is heard. The transcript's accents, capitals and punctuation come
+ * from the transcriber, so a "correction" that differs only in those is dropped.
+ */
+export function spokenCorrections<T extends { said: string; better: string }>(corrections: T[]) {
+  const heard = (text: string) => normaliseSpeech(text).replace(/,/g, ' ').replace(/\s+/g, ' ');
+  return corrections.filter((item) => heard(item.said) !== heard(item.better));
+}
+
 /** Which of the call's phrases the learner used, from their transcribed turns. */
 export function phrasesUsed(call: UnitCall, learnerTurns: string[]) {
   const said = normaliseSpeech(learnerTurns.join(' . '));
