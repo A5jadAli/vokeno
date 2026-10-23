@@ -37,9 +37,12 @@ import { useLessonAudio } from '@/features/audio/use-lesson-audio';
 import { bringBackSooner, cardsForPhrases } from '@/features/coaching/unit-call-review';
 import {
   getUnitCall,
+  learnerWords,
   normaliseSpeech,
   phrasesUsed,
+  REVIEW_MIN_WORDS,
   UNIT_CALL_SECONDS,
+  unitCallOpening,
   type UnitCallPhrase,
 } from '../../supabase/functions/_shared/unit-calls';
 import {
@@ -172,6 +175,7 @@ export default function ConversationScreen() {
   const [callReviewPending, setCallReviewPending] = useState(false);
   const [callReviewError, setCallReviewError] = useState('');
   const [callPhrases, setCallPhrases] = useState<(UnitCallPhrase & { used: boolean })[]>([]);
+  const [callTooShort, setCallTooShort] = useState(false);
   const [freeCallUsed, setFreeCallUsed] = useState(false);
   const [callStartedAt, setCallStartedAt] = useState<number | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(UNIT_CALL_SECONDS);
@@ -184,7 +188,6 @@ export default function ConversationScreen() {
         ...baseMode,
         description: unitCall.learnerGoal,
         level: unitCall.level,
-        starter: `Start the scene now as ${unitCall.character}. Greet the learner in character in one short sentence and ask your first question.`,
         title: unitCall.title,
       }
     : unit
@@ -268,8 +271,14 @@ export default function ConversationScreen() {
       for (const [id, entry] of Object.entries(updated))
         if (entry && entry !== state.foundations[id]) state.saveFoundation(id, entry);
     };
+    // A call with almost nothing from the learner (or only background noise) proves nothing.
+    const tooShort = learnerWords(learner) < REVIEW_MIN_WORDS;
+    setCallTooShort(tooShort);
+    if (tooShort) {
+      setCallReviewError('Say a little more next time so there is something to review.');
+      return;
+    }
     bringBack(used.filter((item) => !item.used));
-    if (!learner.length) return;
     setCallReviewPending(true);
     setCallReviewError('');
     try {
@@ -426,6 +435,7 @@ export default function ConversationScreen() {
     setCallReview(null);
     setCallReviewError('');
     setCallPhrases([]);
+    setCallTooShort(false);
     setFreeCallUsed(false);
     callReviewedRef.current = false;
     userTurnIdsRef.current.clear();
@@ -462,7 +472,11 @@ export default function ConversationScreen() {
         practice: diagnostic ? 'diagnostic' : 'conversation',
         signal: startAbort.signal,
         // The learner waits with a closed microphone during the greeting, so keep it short.
-        starter: examCard ? mode.starter : `${mode.starter} ${BRIEF_OPENING}`,
+        starter: unitCall
+          ? `${unitCallOpening(unitCall)} ${BRIEF_OPENING}`
+          : examCard
+            ? mode.starter
+            : `${mode.starter} ${BRIEF_OPENING}`,
         startMuted: true,
         track,
         unitId: unitCall ? undefined : unit?.id,
@@ -801,6 +815,7 @@ export default function ConversationScreen() {
             pending={callReviewPending}
             error={callReviewError}
             phrases={callPhrases}
+            scheduled={!callTooShort}
             speech={speech}
             accent={darkAccent}
           />
@@ -844,7 +859,9 @@ export default function ConversationScreen() {
                   key={`${turn.role}-${turn.id}`}
                   style={[styles.turn, turn.role === 'user' && styles.userTurn]}
                 >
-                  <Text style={styles.turnRole}>{turn.role === 'user' ? 'YOU' : 'VOKENO'}</Text>
+                  <Text style={styles.turnRole}>
+                    {turn.role === 'user' ? 'YOU' : (unitCall?.character.toUpperCase() ?? 'VOKENO')}
+                  </Text>
                   <Text style={styles.turnText}>{turn.text}</Text>
                 </View>
               ))

@@ -14,6 +14,8 @@ type Props = {
   pending: boolean;
   error: string;
   phrases: (UnitCallPhrase & { used: boolean })[];
+  /** False when the call was too short to judge, so no phrase was moved in review. */
+  scheduled: boolean;
   speech: LessonAudio;
   accent: string;
 };
@@ -22,7 +24,15 @@ type Props = {
  * After a unit call: what to say differently, one tip, which of the unit's phrases came up, and
  * what the coach will remember. Phrases not used come back in tomorrow's review.
  */
-export function CallReviewCard({ review, pending, error, phrases, speech, accent }: Props) {
+export function CallReviewCard({
+  review,
+  pending,
+  error,
+  phrases,
+  scheduled,
+  speech,
+  accent,
+}: Props) {
   const router = useRouter();
   const avoided = phrases.filter((item) => !item.used);
   return (
@@ -48,7 +58,7 @@ export function CallReviewCard({ review, pending, error, phrases, speech, accent
           </View>
         ))}
       </View>
-      {avoided.length ? (
+      {!scheduled ? null : avoided.length ? (
         <Text style={styles.note}>
           The ones you did not use come back in tomorrow’s review, so they are fresh for next time.
         </Text>

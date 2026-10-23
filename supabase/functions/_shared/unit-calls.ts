@@ -182,13 +182,44 @@ export function normaliseSpeech(text: string) {
     .trim()} `;
 }
 
+/** The fewest words a learner must say in a call before it is worth reviewing. */
+export const REVIEW_MIN_WORDS = 6;
+
+const heard = (text: string) => normaliseSpeech(text).replace(/,/g, ' ').replace(/\s+/g, ' ');
+
+/** How many words the learner said across their turns. */
+export const learnerWords = (learnerTurns: string[]) =>
+  heard(learnerTurns.join(' ')).trim().split(' ').filter(Boolean).length;
+
+type RawReview = {
+  corrections: { said: string; better: string; why: string }[];
+  tip: string;
+  facts: { fact: string; quote: string }[];
+};
+
 /**
- * Corrections that change what is heard. The transcript's accents, capitals and punctuation come
- * from the transcriber, so a "correction" that differs only in those is dropped.
+ * Keeps only what the learner's own words support. A correction must quote something they said
+ * and change how it sounds (the transcript's accents, capitals and punctuation come from the
+ * transcriber, so those are not the learner's errors). A fact must quote the words where the
+ * learner said it, so nothing the coach said or the model imagined is remembered.
  */
-export function spokenCorrections<T extends { said: string; better: string }>(corrections: T[]) {
-  const heard = (text: string) => normaliseSpeech(text).replace(/,/g, ' ').replace(/\s+/g, ' ');
-  return corrections.filter((item) => heard(item.said) !== heard(item.better));
+export function groundReview(review: RawReview, learnerTurns: string[]) {
+  const said = heard(learnerTurns.join(' . '));
+  const quoted = (text: string) => heard(text).trim().length > 1 && said.includes(heard(text));
+  return {
+    corrections: review.corrections.filter(
+      (item) => quoted(item.said) && heard(item.said) !== heard(item.better),
+    ),
+    tip: review.tip.trim(),
+    facts: review.facts.filter((item) => quoted(item.quote)).map((item) => item.fact.trim()),
+  };
+}
+
+/** The first thing the character says. It must name the language: it replaces the call brief. */
+export function unitCallOpening(call: UnitCall) {
+  const language =
+    call.track === 'ES' ? 'Mexican Spanish' : call.track === 'DE' ? 'German' : 'English';
+  return `Speak only ${language}, slowly and simply for an ${call.level} beginner. Start the scene now as ${call.character}: ${call.scene} Greet the learner in character in one short sentence and ask your first question.`;
 }
 
 /** Which of the call's phrases the learner used, from their transcribed turns. */

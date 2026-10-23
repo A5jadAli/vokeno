@@ -6,9 +6,12 @@ import { freshFoundationEntry } from '@/features/foundations/progress';
 import {
   getUnitCall,
   phrasesUsed,
+  groundReview,
+  learnerWords,
+  REVIEW_MIN_WORDS,
   sanitiseMemory,
-  spokenCorrections,
   unitCallBrief,
+  unitCallOpening,
   unitCalls,
 } from '../supabase/functions/_shared/unit-calls';
 
@@ -53,14 +56,44 @@ describe('lesson-linked unit calls', () => {
     expect(used.find((item) => item.say === '¿Quién es?')?.used).toBe(false);
   });
 
-  it('drops review corrections that only change accents, capitals or punctuation', () => {
-    const kept = spokenCorrections([
-      { said: 'Cuanto es?', better: '¿Cuánto es?' },
-      { said: 'Puedo pagar con tarjeta?', better: '¿Puedo pagar con tarjeta?' },
-      { said: 'para llevar', better: 'Para llevar, por favor.' },
-      { said: 'con azúcar no', better: 'sin azúcar' },
-    ]);
-    expect(kept.map((item) => item.better)).toEqual(['Para llevar, por favor.', 'sin azúcar']);
+  it('keeps only corrections and facts the learner’s own words support', () => {
+    const learner = [
+      'Hola. Yo quiero un café con azúcar no.',
+      'Para llevar. Cuanto es?',
+      'Vivo en Puebla.',
+    ];
+    const review = groundReview(
+      {
+        corrections: [
+          { said: 'Cuanto es?', better: '¿Cuánto es?', why: 'accent' },
+          { said: 'con azúcar no', better: 'sin azúcar', why: 'without is sin' },
+          { said: 'yo tengo hambre', better: 'tengo hambre', why: 'never said' },
+        ],
+        tip: '  The j in tarjeta is a breathy h.  ',
+        facts: [
+          { fact: 'Lives in Puebla', quote: 'vivo en Puebla' },
+          { fact: 'Likes tacos', quote: 'me gustan los tacos' },
+          { fact: 'Lives in Mexico City', quote: '' },
+        ],
+      },
+      learner,
+    );
+    expect(review.corrections.map((item) => item.better)).toEqual(['sin azúcar']);
+    expect(review.facts).toEqual(['Lives in Puebla']);
+    expect(review.tip).toBe('The j in tarjeta is a breathy h.');
+  });
+
+  it('needs a few words from the learner before a call is reviewed', () => {
+    expect(learnerWords(['Bien.'])).toBeLessThan(REVIEW_MIN_WORDS);
+    expect(
+      learnerWords(['Hola, me llamo Sara.', '¿Y tú? ¿Cómo te llamas?']),
+    ).toBeGreaterThanOrEqual(REVIEW_MIN_WORDS);
+  });
+
+  it('opens in the course language, since the opening replaces the call brief', () => {
+    const opening = unitCallOpening(getUnitCall('es-a1-u1')!);
+    expect(opening).toContain('Speak only Mexican Spanish');
+    expect(opening).toContain('A1 beginner');
   });
 
   it('bounds and cleans memory, and labels it as data in the brief', () => {

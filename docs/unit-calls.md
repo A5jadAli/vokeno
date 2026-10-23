@@ -6,12 +6,15 @@ After a unit's Exam task, the learner can talk it through with that unit's chara
 
 - **Calls:** `supabase/functions/_shared/unit-calls.ts` defines one call per unit (`es-a1-u1` to `es-a1-u6` so far), each with a character, persona, scene, twist and the unit phrases to listen for. The app and the `realtime-session` edge function import the same file, so the call the learner is offered is the call the server runs.
 - **Invite:** `UnitCallInvite` in `src/components/step-lesson.tsx` appears when an Exam task is completed and says whether the free call is still available (`usedUnitCalls` in the coaching store).
-- **Call:** `/conversation?call=<id>` runs a realtime session with the call's brief appended to the usual instructions. Corrections are on, since unit calls are for beginners. A countdown ends the call at 3 minutes.
+- **Call:** `/conversation?call=<id>` runs a realtime session with the call's brief appended to the usual instructions. The opening line (`unitCallOpening`) names the language itself, because a response's own instructions replace the session's for that response; without it the first greeting came out in English. Corrections are on, since unit calls are for beginners. A countdown ends the call at 3 minutes.
 - **Server rules:** the function claims the call with the `voka_unit_call` RPC before starting. A learner without Plus who has already used that call gets HTTP 402 with `reason: 'free-call-used'`, and the app links to Plus. If the call cannot start (connection, upstream or bind failure), the claim is released so the free call is not lost. The daily live-practice allowance applies as usual.
 - **Review:** when the call ends, the app:
   1. marks which unit phrases came up (`phrasesUsed`, which ignores accents, case and punctuation, and does not match inside another word);
   2. brings unused phrases back in tomorrow's review, one box lower, never reset (`bringBackSooner` in `src/features/coaching/unit-call-review.ts`);
   3. asks the function's `review` action for up to 3 corrections (You said · People say, with tap to hear), one pronunciation tip and up to 3 non-sensitive facts. Corrected unit phrases are also brought back sooner.
+
+  A call with fewer than 6 words from the learner (`REVIEW_MIN_WORDS`) gets no review and moves no review cards, since a near-silent call may be only background noise. The function keeps only what the learner's own words support (`groundReview`): a correction must quote something they said and change how it sounds, because the transcript's accents and punctuation come from the transcriber; a fact must quote the words where the learner said it, so nothing the coach said or the model imagined is remembered.
+
 - **Memory:** facts and repeated corrections are kept per language in the coaching store (6 facts, 3 corrections, 120 characters each). They stay on the device, are not synced to the cloud, and are sent only with a unit call, labelled in the brief as data, not instructions. **Profile → Coach memory** shows them; the learner can delete any item or clear everything.
 
 ## Exam practice near a goal date
@@ -30,4 +33,4 @@ When the learner's goal is German or Spanish A1 and the date is 42 days away or 
 2. Deploy the function: `npx supabase functions deploy realtime-session`.
 3. Ship the app update. Builds without the update never send a `callId`, so they are unaffected.
 
-The review uses `OPENAI_ASSESSMENT_MODEL` (default `gpt-4o-mini`). A 3-minute call costs about US$0.24 on `gpt-realtime-2.1`, or about US$0.12 on the mini model. See the business model plan for the cost of free calls.
+The review uses `OPENAI_REVIEW_MODEL` (default `gpt-6.1-sol`, under US$0.01 a review) and falls back to `OPENAI_ASSESSMENT_MODEL` (default `gpt-4o-mini`) if that call fails. The mini model alone gave wrong pronunciation tips in testing. A 3-minute call costs about US$0.24 on `gpt-realtime-2.1`, or about US$0.12 on the mini model. See the business model plan for the cost of free calls.
