@@ -1,16 +1,17 @@
-# Spanish A1 Units 1–4: native review packet
+# Spanish A1 Units 1–5: native review packet
 
-Prepared 18 October 2026. **Implemented locally; native, teacher and beginner approval pending.** Stop expansion after these four units for the requested review. These introductory units do not establish full A1 coverage, DELE readiness or native-level fluency. (The file keeps its original name so existing links work; the pilot was three units until Unit 3 was split on 18 October.)
+Prepared 18 October 2026. **Implemented locally; native, teacher and beginner approval pending.** Unit 5 completes the first phase; checkpoint 1 comes next. These introductory units do not establish full A1 coverage, DELE readiness or native-level fluency. (The file keeps its original name so existing links work; the pilot was three units until Unit 3 was split on 18 October.)
 
 ## Open and review
 
-Start in Spanish on Today, then follow the recommended lesson through all 16 sessions. Course also lets reviewers open individual sessions. The path remains Words → Grammar → Real talk → Exam task, using the existing colours, typography, completion screens and onward recommendation.
+Start in Spanish on Today, then follow the recommended lesson through all 20 sessions. Course also lets reviewers open individual sessions. The path remains Words → Grammar → Real talk → Exam task, using the existing colours, typography, completion screens and onward recommendation.
 
 - [Unit 1 script](../src/features/foundations/spanish-a1-units.ts): greetings for the time of day, name, origin chunk and communication repair.
 - [Unit 2 script](../src/features/foundations/spanish-a1-unit-2.ts): origin versus residence, languages, occupation, nationality, questions and friend introductions.
 - [Unit 3 script](../src/features/foundations/spanish-a1-unit-3.ts): numbers to 100, age, phone numbers read digit by digit and in pairs, a corrected number and a three-field details form.
 - [Unit 4 script](../src/features/foundations/spanish-a1-unit-4.ts): form labels, the alphabet with Mexican letter names, mi/tu/su, email symbols, spelling at the desk and a five-field registration form.
-- [Audio review sheet](spanish-a1-audio-review.csv): 135 unique clips, with transcripts, speaker, voice, lesson/step/content-version references, measured speech ends and public playback links. Open as UTF-8 so accents and ñ survive. Repeated uses of a clip share one row; listen to the clip in each conversational context too.
+- [Unit 5 script](../src/features/foundations/spanish-a1-unit-5.ts): people in your life, descriptions with agreement, possessives and introductions.
+- [Audio review sheet](spanish-a1-audio-review.csv): 175 unique clips, with transcripts, speaker, voice, lesson/step/content-version references, measured speech ends and public playback links. Open as UTF-8 so accents and ñ survive. Repeated uses of a clip share one row; listen to the clip in each conversational context too.
 - [Assessment and review protocol](spanish-a1-assessment-review.md): later evidence requirements and the full exam blueprint.
 
 For every issue record lesson ID, one-based step, current content version, exact text or clip key, severity, suggested correction and reason. For audio include the timestamp. Mark a row approved only after listening. Content changes invalidate the affected approval; a general approval of the unit is insufficient.
@@ -23,8 +24,9 @@ For every issue record lesson ID, one-based step, current content version, exact
 | 2    | 4        | 48    | 19                 | Select a profile using multiple details; introduce someone, then answer as that person   |
 | 3    | 4        | 52    | 16                 | Take down numbers read in pairs, use a corrected phone number in a three-field form      |
 | 4    | 4        | 36    | 9                  | Spell unfamiliar names and email addresses; complete a five-field registration form      |
+| 5    | 4        | 42    | 17                 | Read about someone's people, then talk for 30 seconds about someone from a card          |
 
-Total: 16 sessions, 178 steps and 61 distinct scheduled review targets. The four synthesis sessions add no cards. Vocabulary in rule tables is practised in the unit but is not all separately scheduled: later retrieval of number, alphabet and grammar patterns remains part of the subsequent curriculum, not a completed coverage claim.
+Total: 20 sessions, 220 steps and 78 distinct scheduled review targets. The five synthesis sessions add no cards. Vocabulary in rule tables is practised in the unit but is not all separately scheduled: later retrieval of number, alphabet and grammar patterns remains part of the subsequent curriculum, not a completed coverage claim.
 
 Sessions run 7–15 steps, in line with German's 9–14. Unit 3 spreads its numeric system: digits and 10–20 in Words, 21–30 with age in Grammar, then tens to 100 and pair-reading in Real talk. Unit 4 spreads the alphabet over Words (a–q) and Grammar (r–z), with practice between groups. Unit 3 Words still introduces 11 cards, ten of them single digits. Advertised times (5–8 minutes) are unvalidated estimates. Observe fatigue, scrolling, help use and delayed recall.
 
@@ -50,7 +52,7 @@ Supported incidental scene language is translated. Optional `Trabajo en una tien
 2. **Naturalness in context.** Check every translation, distractor and accepted response, including `Soy estudiante`, `Hablo español e inglés`, `¿Dónde vive?`, third-person introductions and the surname/phone correction at the desk. Flag instructions that blur speaking as a character and introducing them to someone else.
 3. **Numbers and spelling.** Verify each actual audio digit and letter against its transcript. Pay particular attention to 096, 7041, every ten-digit number, 15 versus 50, ñ, hache, letter-name variants and stress in dieciséis, veintidós, veintitrés and veintiséis. Confirm `veintiún años`, `treinta y un años` and exact `cien`.
 4. **Names and contact details.** `Muñoz` must retain ñ in the surname field; the supplied email uses `munoz`. Check that this distinction is clear rather than contradictory. Multiple surnames are acknowledged; examples do not define a universal naming system. Phone numbers are fictional teaching examples, not numbers to call. Email examples use IANA's reserved example.com domain.
-5. **Audio quality.** There are 118 newly generated AI clips, using the existing voice system. Automated checks verify inventory, decodability and plausible speech ends. They do not verify pronunciation, omitted/repeated digits, voice appropriateness, natural pacing or timing between scene turns. Listen at normal and slow speed, then test native-device playback.
+5. **Audio quality.** There are 158 newly generated AI clips, using the existing voice system. Automated checks verify inventory, decodability and plausible speech ends. They do not verify pronunciation, omitted/repeated digits, voice appropriateness, natural pacing or timing between scene turns. Listen at normal and slow speed, then test native-device playback.
 6. **Load and motivation.** Ask beginners what they are trying to accomplish at each stage and what comes next. Watch the number tables and alphabet screens especially. Changed situations and optional examples support personal use, but their learning benefit must be observed rather than assumed.
 
 ### Native-speaker pass, 18 October
@@ -97,4 +99,4 @@ The first-party references checked for the new content include [RAE cardinal num
 
 Require a Mexican-reference native reviewer and a Spanish teacher to check all scripts, alternatives, explanations and recordings. Include a reviewer familiar with DELE A1 before approving exam claims. Observe beginners using the rendered app; record time and comprehension without coaching them through the intended route.
 
-Do not expand into Unit 5 until this four-unit review is discussed. Retain outstanding issues and their owners in this packet. Full course coverage, prerequisite-aware standalone suggestions, the legacy-learner bridge, wider regional audio and assessed checkpoints are still open work in the milestone ledger.
+Build checkpoint 1 before Unit 6. Retain outstanding issues and their owners in this packet. Full course coverage, prerequisite-aware standalone suggestions, the legacy-learner bridge, wider regional audio and assessed checkpoints are still open work in the milestone ledger.

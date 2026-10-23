@@ -135,6 +135,10 @@ export const characters: Record<LanguageTrack, Record<string, Casting>> = {
     Andrés: cast('cedar', 'Andrés, a young man ordering with friends. Easy-going.'),
     Pasajero: cast('ash', 'An airline passenger whose flight was cancelled. Stressed but polite.'),
     Agente: cast('marin', 'An airline agent at the desk. Professional and kind.'),
+    Valeria: cast(
+      'shimmer',
+      'Valeria, Ana’s cousin in her twenties from Puebla. Cheerful and easy-going.',
+    ),
   },
   EN: {
     Barista: cast(

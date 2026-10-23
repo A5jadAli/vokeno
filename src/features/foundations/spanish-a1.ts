@@ -325,6 +325,8 @@ export const spanishA1Lessons = defineLessons('ES', [
   },
   {
     id: 'es-family',
+    retired: true,
+    replacedBy: 'es-a1-u5-words',
     level: 'A1',
     title: 'Talk about family and friends',
     outcome: 'Say who is in your family and ask about someone else’s.',

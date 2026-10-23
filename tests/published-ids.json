@@ -188,7 +188,11 @@
     "es-a1-u4-words",
     "es-a1-u4-grammar",
     "es-a1-u4-talk",
-    "es-a1-u4-task"
+    "es-a1-u4-task",
+    "es-a1-u5-words",
+    "es-a1-u5-grammar",
+    "es-a1-u5-talk",
+    "es-a1-u5-task"
   ],
   "listening": [
     "coffee-run",

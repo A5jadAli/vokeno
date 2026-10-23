@@ -158,10 +158,10 @@ describe('Spanish Unit 1 practice and review', () => {
   });
 });
 
-describe('Spanish Units 1 to 4 as one beginner path', () => {
-  it('advances through sixteen sessions, preserves unit boundaries and then offers existing practice', () => {
-    expect(spanishA1Units).toHaveLength(16);
-    expect(getTrackLessons('ES').slice(0, 16)).toEqual(spanishA1Units);
+describe('Spanish Units 1 to 5 as one beginner path', () => {
+  it('advances through twenty sessions, preserves unit boundaries and then offers existing practice', () => {
+    expect(spanishA1Units).toHaveLength(20);
+    expect(getTrackLessons('ES').slice(0, 20)).toEqual(spanishA1Units);
     const progress: FoundationProgress = {};
     for (const [index, lesson] of spanishA1Units.entries()) {
       expect(lesson.unit.number).toBe(Math.floor(index / 4) + 1);
@@ -172,9 +172,9 @@ describe('Spanish Units 1 to 4 as one beginner path', () => {
     expect(findNextLesson(progress, 'ES')?.lesson.id).toBe('es-sounds');
     expect(
       courseUnits('ES', progress)
-        .slice(0, 4)
+        .slice(0, 5)
         .map((unit) => unit.done),
-    ).toEqual([4, 4, 4, 4]);
+    ).toEqual([4, 4, 4, 4, 4]);
   });
 
   it('keeps synthesis sessions free of new cards and schedules the unique taught set once', () => {

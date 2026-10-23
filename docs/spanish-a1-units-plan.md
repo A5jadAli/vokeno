@@ -1,6 +1,6 @@
 # Spanish A1: 25 units and 100 session briefs
 
-Companion to the [curriculum plan](spanish-a1-curriculum-plan.md). This is an authoring specification. **Units 1–4 are implemented locally and awaiting native review; Units 5–25 remain proposed.** See the [implementation ledger](spanish-a1-milestones.md) for exact session IDs, delivered changes and open review gates. Scripts, item banks, media and answer variants require review.
+Companion to the [curriculum plan](spanish-a1-curriculum-plan.md). This is an authoring specification. **Units 1–5 are implemented locally and awaiting native review; Units 6–25 and the checkpoints remain proposed.** See the [implementation ledger](spanish-a1-milestones.md) for exact session IDs, delivered changes and open review gates. Scripts, item banks, media and answer variants require review.
 
 ## Authoring contract
 
@@ -88,6 +88,8 @@ Implementation note (18 October): the first build put all of this into one Unit 
 | Grammar   | “My friend, our family”: noun/adjective agreement, articles, `tener`, possessives; distinguish `su` from information identifying whose person/object it is. |
 | Real talk | “Introduce two people”: identify someone in a small group; ask and answer a follow-up; short `este/esta` introduction.                                      |
 | Exam task | “Tell us about someone”: O2 precursor from a simple cue card; write a few original sentences; read a profile with changed names/relationships.              |
+
+Implementation note (23 October): the [Unit 5 script](../src/features/foundations/spanish-a1-unit-5.ts) is titled “The people in your life”. Words: who is who in a photo (`mi mamá`, `mi hermano`, `¿Quién es?`, `Se llama…`) with partner, housemate and other households in the reference table. Grammar: describing kindly with gender and number agreement, `mis/tus`, and `su` versus `la hermana de Ana`. Real talk: a cousin joins the exchange (`Esta es mi prima`, `Igualmente`, Mexican `mis papás`) and follow-up questions. Exam task: an O2 precursor from a card plus a short reading. The retired starter lesson `es-family` now points to `es-a1-u5-words`. Checkpoint 1 is still to build.
 
 **Sound/writing:** `ll/y`, ñ and gender/number endings; plural spelling in taught words. **Recycle:** U8, U12, U24. **CP1 after U5:** meet a new person, interpret a profile, supply contact fields and give a short introduction. Route number errors to U3, spelling and form errors to U4, identity patterns to U2, repair difficulty to U1.
 

@@ -57,7 +57,7 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
-test('Spanish Units 1 to 4 guide a beginner through sixteen sessions with saved forms and listening help', async ({
+test('Spanish Units 1 to 5 guide a beginner through twenty sessions with saved forms and listening help', async ({
   page,
 }, testInfo) => {
   test.setTimeout(420_000);

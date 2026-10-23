@@ -1,6 +1,6 @@
 # Spanish A1: curriculum and learning journey
 
-Research and repository review: 18 October 2026. Status: **curriculum specification; Units 1–4 are now implemented locally, with native review pending**. The remaining units, checkpoints and exam system are planned. See the [implementation milestones](spanish-a1-milestones.md) for delivered work and open gates; this document is not a certification claim.
+Research and repository review: 18 October 2026. Status: **curriculum specification; Units 1–5 are now implemented locally, with native review pending**. The remaining units, checkpoints and exam system are planned. See the [implementation milestones](spanish-a1-milestones.md) for delivered work and open gates; this document is not a certification claim.
 
 The user selected **standard DELE A1** and delegated the choice of Spanish variety. The primary audience remains beginners learning for everyday life. This plan preserves the app's current design and adds a rigorous route towards exam preparation.
 
@@ -8,7 +8,7 @@ The user selected **standard DELE A1** and delegated the choice of Spanish varie
 
 Build **25 units, four sessions per unit**, with six cumulative checkpoints, deliberate spaced retrieval, linked listening and productive practice, and three original full exam forms. Keep Mexican Spanish as the main production model; introduce carefully scaffolded Spanish-from-Spain comprehension throughout the course. Use the existing Today → Course → Practice → Progress journey.
 
-Twenty-five is an instructional design decision, not a CEFR requirement. It gives pronunciation, personal information, time, forms, messages and unscripted interaction more space than a literal translation of the German syllabus. The plan originally had 24 units; the 18 October review split the overloaded numbers-and-spelling unit into Unit 3 (numbers) and Unit 4 (spelling and forms), so later units moved up by one. Review the four implemented units before adding Unit 5. Then pilot the first five units and checkpoint before committing to the final session lengths. Split an overloaded session rather than compressing essential practice to meet a unit count.
+Twenty-five is an instructional design decision, not a CEFR requirement. It gives pronunciation, personal information, time, forms, messages and unscripted interaction more space than a literal translation of the German syllabus. The plan originally had 24 units; the 18 October review split the overloaded numbers-and-spelling unit into Unit 3 (numbers) and Unit 4 (spelling and forms), so later units moved up by one. Unit 5 completes the first phase. Pilot the first five units and checkpoint 1 before committing to the final session lengths. Split an overloaded session rather than compressing essential practice to meet a unit count.
 
 The intended outcome is **reliable, natural A1 communication, with evidence of readiness for DELE A1 tasks**. A1 still allows hesitation, limited language and help from a cooperative interlocutor. Accent elimination, unrestricted native-speed comprehension and native-level fluency are not appropriate completion criteria. The CEFR prioritises intelligibility and successful communication; its A1 interaction and fluency descriptors explicitly allow repetition and pauses. [CEFR Companion Volume, sections 3.3 and 5.2–5.3](https://rm.coe.int/common-european-framework-of-reference-for-languages-learning-teaching/16809ea0d4).
 
@@ -20,7 +20,7 @@ The intended outcome is **reliable, natural A1 communication, with evidence of r
 - [Coverage register](spanish-a1-coverage.md): planned teaching, recycling and evidence for language and exam requirements; source-audit rules.
 - [Assessment and native-review specification](spanish-a1-assessment-review.md): exam blueprint, review gates, authoring example and implementation backlog.
 
-These documents specify the whole course. Units 1–4 are now authored in the local catalogue; the remaining specification is still planned. No native-speaker approval is claimed. “Mapped” means assigned in a plan; “covered” will require approved content and evidence.
+These documents specify the whole course. Units 1–5 are now authored in the local catalogue; the remaining specification is still planned. No native-speaker approval is claimed. “Mapped” means assigned in a plan; “covered” will require approved content and evidence.
 
 ### Relationship to existing project decisions
 
