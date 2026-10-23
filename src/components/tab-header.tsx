@@ -60,13 +60,7 @@ export function TabHeader({
       </View>
       <View>
         {eyebrow ? <Text style={styles.eyebrow}>{eyebrow}</Text> : null}
-        <Text
-          accessibilityRole="header"
-          adjustsFontSizeToFit
-          minimumFontScale={0.75}
-          numberOfLines={1}
-          style={styles.title}
-        >
+        <Text accessibilityRole="header" style={styles.title}>
           {title}
         </Text>
       </View>

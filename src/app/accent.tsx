@@ -97,15 +97,15 @@ export default function AccentScreen() {
                   selected && { borderColor: Selection.border, borderWidth: 2 },
                 ]}
               >
-                <View style={[styles.radio, selected && { backgroundColor: Selection.border }]}>
-                  {selected ? (
-                    <MaterialCommunityIcons color={Palette.cream} name="check" size={14} />
-                  ) : null}
-                </View>
                 <View style={styles.goalCopy}>
                   <Text style={styles.goalTitle}>{speakingGoalCopy[goal].label}</Text>
                   <Text style={styles.goalDescription}>{speakingGoalCopy[goal].description}</Text>
                 </View>
+                <MaterialCommunityIcons
+                  color={selected ? Selection.border : Palette.handle}
+                  name={selected ? 'radiobox-marked' : 'radiobox-blank'}
+                  size={24}
+                />
               </Pressable>
             );
           })}
@@ -177,15 +177,6 @@ const styles = StyleSheet.create({
     minHeight: 78,
     padding: space(4),
   },
-  radio: {
-    alignItems: 'center',
-    borderColor: Palette.muted,
-    borderRadius: Radius.pill,
-    borderWidth: 1,
-    height: 24,
-    justifyContent: 'center',
-    width: 24,
-  },
   goalCopy: { flex: 1 },
   goalTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.label },
   goalDescription: {
@@ -223,6 +214,7 @@ const styles = StyleSheet.create({
   referenceCard: {
     backgroundColor: Palette.ink,
     borderRadius: Radius.xl,
+    marginTop: space(4),
     flexDirection: 'row',
     gap: space(3),
     marginBottom: space(6),

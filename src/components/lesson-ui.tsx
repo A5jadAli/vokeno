@@ -129,11 +129,10 @@ export function PrimaryButton({
       radius={Radius.lg}
     >
       <View style={styles.primary}>
+        {/* Wraps rather than shrinking, so the phone's larger text setting is kept. */}
         <Text
-          adjustsFontSizeToFit
-          minimumFontScale={0.85}
-          numberOfLines={1}
-          style={[styles.primaryText, { color: ink, flexShrink: 1 }]}
+          numberOfLines={2}
+          style={[styles.primaryText, { color: ink, flexShrink: 1, textAlign: 'center' }]}
         >
           {title}
         </Text>
@@ -173,10 +172,8 @@ export function TextButton({
     >
       {icon ? <MaterialCommunityIcons name={icon} size={18} color={Palette.ink} /> : null}
       <Text
-        adjustsFontSizeToFit
-        minimumFontScale={0.85}
-        numberOfLines={1}
-        style={[styles.textButtonLabel, { flexShrink: 1 }]}
+        numberOfLines={2}
+        style={[styles.textButtonLabel, { flexShrink: 1, textAlign: 'center' }]}
       >
         {title}
       </Text>
@@ -273,10 +270,19 @@ export function ActionRow({
         {subtitle ? <Text style={styles.rowSubtitle}>{subtitle}</Text> : null}
       </View>
       {trailing ? <Text style={styles.rowTrailing}>{trailing}</Text> : null}
+      {/* Pick-one options use the same radio mark as answer choices; ✓ is kept for "correct". */}
       <MaterialCommunityIcons
-        name={selected ? 'check-circle' : choice ? 'circle-outline' : 'chevron-right'}
+        name={
+          choice
+            ? selected
+              ? 'radiobox-marked'
+              : 'radiobox-blank'
+            : selected
+              ? 'check-circle'
+              : 'chevron-right'
+        }
         size={22}
-        color={selected ? Palette.ink : Palette.muted}
+        color={selected ? Palette.ink : choice ? Palette.handle : Palette.muted}
       />
     </Pressable>
   );
@@ -287,7 +293,12 @@ export function InfoCard({
   title,
   children,
   tone = 'white',
-}: PropsWithChildren<{ icon: IconName; title: string; tone?: 'white' | 'tint' | 'ink' }>) {
+}: PropsWithChildren<{
+  icon: IconName;
+  title: string;
+  /** `quiet` (canvas) is for explanations beside dialogue, so they never look like speech. */
+  tone?: 'white' | 'tint' | 'quiet' | 'ink';
+}>) {
   const dark = tone === 'ink';
   const accent = useAccentColors();
   return (
@@ -295,6 +306,7 @@ export function InfoCard({
       style={[
         styles.info,
         tone === 'tint' && { backgroundColor: accent?.tint ?? Palette.canvas },
+        tone === 'quiet' && { backgroundColor: Palette.canvas },
         dark && { backgroundColor: Palette.ink },
       ]}
     >

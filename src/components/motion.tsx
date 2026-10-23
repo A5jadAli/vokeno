@@ -114,7 +114,10 @@ export function ProgressFill({
   useEffect(() => {
     fill.value = withSpring(Math.max(0, Math.min(1, value)), { damping: 20, stiffness: 140 });
   }, [fill, value]);
-  const style = useAnimatedStyle(() => ({ width: Math.max(height, fill.value * width) }));
+  // Nothing done is an empty track; any progress shows at least a round cap.
+  const style = useAnimatedStyle(() => ({
+    width: fill.value <= 0.001 ? 0 : Math.max(height, fill.value * width),
+  }));
   return (
     <View
       onLayout={(event) => setWidth(event.nativeEvent.layout.width)}

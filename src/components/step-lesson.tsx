@@ -455,7 +455,7 @@ function SceneStep({ step, speech }: StepProps & { step: Of<'scene'> }) {
         </Text>
       ) : null}
       {step.note ? (
-        <InfoCard icon="lightbulb-on-outline" title="Notice" tone="tint">
+        <InfoCard icon="lightbulb-on-outline" title="Notice" tone="quiet">
           {step.note}
         </InfoCard>
       ) : null}

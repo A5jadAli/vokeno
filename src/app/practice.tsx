@@ -106,8 +106,7 @@ export default function PracticeScreen() {
         {scenario ? (
           <Row
             icon="headphones"
-            accent={colors.accent}
-            onAccent={colors.onAccent}
+            tint={colors.tint}
             label={`Listening · ${scenario.level} · ${scenario.duration}`}
             title={scenario.title}
             meta={scenario.context}
@@ -116,8 +115,7 @@ export default function PracticeScreen() {
         ) : null}
         <Row
           icon="microphone-outline"
-          accent={colors.accent}
-          onAccent={colors.onAccent}
+          tint={colors.tint}
           label={
             conversation ? `Speaking · ${conversation.level} · live coach` : 'Speaking · live coach'
           }
@@ -265,16 +263,15 @@ function Row({
   title,
   meta,
   label,
-  accent,
-  onAccent,
+  tint,
   onPress,
 }: {
   icon: IconName;
   title: string;
   meta: string;
   label?: string;
-  accent?: string;
-  onAccent?: string;
+  /** Language content sits on the language tint; tools on grey. */
+  tint?: string;
   onPress: () => void;
 }) {
   return (
@@ -284,8 +281,8 @@ function Row({
       onPress={onPress}
       style={({ pressed }) => [styles.row, pressed && styles.pressed]}
     >
-      <View style={[styles.rowIcon, accent ? { backgroundColor: accent } : null]}>
-        <MaterialCommunityIcons color={accent ? onAccent : Palette.ink} name={icon} size={20} />
+      <View style={[styles.rowIcon, tint ? { backgroundColor: tint } : null]}>
+        <MaterialCommunityIcons color={Palette.ink} name={icon} size={20} />
       </View>
       <View style={styles.copy}>
         {label ? <Text style={styles.eyebrow}>{label}</Text> : null}

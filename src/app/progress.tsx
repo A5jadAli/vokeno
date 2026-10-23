@@ -72,9 +72,15 @@ export default function ProgressScreen() {
         <View style={styles.unitList}>
           {units.map((unit) => (
             <View key={unit.id} style={styles.unitRow}>
-              <Text style={styles.unitName} numberOfLines={1}>
-                {unit.label}
-              </Text>
+              {/* Name and count on one line, the bar below, so names keep the full width. */}
+              <View style={styles.unitTop}>
+                <Text style={styles.unitName} numberOfLines={2}>
+                  {unit.label}
+                </Text>
+                <Text style={styles.unitCount}>
+                  {unit.done}/{unit.lessons.length}
+                </Text>
+              </View>
               <View style={styles.unitBar}>
                 <ProgressFill
                   value={unit.done / unit.lessons.length}
@@ -83,9 +89,6 @@ export default function ProgressScreen() {
                   height={6}
                 />
               </View>
-              <Text style={styles.unitCount}>
-                {unit.done}/{unit.lessons.length}
-              </Text>
             </View>
           ))}
         </View>
@@ -243,28 +246,39 @@ const styles = StyleSheet.create({
     lineHeight: LineHeight.label,
   },
   unitList: { gap: space(2), marginTop: space(1) },
-  unitRow: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
+  unitRow: { gap: space(1.5) },
+  unitTop: { alignItems: 'flex-start', flexDirection: 'row', gap: space(2) },
   unitName: {
     color: Palette.ink,
-    flex: 1.4,
+    flex: 1,
     fontFamily: VokaFonts.bodyMedium,
     fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
   },
   unitBar: { flex: 1, flexDirection: 'row' },
   unitCount: {
     color: Palette.secondary,
     fontFamily: VokaFonts.bodySemiBold,
     fontSize: FontSize.caption,
+    lineHeight: LineHeight.label,
     minWidth: 28,
     textAlign: 'right',
   },
   link: { alignItems: 'center', flexDirection: 'row', gap: space(1), minHeight: 44 },
   linkText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.body },
-  stats: { flexDirection: 'row', gap: space(2), marginHorizontal: space(4), marginTop: space(3) },
+  // Three across where they fit; on small phones or large text they wrap rather than break words.
+  stats: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space(2),
+    marginHorizontal: space(4),
+    marginTop: space(3),
+  },
   stat: {
     backgroundColor: Palette.white,
     borderRadius: Radius.lg,
-    flex: 1,
+    flexBasis: 112,
+    flexGrow: 1,
     gap: space(0.5),
     padding: space(3),
   },
@@ -275,6 +289,7 @@ const styles = StyleSheet.create({
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
     fontSize: FontSize.heading,
+    marginBottom: space(3),
     marginHorizontal: space(5),
     marginTop: space(6),
   },
