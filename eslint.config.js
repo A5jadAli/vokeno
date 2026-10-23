@@ -16,6 +16,24 @@ module.exports = defineConfig([
     },
   },
   {
+    // Colours come from src/constants/theme.ts, so a palette change is one edit there.
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/constants/theme.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/#[0-9a-fA-F]{3,8}\\b|rgba?\\(/]',
+          message: 'Use a colour token from @/constants/theme (withAlpha for opacity).',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/#[0-9a-fA-F]{3,8}\\b|rgba?\\(/]',
+          message: 'Use a colour token from @/constants/theme (withAlpha for opacity).',
+        },
+      ],
+    },
+  },
+  {
     files: ['scripts/**/*.{js,cjs,mjs}'],
     rules: {
       'no-console': 'off',

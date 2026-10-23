@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   copy: { fontFamily: VokaFonts.body, color: Palette.secondary, fontSize: 14, lineHeight: 21 },
   iconTile: {
     alignItems: 'center',
-    backgroundColor: '#FFE3D6',
+    backgroundColor: Palette.orangeTintStrong,
     borderRadius: 14,
     height: 52,
     justifyContent: 'center',

@@ -2,19 +2,19 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import type { GoalPlan, GoalStatus } from '@/features/coaching/goal-plan';
 import { levelLabel } from '@/features/foundations/level-status';
 import { parseDateOnly } from '@/features/profile/test-date';
 import { languageDetails, trackColors, type LanguageTrack } from '@/features/language/config';
 
 const statusStyle: Record<GoalStatus, { label: string; bg: string; ink: string }> = {
-  'on-track': { label: 'On track', bg: '#E5F6EB', ink: '#14532D' },
-  behind: { label: 'Behind', bg: '#FCF0C8', ink: '#6B4E00' },
-  tight: { label: 'Very tight', bg: '#FDEBE7', ink: '#7A1F10' },
-  ready: { label: 'Level done', bg: '#E5F6EB', ink: '#14532D' },
-  today: { label: 'Exam day', bg: '#E5F6EB', ink: '#14532D' },
-  passed: { label: 'Date passed', bg: '#EDEAE3', ink: Palette.ink },
+  'on-track': { label: 'On track', bg: Feedback.correctBg, ink: Feedback.correctInk },
+  behind: { label: 'Behind', bg: Feedback.behindBg, ink: Feedback.behindInk },
+  tight: { label: 'Very tight', bg: Feedback.wrongBg, ink: Feedback.wrongInk },
+  ready: { label: 'Level done', bg: Feedback.correctBg, ink: Feedback.correctInk },
+  today: { label: 'Exam day', bg: Feedback.correctBg, ink: Feedback.correctInk },
+  passed: { label: 'Date passed', bg: Palette.neutralChip, ink: Palette.ink },
 };
 
 const shortDate = (value: string) => {
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   weekLabel: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
   weekCount: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 13 },
   track: {
-    backgroundColor: 'rgba(19,18,17,0.08)',
+    backgroundColor: withAlpha(Palette.ink, 0.08),
     borderRadius: 99,
     height: 8,
     overflow: 'hidden',

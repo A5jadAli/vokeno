@@ -17,7 +17,7 @@ import {
   PrimaryAccent,
 } from '@/components/lesson-ui';
 import { AppScreen } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, VokaFonts } from '@/constants/theme';
 import { optionOrder } from '@/features/foundations/catalog';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { useLessonAudio } from '@/features/audio/use-lesson-audio';
@@ -172,7 +172,11 @@ function PlacementCheck({
                   </Text>
                   <Text style={styles.missedPrompt}>{entry.prompt}</Text>
                   <View style={styles.missedAnswer}>
-                    <MaterialCommunityIcons name="check-circle" size={18} color="#1F5A33" />
+                    <MaterialCommunityIcons
+                      name="check-circle"
+                      size={18}
+                      color={Feedback.correctText}
+                    />
                     <Text style={styles.missedAnswerText}>{entry.options[entry.answer]}</Text>
                   </View>
                   <Text style={lessonText.small}>{entry.explanation}</Text>
@@ -272,5 +276,5 @@ const styles = StyleSheet.create({
     lineHeight: 23,
   },
   missedAnswer: { alignItems: 'center', flexDirection: 'row', gap: 6 },
-  missedAnswerText: { color: '#1F5A33', fontFamily: VokaFonts.bodyBold, fontSize: 15 },
+  missedAnswerText: { color: Feedback.correctText, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
 });

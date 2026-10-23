@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { speakingGoalCopy, type SpeakingGoal, useCoachingStore } from '@/features/coaching/store';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { languageDetails, trackColors } from '@/features/language/config';
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   referenceCopy: { flex: 1 },
   referenceTitle: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
   referenceText: {
-    color: 'rgba(241,237,227,.62)',
+    color: withAlpha(Palette.cream, 0.62),
     fontFamily: VokaFonts.body,
     fontSize: 12,
     lineHeight: 18,

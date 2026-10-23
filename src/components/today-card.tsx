@@ -8,7 +8,7 @@ import { GoalCard, GoalPrompt } from '@/components/goal-card';
 import { PrimaryAccent, PrimaryButton } from '@/components/lesson-ui';
 import { ReminderPicker } from '@/components/reminder-picker';
 import { StreakStrip } from '@/components/streak-strip';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import type { PlanStep } from '@/features/coaching/daily-plan';
 import { foundationLessons, getTrackLessons } from '@/features/foundations/catalog';
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
   dots: { alignItems: 'center', flexDirection: 'row', gap: 6 },
   dotStep: {
     alignItems: 'center',
-    backgroundColor: 'rgba(19,18,17,0.10)',
+    backgroundColor: withAlpha(Palette.ink, 0.1),
     borderRadius: 99,
     height: 16,
     justifyContent: 'center',

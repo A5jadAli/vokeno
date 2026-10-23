@@ -3,7 +3,7 @@ import { Redirect } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { AnswerChoice } from '@/components/answer-choice';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Palette, Selection, VokaFonts } from '@/constants/theme';
 import { readingLessons } from '@/features/reading/catalog';
 import { useCoachingStore } from '@/features/coaching/store';
 import { useSelectedLanguage } from '@/features/language/selection';
@@ -149,7 +149,7 @@ function Button({
       style={({ pressed }) => ({
         minHeight: 48,
         padding: 16,
-        backgroundColor: primary ? Palette.yellow : selected ? '#FFF1BC' : Palette.white,
+        backgroundColor: primary ? Palette.yellow : selected ? Selection.faceStrong : Palette.white,
         borderColor: selected ? Palette.yellow : Palette.line,
         borderWidth: 2,
         borderRadius: 16,

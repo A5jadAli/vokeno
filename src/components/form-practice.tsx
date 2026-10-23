@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { answerInputProps, Feedback, lessonText } from '@/components/lesson-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { answerInputProps, lessonText } from '@/components/lesson-ui';
+import { Feedback, Palette, VokaFonts } from '@/constants/theme';
 import { ListeningPrompt } from '@/components/listening-prompt';
 import type { LessonAudio } from '@/features/audio/use-lesson-audio';
 import {

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Animated, { ZoomIn } from 'react-native-reanimated';
 
 import { ActionBar, PrimaryButton, TextButton } from '@/components/lesson-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { useHabits } from '@/features/habits/use-habits';
 import { trackColors, type LanguageTrack } from '@/features/language/config';
 
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   dots: { flexDirection: 'row', gap: 6 },
   dot: {
     alignItems: 'center',
-    backgroundColor: 'rgba(19,18,17,0.1)',
+    backgroundColor: withAlpha(Palette.ink, 0.1),
     borderRadius: 99,
     height: 18,
     justifyContent: 'center',

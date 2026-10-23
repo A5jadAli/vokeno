@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Dark, Palette, Selection, VokaFonts } from '@/constants/theme';
 import type { LessonAudio } from '@/features/audio/use-lesson-audio';
 import { useAccentColors } from '@/components/accent-context';
 
@@ -82,8 +82,8 @@ const styles = StyleSheet.create({
     padding: 12,
     minHeight: 76,
   },
-  dark: { backgroundColor: '#242321' },
-  active: { backgroundColor: '#FFF1BC', borderColor: Palette.yellow },
+  dark: { backgroundColor: Dark.raisedAlt },
+  active: { backgroundColor: Selection.faceStrong, borderColor: Palette.yellow },
   pressed: { opacity: 0.8 },
   icon: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },
   copy: { flex: 1, gap: 4 },
@@ -97,7 +97,11 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.soft,
   },
   roundAccent: { backgroundColor: Palette.yellow },
-  roundActive: { backgroundColor: '#FFF1BC', borderWidth: 2, borderColor: Palette.yellow },
+  roundActive: {
+    backgroundColor: Selection.faceStrong,
+    borderWidth: 2,
+    borderColor: Palette.yellow,
+  },
 });
 
 /** A compact round play control for dense lists; slow playback uses a tortoise icon. */

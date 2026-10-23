@@ -14,7 +14,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ActionRow, lessonText, PrimaryButton } from '@/components/lesson-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import {
   REPORT_REASONS,
   reportAiContent,
@@ -154,7 +154,7 @@ export function ReportContent({
 const styles = StyleSheet.create({
   trigger: { alignItems: 'center', flexDirection: 'row', gap: 4, minHeight: 32 },
   triggerText: { fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
-  scrim: { backgroundColor: 'rgba(0,0,0,0.45)', flex: 1 },
+  scrim: { backgroundColor: withAlpha(Palette.black, 0.45), flex: 1 },
   sheet: {
     backgroundColor: Palette.cream,
     borderTopLeftRadius: 28,
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   },
   grabber: {
     alignSelf: 'center',
-    backgroundColor: 'rgba(19,18,17,0.2)',
+    backgroundColor: withAlpha(Palette.ink, 0.2),
     borderRadius: 99,
     height: 5,
     marginBottom: 6,
@@ -183,11 +183,11 @@ const styles = StyleSheet.create({
     minHeight: 80,
     padding: 12,
   },
-  error: { color: '#8E2D1B', fontFamily: VokaFonts.bodyMedium, fontSize: 14 },
+  error: { color: Feedback.wrongText, fontFamily: VokaFonts.bodyMedium, fontSize: 14 },
   sent: { alignItems: 'center', gap: 12, paddingVertical: 8 },
   sentIcon: {
     alignItems: 'center',
-    backgroundColor: '#BFE5C8',
+    backgroundColor: Feedback.correctSoft,
     borderRadius: 99,
     height: 64,
     justifyContent: 'center',

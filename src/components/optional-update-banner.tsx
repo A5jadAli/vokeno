@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Brand, Palette, VokaFonts } from '@/constants/theme';
+import { Brand, Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { downloadAvailableUpdate, restartWithDownloadedUpdate } from '@/features/updates/ota';
 
 const UPDATE_SNOOZE_KEY = '@voka/update-snoozed-until';
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 13,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: Palette.black,
     shadowOffset: { height: 5, width: 0 },
     shadowOpacity: 0.22,
     shadowRadius: 12,
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   copy: { flex: 1 },
   title: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
   notes: {
-    color: 'rgba(241,237,227,.64)',
+    color: withAlpha(Palette.cream, 0.64),
     fontFamily: VokaFonts.body,
     fontSize: 12,
     lineHeight: 17,

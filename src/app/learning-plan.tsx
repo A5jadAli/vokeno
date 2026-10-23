@@ -10,7 +10,7 @@ import {
   SectionLabel,
 } from '@/components/lesson-ui';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { learningRecommendation } from '@/features/coaching/recommendation';
 import { useCoachingStore, type StartingAbility, type StudyGoal } from '@/features/coaching/store';
 import { foundationLessons } from '@/features/foundations/catalog';
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   body: { gap: 14, paddingBottom: 32, paddingHorizontal: 20, paddingTop: 8 },
   group: { gap: 8 },
   segment: {
-    backgroundColor: 'rgba(19,18,17,0.07)',
+    backgroundColor: withAlpha(Palette.ink, 0.07),
     borderRadius: 16,
     flexDirection: 'row',
     gap: 4,

@@ -7,7 +7,7 @@ import Animated, { FadeIn, SlideInDown, ZoomIn } from 'react-native-reanimated';
 import { useAccentColors } from '@/components/accent-context';
 import { AudioIconButton } from '@/components/lesson-audio-button';
 import { ProgressFill, Tactile } from '@/components/motion';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, Selection, VokaFonts, withAlpha } from '@/constants/theme';
 import type { LessonAudio } from '@/features/audio/use-lesson-audio';
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
@@ -24,19 +24,6 @@ export const answerInputProps: TextInputProps = {
   importantForAutofill: 'no',
   keyboardType: Platform.OS === 'android' ? 'visible-password' : 'default',
 };
-
-/** Answer colours: a soft tint for surfaces, a strong accent for marks, a dark ink for text. */
-export const Feedback = {
-  correctBg: '#E5F6EB',
-  correctAccent: '#1E9E57',
-  correctInk: '#14532D',
-  wrongBg: '#FDEBE7',
-  wrongAccent: '#D93F26',
-  wrongInk: '#7A1F10',
-  closeBg: '#FFF5D1',
-  closeAccent: '#D99A00',
-  closeInk: '#5F4500',
-} as const;
 
 const feedbackLooks = {
   correct: {
@@ -83,7 +70,7 @@ export function LessonTopBar({ progress, label }: { progress: number; label?: st
         <ProgressFill
           value={value}
           color={accent?.accent ?? Palette.yellow}
-          track="rgba(19,18,17,0.1)"
+          track={withAlpha(Palette.ink, 0.1)}
         />
       </View>
       {label ? <Text style={styles.topLabel}>{label}</Text> : null}
@@ -116,14 +103,14 @@ export function PrimaryButton({
   const look = {
     yellow: {
       face: accent?.accent ?? Palette.yellow,
-      lip: '#C99600',
+      lip: Selection.lip,
       ink: accent?.onAccent ?? Palette.ink,
     },
-    green: { face: Feedback.correctAccent, lip: '#137040', ink: Palette.white },
-    red: { face: Feedback.wrongAccent, lip: '#A12A15', ink: Palette.white },
-    ink: { face: Palette.ink, lip: '#000000', ink: Palette.cream },
+    green: { face: Feedback.correctAccent, lip: Feedback.correctLip, ink: Palette.white },
+    red: { face: Feedback.wrongAccent, lip: Feedback.wrongLip, ink: Palette.white },
+    ink: { face: Palette.ink, lip: Palette.black, ink: Palette.cream },
   }[tone];
-  const face = disabled ? '#DEDAD2' : look.face;
+  const face = disabled ? Palette.disabled : look.face;
   const ink = disabled ? Palette.muted : look.ink;
   return (
     <Tactile
@@ -268,7 +255,7 @@ export function ActionRow({
       onPress={onPress}
       style={({ pressed }) => [
         styles.row,
-        selected && { borderColor: accent, backgroundColor: '#FFF8E0' },
+        selected && { borderColor: accent, backgroundColor: Selection.faceSoft },
         pressed && styles.softPressed,
       ]}
     >
@@ -303,7 +290,7 @@ export function InfoCard({
     <View
       style={[
         styles.info,
-        tone === 'yellow' && { backgroundColor: accent?.tint ?? '#FFF4CC' },
+        tone === 'yellow' && { backgroundColor: accent?.tint ?? Selection.face },
         dark && { backgroundColor: Palette.ink },
       ]}
     >
@@ -316,7 +303,9 @@ export function InfoCard({
         <Text style={[styles.infoTitle, dark && { color: Palette.cream }]}>{title}</Text>
       </View>
       {typeof children === 'string' ? (
-        <Text style={[styles.infoText, dark && { color: 'rgba(241,237,227,.8)' }]}>{children}</Text>
+        <Text style={[styles.infoText, dark && { color: withAlpha(Palette.cream, 0.8) }]}>
+          {children}
+        </Text>
       ) : (
         children
       )}
@@ -404,7 +393,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   textButtonLabel: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
-  softPressed: { backgroundColor: 'rgba(19,18,17,0.12)' },
+  softPressed: { backgroundColor: withAlpha(Palette.ink, 0.12) },
   actionBar: {
     backgroundColor: Palette.cream,
     gap: 12,
@@ -416,7 +405,7 @@ const styles = StyleSheet.create({
   sheet: {
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    boxShadow: '0 -6px 24px rgba(19, 18, 17, 0.10)',
+    boxShadow: `0 -6px 24px ${withAlpha(Palette.ink, 0.1)}`,
     gap: 16,
     paddingTop: 20,
   },

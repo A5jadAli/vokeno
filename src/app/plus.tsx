@@ -14,7 +14,7 @@ import {
 
 import { PrimaryButton } from '@/components/lesson-ui';
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Brand, Palette, VokaFonts } from '@/constants/theme';
+import { Brand, Dark, Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { useAuthSession } from '@/features/auth/use-auth-session';
 import {
   fetchPlusAccess,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     marginTop: 9,
   },
   copy: {
-    color: 'rgba(241,237,227,.64)',
+    color: withAlpha(Palette.cream, 0.64),
     fontFamily: VokaFonts.body,
     fontSize: 14,
     lineHeight: 21,
@@ -433,14 +433,14 @@ const styles = StyleSheet.create({
   },
   loader: { marginTop: 28 },
   error: {
-    color: '#FFB49E',
+    color: Dark.errorText,
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 12,
     lineHeight: 18,
     marginTop: 22,
   },
   terms: {
-    color: 'rgba(241,237,227,.7)',
+    color: withAlpha(Palette.cream, 0.7),
     fontFamily: VokaFonts.body,
     fontSize: 12,
     lineHeight: 18,
@@ -457,17 +457,17 @@ const styles = StyleSheet.create({
   primaryWrap: { alignSelf: 'stretch', gap: 10, marginTop: 28 },
   plans: { gap: 12, marginTop: 28 },
   plan: {
-    borderColor: 'rgba(241,237,227,.22)',
+    borderColor: withAlpha(Palette.cream, 0.22),
     borderRadius: 18,
     borderWidth: 1.5,
     gap: 4,
     padding: 16,
   },
-  planSelected: { backgroundColor: 'rgba(241,237,227,.08)', borderColor: Brand.onDark },
+  planSelected: { backgroundColor: withAlpha(Palette.cream, 0.08), borderColor: Brand.onDark },
   planTop: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
   planName: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 17 },
   planPrice: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
-  planMeta: { color: 'rgba(241,237,227,.7)', fontFamily: VokaFonts.body, fontSize: 13 },
+  planMeta: { color: withAlpha(Palette.cream, 0.7), fontFamily: VokaFonts.body, fontSize: 13 },
   badge: {
     backgroundColor: Brand.onDark,
     borderRadius: 99,
@@ -479,7 +479,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   priceNote: {
-    color: 'rgba(241,237,227,.7)',
+    color: withAlpha(Palette.cream, 0.7),
     fontFamily: VokaFonts.body,
     fontSize: 13,
     lineHeight: 19,

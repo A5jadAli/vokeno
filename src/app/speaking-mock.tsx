@@ -13,7 +13,7 @@ import {
   PrimaryAccent,
 } from '@/components/lesson-ui';
 import { AppScreen } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, VokaFonts } from '@/constants/theme';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { formatClock, useMockNotes } from '@/features/speaking-mock/store';
 import {
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     paddingVertical: 12,
   },
-  clockDone: { backgroundColor: '#E3F2E5' },
+  clockDone: { backgroundColor: Feedback.correctBgAlt },
   clockText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 28 },
   notes: {
     backgroundColor: Palette.white,

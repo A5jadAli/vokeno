@@ -9,19 +9,18 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { Feedback } from '@/components/lesson-ui';
 import { Tactile } from '@/components/motion';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, Selection, VokaFonts, withAlpha } from '@/constants/theme';
 import { haptic } from '@/features/feedback/haptics';
 
 const looks = {
   idle: {
     face: Palette.white,
-    border: 'rgba(19,18,17,0.12)',
-    lip: 'rgba(19,18,17,0.14)',
+    border: withAlpha(Palette.ink, 0.12),
+    lip: withAlpha(Palette.ink, 0.14),
     ink: Palette.ink,
   },
-  selected: { face: '#FFF4CC', border: Palette.yellow, lip: '#C99600', ink: Palette.ink },
+  selected: { face: Selection.face, border: Palette.yellow, lip: Selection.lip, ink: Palette.ink },
   correct: {
     face: Feedback.correctBg,
     border: Feedback.correctAccent,

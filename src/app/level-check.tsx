@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { LessonAudioButton } from '@/components/lesson-audio-button';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { trackColors } from '@/features/language/config';
 import { useLessonAudio } from '@/features/audio/use-lesson-audio';
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
   },
   duration: {
-    color: 'rgba(241,237,227,.5)',
+    color: withAlpha(Palette.cream, 0.5),
     flex: 1,
     fontFamily: VokaFonts.bodySemiBold,
     fontSize: 12,
@@ -137,19 +137,19 @@ const styles = StyleSheet.create({
     width: 104,
   },
   listenText: {
-    color: 'rgba(241,237,227,.72)',
+    color: withAlpha(Palette.cream, 0.72),
     fontFamily: VokaFonts.bodySemiBold,
     fontSize: 14,
     marginTop: 14,
   },
   privacy: {
-    color: 'rgba(241,237,227,.4)',
+    color: withAlpha(Palette.cream, 0.4),
     fontFamily: VokaFonts.body,
     fontSize: 12,
     marginTop: 6,
   },
   placementLink: {
-    backgroundColor: 'rgba(241,237,227,0.1)',
+    backgroundColor: withAlpha(Palette.cream, 0.1),
     borderRadius: 14,
     justifyContent: 'center',
     marginTop: 14,

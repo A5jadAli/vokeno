@@ -11,7 +11,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import { Palette } from '@/constants/theme';
+import { Palette, withAlpha } from '@/constants/theme';
 
 const OPEN_SPRING = { damping: 26, stiffness: 260, mass: 0.9 };
 
@@ -111,7 +111,7 @@ export function BottomSheet({
 
 const styles = StyleSheet.create({
   root: { flex: 1, justifyContent: 'flex-end' },
-  backdrop: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(19,18,17,0.45)' },
+  backdrop: { ...StyleSheet.absoluteFill, backgroundColor: withAlpha(Palette.ink, 0.45) },
   fill: { flex: 1 },
   sheet: {
     backgroundColor: Palette.cream,
@@ -121,5 +121,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
   },
   handleArea: { alignItems: 'center', paddingBottom: 4, paddingTop: 10 },
-  grabber: { backgroundColor: 'rgba(19,18,17,0.22)', borderRadius: 99, height: 5, width: 40 },
+  grabber: {
+    backgroundColor: withAlpha(Palette.ink, 0.22),
+    borderRadius: 99,
+    height: 5,
+    width: 40,
+  },
 });

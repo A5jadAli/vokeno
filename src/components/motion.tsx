@@ -13,6 +13,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import { Palette, withAlpha } from '@/constants/theme';
 
 type TactileProps = PropsWithChildren<{
   face: string;
@@ -71,7 +72,7 @@ export function Tactile({
         aria-disabled={disabled}
         // Drawn in the foreground so the ripple shows on top of the coloured face.
         android_ripple={
-          disabled ? undefined : { color: 'rgba(19, 18, 17, 0.08)', foreground: true }
+          disabled ? undefined : { color: withAlpha(Palette.ink, 0.08), foreground: true }
         }
         disabled={disabled}
         onPress={onPress}

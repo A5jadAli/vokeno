@@ -9,7 +9,6 @@ import { AudioIconButton } from '@/components/lesson-audio-button';
 import {
   answerInputProps,
   ActionBar,
-  Feedback,
   InfoCard,
   LessonTopBar,
   lessonText,
@@ -23,7 +22,7 @@ import { SpeakingPractice } from '@/components/speaking-practice';
 import { FormPractice } from '@/components/form-practice';
 import { ListeningPrompt } from '@/components/listening-prompt';
 import { AppScreen } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { haptic } from '@/features/feedback/haptics';
 import {
@@ -725,9 +724,9 @@ function Tile({
   return (
     <Tactile
       face={Palette.white}
-      lip="rgba(19,18,17,0.14)"
+      lip={withAlpha(Palette.ink, 0.14)}
       radius={12}
-      borderColor="rgba(19,18,17,0.14)"
+      borderColor={withAlpha(Palette.ink, 0.14)}
       borderWidth={1.5}
       disabled={disabled}
       onPress={onPress}
@@ -1189,7 +1188,7 @@ const styles = StyleSheet.create({
   bubbleRowMine: { alignItems: 'flex-end' },
   bubble: { borderRadius: 18, gap: 2, maxWidth: '86%', paddingHorizontal: 14, paddingVertical: 10 },
   bubbleTheirs: { backgroundColor: Palette.white, borderTopLeftRadius: 6 },
-  bubbleMine: { backgroundColor: '#E9F4E6', borderTopRightRadius: 6 },
+  bubbleMine: { backgroundColor: Palette.bubbleMine, borderTopRightRadius: 6 },
   bubbleActive: { borderColor: Palette.ink, borderWidth: 1.5 },
   speaker: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   bubbleText: {
@@ -1298,7 +1297,7 @@ const styles = StyleSheet.create({
   matchCell: {
     alignItems: 'center',
     backgroundColor: Palette.white,
-    borderColor: 'rgba(19,18,17,0.12)',
+    borderColor: withAlpha(Palette.ink, 0.12),
     borderRadius: 14,
     borderWidth: 2,
     justifyContent: 'center',
@@ -1397,7 +1396,7 @@ function UnitStep({ lesson }: { lesson: StepLesson }) {
           value={unit.done / total}
           from={firstTime ? (unit.done - 1) / total : unit.done / total}
           color={trackColors[lesson.track].accent}
-          track="rgba(19,18,17,0.08)"
+          track={withAlpha(Palette.ink, 0.08)}
           height={10}
         />
         <Text style={styles.unitStepCount}>

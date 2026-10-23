@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     paddingRight: 14,
   },
-  chipLit: { backgroundColor: '#FDE7D8' },
+  chipLit: { backgroundColor: Palette.orangeTint },
   chipNumber: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 17 },
   pressed: { opacity: 0.7 },
 });

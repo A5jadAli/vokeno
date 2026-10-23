@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import {
   languageDetails,
   languageTracks,
@@ -95,8 +95,8 @@ const styles = StyleSheet.create({
   },
   chipLight: { backgroundColor: Palette.white, borderColor: Palette.line },
   chipDark: {
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderColor: 'rgba(255, 255, 255, 0.14)',
+    backgroundColor: withAlpha(Palette.white, 0.06),
+    borderColor: withAlpha(Palette.white, 0.14),
   },
   label: { fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   pressed: { opacity: 0.7 },

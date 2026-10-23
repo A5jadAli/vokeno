@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { ProgressFill } from '@/components/motion';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { getTrackLessons, type FoundationLesson } from '@/features/foundations/catalog';
 import { levelLabel, levelNote } from '@/features/foundations/level-status';
@@ -187,7 +187,7 @@ function UnitCard({
             <ProgressFill
               value={unit.done / total}
               color={colors.accent}
-              track="rgba(19,18,17,0.08)"
+              track={withAlpha(Palette.ink, 0.08)}
               height={6}
             />
             <Text style={styles.unitCount}>

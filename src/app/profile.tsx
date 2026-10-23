@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow } from '@/components/voka-ui';
-import { Brand, Palette, VokaFonts } from '@/constants/theme';
+import { Brand, Feedback, Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { useAssessmentStore } from '@/features/assessment/store';
 import { deleteCurrentAccount } from '@/features/auth/account';
 import { supabase } from '@/features/auth/supabase';
@@ -197,7 +197,11 @@ export default function ProfileScreen() {
             onPress={handleDeleteAccount}
             style={({ pressed }) => [styles.settingRow, pressed && styles.pressed]}
           >
-            <MaterialCommunityIcons color="#A4391B" name="delete-outline" size={20} />
+            <MaterialCommunityIcons
+              color={Feedback.wrongTextLight}
+              name="delete-outline"
+              size={20}
+            />
             <Text style={[styles.settingLabel, styles.dangerText]}>Delete account</Text>
             <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
           </Pressable>
@@ -313,7 +317,7 @@ const styles = StyleSheet.create({
   name: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 22 },
   badges: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 8 },
   badge: {
-    backgroundColor: 'rgba(19,18,17,.08)',
+    backgroundColor: withAlpha(Palette.ink, 0.08),
     borderRadius: 99,
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
@@ -330,7 +334,7 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   planGlow: {
-    backgroundColor: 'rgba(241,237,227,.08)',
+    backgroundColor: withAlpha(Palette.cream, 0.08),
     borderRadius: 99,
     height: 150,
     position: 'absolute',
@@ -357,7 +361,7 @@ const styles = StyleSheet.create({
   },
   benefitText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   price: {
-    color: 'rgba(241,237,227,.45)',
+    color: withAlpha(Palette.cream, 0.45),
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 12,
     marginTop: 10,
@@ -403,7 +407,7 @@ const styles = StyleSheet.create({
   },
   settingLabel: { color: Palette.ink, flex: 1, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   settingValue: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: 13 },
-  dangerText: { color: '#A4391B' },
+  dangerText: { color: Feedback.wrongTextLight },
   identityNote: {
     alignItems: 'center',
     backgroundColor: Palette.soft,

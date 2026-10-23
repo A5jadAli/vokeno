@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { RadioRow } from '@/components/radio-row';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, VokaFonts } from '@/constants/theme';
 import {
   remindersSupported,
   requestReminderPermission,
@@ -125,7 +125,12 @@ const styles = StyleSheet.create({
   chipSelected: { backgroundColor: Palette.ink, borderColor: Palette.ink },
   chipText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   chipTextSelected: { color: Palette.cream },
-  blocked: { color: '#8E2D1B', fontFamily: VokaFonts.bodyMedium, fontSize: 14, lineHeight: 20 },
+  blocked: {
+    color: Feedback.wrongText,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: 14,
+    lineHeight: 20,
+  },
   blockedInCard: { padding: 16 },
   link: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, textDecorationLine: 'underline' },
   pressed: { opacity: 0.7 },

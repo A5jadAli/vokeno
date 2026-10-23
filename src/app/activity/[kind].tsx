@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { useLessonAudio } from '@/features/audio/use-lesson-audio';
 import { listeningWarmUpSample } from '@/features/audio/spoken-texts';
 import { AnswerChoice } from '@/components/answer-choice';
@@ -40,7 +40,11 @@ function ActivityHeader({
             key={item}
             style={[
               styles.progressBar,
-              { backgroundColor: dark ? 'rgba(241, 237, 227, 0.15)' : 'rgba(19, 18, 17, 0.15)' },
+              {
+                backgroundColor: dark
+                  ? withAlpha(Palette.cream, 0.15)
+                  : withAlpha(Palette.ink, 0.15),
+              },
               item < progress && styles.progressDone,
             ]}
           />
@@ -251,11 +255,11 @@ const styles = StyleSheet.create({
     marginTop: -54,
   },
   waveBar: { backgroundColor: Palette.cream, borderRadius: 9, flex: 1 },
-  waveMuted: { backgroundColor: 'rgba(241, 237, 227, 0.25)' },
+  waveMuted: { backgroundColor: withAlpha(Palette.cream, 0.25) },
   audioControls: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 18 },
   audioControl: { minHeight: 44, justifyContent: 'center' },
   audioTranscript: {
-    color: 'rgba(241,237,227,.72)',
+    color: withAlpha(Palette.cream, 0.72),
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 12,
     lineHeight: 18,
@@ -271,7 +275,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   audioChip: {
-    backgroundColor: 'rgba(241, 237, 227, 0.12)',
+    backgroundColor: withAlpha(Palette.cream, 0.12),
     borderRadius: 99,
     color: Palette.cream,
     fontFamily: VokaFonts.bodySemiBold,
@@ -288,13 +292,13 @@ const styles = StyleSheet.create({
   },
   answers: { gap: 10, marginTop: 18 },
   answerFeedback: {
-    color: '#A4391B',
+    color: Feedback.wrongTextLight,
     fontFamily: VokaFonts.bodySemiBold,
     fontSize: 12,
     lineHeight: 18,
     marginTop: 14,
   },
-  answerFeedbackCorrect: { color: '#39734A' },
+  answerFeedbackCorrect: { color: Feedback.correctTextMuted },
   checkButton: {
     alignItems: 'center',
     backgroundColor: Palette.orange,

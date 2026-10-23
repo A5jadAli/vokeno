@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { LanguageSwitch } from '@/components/language-switch';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, VokaFonts } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { languageDetails } from '@/features/language/config';
 import { useSelectedLanguage } from '@/features/language/selection';
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   remove: { alignItems: 'center', height: 44, justifyContent: 'center', width: 44 },
   empty: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14, padding: 16 },
   clear: {
-    color: '#A33A22',
+    color: Feedback.danger,
     fontFamily: VokaFonts.bodyBold,
     fontSize: 15,
     paddingVertical: 14,
@@ -188,6 +188,6 @@ const styles = StyleSheet.create({
     minHeight: 48,
   },
   secondary: { backgroundColor: Palette.soft },
-  danger: { backgroundColor: '#A33A22' },
+  danger: { backgroundColor: Feedback.danger },
   buttonText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
 });

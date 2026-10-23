@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Brand, Palette, VokaFonts } from '@/constants/theme';
+import { Brand, Feedback, Palette, VokaFonts } from '@/constants/theme';
 import {
   isGoogleSignInEnabled,
   isOAuthRedirectHandled,
@@ -407,7 +407,7 @@ export default function AuthScreen() {
                         style={styles.requirementRow}
                       >
                         <MaterialCommunityIcons
-                          color={met ? '#237A45' : Palette.muted}
+                          color={met ? Feedback.correctTextLight : Palette.muted}
                           name={met ? 'check-circle' : 'circle-outline'}
                           size={15}
                         />
@@ -610,10 +610,10 @@ const styles = StyleSheet.create({
   requirements: { gap: 5, marginBottom: 3, marginTop: 3 },
   requirementRow: { alignItems: 'center', flexDirection: 'row', gap: 7 },
   requirementText: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: 12 },
-  requirementMet: { color: '#237A45' },
+  requirementMet: { color: Feedback.correctTextLight },
   message: { fontFamily: VokaFonts.bodyMedium, fontSize: 12, lineHeight: 18 },
-  messageError: { color: '#A4391B' },
-  messageSuccess: { color: '#237A45' },
+  messageError: { color: Feedback.wrongTextLight },
+  messageSuccess: { color: Feedback.correctTextLight },
   forgotButton: { alignSelf: 'flex-end', paddingBottom: 2, paddingTop: 2 },
   forgotText: {
     color: Palette.ink,

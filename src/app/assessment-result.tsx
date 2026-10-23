@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { ReportContent } from '@/components/report-content';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Dark, Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { useAssessmentStore } from '@/features/assessment/store';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { languageDetails, trackColors } from '@/features/language/config';
@@ -20,7 +20,7 @@ export default function AssessmentResultScreen() {
     <AppScreen backgroundColor={Palette.ink} dark showNav={false}>
       <View style={styles.header}>
         <HeaderBack dark />
-        <Eyebrow color="rgba(241,237,227,.55)">Assessment results</Eyebrow>
+        <Eyebrow color={withAlpha(Palette.cream, 0.55)}>Assessment results</Eyebrow>
         <View style={styles.spacer} />
       </View>
       <View style={styles.body}>
@@ -156,24 +156,30 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   copy: {
-    color: 'rgba(241,237,227,.68)',
+    color: withAlpha(Palette.cream, 0.68),
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 14,
     lineHeight: 21,
     marginTop: 12,
   },
-  resultCard: { backgroundColor: '#282623', borderRadius: 20, gap: 10, marginTop: 18, padding: 16 },
+  resultCard: {
+    backgroundColor: Dark.raised,
+    borderRadius: 20,
+    gap: 10,
+    marginTop: 18,
+    padding: 16,
+  },
   resultTitle: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 16 },
   resultRow: { alignItems: 'flex-start', flexDirection: 'row', gap: 9 },
   resultText: {
-    color: 'rgba(241,237,227,.72)',
+    color: withAlpha(Palette.cream, 0.72),
     flex: 1,
     fontFamily: VokaFonts.body,
     fontSize: 12,
     lineHeight: 18,
   },
   disclaimer: {
-    color: 'rgba(241,237,227,.4)',
+    color: withAlpha(Palette.cream, 0.4),
     fontFamily: VokaFonts.body,
     fontSize: 12,
     lineHeight: 18,

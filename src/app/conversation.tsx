@@ -22,7 +22,7 @@ import { haptic } from '@/features/feedback/haptics';
 import { ReportContent } from '@/components/report-content';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Dark, Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { useAssessmentStore } from '@/features/assessment/store';
 import { useCoachingStore } from '@/features/coaching/store';
 import {
@@ -846,7 +846,7 @@ export default function ConversationScreen() {
             thumbColor={Palette.white}
             accessibilityLabel="Show live captions"
             onValueChange={setCaptions}
-            trackColor={{ false: '#47443F', true: mode.accent }}
+            trackColor={{ false: Dark.switchOff, true: mode.accent }}
             value={captions}
           />
         </View>
@@ -922,14 +922,14 @@ const styles = StyleSheet.create({
   logo: { color: Palette.cream, fontFamily: VokaFonts.displayExtraBold, fontSize: 16 },
   livePill: {
     alignItems: 'center',
-    backgroundColor: 'rgba(241,237,227,0.1)',
+    backgroundColor: withAlpha(Palette.cream, 0.1),
     borderRadius: 99,
     flexDirection: 'row',
     gap: 6,
     paddingHorizontal: 10,
     paddingVertical: 7,
   },
-  liveDot: { backgroundColor: '#55DB8A', borderRadius: 99, height: 7, width: 7 },
+  liveDot: { backgroundColor: Dark.live, borderRadius: 99, height: 7, width: 7 },
   liveText: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   body: { paddingBottom: 34, paddingHorizontal: 20, paddingTop: 15 },
   title: {
@@ -940,7 +940,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   description: {
-    color: 'rgba(241,237,227,0.67)',
+    color: withAlpha(Palette.cream, 0.67),
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 13,
     lineHeight: 20,
@@ -955,14 +955,14 @@ const styles = StyleSheet.create({
     marginTop: 14,
   },
   aiNote: {
-    color: 'rgba(241,237,227,.6)',
+    color: withAlpha(Palette.cream, 0.6),
     flex: 1,
     fontFamily: VokaFonts.body,
     fontSize: 12,
   },
   examClock: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   examBullet: {
-    color: 'rgba(241,237,227,.8)',
+    color: withAlpha(Palette.cream, 0.8),
     fontFamily: VokaFonts.body,
     fontSize: 14,
     lineHeight: 21,
@@ -984,7 +984,7 @@ const styles = StyleSheet.create({
   },
   phraseRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 10 },
   phraseChip: {
-    backgroundColor: 'rgba(241,237,227,.1)',
+    backgroundColor: withAlpha(Palette.cream, 0.1),
     borderRadius: 99,
     color: Palette.cream,
     fontFamily: VokaFonts.bodyMedium,
@@ -994,7 +994,7 @@ const styles = StyleSheet.create({
   },
   stage: {
     alignItems: 'center',
-    backgroundColor: '#1D1C1A',
+    backgroundColor: Dark.surface,
     borderRadius: 28,
     borderWidth: 1,
     marginTop: 17,
@@ -1015,7 +1015,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   statusHint: {
-    color: 'rgba(241,237,227,0.55)',
+    color: withAlpha(Palette.cream, 0.55),
     fontFamily: VokaFonts.body,
     fontSize: 12,
     lineHeight: 18,
@@ -1023,7 +1023,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   audioRouteHint: {
-    color: 'rgba(241,237,227,0.42)',
+    color: withAlpha(Palette.cream, 0.42),
     fontFamily: VokaFonts.body,
     fontSize: 12,
     lineHeight: 18,
@@ -1044,15 +1044,15 @@ const styles = StyleSheet.create({
   controls: { flexDirection: 'row', gap: 13, marginTop: 20 },
   controlButton: {
     alignItems: 'center',
-    backgroundColor: '#3A3733',
+    backgroundColor: Dark.control,
     borderRadius: 99,
     height: 52,
     justifyContent: 'center',
     width: 52,
   },
-  endButton: { backgroundColor: '#C8422F' },
+  endButton: { backgroundColor: Dark.endCall },
   error: {
-    color: '#FFB49E',
+    color: Dark.errorText,
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 12,
     lineHeight: 18,
@@ -1066,13 +1066,13 @@ const styles = StyleSheet.create({
     marginTop: 26,
   },
   captionHint: {
-    color: 'rgba(241,237,227,0.5)',
+    color: withAlpha(Palette.cream, 0.5),
     fontFamily: VokaFonts.body,
     fontSize: 12,
     marginTop: 5,
   },
   transcript: {
-    backgroundColor: '#1D1C1A',
+    backgroundColor: Dark.surface,
     borderRadius: 22,
     gap: 10,
     marginTop: 12,
@@ -1082,7 +1082,7 @@ const styles = StyleSheet.create({
   turn: { alignSelf: 'flex-start', maxWidth: '90%' },
   userTurn: { alignSelf: 'flex-end', alignItems: 'flex-end' },
   turnRole: {
-    color: 'rgba(241,237,227,0.4)',
+    color: withAlpha(Palette.cream, 0.4),
     fontFamily: VokaFonts.bodySemiBold,
     fontSize: 12,
     marginBottom: 3,
@@ -1094,37 +1094,37 @@ const styles = StyleSheet.create({
     lineHeight: 19,
   },
   emptyTranscript: {
-    color: 'rgba(241,237,227,0.45)',
+    color: withAlpha(Palette.cream, 0.45),
     fontFamily: VokaFonts.body,
     fontSize: 12,
     lineHeight: 18,
   },
-  coachCard: { backgroundColor: '#282623', borderRadius: 22, marginTop: 18, padding: 17 },
+  coachCard: { backgroundColor: Dark.raised, borderRadius: 22, marginTop: 18, padding: 17 },
   coachHeading: { alignItems: 'center', flexDirection: 'row', gap: 9 },
   coachTitle: { color: Palette.cream, flex: 1, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
   coachCopy: {
-    color: 'rgba(241,237,227,0.58)',
+    color: withAlpha(Palette.cream, 0.58),
     fontFamily: VokaFonts.body,
     fontSize: 12,
     lineHeight: 18,
     marginTop: 10,
   },
   signal: {
-    borderTopColor: 'rgba(241,237,227,0.1)',
+    borderTopColor: withAlpha(Palette.cream, 0.1),
     borderTopWidth: 1,
     marginTop: 11,
     paddingTop: 10,
   },
   signalLabel: { fontFamily: VokaFonts.bodyBold, fontSize: 13 },
   signalReason: {
-    color: 'rgba(241,237,227,0.58)',
+    color: withAlpha(Palette.cream, 0.58),
     fontFamily: VokaFonts.body,
     fontSize: 12,
     lineHeight: 18,
     marginTop: 3,
   },
   privacy: {
-    color: 'rgba(241,237,227,0.35)',
+    color: withAlpha(Palette.cream, 0.35),
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 12,
     marginTop: 14,
@@ -1133,7 +1133,7 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.7, transform: [{ scale: 0.99 }] },
   disabled: { opacity: 0.5 },
   practiceCard: {
-    backgroundColor: 'rgba(241,237,227,.08)',
+    backgroundColor: withAlpha(Palette.cream, 0.08),
     borderRadius: 18,
     marginTop: 15,
     padding: 14,

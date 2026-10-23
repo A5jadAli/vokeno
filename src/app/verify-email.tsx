@@ -6,7 +6,7 @@ import Animated, { ZoomIn } from 'react-native-reanimated';
 
 import { ActionBar, InfoCard, lessonText, PrimaryButton, TextButton } from '@/components/lesson-ui';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, VokaFonts } from '@/constants/theme';
 import { emailProviderName, openEmailInbox } from '@/features/auth/email-app';
 import { supabase } from '@/features/auth/supabase';
 import { haptic } from '@/features/feedback/haptics';
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     width: 96,
   },
-  ok: { backgroundColor: '#BFE5C8' },
+  ok: { backgroundColor: Feedback.correctSoft },
   email: {
     color: Palette.ink,
     fontFamily: VokaFonts.bodyBold,
@@ -233,14 +233,14 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   notice: {
-    backgroundColor: '#E3F2E5',
+    backgroundColor: Feedback.correctBgAlt,
     borderRadius: 14,
-    color: '#1F5A33',
+    color: Feedback.correctText,
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 14,
     lineHeight: 21,
     padding: 12,
   },
-  noticeError: { backgroundColor: '#FFE9E1', color: '#8E2D1B' },
+  noticeError: { backgroundColor: Feedback.wrongBgAlt, color: Feedback.wrongText },
   links: { gap: 8 },
 });

@@ -8,7 +8,7 @@ import { StreakStrip } from '@/components/streak-strip';
 import { SyncStatusNotice } from '@/components/sync-status';
 import { TabHeader } from '@/components/tab-header';
 import { AppScreen } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { testDateFor, useCoachingStore } from '@/features/coaching/store';
 import { curriculumUnits } from '@/features/curriculum/catalog';
 import { useHabits } from '@/features/habits/use-habits';
@@ -62,7 +62,7 @@ export default function ProgressScreen() {
         <ProgressFill
           value={position.finishedLessons / Math.max(1, position.totalLessons)}
           color={colors.accent}
-          track="rgba(19,18,17,0.08)"
+          track={withAlpha(Palette.ink, 0.08)}
           height={10}
         />
         <Text style={styles.meta}>
@@ -79,7 +79,7 @@ export default function ProgressScreen() {
                 <ProgressFill
                   value={unit.done / unit.lessons.length}
                   color={colors.accent}
-                  track="rgba(19,18,17,0.06)"
+                  track={withAlpha(Palette.ink, 0.06)}
                   height={6}
                 />
               </View>

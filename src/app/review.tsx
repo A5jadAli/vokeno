@@ -16,7 +16,7 @@ import {
 } from '@/components/lesson-ui';
 import { SessionFooter } from '@/components/session-footer';
 import { AppScreen } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, VokaFonts } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { freshFoundationEntry } from '@/features/foundations/progress';
 import { useSelectedLanguage } from '@/features/language/selection';
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
   listen: { alignItems: 'center', flexDirection: 'row', gap: 16, justifyContent: 'center' },
   answer: {
     alignItems: 'center',
-    backgroundColor: '#E3F2E5',
+    backgroundColor: Feedback.correctBgAlt,
     borderRadius: 20,
     flexDirection: 'row',
     gap: 12,

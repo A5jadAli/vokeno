@@ -5,7 +5,7 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { TestDatePicker } from '@/components/test-date-picker';
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Dark, Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { defaultGoalLevel, goalLevels } from '@/features/coaching/goal-plan';
 import { useCoachingStore, testDateFor } from '@/features/coaching/store';
 import { exams, levelLabel } from '@/features/foundations/level-status';
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     marginTop: 9,
   },
   copy: {
-    color: 'rgba(241,237,227,.63)',
+    color: withAlpha(Palette.cream, 0.63),
     fontFamily: VokaFonts.body,
     fontSize: 13,
     lineHeight: 20,
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   dateButton: {
     alignItems: 'center',
-    backgroundColor: '#282623',
+    backgroundColor: Dark.raised,
     borderRadius: 18,
     flexDirection: 'row',
     gap: 11,
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   },
   dateButtonText: { color: Palette.cream, flex: 1, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
   pickerCard: {
-    backgroundColor: '#282623',
+    backgroundColor: Dark.raised,
     borderRadius: 20,
     marginTop: 24,
     overflow: 'hidden',
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   levels: { flexDirection: 'row', gap: 8, marginTop: 22 },
   level: {
     alignItems: 'center',
-    backgroundColor: '#282623',
+    backgroundColor: Dark.raised,
     borderRadius: 16,
     flex: 1,
     gap: 2,
@@ -212,10 +212,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
   },
   levelText: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 17 },
-  levelExam: { color: 'rgba(241,237,227,.6)', fontFamily: VokaFonts.body, fontSize: 11 },
+  levelExam: { color: withAlpha(Palette.cream, 0.6), fontFamily: VokaFonts.body, fontSize: 11 },
   levelTextChosen: { color: Palette.ink },
   removeText: {
-    color: 'rgba(241,237,227,.72)',
+    color: withAlpha(Palette.cream, 0.72),
     fontFamily: VokaFonts.bodyBold,
     fontSize: 14,
     paddingVertical: 18,

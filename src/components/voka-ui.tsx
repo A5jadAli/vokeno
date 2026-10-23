@@ -22,7 +22,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Dark, Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { useLanguageSelection } from '@/features/language/selection';
 import { focusedInputScrollOffset } from './keyboard-scroll';
 
@@ -147,7 +147,7 @@ export function BottomNav({ active, dark = false }: { active?: NavKey; dark?: bo
   const track = useLanguageSelection((state) => state.track);
   const foreground = dark ? Palette.cream : Palette.ink;
   // At least 3:1 against the bar, so unselected destinations stay readable.
-  const muted = dark ? 'rgba(241, 237, 227, 0.7)' : Palette.secondary;
+  const muted = dark ? withAlpha(Palette.cream, 0.7) : Palette.secondary;
 
   return (
     <SafeAreaView
@@ -156,7 +156,7 @@ export function BottomNav({ active, dark = false }: { active?: NavKey; dark?: bo
         styles.navSafeArea,
         {
           backgroundColor: dark ? Palette.ink : Palette.cream,
-          borderTopColor: dark ? '#302E2B' : Palette.line,
+          borderTopColor: dark ? Dark.border : Palette.line,
         },
       ]}
     >
@@ -253,7 +253,7 @@ export function HeaderBack({
       }}
       style={({ pressed }) => [
         styles.back,
-        { backgroundColor: dark ? 'rgba(241, 237, 227, 0.1)' : Palette.soft },
+        { backgroundColor: dark ? withAlpha(Palette.cream, 0.1) : Palette.soft },
         pressed && styles.pressed,
       ]}
     >

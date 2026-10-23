@@ -5,7 +5,7 @@ import { PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
 import { LessonAudioButton } from '@/components/lesson-audio-button';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { useLessonAudio } from '@/features/audio/use-lesson-audio';
 import { vocabularyDeck } from '@/features/audio/spoken-texts';
 import { useCoachingStore } from '@/features/coaching/store';
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   spacer: { width: 40 },
   progressDots: { flexDirection: 'row', gap: 5 },
-  dot: { backgroundColor: 'rgba(19, 18, 17, 0.15)', borderRadius: 99, height: 8, width: 8 },
+  dot: { backgroundColor: withAlpha(Palette.ink, 0.15), borderRadius: 99, height: 8, width: 8 },
   dotDone: { backgroundColor: Palette.yellow },
   dotCurrent: { backgroundColor: Palette.ink },
   content: { alignItems: 'center', flex: 1, paddingHorizontal: 22 },
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   },
   cardTop: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
   article: {
-    backgroundColor: 'rgba(242, 183, 5, 0.25)',
+    backgroundColor: withAlpha(Palette.yellow, 0.25),
     borderRadius: 99,
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   mic: {
     alignItems: 'center',
     backgroundColor: Palette.ink,
-    borderColor: 'rgba(242, 183, 5, 0.35)',
+    borderColor: withAlpha(Palette.yellow, 0.35),
     borderRadius: 99,
     borderWidth: 12,
     height: 104,

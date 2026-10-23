@@ -6,7 +6,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { SessionFooter } from '@/components/session-footer';
 import { AnswerChoice } from '@/components/answer-choice';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, VokaFonts, withAlpha } from '@/constants/theme';
 import { optionOrder } from '@/features/foundations/catalog';
 import { getScenario, type SubtitleMode } from '@/features/listening/scenarios';
 import { useProgressStore } from '@/features/progress/store';
@@ -305,13 +305,13 @@ const styles = StyleSheet.create({
     width: 66,
   },
   waveform: { alignItems: 'center', flex: 1, flexDirection: 'row', gap: 4, height: 58 },
-  waveBar: { backgroundColor: 'rgba(241, 237, 227, 0.2)', borderRadius: 99, flex: 1 },
+  waveBar: { backgroundColor: withAlpha(Palette.cream, 0.2), borderRadius: 99, flex: 1 },
   waveBarActive: { backgroundColor: Palette.cream },
   controls: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 20 },
   control: {
     minHeight: 44,
     alignItems: 'center',
-    backgroundColor: 'rgba(241, 237, 227, 0.1)',
+    backgroundColor: withAlpha(Palette.cream, 0.1),
     borderRadius: 99,
     flexDirection: 'row',
     gap: 6,
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   subtitleOff: {
-    color: 'rgba(241, 237, 227, 0.48)',
+    color: withAlpha(Palette.cream, 0.48),
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 15,
     textAlign: 'center',
@@ -371,8 +371,8 @@ const styles = StyleSheet.create({
   },
   answers: { gap: 8, marginTop: 15 },
   feedback: { fontFamily: VokaFonts.bodySemiBold, fontSize: 12, lineHeight: 18, marginTop: 12 },
-  feedbackCorrect: { color: '#337A45' },
-  feedbackWrong: { color: '#B23818' },
+  feedbackCorrect: { color: Feedback.correctTextLightAlt },
+  feedbackWrong: { color: Feedback.wrongTextBright },
   checkButton: {
     alignItems: 'center',
     backgroundColor: Palette.orange,

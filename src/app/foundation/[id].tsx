@@ -21,7 +21,7 @@ import {
 import { SessionFooter } from '@/components/session-footer';
 import { StepLessonPlayer } from '@/components/step-lesson';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, Selection, VokaFonts, withAlpha } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import {
   foundationLessons,
@@ -418,8 +418,8 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
                 placeholderTextColor={Palette.muted}
                 style={[
                   styles.input,
-                  result?.tone === 'correct' && { borderColor: '#2F7A47' },
-                  result?.tone === 'wrong' && { borderColor: '#B44931' },
+                  result?.tone === 'correct' && { borderColor: Feedback.correctFill },
+                  result?.tone === 'wrong' && { borderColor: Feedback.wrongBorder },
                 ]}
                 value={entry.draft}
                 editable={!correctNow}
@@ -583,7 +583,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 const styles = StyleSheet.create({
   body: { gap: 16, paddingBottom: 32, paddingHorizontal: 20, paddingTop: 8 },
   alert: {
-    backgroundColor: '#FFF4CC',
+    backgroundColor: Selection.face,
     borderRadius: 14,
     color: Palette.ink,
     fontFamily: VokaFonts.bodyMedium,
@@ -616,7 +616,7 @@ const styles = StyleSheet.create({
   toggle: {
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(19,18,17,0.06)',
+    backgroundColor: withAlpha(Palette.ink, 0.06),
     borderRadius: 99,
     flexDirection: 'row',
     gap: 6,

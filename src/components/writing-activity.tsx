@@ -22,7 +22,7 @@ import {
 } from '@/components/lesson-ui';
 import { AppScreen, HeaderBack } from '@/components/voka-ui';
 import { ReportContent } from '@/components/report-content';
-import { Palette, VokaFonts } from '@/constants/theme';
+import { Feedback, Palette, Selection, VokaFonts, withAlpha } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { isWritingFeedbackConfigured, requestWritingFeedback } from '@/features/writing/feedback';
@@ -37,9 +37,9 @@ import { countWritingWords } from '@/features/writing/validation';
 import { languageDetails, type LanguageTrack, trackColors } from '@/features/language/config';
 
 const ratingStyle = {
-  strong: { bg: '#E3F2E5', ink: '#1F5A33' },
-  developing: { bg: '#FFF4CC', ink: '#6B4E00' },
-  'needs work': { bg: '#FFE9E1', ink: '#8E2D1B' },
+  strong: { bg: Feedback.correctBgAlt, ink: Feedback.correctText },
+  developing: { bg: Selection.face, ink: Feedback.behindInk },
+  'needs work': { bg: Feedback.wrongBgAlt, ink: Feedback.wrongText },
 } as const;
 
 const keyboardTip = {
@@ -262,7 +262,7 @@ function WritingPractice({ track }: { track: LanguageTrack }) {
               style={[
                 styles.counterFill,
                 { width: `${Math.min(100, (words / minimum) * 100)}%` },
-                words >= minimum && { backgroundColor: '#2F7A47' },
+                words >= minimum && { backgroundColor: Feedback.correctFill },
               ]}
             />
           </View>
@@ -491,7 +491,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-  clockDone: { backgroundColor: '#FFE9E1' },
+  clockDone: { backgroundColor: Feedback.wrongBgAlt },
   clockText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   body: { gap: 14, paddingBottom: 32, paddingHorizontal: 20 },
   tabs: {
@@ -519,13 +519,13 @@ const styles = StyleSheet.create({
   examToggleOn: { borderColor: Palette.yellow },
   examTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
   switch: {
-    backgroundColor: 'rgba(19,18,17,.2)',
+    backgroundColor: withAlpha(Palette.ink, 0.2),
     borderRadius: 99,
     height: 28,
     padding: 3,
     width: 48,
   },
-  switchOn: { backgroundColor: '#2F7A47' },
+  switchOn: { backgroundColor: Feedback.correctFill },
   knob: { backgroundColor: Palette.white, borderRadius: 99, height: 22, width: 22 },
   knobOn: { transform: [{ translateX: 20 }] },
   input: {
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
   },
   counter: { alignItems: 'center', flexDirection: 'row', gap: 10 },
   counterTrack: {
-    backgroundColor: 'rgba(19,18,17,.1)',
+    backgroundColor: withAlpha(Palette.ink, 0.1),
     borderRadius: 99,
     flex: 1,
     height: 6,
@@ -552,18 +552,18 @@ const styles = StyleSheet.create({
   counterFill: { backgroundColor: Palette.yellow, height: '100%' },
   counterText: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   warning: {
-    backgroundColor: '#FFE9E1',
+    backgroundColor: Feedback.wrongBgAlt,
     borderRadius: 14,
-    color: '#8E2D1B',
+    color: Feedback.wrongText,
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 14,
     lineHeight: 21,
     padding: 12,
   },
   saved: {
-    backgroundColor: '#E3F2E5',
+    backgroundColor: Feedback.correctBgAlt,
     borderRadius: 14,
-    color: '#1F5A33',
+    color: Feedback.correctText,
     fontFamily: VokaFonts.bodySemiBold,
     fontSize: 14,
     lineHeight: 21,
@@ -596,17 +596,17 @@ const styles = StyleSheet.create({
   },
   correction: { borderTopColor: Palette.line, borderTopWidth: 1, gap: 4, paddingTop: 10 },
   original: {
-    color: '#8E2D1B',
+    color: Feedback.wrongText,
     fontFamily: VokaFonts.bodyMedium,
     fontSize: 15,
     textDecorationLine: 'line-through',
   },
-  corrected: { color: '#1F5A33', fontFamily: VokaFonts.bodyBold, fontSize: 15 },
+  corrected: { color: Feedback.correctText, fontFamily: VokaFonts.bodyBold, fontSize: 15 },
   improved: { color: Palette.ink, fontFamily: VokaFonts.body, fontSize: 15, lineHeight: 22 },
   chartCard: { backgroundColor: Palette.white, borderRadius: 20, gap: 12, padding: 16 },
   chart: { alignItems: 'flex-end', flexDirection: 'row', gap: 6, height: 130 },
   barColumn: { alignItems: 'center', flex: 1, justifyContent: 'flex-end' },
-  bar: { backgroundColor: '#D9D6CF', borderRadius: 6, marginVertical: 4, width: '100%' },
+  bar: { backgroundColor: Palette.neutralBar, borderRadius: 6, marginVertical: 4, width: '100%' },
   barPeak: { backgroundColor: Palette.orange },
   barLabel: { color: Palette.muted, fontFamily: VokaFonts.bodySemiBold, fontSize: 12 },
   wordChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },

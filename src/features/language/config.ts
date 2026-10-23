@@ -21,8 +21,18 @@ export const trackColors: Record<
   LanguageTrack,
   { accent: string; onAccent: string; onDark: string; tint: string }
 > = {
-  EN: { accent: Palette.orange, onAccent: Palette.ink, onDark: Palette.orange, tint: '#FDE7D8' },
-  DE: { accent: Palette.yellow, onAccent: Palette.ink, onDark: Palette.yellow, tint: '#FCF0C8' },
+  EN: {
+    accent: Palette.orange,
+    onAccent: Palette.ink,
+    onDark: Palette.orange,
+    tint: Palette.orangeTint,
+  },
+  DE: {
+    accent: Palette.yellow,
+    onAccent: Palette.ink,
+    onDark: Palette.yellow,
+    tint: Palette.yellowTint,
+  },
   ES: {
     accent: Palette.violet,
     onAccent: Palette.white,
