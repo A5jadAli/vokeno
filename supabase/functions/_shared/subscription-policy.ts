@@ -5,6 +5,9 @@ export type SubscriptionConfig = {
   environment: 'PRODUCTION' | 'SANDBOX';
   androidProduct: string;
   iosProduct: string;
+  /** The annual plan, or empty when only the monthly plan is sold. */
+  androidAnnualProduct: string;
+  iosAnnualProduct: string;
   voiceDaily: number;
   assessmentDaily: number;
 };
@@ -69,19 +72,22 @@ export function parseSubscription(
   for (const [key, value] of Object.entries(record(subscriber.subscriptions))) {
     const subscription = record(value);
     const store = subscription.store;
-    const expected =
+    const configured =
       store === 'play_store'
-        ? config.androidProduct
+        ? [config.androidProduct, config.androidAnnualProduct]
         : store === 'app_store'
-          ? config.iosProduct
-          : '';
+          ? [config.iosProduct, config.iosAnnualProduct]
+          : [];
+    // Each configured plan is matched exactly; an empty slot never matches anything.
+    const expected = configured.find((product) => {
+      if (!product) return false;
+      const [base, plan] = product.split(':');
+      const productMatches =
+        key === product ||
+        (key === base && (!plan || subscription.product_plan_identifier === plan));
+      return productMatches && [base, product].includes(String(entitlement.product_identifier));
+    });
     if (!expected) continue;
-    const [base, plan] = expected.split(':');
-    const productMatches =
-      key === expected ||
-      (key === base && (!plan || subscription.product_plan_identifier === plan));
-    if (!productMatches || ![base, expected].includes(String(entitlement.product_identifier)))
-      continue;
     if (subscription.is_sandbox !== (config.environment === 'SANDBOX')) continue;
     // Grace access is allowed only when the provider explicitly supplies its expiry.
     const subscriptionExpiry = Math.max(

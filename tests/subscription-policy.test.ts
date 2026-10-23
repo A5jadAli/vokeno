@@ -18,6 +18,8 @@ const config: SubscriptionConfig = {
   environment: 'PRODUCTION',
   androidProduct: 'voka_plus:monthly',
   iosProduct: 'voka_plus_monthly',
+  androidAnnualProduct: 'voka_plus:annual',
+  iosAnnualProduct: '',
   voiceDaily: 15,
   assessmentDaily: 25,
 };
@@ -75,6 +77,25 @@ describe('server subscription verification', () => {
     expect(
       parseSubscription(customer(), user, { ...config, environment: 'SANDBOX' }, now).active,
     ).toBe(false);
+  });
+  it('accepts the configured annual plan, and nothing when that slot is empty', () => {
+    const annual = customer();
+    const sub = annual.subscriber.subscriptions['voka_plus:monthly'];
+    annual.subscriber.subscriptions = {
+      'voka_plus:annual': sub,
+    } as unknown as typeof annual.subscriber.subscriptions;
+    annual.subscriber.entitlements.voka_plus.product_identifier = 'voka_plus:annual';
+    expect(parseSubscription(annual, user, config, now)).toMatchObject({
+      active: true,
+      productId: 'voka_plus:annual',
+    });
+    expect(
+      parseSubscription(annual, user, { ...config, androidAnnualProduct: '' }, now).active,
+    ).toBe(false);
+    // A monthly purchase is not unlocked by the annual slot alone.
+    expect(parseSubscription(customer(), user, { ...config, androidProduct: '' }, now).active).toBe(
+      false,
+    );
   });
   it('supports explicit base-plan metadata but rejects ambiguous base-plan products', () => {
     const input = customer({ product_plan_identifier: 'monthly' });

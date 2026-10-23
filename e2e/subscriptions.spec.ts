@@ -77,7 +77,7 @@ test('Plus is discoverable but does not offer an unconfigured payment', async ({
   await signedIn(page, () => disabled);
   await expect(page.getByText('Coming soon', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Not available yet' })).toBeDisabled();
-  await expect(page.getByText(/Unlimited|Rs 200/)).toHaveCount(0);
+  await expect(page.getByText(/Unlimited|unlimited|Rs 200|US\$1/)).toHaveCount(0);
   await page.getByRole('link', { name: 'Terms', exact: true }).click();
   await expect(page.getByText('Practice allowances', { exact: true })).toBeVisible();
 });
@@ -95,7 +95,7 @@ test('verified subscribers see their remaining allowance and can manage cancella
     assessmentRemaining: 9,
   }));
   await expect(page.getByText('You’re on Plus.', { exact: true })).toBeVisible();
-  await expect(page.getByText(/Today: 7 session starts and 9 assessment/)).toBeVisible();
+  await expect(page.getByText(/Today: 7 practice calls and 9 spoken/)).toBeVisible();
   await expect(page.getByText(/Access until/)).toBeVisible();
   await expect(page.getByRole('link', { name: 'Manage subscription', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /Subscribe/ })).toHaveCount(0);

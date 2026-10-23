@@ -11,6 +11,7 @@ psql_test=("$pg_bin/psql" -X -v ON_ERROR_STOP=1 -h "$test_dir" -p 55439 -d postg
 "${psql_test[@]}" -c 'create role anon; create role authenticated; create role service_role; create schema auth; create table auth.users(id uuid primary key, is_anonymous boolean);' >/dev/null
 "${psql_test[@]}" -f "$project_dir/supabase/migrations/20260923000000_ai_usage_limits.sql" >/dev/null
 "${psql_test[@]}" -f "$project_dir/supabase/migrations/20260924000000_subscriptions.sql" >/dev/null
+"${psql_test[@]}" -f "$project_dir/supabase/migrations/20261024000000_plus_annual.sql" >/dev/null
 "${psql_test[@]}" -f "$project_dir/tests/subscriptions.sql"
 "${psql_test[@]}" -c "insert into auth.users values ('00000000-0000-4000-8000-000000000004', false); insert into public.voka_subscriptions(user_id, active, environment, product_id, store, expires_at, verified_at) values ('00000000-0000-4000-8000-000000000004', true, 'PRODUCTION', 'voka_plus:monthly', 'play_store', now() + interval '1 day', now());" >/dev/null
 request_pids=()

@@ -4,7 +4,7 @@ export const SUPPORT_EMAIL = 'support@vokeno.com';
 
 export const documents = {
   privacy: {
-    intro: 'Effective 30 September 2026',
+    intro: 'Effective 23 October 2026',
     sections: [
       [
         'What Vokeno processes',
@@ -21,6 +21,10 @@ export const documents = {
       [
         'Live voice and assessments',
         'Supabase authorises live sessions. Microphone audio travels directly to OpenAI over an encrypted WebRTC connection during live practice and is not stored by Vokeno. Assessment transcripts are processed by xAI, or OpenAI when xAI is unavailable, to produce a non-certified language estimate.',
+      ],
+      [
+        'Unit calls and coach memory',
+        'After a unit call, its transcript is sent to OpenAI to produce corrections, one tip and up to three things you said about yourself. Only things you said are kept. They and your repeated corrections are stored on this device only, are not synced to Vokeno, and are sent to OpenAI only during your unit calls so the coach can follow up. See, delete or clear them at any time in Profile › Coach memory. Providers are instructed not to store these requests for training.',
       ],
       [
         'AI writing feedback',
@@ -55,7 +59,7 @@ export const documents = {
     title: 'Privacy policy',
   },
   terms: {
-    intro: 'Effective 30 September 2026',
+    intro: 'Effective 23 October 2026',
     sections: [
       [
         'Learning service',
@@ -67,11 +71,11 @@ export const documents = {
       ],
       [
         'Subscriptions',
-        'The store shows the price, billing period, renewal terms, and any trial before purchase. Subscriptions renew automatically unless cancelled through the store before the current period ends. Cancellation stops future renewals; access continues until the paid period ends unless the purchase is refunded or revoked. Manage or cancel from the Vokeno Plus screen or your store account. Deleting the app or your Vokeno account does not cancel billing. Restore purchases using the same Vokeno and store accounts. Purchases cannot be restored to a new Vokeno account after permanently deleting the original account, so cancel your subscription before account deletion.',
+        'Vokeno Plus is offered as a monthly or an annual subscription. The plan screen and the store show the price, billing period, renewal terms, and any free trial before purchase. If a free trial is offered, you are charged the plan price when the trial ends unless you cancel before then; the store decides trial eligibility, usually one trial per account. Subscriptions renew automatically unless cancelled through the store before the current period ends. Cancellation stops future renewals; access continues until the paid period ends unless the purchase is refunded or revoked. Manage or cancel from the Vokeno Plus screen or your store account. Deleting the app or your Vokeno account does not cancel billing. Restore purchases using the same Vokeno and store accounts. Purchases cannot be restored to a new Vokeno account after permanently deleting the original account, so cancel your subscription before account deletion.',
       ],
       [
         'Practice allowances',
-        'The plan screen shows the included daily live session starts and spoken assessment requests. Each voice session lasts up to five minutes. AI requests count when processing starts, including an interrupted attempt. Allowances reset at midnight UTC and do not roll over. Service safety limits and temporary outages may affect availability. Lessons and learning history do not require Plus.',
+        'The plan screen shows the included daily live practice calls and spoken assessments. Each voice session lasts up to five minutes. Every learner gets one free three-minute coach call per unit; Plus lets you repeat unit calls within the daily allowance. AI requests count when processing starts, including an interrupted attempt. Allowances reset at midnight UTC and do not roll over. Service safety limits and temporary outages may affect availability. Lessons and learning history do not require Plus.',
       ],
       [
         'AI-generated content',

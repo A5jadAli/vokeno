@@ -12,6 +12,8 @@ const access: SubscriptionAccess = {
     environment: 'PRODUCTION',
     androidProduct: 'voka_plus:monthly',
     iosProduct: '',
+    androidAnnualProduct: 'voka_plus:annual',
+    iosAnnualProduct: '',
     voiceDaily: 15,
     assessmentDaily: 25,
   },

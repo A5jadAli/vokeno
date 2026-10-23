@@ -8,11 +8,21 @@ See [preview release verification](subscription-preview-release.md).
 
 ## Implemented behavior
 
-- An authenticated Plus screen displays the store-localized monthly price and
-  server-configured finite daily allowance. Guests are directed to account creation.
-- Checkout uses only the configured monthly product. Android buys the displayed
-  full-price auto-renewing base plan, not an arbitrary offer. Annual, lifetime and
-  prepaid plans are intentionally not supported by this first implementation.
+- An authenticated Plus screen offers the configured **annual** and **monthly**
+  plans (annual first), with store-localized prices and the server-configured finite
+  daily allowance. Guests are directed to account creation.
+- Every price, per-month figure, saving and trial comes from the store. The saving
+  is computed from the two plans' store prices in the same currency, rounded down,
+  and shown only at 10% or more. Nothing on the paywall is a hard-coded price.
+- Android buys exactly the option shown: the base plan, or a free-trial offer when
+  Play lists one for this user (Play returns only offers the user is eligible for).
+  A trial is used only when it is a plain free trial followed by the base plan's
+  full price, so the price shown is the price renewed at. Discounted, introductory
+  and prepaid offers are never chosen. Lifetime plans are not supported.
+- Google Play subscription policy: the trial length, the price after it, the
+  billing period, automatic renewal and where to cancel are shown next to the
+  purchase button, before checkout (`planTerms` in `src/app/plus.tsx`). Benefits
+  are finite and match the server allowance; the app never says "unlimited".
 - Purchase/restore operations and SDK identity changes are serialized. Duplicate
   actions are blocked and authentication is checked again after asynchronous work.
 - Cancellation, pending payment, unconfirmed purchase, empty restore, expired
@@ -45,13 +55,19 @@ See [preview release verification](subscription-preview-release.md).
    the price and daily limits before creating a live offer. The former Rs 200 and
    unlimited promises have been removed, not replaced with an assumed price.
 2. Upload a billing-enabled Android build for `com.asjadali.voka` to the appropriate
-   Play test track. Create an auto-renewing monthly subscription and base plan.
-   Connect the Play app/service credentials and real-time developer notifications
-   to RevenueCat, following its current store-integration instructions.
-3. Create entitlement `voka_plus`, attach the product, and put it in the current
-   offering's monthly package. A proposed naming convention is subscription
-   `voka_plus`, base plan `monthly`, RevenueCat product `voka_plus:monthly`.
-   Configure the actual identifiers, not this example, in the backend.
+   Play test track. In Play Console › Monetize › Subscriptions, create subscription
+   `voka_plus` with two auto-renewing base plans:
+   - `monthly`: billing period 1 month, US$9.99;
+   - `annual`: billing period 1 year, US$59.99, with one offer `trial-7d`: a 7-day
+     free trial, eligibility "New customer acquisition: never had this subscription".
+     Set the regional prices by hand rather than accepting Play's conversion: Pakistan
+     PKR 999 / PKR 5,999 and India INR 299 / INR 1,799 (the business model plan's
+     proposal). Turn on grace period and account hold. Connect the Play app/service
+     credentials and real-time developer notifications to RevenueCat, following its
+     current store-integration instructions.
+3. Create entitlement `voka_plus` and attach both products. In the current
+   offering, put `voka_plus:monthly` in the Monthly package and `voka_plus:annual`
+   in the Annual package. Configure the actual identifiers in the backend.
 4. Set RevenueCat restore behavior to **Keep with original App User ID**. This
    implementation uses authenticated Supabase UUIDs only, never anonymous SDK
    identities. Restores require the original Vokeno account. Automatic transfers
@@ -87,22 +103,43 @@ npx supabase db push
 npx supabase functions deploy subscription-status revenuecat-webhook realtime-session
 ```
 
-Migration `20260924000000_subscriptions.sql` starts with `enabled = false`,
+Migration `20261024000000_plus_annual.sql` adds the annual product columns (empty,
+so nothing changes until they are set) and `voka_plus_product`, which both the access
+check and the daily quota use. Migration `20260924000000_subscriptions.sql` starts with `enabled = false`,
 `sales_enabled = false`, empty product IDs and zero paid allowances. Database
 access is restricted to the service role; do not grant clients write privileges.
 
 The owner-approved configuration belongs in the singleton row of
 `public.voka_subscription_config`:
 
-| Field              | Meaning                                                                |
-| ------------------ | ---------------------------------------------------------------------- |
-| `enabled`          | Enables verified subscription access. Keep false until setup is valid. |
-| `sales_enabled`    | Allows new checkout independently of existing subscribers.             |
-| `environment`      | `PRODUCTION` or staging-only `SANDBOX`.                                |
-| `android_product`  | Exact RevenueCat subscription/base-plan ID.                            |
-| `ios_product`      | Exact monthly iOS product, or empty if not launching iOS.              |
-| `voice_daily`      | Approved total daily session-start allowance.                          |
-| `assessment_daily` | Approved total daily assessment-request allowance.                     |
+| Field                    | Meaning                                                                |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `enabled`                | Enables verified subscription access. Keep false until setup is valid. |
+| `sales_enabled`          | Allows new checkout independently of existing subscribers.             |
+| `environment`            | `PRODUCTION` or staging-only `SANDBOX`.                                |
+| `android_product`        | Exact RevenueCat monthly subscription/base-plan ID.                    |
+| `ios_product`            | Exact monthly iOS product, or empty if not launching iOS.              |
+| `android_annual_product` | Exact annual base-plan ID, or empty to sell monthly only.              |
+| `ios_annual_product`     | Exact annual iOS product, or empty.                                    |
+| `voice_daily`            | Approved total daily session-start allowance.                          |
+| `assessment_daily`       | Approved total daily assessment-request allowance.                     |
+
+Recommended values when sales open, from the business model plan. Today signed-in
+free learners get 10 voice session starts a day (`voka_ai_budget_config`), which
+is kept during the free beta. At launch:
+
+| Setting                                       | Value | Meaning                                                                      |
+| --------------------------------------------- | ----- | ---------------------------------------------------------------------------- |
+| `voka_ai_budget_config` voice `account_daily` | 2     | Free: a unit call and one practice call                                      |
+| `voice_daily`                                 | 6     | Plus: up to 30 minutes of calls a day                                        |
+| `assessment_daily`                            | 30    | Plus: spoken assessments and call reviews                                    |
+| voice `global_daily`                          | raise | Must be at least `voice_daily` and sized for the expected number of learners |
+
+Voice is the only cost that grows with use. On `gpt-realtime-2.1` (about US$0.08 a
+minute) a Plus learner who uses all 6 calls every day costs about US$72 a month;
+a typical learner uses about 50 minutes a month (about US$4). Watch the share of
+heavy users before raising the limit, as the business model plan's risks section
+describes, and lower `voice_daily` for everyone rather than per country.
 
 Paid limits should exceed free allowances and fit the separately reviewed global
 caps in `voka_ai_budget_config`. New sales are suppressed if voice limits do not

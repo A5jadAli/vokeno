@@ -17,7 +17,7 @@ export class FreeCallUsedError extends Error {
   constructor(message?: string) {
     super(
       message ??
-        'You have used the free call for this unit. Unlimited unit calls come with Vokeno Plus.',
+        'You have used the free call for this unit. With Vokeno Plus you can repeat unit calls.',
     );
     this.name = 'FreeCallUsedError';
   }

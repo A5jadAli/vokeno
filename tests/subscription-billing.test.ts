@@ -38,11 +38,19 @@ jest.mock('@/features/auth/supabase', () => ({
 
 const emptyInfo = { entitlements: { active: {} } };
 const activeInfo = { entitlements: { active: { voka_plus: { isActive: true } } } };
+const price = (formatted: string, amountMicros: number) => ({
+  formatted,
+  amountMicros,
+  currencyCode: 'PKR',
+});
 const option = {
   isBasePlan: true,
   isPrepaid: false,
   storeProductId: 'voka_plus:monthly',
-  fullPricePhase: { price: { formatted: 'Rs 999' } },
+  pricingPhases: [{ price: price('Rs 999', 999_000_000) }],
+  fullPricePhase: { price: price('Rs 999', 999_000_000) },
+  freePhase: null,
+  introPhase: null,
 };
 const pkg = {
   packageType: 'MONTHLY',
@@ -52,6 +60,27 @@ const pkg = {
     subscriptionOptions: [option],
   },
 };
+const annualBase = {
+  ...option,
+  storeProductId: 'voka_plus:annual',
+  pricingPhases: [{ price: price('Rs 5,999', 5_999_000_000) }],
+  fullPricePhase: { price: price('Rs 5,999', 5_999_000_000) },
+};
+const annualTrial = {
+  ...annualBase,
+  isBasePlan: false,
+  pricingPhases: [{ price: price('Free', 0) }, { price: price('Rs 5,999', 5_999_000_000) }],
+  freePhase: { billingPeriod: { unit: 'DAY', value: 7, iso8601: 'P7D' } },
+};
+const annualPkg = {
+  packageType: 'ANNUAL',
+  product: {
+    identifier: 'voka_plus:annual',
+    subscriptionPeriod: 'P1Y',
+    pricePerMonthString: 'Rs 499.92',
+    subscriptionOptions: [annualBase, annualTrial],
+  },
+};
 const access: PlusAccess = {
   config: {
     enabled: true,
@@ -59,6 +88,8 @@ const access: PlusAccess = {
     environment: 'PRODUCTION',
     androidProduct: 'voka_plus:monthly',
     iosProduct: '',
+    androidAnnualProduct: 'voka_plus:annual',
+    iosAnnualProduct: '',
     voiceDaily: 15,
     assessmentDaily: 25,
   },
@@ -103,9 +134,9 @@ describe('Vokeno Plus purchases', () => {
     expect(mockPurchases.configure).not.toHaveBeenCalled();
     expect(mockPurchases.logIn).toHaveBeenCalledWith(mockUser);
   });
-  it('shows store pricing and the configured monthly plan only', async () => {
+  it('shows store pricing for the configured monthly plan', async () => {
     expect(await billing.loadVokaPlus(mockUser)).toMatchObject({
-      price: 'Rs 999',
+      plans: [{ id: 'monthly', price: 'Rs 999', period: 'month' }],
       canPurchase: true,
       isPlus: false,
     });
@@ -128,15 +159,73 @@ describe('Vokeno Plus purchases', () => {
       canPurchase: false,
       canRestore: false,
     });
-    await expect(billing.purchaseVokaPlus(mockUser)).rejects.toThrow('not open');
+    await expect(billing.purchaseVokaPlus(mockUser, 'monthly')).rejects.toThrow('not open');
     expect(mockPurchases.configure).not.toHaveBeenCalled();
   });
   it('rejects guests and mismatched Vokeno identities before store access', async () => {
     mockGuest = true;
-    await expect(billing.purchaseVokaPlus(mockUser)).rejects.toThrow('Sign in');
+    await expect(billing.purchaseVokaPlus(mockUser, 'monthly')).rejects.toThrow('Sign in');
     mockGuest = false;
-    await expect(billing.purchaseVokaPlus('another-account')).rejects.toThrow('Sign in');
+    await expect(billing.purchaseVokaPlus('another-account', 'monthly')).rejects.toThrow('Sign in');
     expect(mockPurchases.configure).not.toHaveBeenCalled();
+  });
+  it('offers annual first, with the eligible trial, per-month price and saving from the store', async () => {
+    mockPurchases.getOfferings.mockResolvedValue({
+      current: { availablePackages: [pkg, annualPkg] },
+    });
+    const state = await billing.loadVokaPlus(mockUser);
+    expect(state.plans).toEqual([
+      {
+        id: 'annual',
+        price: 'Rs 5,999',
+        period: 'year',
+        perMonth: 'Rs 499.92',
+        trialDays: 7,
+        savePercent: 49,
+      },
+      { id: 'monthly', price: 'Rs 999', period: 'month' },
+    ]);
+    // The purchase is the shown option: the trial, which renews at the shown price.
+    await billing.purchaseVokaPlus(mockUser, 'annual');
+    expect(mockPurchases.purchaseSubscriptionOption).toHaveBeenCalledWith(annualTrial);
+  });
+  it('shows no trial when the store offers none, and never a discounted offer', async () => {
+    const discounted = {
+      ...annualTrial,
+      pricingPhases: [{ price: price('Rs 2,999', 2_999_000_000) }, annualBase.fullPricePhase],
+      freePhase: null,
+      introPhase: { price: price('Rs 2,999', 2_999_000_000) },
+    };
+    mockPurchases.getOfferings.mockResolvedValue({
+      current: {
+        availablePackages: [
+          {
+            ...annualPkg,
+            product: { ...annualPkg.product, subscriptionOptions: [annualBase, discounted] },
+          },
+        ],
+      },
+    });
+    const [annual] = (await billing.loadVokaPlus(mockUser)).plans;
+    expect(annual).toMatchObject({ id: 'annual', price: 'Rs 5,999' });
+    expect(annual.trialDays).toBeUndefined();
+    await billing.purchaseVokaPlus(mockUser, 'annual');
+    expect(mockPurchases.purchaseSubscriptionOption).toHaveBeenCalledWith(annualBase);
+  });
+  it('does not offer the annual plan unless the backend configures it', async () => {
+    fetchMock.mockImplementation(
+      async () =>
+        new Response(
+          JSON.stringify({ ...access, config: { ...access.config, androidAnnualProduct: '' } }),
+        ),
+    );
+    mockPurchases.getOfferings.mockResolvedValue({
+      current: { availablePackages: [pkg, annualPkg] },
+    });
+    expect((await billing.loadVokaPlus(mockUser)).plans.map((plan) => plan.id)).toEqual([
+      'monthly',
+    ]);
+    await expect(billing.purchaseVokaPlus(mockUser, 'annual')).rejects.toThrow('unavailable');
   });
   it('does not fall back to yearly or unrelated products', async () => {
     for (const invalid of [
@@ -146,12 +235,12 @@ describe('Vokeno Plus purchases', () => {
     ]) {
       mockPurchases.getOfferings.mockResolvedValue({ current: { availablePackages: [invalid] } });
       expect((await billing.loadVokaPlus(mockUser)).canPurchase).toBe(false);
-      await expect(billing.purchaseVokaPlus(mockUser)).rejects.toThrow('unavailable');
+      await expect(billing.purchaseVokaPlus(mockUser, 'monthly')).rejects.toThrow('unavailable');
     }
     expect(mockPurchases.purchaseSubscriptionOption).not.toHaveBeenCalled();
   });
   it('does not grant paid access just because the SDK reports a purchase', async () => {
-    expect(await billing.purchaseVokaPlus(mockUser)).toBe('confirming');
+    expect(await billing.purchaseVokaPlus(mockUser, 'monthly')).toBe('confirming');
     expect(mockPurchases.purchaseSubscriptionOption).toHaveBeenCalledWith(option);
     expect(mockPurchases.purchasePackage).not.toHaveBeenCalled();
   });
@@ -162,23 +251,25 @@ describe('Vokeno Plus purchases', () => {
           JSON.stringify({ ...access, isPlus: JSON.parse(String(init?.body)).action === 'sync' }),
         ),
     );
-    expect(await billing.purchaseVokaPlus(mockUser)).toBe('active');
+    expect(await billing.purchaseVokaPlus(mockUser, 'monthly')).toBe('active');
   });
   it('distinguishes cancellation and pending payment without confirming access', async () => {
     mockPurchases.purchaseSubscriptionOption.mockRejectedValueOnce({ code: '1' });
-    expect(await billing.purchaseVokaPlus(mockUser)).toBe('cancelled');
+    expect(await billing.purchaseVokaPlus(mockUser, 'monthly')).toBe('cancelled');
     mockPurchases.purchaseSubscriptionOption.mockRejectedValueOnce({ code: '20' });
-    expect(await billing.purchaseVokaPlus(mockUser)).toBe('pending');
+    expect(await billing.purchaseVokaPlus(mockUser, 'monthly')).toBe('pending');
   });
   it('blocks synchronous duplicate purchases', async () => {
-    const first = billing.purchaseVokaPlus(mockUser);
-    await expect(billing.purchaseVokaPlus(mockUser)).rejects.toThrow('already in progress');
+    const first = billing.purchaseVokaPlus(mockUser, 'monthly');
+    await expect(billing.purchaseVokaPlus(mockUser, 'monthly')).rejects.toThrow(
+      'already in progress',
+    );
     await first;
     expect(mockPurchases.purchaseSubscriptionOption).toHaveBeenCalledTimes(1);
   });
   it('does not charge again when the store already has an active purchase', async () => {
     mockPurchases.getCustomerInfo.mockResolvedValue(activeInfo);
-    expect(await billing.purchaseVokaPlus(mockUser)).toBe('confirming');
+    expect(await billing.purchaseVokaPlus(mockUser, 'monthly')).toBe('confirming');
     expect(mockPurchases.purchaseSubscriptionOption).not.toHaveBeenCalled();
   });
   it('checks identity again after slow offering lookups', async () => {
@@ -186,7 +277,7 @@ describe('Vokeno Plus purchases', () => {
       mockUser = 'account-b';
       return { current: { availablePackages: [pkg] } };
     });
-    await expect(billing.purchaseVokaPlus('account-a')).rejects.toThrow('Sign in');
+    await expect(billing.purchaseVokaPlus('account-a', 'monthly')).rejects.toThrow('Sign in');
     expect(mockPurchases.purchaseSubscriptionOption).not.toHaveBeenCalled();
   });
   it('restores without starting another purchase and reports an empty restore', async () => {
@@ -203,7 +294,7 @@ describe('Vokeno Plus purchases', () => {
       'https://play.google.com/store/account/subscriptions',
     );
     process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY = 'test_synthetic';
-    await expect(billing.purchaseVokaPlus(mockUser)).rejects.toThrow('not available');
+    await expect(billing.purchaseVokaPlus(mockUser, 'monthly')).rejects.toThrow('not available');
     expect(mockPurchases.configure).not.toHaveBeenCalled();
   });
 });

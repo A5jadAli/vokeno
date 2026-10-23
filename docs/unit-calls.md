@@ -1,6 +1,6 @@
 # Lesson-linked coach calls
 
-After a unit's Exam task, the learner can talk it through with that unit's character for 3 minutes. The call has a twist, uses the unit's phrases, and ends with a review card. Every learner gets one free call per unit; Plus members can repeat them.
+After a unit's Exam task, the learner can talk it through with that unit's character for 3 minutes. The call has a twist, uses the unit's phrases, and ends with a review card. Every learner gets one free call per unit; Plus members can repeat them within their daily practice allowance.
 
 ## How it works
 

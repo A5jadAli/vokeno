@@ -2,7 +2,15 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Linking from 'expo-linking';
 import { type Href, useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, AppState, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  AppState,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import { PrimaryButton } from '@/components/lesson-ui';
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
@@ -15,7 +23,20 @@ import {
   restoreVokaPlus,
   subscriptionManagementUrl,
 } from '@/features/subscription/billing';
-import type { PlusState, PurchaseOutcome } from '@/features/subscription/types';
+import type { PlanId, PlusPlan, PlusState, PurchaseOutcome } from '@/features/subscription/types';
+
+/** What the learner agrees to, next to the button that agrees to it. */
+function planTerms(plan: PlusPlan) {
+  const apple = Platform.OS === 'ios';
+  const account = apple ? 'Apple account' : 'Google Play account';
+  const cancel = apple
+    ? 'Settings › your name › Subscriptions'
+    : 'Google Play › Payments and subscriptions';
+  const renews = `Renews automatically every ${plan.period} until you cancel in ${cancel}.`;
+  return plan.trialDays
+    ? `Free for ${plan.trialDays} days, then ${plan.price} a ${plan.period}. ${renews} Cancel before the trial ends and you will not be charged.`
+    : `${plan.price} a ${plan.period}, charged to your ${account} when you confirm. ${renews}`;
+}
 
 export default function PlusScreen() {
   const { session } = useAuthSession();
@@ -32,6 +53,7 @@ function PlusContent() {
   const [notice, setNotice] = useState('');
   const [confirming, setConfirming] = useState(false);
   const [checkedAt, setCheckedAt] = useState(() => Date.now());
+  const [planId, setPlanId] = useState<PlanId>();
   const busy = useRef(false);
   const mounted = useRef(true);
   useEffect(() => {
@@ -42,7 +64,7 @@ function PlusContent() {
   }, []);
 
   const run = useCallback(
-    async (action: 'load' | 'purchase' | 'restore', force = false) => {
+    async (action: 'load' | 'purchase' | 'restore', force = false, plan?: PlanId) => {
       if (!userId || busy.current) return;
       busy.current = true;
       setPending(action);
@@ -50,7 +72,7 @@ function PlusContent() {
       const current = () => mounted.current;
       try {
         let outcome: PurchaseOutcome | undefined;
-        if (action === 'purchase') outcome = await purchaseVokaPlus(userId);
+        if (action === 'purchase' && plan) outcome = await purchaseVokaPlus(userId, plan);
         if (action === 'restore') outcome = await restoreVokaPlus(userId);
         if (action === 'load' && force) await fetchPlusAccess(userId, true);
         if (!current()) return;
@@ -140,6 +162,8 @@ function PlusContent() {
   const unavailable = !state?.config.enabled || !state.config.salesEnabled;
   const canPurchase = state?.canPurchase && !confirming && !state.isPlus && !pending && !error;
   const showManage = state?.isPlus || confirming || state?.storeEntitled;
+  // Annual comes first when the store sells it; the learner can switch before paying.
+  const chosen = state?.plans.find((plan) => plan.id === planId) ?? state?.plans[0];
 
   return (
     <AppScreen backgroundColor={Palette.ink} dark showNav={false}>
@@ -167,7 +191,7 @@ function PlusContent() {
             ? `${state.willRenew ? 'Renews' : 'Access until'} ${date}. Manage or cancel in your store settings.`
             : unavailable
               ? 'Subscriptions are not open yet. Keep learning with the free lessons and your current practice allowance.'
-              : 'A monthly subscription with a clear daily practice allowance. Your store confirms the price before payment. Cancel anytime in store settings.'}
+              : 'Lessons stay free. Plus adds more speaking practice with your coach. Choose monthly or annual; your store confirms the price before you pay, and you can cancel anytime.'}
         </Text>
         {state && !state.isPlus && date && new Date(state.expiresAt!).getTime() <= checkedAt ? (
           <Text style={styles.notice}>
@@ -187,8 +211,8 @@ function PlusContent() {
         ) : null}
         {state?.isPlus ? (
           <Text style={styles.notice}>
-            Today: {state.voiceRemaining} session starts and {state.assessmentRemaining} assessment
-            requests remaining.
+            Today: {state.voiceRemaining} practice calls and {state.assessmentRemaining} spoken
+            assessments remaining.
           </Text>
         ) : null}
         {notice || (confirming && !state?.isPlus) ? (
@@ -215,8 +239,9 @@ function PlusContent() {
         <View style={styles.benefits}>
           {(state?.config.enabled
             ? [
-                `${state.config.voiceDaily} live session starts per day, up to 5 minutes each`,
-                `${state.config.assessmentDaily} spoken assessment requests per day`,
+                'Repeat any unit call with your coach',
+                `${state.config.voiceDaily} live practice calls a day, up to 5 minutes each`,
+                `${state.config.assessmentDaily} spoken assessments a day`,
                 'Daily allowances reset at midnight UTC',
               ]
             : [
@@ -233,6 +258,41 @@ function PlusContent() {
         {pending && !state ? (
           <ActivityIndicator color={Brand.onDark} style={styles.loader} />
         ) : null}
+        {!showManage && state?.plans.length ? (
+          <View accessibilityRole="radiogroup" style={styles.plans}>
+            {state.plans.map((plan) => {
+              const selected = plan.id === chosen?.id;
+              return (
+                <Pressable
+                  key={plan.id}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: selected, disabled: Boolean(pending) }}
+                  disabled={Boolean(pending)}
+                  onPress={() => setPlanId(plan.id)}
+                  style={[styles.plan, selected && styles.planSelected]}
+                >
+                  <View style={styles.planTop}>
+                    <Text style={styles.planName}>
+                      {plan.id === 'annual' ? 'Annual' : 'Monthly'}
+                    </Text>
+                    {plan.savePercent ? (
+                      <Text style={styles.badge}>Save {plan.savePercent}%</Text>
+                    ) : null}
+                  </View>
+                  <Text style={styles.planPrice}>
+                    {plan.price} a {plan.period}
+                  </Text>
+                  {plan.perMonth ? (
+                    <Text style={styles.planMeta}>{plan.perMonth} a month, billed yearly</Text>
+                  ) : null}
+                  {plan.trialDays ? (
+                    <Text style={styles.planMeta}>{plan.trialDays}-day free trial</Text>
+                  ) : null}
+                </Pressable>
+              );
+            })}
+          </View>
+        ) : null}
         {!showManage ? (
           <View style={styles.primaryWrap}>
             <PrimaryButton
@@ -241,21 +301,18 @@ function PlusContent() {
                   ? 'Opening checkout…'
                   : pending === 'load'
                     ? 'Checking…'
-                    : state?.price
-                      ? `Subscribe · ${state.price}/month`
-                      : 'Not available yet'
+                    : chosen?.trialDays
+                      ? `Start ${chosen.trialDays}-day free trial`
+                      : chosen
+                        ? `Subscribe · ${chosen.price}/${chosen.period}`
+                        : 'Not available yet'
               }
-              icon={state?.price && !pending ? 'arrow-right' : undefined}
+              icon={chosen && !pending ? 'arrow-right' : undefined}
               busy={pending === 'purchase'}
-              disabled={!canPurchase}
-              onPress={() => void run('purchase')}
+              disabled={!canPurchase || !chosen}
+              onPress={() => void run('purchase', false, chosen?.id)}
             />
-            {!state?.price ? (
-              <Text style={styles.priceNote}>
-                Planned price: US$1 a month. Google Play shows the exact price in your currency
-                before you pay.
-              </Text>
-            ) : null}
+            {chosen ? <Text style={styles.priceNote}>{planTerms(chosen)}</Text> : null}
           </View>
         ) : null}
         <Pressable
@@ -398,6 +455,29 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   primaryWrap: { alignSelf: 'stretch', gap: 10, marginTop: 28 },
+  plans: { gap: 12, marginTop: 28 },
+  plan: {
+    borderColor: 'rgba(241,237,227,.22)',
+    borderRadius: 18,
+    borderWidth: 1.5,
+    gap: 4,
+    padding: 16,
+  },
+  planSelected: { backgroundColor: 'rgba(241,237,227,.08)', borderColor: Brand.onDark },
+  planTop: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+  planName: { color: Palette.cream, fontFamily: VokaFonts.bodyBold, fontSize: 17 },
+  planPrice: { color: Palette.cream, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
+  planMeta: { color: 'rgba(241,237,227,.7)', fontFamily: VokaFonts.body, fontSize: 13 },
+  badge: {
+    backgroundColor: Brand.onDark,
+    borderRadius: 99,
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: 12,
+    overflow: 'hidden',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
   priceNote: {
     color: 'rgba(241,237,227,.7)',
     fontFamily: VokaFonts.body,

@@ -66,3 +66,30 @@ begin
   if exists (select 1 from public.voka_subscriptions where user_id = u) then raise exception 'Deleted account retained entitlement'; end if;
 end;
 $$;
+
+-- The annual plan: no access while its slot is empty, access once it is configured.
+do $$
+declare
+  u uuid := '00000000-0000-4000-8000-000000000005';
+  result jsonb;
+  annual jsonb := jsonb_build_object('active', true, 'environment', 'PRODUCTION',
+    'productId', 'voka_plus:annual', 'store', 'play_store', 'expiresAt', now() + interval '365 days',
+    'willRenew', true, 'billingIssue', false, 'providerUpdatedAt', now());
+begin
+  insert into auth.users(id, is_anonymous) values (u, false);
+  update public.voka_ai_budget_config set global_daily = 20 where kind = 'assessment';
+  update public.voka_subscription_config set android_annual_product = '';
+  result := public.voka_subscription_access('save', u, annual);
+  if (result->>'isPlus')::boolean then raise exception 'Unconfigured annual plan granted access'; end if;
+  update public.voka_subscription_config set android_annual_product = 'voka_plus:annual';
+  result := public.voka_subscription_access('read', u);
+  if not (result->>'isPlus')::boolean then raise exception 'Annual plan not recognised'; end if;
+  if result->'config'->>'androidAnnualProduct' <> 'voka_plus:annual' then raise exception 'Annual product missing from config'; end if;
+  result := public.claim_voka_ai_request(u, 'voice');
+  if not (result->>'allowed')::boolean then raise exception 'Annual allowance not applied'; end if;
+  update public.voka_subscriptions set product_id = '' where user_id = u;
+  update public.voka_subscription_config set android_annual_product = '';
+  result := public.voka_subscription_access('read', u);
+  if (result->>'isPlus')::boolean then raise exception 'Empty product matched an empty plan slot'; end if;
+end;
+$$;

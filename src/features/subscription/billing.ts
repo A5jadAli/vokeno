@@ -4,9 +4,10 @@ import Purchases, {
   PURCHASES_ERROR_CODE,
   type CustomerInfo,
   type PurchasesPackage,
+  type SubscriptionOption,
 } from 'react-native-purchases';
 import { getSupabaseAnonKey, getSupabaseFunctionUrl, supabase } from '@/features/auth/supabase';
-import type { PlusAccess, PlusState, PurchaseOutcome } from './types';
+import type { PlanId, PlusAccess, PlusPlan, PlusState, PurchaseOutcome } from './types';
 
 export const VOKA_PLUS_ENTITLEMENT = 'voka_plus';
 let configuredUserId: string | undefined;
@@ -94,26 +95,103 @@ function storeEntitled(info: CustomerInfo) {
   return Boolean(info.entitlements.active[VOKA_PLUS_ENTITLEMENT]?.isActive);
 }
 
-async function monthlyPackage(access: PlusAccess): Promise<PurchasesPackage | undefined> {
-  const expected =
-    Platform.OS === 'android' ? access.config.androidProduct : access.config.iosProduct;
-  const offerings = await Purchases.getOfferings();
-  return offerings.current?.availablePackages.find(
-    (item) =>
-      item.packageType === 'MONTHLY' &&
-      item.product.identifier === expected &&
-      item.product.subscriptionPeriod === 'P1M',
-  );
+const PLAN = {
+  monthly: { packageType: 'MONTHLY', period: 'P1M' },
+  annual: { packageType: 'ANNUAL', period: 'P1Y' },
+} as const;
+
+function planProduct(access: PlusAccess, plan: PlanId) {
+  if (plan === 'annual')
+    return Platform.OS === 'android'
+      ? access.config.androidAnnualProduct
+      : access.config.iosAnnualProduct;
+  return Platform.OS === 'android' ? access.config.androidProduct : access.config.iosProduct;
 }
 
-function monthlyPrice(pkg?: PurchasesPackage) {
-  if (!pkg) return undefined;
-  if (Platform.OS !== 'android') return pkg.product.priceString;
-  const base = pkg.product.subscriptionOptions?.find(
-    (option) =>
-      option.isBasePlan && !option.isPrepaid && option.storeProductId === pkg.product.identifier,
+async function planPackages(access: PlusAccess) {
+  const offerings = await Purchases.getOfferings();
+  const find = (plan: PlanId) => {
+    const expected = planProduct(access, plan);
+    return expected
+      ? offerings.current?.availablePackages.find(
+          (item) =>
+            item.packageType === PLAN[plan].packageType &&
+            item.product.identifier === expected &&
+            item.product.subscriptionPeriod === PLAN[plan].period,
+        )
+      : undefined;
+  };
+  return { annual: find('annual'), monthly: find('monthly') };
+}
+
+const trialLength = (option: SubscriptionOption) => {
+  const period = option.freePhase?.billingPeriod;
+  if (!period) return undefined;
+  if (period.unit === 'DAY') return period.value;
+  if (period.unit === 'WEEK') return period.value * 7;
+  return undefined;
+};
+
+/**
+ * The exact Android option to show and buy. A free trial is used only when it is a plain trial
+ * followed by the plan's full price; Play lists only the offers this user is eligible for.
+ * Discounted or prepaid offers are never chosen, so the price shown is the price renewed at.
+ */
+function planOption(pkg: PurchasesPackage): SubscriptionOption | undefined {
+  const options = (pkg.product.subscriptionOptions ?? []).filter(
+    (item) => !item.isPrepaid && item.storeProductId === pkg.product.identifier,
   );
-  return base?.fullPricePhase?.price.formatted;
+  const base = options.find((item) => item.isBasePlan && item.fullPricePhase);
+  if (!base) return undefined;
+  const trial = options.find(
+    (item) =>
+      !item.isBasePlan &&
+      !item.introPhase &&
+      item.pricingPhases.length === 2 &&
+      trialLength(item) !== undefined &&
+      item.fullPricePhase?.price.amountMicros === base.fullPricePhase!.price.amountMicros,
+  );
+  return trial ?? base;
+}
+
+function describePlan(id: PlanId, pkg?: PurchasesPackage): PlusPlan | undefined {
+  if (!pkg) return undefined;
+  const period = id === 'annual' ? 'year' : 'month';
+  if (Platform.OS !== 'android')
+    return pkg.product.priceString ? { id, price: pkg.product.priceString, period } : undefined;
+  const option = planOption(pkg);
+  const price = option?.fullPricePhase?.price.formatted;
+  if (!option || !price) return undefined;
+  return {
+    id,
+    price,
+    period,
+    ...(trialLength(option) ? { trialDays: trialLength(option) } : {}),
+    ...(id === 'annual' && pkg.product.pricePerMonthString
+      ? { perMonth: pkg.product.pricePerMonthString }
+      : {}),
+  };
+}
+
+/** Annual against twelve monthly payments, from the store's own prices in the same currency. */
+function savePercent(annual?: PurchasesPackage, monthly?: PurchasesPackage) {
+  const year = annual && planOption(annual)?.fullPricePhase?.price;
+  const month = monthly && planOption(monthly)?.fullPricePhase?.price;
+  if (!year || !month || year.currencyCode !== month.currencyCode || !month.amountMicros)
+    return undefined;
+  const percent = Math.floor((1 - year.amountMicros / (month.amountMicros * 12)) * 100);
+  return percent >= 10 ? percent : undefined;
+}
+
+export function storePlans(packages: { annual?: PurchasesPackage; monthly?: PurchasesPackage }) {
+  const annual = describePlan('annual', packages.annual);
+  const monthly = describePlan('monthly', packages.monthly);
+  const save =
+    Platform.OS === 'android' ? savePercent(packages.annual, packages.monthly) : undefined;
+  return [
+    ...(annual ? [{ ...annual, ...(save ? { savePercent: save } : {}) }] : []),
+    ...(monthly ? [monthly] : []),
+  ];
 }
 
 export function loadVokaPlus(userId: string): Promise<PlusState> {
@@ -121,6 +199,7 @@ export function loadVokaPlus(userId: string): Promise<PlusState> {
     const access = await fetchPlusAccess(userId);
     const state: PlusState = {
       ...access,
+      plans: [],
       canPurchase: false,
       canRestore: false,
       storeEntitled: false,
@@ -133,9 +212,8 @@ export function loadVokaPlus(userId: string): Promise<PlusState> {
       const info = await Purchases.getCustomerInfo();
       state.storeEntitled = storeEntitled(info);
       if (!access.isPlus && !state.storeEntitled && access.config.salesEnabled) {
-        const pkg = await monthlyPackage(access);
-        state.price = monthlyPrice(pkg);
-        state.canPurchase = Boolean(state.price);
+        state.plans = storePlans(await planPackages(access));
+        state.canPurchase = state.plans.length > 0;
         if (!state.canPurchase)
           state.storeError =
             'This plan is not available from your store yet. Please try again later.';
@@ -169,7 +247,7 @@ function changePurchase(userId: string, action: () => Promise<PurchaseOutcome>) 
   });
 }
 
-export function purchaseVokaPlus(userId: string): Promise<PurchaseOutcome> {
+export function purchaseVokaPlus(userId: string, plan: PlanId): Promise<PurchaseOutcome> {
   return changePurchase(userId, async () => {
     const access = await fetchPlusAccess(userId);
     if (access.isPlus) return 'active';
@@ -177,19 +255,14 @@ export function purchaseVokaPlus(userId: string): Promise<PurchaseOutcome> {
       throw new Error('Vokeno Plus is not open for new subscriptions yet.');
     await configure(userId);
     if (storeEntitled(await Purchases.getCustomerInfo())) return confirm(userId);
-    const pkg = await monthlyPackage(access);
-    if (!pkg || !monthlyPrice(pkg))
-      throw new Error('The monthly plan is unavailable. Please try again later.');
+    const pkg = (await planPackages(access))[plan];
+    if (!pkg || !describePlan(plan, pkg))
+      throw new Error(`The ${plan} plan is unavailable. Please try again later.`);
     await requireUser(userId);
     try {
-      if (Platform.OS === 'android') {
-        // Buy the displayed full-price base plan, never an arbitrary default offer.
-        const option = pkg.product.subscriptionOptions!.find(
-          (item) =>
-            item.isBasePlan && !item.isPrepaid && item.storeProductId === pkg.product.identifier,
-        )!;
-        await Purchases.purchaseSubscriptionOption(option);
-      } else await Purchases.purchasePackage(pkg);
+      // Buy exactly the option that was shown: its trial, price and period.
+      if (Platform.OS === 'android') await Purchases.purchaseSubscriptionOption(planOption(pkg)!);
+      else await Purchases.purchasePackage(pkg);
     } catch (reason) {
       const error = reason as { code?: string; userCancelled?: boolean } | undefined;
       if (error?.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR || error?.userCancelled)

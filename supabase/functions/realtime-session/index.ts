@@ -702,7 +702,7 @@ export default {
         return Response.json(
           {
             error:
-              'You have used the free call for this unit. Unlimited unit calls come with Vokeno Plus.',
+              'You have used the free call for this unit. With Vokeno Plus you can repeat unit calls.',
             reason: 'free-call-used',
           },
           { status: 402 },

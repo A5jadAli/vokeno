@@ -58,7 +58,7 @@ WRITING FEEDBACK AND SMART REVIEW
 • Track your progress and streaks
 
 FREE TO START
-Lessons, review and placement are free. Live AI practice includes a free daily allowance. Vokeno Plus is an optional monthly subscription with more live practice; Google Play shows the price in your currency before you pay, and you can cancel anytime in Google Play.
+Lessons, review and placement are free. Live AI practice includes a free daily allowance, and each unit includes a free coach call. Vokeno Plus is an optional monthly or annual subscription with more live practice. Google Play shows the price in your currency and any free-trial terms before you pay, and you can cancel anytime in Google Play.
 
 HONEST BY DESIGN
 Vokeno is independent of IELTS and is not affiliated with the British Council, IDP or Cambridge. It does not award official band scores or certificates. AI feedback can be wrong, and you can report any AI response inside the app.
@@ -110,7 +110,7 @@ IELTS اسپیکنگ کی تیاری
 • الفاظ بھولنے سے پہلے دوبارہ سامنے آتے ہیں
 
 مفت آغاز
-اسباق، دہرائی اور لیول ٹیسٹ مفت ہیں۔ لائیو AI مشق میں روزانہ مفت حصہ شامل ہے۔ Vokeno Plus ایک اختیاری ماہانہ سبسکرپشن ہے؛ قیمت ادائیگی سے پہلے Google Play آپ کی کرنسی میں دکھاتا ہے، اور آپ جب چاہیں منسوخ کر سکتے ہیں۔
+اسباق، دہرائی اور لیول ٹیسٹ مفت ہیں۔ لائیو AI مشق میں روزانہ مفت حصہ شامل ہے، اور ہر یونٹ کے ساتھ کوچ سے ایک مفت کال۔ Vokeno Plus ایک اختیاری ماہانہ یا سالانہ سبسکرپشن ہے؛ قیمت اور مفت ٹرائل کی شرائط ادائیگی سے پہلے Google Play آپ کی کرنسی میں دکھاتا ہے، اور آپ جب چاہیں منسوخ کر سکتے ہیں۔
 
 ایپ انگریزی میں ہے۔ Vokeno کا IELTS، برٹش کونسل، IDP یا Cambridge سے کوئی تعلق نہیں، اور یہ کوئی سرکاری بینڈ اسکور یا سرٹیفکیٹ نہیں دیتی۔ AI فیڈبیک غلط بھی ہو سکتا ہے، اور آپ ایپ میں کسی بھی AI جواب کی رپورٹ کر سکتے ہیں۔
 
@@ -157,7 +157,7 @@ AUSSPRACHE, SCHREIBEN UND WIEDERHOLUNG
 • Wörter kommen zurück, kurz bevor du sie vergisst
 
 KOSTENLOS STARTEN
-Lektionen, Wiederholung und Einstufung sind kostenlos. Live-Übungen mit der KI enthalten ein tägliches Gratiskontingent. Vokeno Plus ist ein optionales Monatsabo; Google Play zeigt den Preis vor dem Kauf in deiner Währung an, und du kannst jederzeit in Google Play kündigen.
+Lektionen, Wiederholung und Einstufung sind kostenlos. Live-Übungen mit der KI enthalten ein tägliches Gratiskontingent, und zu jeder Einheit gehört ein kostenloser Anruf mit dem Coach. Vokeno Plus ist ein optionales Monats- oder Jahresabo; Google Play zeigt den Preis und die Bedingungen eines Gratis-Testzeitraums vor dem Kauf in deiner Währung an, und du kannst jederzeit in Google Play kündigen.
 
 Die App ist auf Englisch. Vokeno ist unabhängig von IELTS und nicht mit dem British Council, IDP oder Cambridge verbunden. Es vergibt keine offiziellen Band-Scores oder Zertifikate. KI-Feedback kann Fehler enthalten, und du kannst jede KI-Antwort in der App melden.
 
