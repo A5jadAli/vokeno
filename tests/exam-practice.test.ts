@@ -83,11 +83,26 @@ describe('speaking mock cards', () => {
     expect(speakingCards.filter((card) => card.track === 'DE').length).toBeGreaterThanOrEqual(6);
     for (const card of speakingCards) {
       expect(card.bullets.length).toBeGreaterThanOrEqual(4);
-      expect(card.prepSeconds).toBeGreaterThanOrEqual(60);
+      // A1 tasks are short; the others keep at least a minute to prepare.
+      expect(card.prepSeconds).toBeGreaterThanOrEqual(/a1/.test(card.part) ? 30 : 60);
       const brief = examinerBrief(card);
       expect(brief).toContain(card.title);
       expect(brief).toMatch(/Never give a (band )?score/);
     }
     expect(getSpeakingCard('not-a-card')).toBeUndefined();
+  });
+
+  it('has A1 cards for Goethe and DELE practice before a goal date, never scored', () => {
+    const a1 = speakingCards.filter((card) => /a1/.test(card.part));
+    expect(new Set(a1.filter((card) => card.track === 'DE').map((card) => card.part))).toEqual(
+      new Set(['goethe-a1-intro', 'goethe-a1-ask', 'goethe-a1-request']),
+    );
+    expect(new Set(a1.filter((card) => card.track === 'ES').map((card) => card.part))).toEqual(
+      new Set(['dele-a1-intro', 'dele-a1-topic', 'dele-a1-dialogue']),
+    );
+    for (const card of a1) {
+      expect(card.gloss).toBeTruthy();
+      expect(examinerBrief(card)).toMatch(/Never give a score, a pass or fail/);
+    }
   });
 });

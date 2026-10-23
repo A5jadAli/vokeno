@@ -16,6 +16,10 @@ export type Database = {
         Args: { p_user_id: string; p_kind: string };
         Returns: { allowed: boolean; reason?: string; retryAfter?: number };
       };
+      voka_unit_call: {
+        Args: { p_action: string; p_user_id: string; p_call_id: string };
+        Returns: { allowed?: boolean; plus?: boolean; reason?: string; released?: boolean };
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

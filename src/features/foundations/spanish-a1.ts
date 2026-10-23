@@ -392,6 +392,8 @@ export const spanishA1Lessons = defineLessons('ES', [
   },
   {
     id: 'es-cafe',
+    retired: true,
+    replacedBy: 'es-a1-u6-words',
     level: 'A1',
     title: 'Order at a café',
     outcome: 'Order a drink, make one change and ask to pay.',

@@ -160,9 +160,14 @@ describe('lessons', () => {
 
   it('continues from the chosen starting point instead of lesson one', () => {
     const lessons = getTrackLessons('ES');
-    const cafe = lessons.findIndex((lesson) => lesson.id === 'es-cafe');
-    expect(plan({ startAt: 'es-cafe' }).steps[0].href).toBe('/foundation/es-cafe');
-    const step = plan({ progress: { 'es-cafe': completed() }, startAt: 'es-cafe' }).steps[0];
+    const cafe = lessons.findIndex((lesson) => lesson.id === 'es-a1-u6-words');
+    expect(plan({ startAt: 'es-a1-u6-words' }).steps[0].href).toBe('/foundation/es-a1-u6-words');
+    // A start saved for the retired starter café lesson moves to the unit that replaced it.
+    expect(plan({ startAt: 'es-cafe' }).steps[0].href).toBe('/foundation/es-a1-u6-words');
+    const step = plan({
+      progress: { 'es-a1-u6-words': completed() },
+      startAt: 'es-a1-u6-words',
+    }).steps[0];
     expect(step.href).toBe(`/foundation/${lessons[cafe + 1].id}`);
   });
 });

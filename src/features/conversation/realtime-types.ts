@@ -20,6 +20,9 @@ export type StartRealtimeSessionOptions = {
   unitId?: string;
   /** A whitelisted exam task card, for speaking mocks. */
   cardId?: string;
+  /** A lesson-linked unit call, and what the learner chose to let the coach remember. */
+  callId?: string;
+  memory?: { facts: string[]; mistakes: string[] };
 };
 
 export type RealtimeSessionHandle = {

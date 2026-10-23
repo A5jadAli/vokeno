@@ -241,6 +241,16 @@ export default function ProfileScreen() {
           <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
         </Pressable>
         <Pressable
+          accessibilityLabel="What your coach remembers"
+          accessibilityRole="button"
+          onPress={() => router.push('/coach-memory' as Href)}
+          style={({ pressed }) => [styles.settingRow, pressed && styles.pressed]}
+        >
+          <MaterialCommunityIcons color={Palette.ink} name="brain" size={20} />
+          <Text style={styles.settingLabel}>Coach memory</Text>
+          <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
+        </Pressable>
+        <Pressable
           accessibilityLabel={`Set goal date, currently ${formatTestDate(testDate)}`}
           accessibilityRole="button"
           onPress={() => router.push('/test-date' as Href)}

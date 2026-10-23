@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Redirect, type Href, useRouter } from 'expo-router';
+import { type Href, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -23,12 +23,87 @@ import {
 } from '../../supabase/functions/_shared/speaking-cards';
 import { trackColors } from '@/features/language/config';
 
+type Exam = { name: string; parts: SpeakingCardPart[]; unit?: string };
+
+/** The exam a mock practises: German has A1 (goal-date practice) and B1; Spanish has A1. */
+function examFor(track: 'DE' | 'EN' | 'ES', level?: string): Exam {
+  if (track === 'EN')
+    return { name: 'IELTS Speaking Part 2 and 3', parts: ['ielts-2'], unit: 'en-ielts-speaking' };
+  if (track === 'ES')
+    return {
+      name: 'DELE A1 expresión oral',
+      parts: ['dele-a1-intro', 'dele-a1-topic', 'dele-a1-dialogue'],
+    };
+  return level === 'A1'
+    ? {
+        name: 'Goethe-Zertifikat A1 Sprechen',
+        parts: ['goethe-a1-intro', 'goethe-a1-ask', 'goethe-a1-request'],
+      }
+    : {
+        name: 'Goethe-Zertifikat B1 Sprechen',
+        parts: ['goethe-plan', 'goethe-present'],
+        unit: 'de-b1-goethe-sprechen',
+      };
+}
+
+const partInfo: Record<SpeakingCardPart, { tab: string; kicker: string; how: string }> = {
+  'ielts-2': {
+    tab: 'Part 2',
+    kicker: 'Task card',
+    how: 'Prepare for one minute, then speak for up to two minutes while the examiner listens. Then answer a rounding-off question and two Part 3 discussion questions, and get feedback on fluency, vocabulary, grammar and pronunciation. The live session is capped at five minutes, so Part 3 is shorter than in the real test. No band score is given.',
+  },
+  'goethe-plan': {
+    tab: 'Plan together',
+    kicker: 'Teil 1',
+    how: 'Prepare, then plan the event with the coach as your partner. React to suggestions, agree on each point and summarise. You get feedback on interaction, not a score.',
+  },
+  'goethe-present': {
+    tab: 'Present a topic',
+    kicker: 'Teil 2',
+    how: 'Prepare, then present for about three minutes using all five points. The coach asks a question afterwards (Teil 3) and gives brief feedback. No score is given.',
+  },
+  'goethe-a1-intro': {
+    tab: 'Introduce yourself',
+    kicker: 'Teil 1',
+    how: 'Introduce yourself with the words on the card, then spell your name and give a phone number. Short, clear answers are what A1 needs. You get one strength and one thing to practise, not a score.',
+  },
+  'goethe-a1-ask': {
+    tab: 'Ask and answer',
+    kicker: 'Teil 2',
+    how: 'Ask one question with each word on the card, then answer the coach’s questions. Simple questions are fine. You get one strength and one thing to practise, not a score.',
+  },
+  'goethe-a1-request': {
+    tab: 'Polite requests',
+    kicker: 'Teil 3',
+    how: 'Make a polite request for each thing on the card and react to the coach’s requests. You get one strength and one thing to practise, not a score.',
+  },
+  'dele-a1-intro': {
+    tab: 'Introduce yourself',
+    kicker: 'Tarea 1',
+    how: 'Present yourself for one to two minutes using the points on the card, then answer two short questions. You get one strength and one thing to practise, not a score.',
+  },
+  'dele-a1-topic': {
+    tab: 'Talk about a topic',
+    kicker: 'Tarea 2',
+    how: 'Talk for about two minutes about the topic, then answer two short questions. Simple, clear sentences are what A1 needs. No score is given.',
+  },
+  'dele-a1-dialogue': {
+    tab: 'Café dialogue',
+    kicker: 'Tarea 4',
+    how: 'The coach is the waiter. Order, ask the price and pay, reacting to what they say. You get one strength and one thing to practise, not a score.',
+  },
+};
+
 export default function SpeakingMockScreen() {
   const [track] = useSelectedLanguage();
-  if (track === 'ES') return <Redirect href="/sprint?track=ES" />;
+  const params = useLocalSearchParams<{ level?: string }>();
   return (
     <PrimaryAccent colors={trackColors[track]}>
-      <SpeakingMock key={track} track={track} />
+      <SpeakingMock
+        key={`${track}-${params.level}`}
+        track={track}
+        exam={examFor(track, params.level)}
+      />
     </PrimaryAccent>
   );
 }
@@ -38,10 +113,9 @@ function pick(cards: SpeakingCard[], avoid?: string) {
   return pool[Math.floor(Math.random() * pool.length)] ?? cards[0];
 }
 
-function SpeakingMock({ track }: { track: 'DE' | 'EN' }) {
+function SpeakingMock({ track, exam }: { track: 'DE' | 'EN' | 'ES'; exam: Exam }) {
   const router = useRouter();
-  const parts: SpeakingCardPart[] =
-    track === 'EN' ? ['ielts-2'] : ['goethe-plan', 'goethe-present'];
+  const parts = exam.parts;
   const [part, setPart] = useState<SpeakingCardPart>(parts[0]);
   const deck = speakingCards.filter((card) => card.part === part);
   const [card, setCard] = useState(() => pick(deck));
@@ -58,11 +132,9 @@ function SpeakingMock({ track }: { track: 'DE' | 'EN' }) {
   }, [deadline]);
   const remaining = deadline ? Math.max(0, deadline - now) : card.prepSeconds * 1000;
   const preparing = deadline !== null;
-  const exam = track === 'EN' ? 'IELTS Speaking Part 2 and 3' : 'Goethe-Zertifikat B1 Sprechen';
-
   const start = () =>
     router.push(
-      `/conversation?track=${track}&unit=${track === 'EN' ? 'en-ielts-speaking' : 'de-b1-goethe-sprechen'}&card=${card.id}` as Href,
+      `/conversation?track=${track}${exam.unit ? `&unit=${exam.unit}` : ''}&card=${card.id}` as Href,
     );
 
   return (
@@ -97,7 +169,7 @@ function SpeakingMock({ track }: { track: 'DE' | 'EN' }) {
     >
       <LessonTopBar progress={preparing ? 0.5 : 0.1} />
       <View style={styles.body}>
-        <Text style={lessonText.meta}>{exam} · practice mock</Text>
+        <Text style={lessonText.meta}>{exam.name} · practice mock</Text>
         <Text accessibilityRole="header" style={lessonText.title}>
           Speaking mock
         </Text>
@@ -116,7 +188,7 @@ function SpeakingMock({ track }: { track: 'DE' | 'EN' }) {
                 style={[styles.tab, part === value && styles.tabActive]}
               >
                 <Text style={[styles.tabText, part === value && styles.tabTextActive]}>
-                  {value === 'goethe-plan' ? 'Plan together' : 'Present a topic'}
+                  {partInfo[value].tab}
                 </Text>
               </Pressable>
             ))}
@@ -125,11 +197,7 @@ function SpeakingMock({ track }: { track: 'DE' | 'EN' }) {
 
         <View style={styles.card}>
           <Text style={[styles.cardKicker, { color: trackColors[track].accent }]}>
-            {card.part === 'ielts-2'
-              ? 'Task card'
-              : card.part === 'goethe-plan'
-                ? 'Teil 1'
-                : 'Teil 2'}
+            {partInfo[card.part].kicker}
           </Text>
           <Text style={styles.cardTitle}>{card.title}</Text>
           {card.part === 'ielts-2' ? <Text style={styles.cardSub}>You should say:</Text> : null}
@@ -172,11 +240,7 @@ function SpeakingMock({ track }: { track: 'DE' | 'EN' }) {
         ) : (
           <>
             <InfoCard icon="information-outline" title="How the mock works">
-              {card.part === 'ielts-2'
-                ? 'Prepare for one minute, then speak for up to two minutes while the examiner listens. Then answer a rounding-off question and two Part 3 discussion questions, and get feedback on fluency, vocabulary, grammar and pronunciation. The live session is capped at five minutes, so Part 3 is shorter than in the real test. No band score is given.'
-                : card.part === 'goethe-plan'
-                  ? 'Prepare, then plan the event with the coach as your partner. React to suggestions, agree on each point and summarise. You get feedback on interaction, not a score.'
-                  : 'Prepare, then present for about three minutes using all five points. The coach asks a question afterwards (Teil 3) and gives brief feedback. No score is given.'}
+              {partInfo[card.part].how}
             </InfoCard>
             <TextButton title="Try a different card" onPress={() => setCard(pick(deck, card.id))} />
           </>

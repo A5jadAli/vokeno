@@ -57,7 +57,7 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
-test('Spanish Units 1 to 5 guide a beginner through twenty sessions with saved forms and listening help', async ({
+test('Spanish Units 1 to 6 guide a beginner through twenty-four sessions with saved forms and listening help', async ({
   page,
 }, testInfo) => {
   test.setTimeout(420_000);
@@ -70,25 +70,28 @@ test('Spanish Units 1 to 5 guide a beginner through twenty sessions with saved f
     let helped = 0;
     for (const step of lesson.steps) {
       if (step.kind === 'form') {
+        // One field is wrong on purpose: the phone where the form has one, otherwise the last.
+        const wrong =
+          step.fields.find((field) => field.label === 'Teléfono') ?? step.fields.at(-1)!;
+        const wrongValue = wrong.label === 'Teléfono' ? '5501000024' : 'nadie@example.com';
         for (const field of step.fields) {
-          const value = field.label === 'Teléfono' ? '5501000024' : field.accepted[0];
+          const value = field === wrong ? wrongValue : field.accepted[0];
           await page.getByRole('textbox', { name: field.label, exact: true }).fill(value);
         }
         await page.reload();
         // Drafts survive a reload, including ñ in a surname where the form has one.
-        if (step.fields.some((field) => field.label === 'Apellido'))
+        const surname = step.fields.find((field) => field.label === 'Apellido');
+        if (surname)
           await expect(page.getByRole('textbox', { name: 'Apellido', exact: true })).toHaveValue(
-            'Muñoz',
+            surname.accepted[0],
           );
-        await expect(page.getByRole('textbox', { name: 'Teléfono', exact: true })).toHaveValue(
-          '5501000024',
-        );
+        const wrongBox = page.getByRole('textbox', { name: wrong.label, exact: true });
+        await expect(wrongBox).toHaveValue(wrongValue);
         await page.getByRole('button', { name: 'Check', exact: true }).click();
         await expect(page.getByText('Check the marked fields', { exact: true })).toBeVisible();
-        const phone = step.fields.find((field) => field.label === 'Teléfono')!;
-        await expect(page.getByText(phone.hint, { exact: true })).toBeVisible();
-        await expect(page.getByRole('textbox', { name: 'Teléfono', exact: true })).toBeFocused();
-        await page.getByRole('textbox', { name: 'Teléfono', exact: true }).scrollIntoViewIfNeeded();
+        await expect(page.getByText(wrong.hint, { exact: true })).toBeVisible();
+        await expect(wrongBox).toBeFocused();
+        await wrongBox.scrollIntoViewIfNeeded();
         await page.screenshot({
           path: testInfo.outputPath(`spanish-form-feedback-${lesson.id}.png`),
           fullPage: true,

@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useFocusEffect } from 'expo-router';
+import { type Href, useFocusEffect, useRouter } from 'expo-router';
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
@@ -27,6 +27,7 @@ import { Palette, VokaFonts } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { haptic } from '@/features/feedback/haptics';
 import {
+  foundationLessons,
   gradeFoundationWriting,
   normaliseFoundationAnswer,
   optionOrder,
@@ -40,8 +41,9 @@ import {
   MAX_FOUNDATION_ATTEMPTS,
   type FoundationEntry,
 } from '@/features/foundations/progress';
-import { isGradedStep } from '@/features/foundations/types';
+import { isGradedStep, type Skill, unitName, usesRetake } from '@/features/foundations/types';
 import { lessonContext } from '@/features/journey/course';
+import { getUnitCall } from '../../supabase/functions/_shared/unit-calls';
 import { lessonLines, stepLines } from '@/features/audio/inventory';
 import { languageDetails, trackColors } from '@/features/language/config';
 import { useLanguageSelection } from '@/features/language/selection';
@@ -84,7 +86,13 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
   const [ready, setReady] = useState<{ check: () => void } | null>(null);
   const [mistakes, setMistakes] = useState(0);
 
-  const steps = lesson.steps;
+  // A checkpoint alternates between two versions. While a run is open it keeps the version it
+  // started with; once finished, the results describe the version just completed.
+  const finishedRun = entry.step >= lesson.steps.length && entry.attempts.length > 0;
+  const retakeRun = finishedRun
+    ? Boolean(entry.attempts.at(-1)?.retake && lesson.retakeSteps)
+    : usesRetake(lesson, entry.attempts);
+  const steps = retakeRun ? lesson.retakeSteps! : lesson.steps;
   const index = Math.min(entry.step, steps.length);
   // Ready players for this step and the next, so their audio starts the moment it is tapped.
   useEffect(() => {
@@ -127,6 +135,7 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
           at: new Date().toISOString(),
           correctFirstTry: entry.firstTry.slice(0, graded).filter(Boolean).length,
           spoken: spoken || entry.answers[0] === 1,
+          ...(retakeRun ? { retake: true } : {}),
         },
       ].slice(-MAX_FOUNDATION_ATTEMPTS),
     });
@@ -218,7 +227,7 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
   return (
     <PrimaryAccent colors={colors}>
       <AppScreen showNav={false} keyboardAware footer={footer}>
-        <LessonTopBar progress={progress} label={`Unit ${lesson.unit.number}`} />
+        <LessonTopBar progress={progress} label={unitName(lesson.unit)} />
         <View style={styles.body}>
           {speech.error ? (
             <Text accessibilityRole="alert" style={styles.alert}>
@@ -228,7 +237,7 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
           {index === 0 && step ? (
             <View style={styles.intro}>
               <Text style={lessonText.meta}>
-                Unit {lesson.unit.number} · {lesson.unit.title} · {lesson.session}
+                {unitName(lesson.unit)} · {lesson.unit.title} · {lesson.session}
               </Text>
               <Text accessibilityRole="header" style={lessonText.title}>
                 {lesson.title}
@@ -263,6 +272,15 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
               correct={lastAttempt.correctFirstTry}
               spoken={lastAttempt.spoken}
               onRetry={retry}
+              results={
+                lesson.unit.checkpoint ? (
+                  <CheckpointResults
+                    steps={steps}
+                    firstTry={entry.firstTry}
+                    spoken={lastAttempt.spoken}
+                  />
+                ) : null
+              }
             />
           ) : null}
         </View>
@@ -910,12 +928,15 @@ function Complete({
   correct,
   spoken,
   onRetry,
+  results,
 }: {
   lesson: StepLesson;
   graded: number;
   correct: number;
   spoken: boolean;
   onRetry: () => void;
+  /** A checkpoint's results by skill, shown before the usual summary. */
+  results?: ReactNode;
 }) {
   const colors = trackColors[lesson.track];
   return (
@@ -942,7 +963,9 @@ function Complete({
           value={lesson.phrases.length ? 'Scheduled' : 'No new phrases'}
         />
       </Animated.View>
+      {results}
       <UnitStep lesson={lesson} />
+      {lesson.session === 'Exam task' ? <UnitCallInvite lesson={lesson} /> : null}
       <InfoCard icon="check-circle-outline" title="What you practised">
         {lesson.outcome}
       </InfoCard>
@@ -953,6 +976,141 @@ function Complete({
       </Text>
       <TextButton title="Practise this lesson again" onPress={onRetry} />
     </>
+  );
+}
+
+/** After a unit's last session: talk it through with the unit's character for three minutes. */
+function UnitCallInvite({ lesson }: { lesson: StepLesson }) {
+  const router = useRouter();
+  const used = useCoachingStore((state) => state.usedUnitCalls);
+  const call = getUnitCall(lesson.unit.id);
+  if (!call || call.track !== lesson.track) return null;
+  const colors = trackColors[lesson.track];
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`Talk it through: a three-minute call with ${call.character}`}
+      onPress={() => router.push(`/conversation?track=${lesson.track}&call=${call.id}` as Href)}
+      style={({ pressed }) => [
+        styles.callInvite,
+        { backgroundColor: colors.tint },
+        pressed && styles.pressed,
+      ]}
+    >
+      <View style={[styles.callIcon, { backgroundColor: colors.accent }]}>
+        <MaterialCommunityIcons name="phone-outline" size={22} color={colors.onAccent} />
+      </View>
+      <View style={{ flex: 1, gap: 2 }}>
+        <Text style={styles.unitStepTitle}>Talk it through with {call.character}</Text>
+        <Text style={styles.unitStepNote}>
+          A three-minute call using this unit’s phrases.{' '}
+          {used.includes(call.id)
+            ? 'More calls come with Vokeno Plus.'
+            : 'Your first call for this unit is free.'}
+        </Text>
+      </View>
+      <MaterialCommunityIcons name="chevron-right" size={22} color={Palette.secondary} />
+    </Pressable>
+  );
+}
+
+const skillNames: Record<Skill, string> = {
+  reading: 'Reading',
+  listening: 'Listening',
+  writing: 'Writing',
+  speaking: 'Speaking',
+};
+
+/**
+ * A checkpoint's results, one line per skill, then the lessons that would help most. Speaking is
+ * self-practice here, so it is never scored. Nothing is locked: the next unit stays open.
+ */
+function CheckpointResults({
+  steps,
+  firstTry,
+  spoken,
+}: {
+  steps: LessonStep[];
+  firstTry: boolean[];
+  spoken: boolean;
+}) {
+  const router = useRouter();
+  const marked = steps.filter(isGradedStep);
+  const tally = new Map<Skill, { right: number; total: number }>();
+  const revisit: string[] = [];
+  marked.forEach((step, index) => {
+    const right = firstTry[index] === true;
+    if (step.skill) {
+      const entry = tally.get(step.skill) ?? { right: 0, total: 0 };
+      tally.set(step.skill, { right: entry.right + Number(right), total: entry.total + 1 });
+    }
+    if (!right && step.revisit && !revisit.includes(step.revisit)) revisit.push(step.revisit);
+  });
+  const lessons = revisit
+    .map((id) => foundationLessons.find((item) => item.id === id))
+    .filter((item): item is StepLesson => Boolean(item && item.format === 'steps'))
+    .slice(0, 3);
+  return (
+    <View style={styles.results} accessibilityLabel="Results by skill">
+      <Text style={styles.unitStepTitle}>Your results by skill</Text>
+      {(['reading', 'listening', 'writing', 'speaking'] as const).map((skill) => {
+        const entry = tally.get(skill);
+        const value =
+          skill === 'speaking'
+            ? spoken
+              ? 'Practised, not scored'
+              : 'Not practised yet'
+            : entry
+              ? `${entry.right} of ${entry.total}`
+              : 'Not checked';
+        const strong = entry && entry.right === entry.total;
+        return (
+          <View key={skill} style={styles.resultRow}>
+            <MaterialCommunityIcons
+              name={
+                skill === 'speaking'
+                  ? 'microphone-outline'
+                  : strong
+                    ? 'check-circle'
+                    : 'circle-half-full'
+              }
+              size={20}
+              color={strong ? Feedback.correctAccent : Palette.secondary}
+            />
+            <Text style={styles.resultSkill}>{skillNames[skill]}</Text>
+            <Text style={styles.resultValue}>{value}</Text>
+          </View>
+        );
+      })}
+      <Text style={[styles.unitStepTitle, { marginTop: 8 }]}>
+        {lessons.length ? 'Practise next' : 'Nothing to fix'}
+      </Text>
+      {lessons.length ? (
+        lessons.map((item) => (
+          <Pressable
+            key={item.id}
+            accessibilityRole="button"
+            accessibilityLabel={`Practise ${item.title}, ${unitName(item.unit)}`}
+            onPress={() => router.push(`/foundation/${item.id}` as Href)}
+            style={({ pressed }) => [styles.revisit, pressed && styles.pressed]}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={styles.resultSkill}>{item.title}</Text>
+              <Text style={styles.unitStepNote}>
+                {unitName(item.unit)} · {item.session}
+              </Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={22} color={Palette.secondary} />
+          </Pressable>
+        ))
+      ) : (
+        <Text style={styles.unitStepNote}>Everything here was right first time. Carry on.</Text>
+      )}
+      <Text style={styles.unitStepNote}>
+        A checkpoint shows what to practise. It is not an exam score, and the next unit is open
+        either way.
+      </Text>
+    </View>
   );
 }
 
@@ -1181,6 +1339,42 @@ const styles = StyleSheet.create({
   unitStepRow: { alignItems: 'center', flexDirection: 'row', gap: 10 },
   unitStepCount: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
   unitStepNote: { color: Palette.secondary, fontFamily: VokaFonts.body, fontSize: 14 },
+  callInvite: {
+    alignItems: 'center',
+    borderRadius: 18,
+    flexDirection: 'row',
+    gap: 12,
+    padding: 14,
+  },
+  callIcon: {
+    alignItems: 'center',
+    borderRadius: 14,
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
+  },
+  results: {
+    backgroundColor: Palette.white,
+    borderColor: Palette.line,
+    borderRadius: 20,
+    borderWidth: 1,
+    gap: 10,
+    padding: 16,
+  },
+  resultRow: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  resultSkill: { color: Palette.ink, flex: 1, fontFamily: VokaFonts.bodySemiBold, fontSize: 15 },
+  resultValue: { color: Palette.secondary, fontFamily: VokaFonts.bodySemiBold, fontSize: 14 },
+  revisit: {
+    alignItems: 'center',
+    borderColor: Palette.line,
+    borderRadius: 14,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 8,
+    minHeight: 56,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
 });
 
 /** The unit this lesson belongs to, with its progress moving forward by this lesson. */

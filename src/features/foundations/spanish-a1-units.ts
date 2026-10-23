@@ -3,8 +3,10 @@ import { spanishA1Unit2 } from './spanish-a1-unit-2';
 import { spanishA1Unit3 } from './spanish-a1-unit-3';
 import { spanishA1Unit4 } from './spanish-a1-unit-4';
 import { spanishA1Unit5 } from './spanish-a1-unit-5';
+import { spanishA1Checkpoint1 } from './spanish-a1-checkpoint-1';
+import { spanishA1Unit6 } from './spanish-a1-unit-6';
 
-// The first five units are available for the native-review pilot.
+// The first six units are available for the native-review pilot.
 // Familiar recorded phrases are deliberately retrieved in new situations. The final task
 // introduces no new review cards. Scripts and existing audio still need native-teacher review.
 const unit1 = defineUnit(
@@ -506,4 +508,6 @@ export const spanishA1Units = [
   ...spanishA1Unit3,
   ...spanishA1Unit4,
   ...spanishA1Unit5,
+  ...spanishA1Checkpoint1,
+  ...spanishA1Unit6,
 ];

@@ -1,14 +1,23 @@
 // Original exam-style speaking task cards, shared by the app and the realtime function.
 // The function accepts only these ids, so a client cannot inject its own instructions.
-export type SpeakingCardPart = 'ielts-2' | 'goethe-plan' | 'goethe-present';
+export type SpeakingCardPart =
+  | 'ielts-2'
+  | 'goethe-plan'
+  | 'goethe-present'
+  | 'goethe-a1-intro'
+  | 'goethe-a1-ask'
+  | 'goethe-a1-request'
+  | 'dele-a1-intro'
+  | 'dele-a1-topic'
+  | 'dele-a1-dialogue';
 
 export type SpeakingCard = {
   id: string;
-  track: 'EN' | 'DE';
+  track: 'EN' | 'DE' | 'ES';
   part: SpeakingCardPart;
   title: string;
   bullets: string[];
-  /** English gloss for German cards. */
+  /** English gloss for German and Spanish cards. */
   gloss?: string;
   prepSeconds: number;
   speakSeconds: number;
@@ -147,6 +156,79 @@ export const speakingCards: SpeakingCard[] = [
     prepSeconds: 90,
     speakSeconds: 180,
   },
+  // A1 cards: original tasks in the shape of Goethe-Zertifikat A1 Sprechen and DELE A1
+  // expresión e interacción orales. For practice before a goal date, never a score.
+  {
+    id: 'goethe-a1-intro',
+    track: 'DE',
+    part: 'goethe-a1-intro',
+    title: 'Stellen Sie sich vor.',
+    gloss: 'Introduce yourself, using the words on the card.',
+    bullets: ['Name?', 'Alter?', 'Land?', 'Wohnort?', 'Sprachen?', 'Beruf?', 'Hobby?'],
+    prepSeconds: 30,
+    speakSeconds: 90,
+  },
+  {
+    id: 'goethe-a1-food',
+    track: 'DE',
+    part: 'goethe-a1-ask',
+    title: 'Thema: Essen und Trinken',
+    gloss:
+      'Topic: food and drink. Ask a question with each word, and answer the partner’s questions.',
+    bullets: ['Frühstück', 'Lieblingsessen', 'Kaffee', 'Restaurant'],
+    prepSeconds: 30,
+    speakSeconds: 120,
+  },
+  {
+    id: 'goethe-a1-weekend',
+    track: 'DE',
+    part: 'goethe-a1-ask',
+    title: 'Thema: Wochenende',
+    gloss: 'Topic: the weekend. Ask a question with each word, and answer the partner’s questions.',
+    bullets: ['Samstag', 'Freunde', 'Sport', 'Kino'],
+    prepSeconds: 30,
+    speakSeconds: 120,
+  },
+  {
+    id: 'goethe-a1-requests',
+    track: 'DE',
+    part: 'goethe-a1-request',
+    title: 'Bitten Sie höflich und reagieren Sie.',
+    gloss: 'Make a polite request for each thing, and respond to the partner’s requests.',
+    bullets: ['ein Glas Wasser', 'das Fenster', 'einen Stift', 'die Rechnung'],
+    prepSeconds: 30,
+    speakSeconds: 120,
+  },
+  {
+    id: 'dele-a1-intro',
+    track: 'ES',
+    part: 'dele-a1-intro',
+    title: 'Preséntate.',
+    gloss: 'Introduce yourself for one to two minutes, using the points on the card.',
+    bullets: ['Nombre', 'Edad', 'Nacionalidad', 'Dónde vives', 'Idiomas', 'Profesión o estudios'],
+    prepSeconds: 30,
+    speakSeconds: 90,
+  },
+  {
+    id: 'dele-a1-people',
+    track: 'ES',
+    part: 'dele-a1-topic',
+    title: 'Las personas importantes en tu vida.',
+    gloss: 'Talk for about two minutes about the people who matter to you.',
+    bullets: ['¿Quiénes son?', '¿Cómo se llaman?', '¿Cómo son?', '¿Dónde viven?'],
+    prepSeconds: 60,
+    speakSeconds: 120,
+  },
+  {
+    id: 'dele-a1-cafe',
+    track: 'ES',
+    part: 'dele-a1-dialogue',
+    title: 'En una cafetería.',
+    gloss: 'Order at a café: something to drink and to eat, ask the price and pay.',
+    bullets: ['Pide una bebida.', 'Pide algo de comer.', 'Pregunta el precio.', 'Paga.'],
+    prepSeconds: 30,
+    speakSeconds: 120,
+  },
 ];
 
 export function getSpeakingCard(id?: string) {
@@ -155,6 +237,20 @@ export function getSpeakingCard(id?: string) {
 
 export function examinerBrief(card: SpeakingCard) {
   const points = card.bullets.join('; ');
+  const a1 =
+    'This is A1 practice before the learner’s exam date. Speak slowly and clearly in short sentences, as a friendly examiner. At the end give one strength and one thing to practise, in simple target-language words with a little English. Never give a score, a pass or fail, or claim to be an official examiner.';
+  if (card.part === 'goethe-a1-intro')
+    return `${a1} Goethe-Zertifikat A1 style, Teil 1, task "${card.title}": the learner introduces themselves using the keywords ${points}. Say only "Bitte stellen Sie sich vor." Listen. Then ask them to spell their name, and ask for a (fictional) phone number, one at a time.`;
+  if (card.part === 'goethe-a1-ask')
+    return `${a1} Goethe-Zertifikat A1 style, Teil 2, topic "${card.title}". Take turns: the learner asks you one question for each word (${points}) and you answer briefly; then you ask them one question per word. Speak German.`;
+  if (card.part === 'goethe-a1-request')
+    return `${a1} Goethe-Zertifikat A1 style, Teil 3, task "${card.title}". Take turns making polite requests about: ${points}. React naturally to theirs (Ja, natürlich / Hier, bitte / Leider nicht). Speak German.`;
+  if (card.part === 'dele-a1-intro')
+    return `${a1} DELE A1 style, presentación personal, task "${card.title}". The learner presents themselves for one to two minutes covering: ${points}. Say only "Preséntate, por favor." Listen without interrupting, then ask two short follow-up questions. Speak everyday Mexican Spanish.`;
+  if (card.part === 'dele-a1-topic')
+    return `${a1} DELE A1 style, exposición de un tema: "${card.title}" covering ${points}. Say only "Cuando quieras, empieza." Listen for about two minutes, then ask two short questions about what they said. Speak everyday Mexican Spanish.`;
+  if (card.part === 'dele-a1-dialogue')
+    return `${a1} DELE A1 style, diálogo, task "${card.title}": you are a waiter at a café; the learner must ${points}. Offer choices, give prices in pesos and react naturally. Speak everyday Mexican Spanish.`;
   if (card.part === 'ielts-2')
     return `This is a compressed IELTS-style Speaking Part 2 and 3 practice that must fit into a five-minute session. The learner has this task card: "${card.title} You should say: ${points}." They have already prepared for one minute. Say only "Please start speaking now." Then listen without interrupting for up to two minutes, even through pauses. If they stop very early, give one short prompt to continue. Then ask one brief rounding-off question, followed by exactly two Part 3 discussion questions linked to the topic, one at a time, the second more abstract than the first. Keep your own turns very short. Straight after the second answer, give about thirty seconds of spoken feedback on Fluency and coherence, Vocabulary, Grammar and Pronunciation: one strength and one priority overall. Never give a band score or claim to be an official examiner.`;
   if (card.part === 'goethe-plan')

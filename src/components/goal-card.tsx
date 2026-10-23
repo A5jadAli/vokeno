@@ -70,44 +70,75 @@ export function GoalCard({ goal, track }: { goal: GoalPlan; track: LanguageTrack
   const headline = `${languageDetails[track].name} ${level} by ${shortDate(goal.date)}`;
   const showWeek = goal.perWeek > 0 && goal.daysLeft > 0;
   const share = showWeek ? Math.min(1, goal.doneThisWeek / goal.perWeek) : 1;
+  // In the last six weeks before an A1 exam, offer the speaking test in its exam format.
+  const examPractice =
+    goal.level === 'A1' &&
+    (track === 'DE' || track === 'ES') &&
+    goal.daysLeft > 0 &&
+    goal.daysLeft <= 42;
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${headline}. ${status.label}. ${progressLine(goal)}. Change goal`}
-      onPress={() => router.push('/test-date' as Href)}
-      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
-    >
-      <View style={styles.top}>
-        <View style={[styles.icon, { backgroundColor: colors.tint }]}>
-          <MaterialCommunityIcons color={Palette.ink} name="flag-checkered" size={20} />
+    <View style={styles.card}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`${headline}. ${status.label}. ${progressLine(goal)}. Change goal`}
+        onPress={() => router.push('/test-date' as Href)}
+        style={({ pressed }) => [styles.main, pressed && styles.pressed]}
+      >
+        <View style={styles.top}>
+          <View style={[styles.icon, { backgroundColor: colors.tint }]}>
+            <MaterialCommunityIcons color={Palette.ink} name="flag-checkered" size={20} />
+          </View>
+          <View style={styles.copy}>
+            <Text numberOfLines={2} style={styles.headline}>
+              {headline}
+            </Text>
+            <Text style={styles.meta}>{progressLine(goal)}</Text>
+          </View>
+          <View style={[styles.pill, { backgroundColor: status.bg }]}>
+            <Text style={[styles.pillText, { color: status.ink }]}>{status.label}</Text>
+          </View>
         </View>
-        <View style={styles.copy}>
-          <Text numberOfLines={2} style={styles.headline}>
-            {headline}
-          </Text>
-          <Text style={styles.meta}>{progressLine(goal)}</Text>
-        </View>
-        <View style={[styles.pill, { backgroundColor: status.bg }]}>
-          <Text style={[styles.pillText, { color: status.ink }]}>{status.label}</Text>
-        </View>
-      </View>
-      {showWeek ? (
-        <View style={styles.week}>
-          <View style={styles.weekTop}>
-            <Text style={styles.weekLabel}>This week</Text>
-            <Text style={styles.weekCount}>
-              {Math.min(goal.doneThisWeek, goal.perWeek)} of {plural(goal.perWeek, 'lesson')}
+        {showWeek ? (
+          <View style={styles.week}>
+            <View style={styles.weekTop}>
+              <Text style={styles.weekLabel}>This week</Text>
+              <Text style={styles.weekCount}>
+                {Math.min(goal.doneThisWeek, goal.perWeek)} of {plural(goal.perWeek, 'lesson')}
+              </Text>
+            </View>
+            <View style={styles.track}>
+              <View
+                style={[styles.fill, { backgroundColor: colors.accent, width: `${share * 100}%` }]}
+              />
+            </View>
+          </View>
+        ) : null}
+        <Text style={styles.advice}>{advice(goal, level)}</Text>
+      </Pressable>
+      {examPractice ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Practise the ${track === 'DE' ? 'Goethe A1' : 'DELE A1'} speaking test`}
+          onPress={() => router.push(`/speaking-mock?track=${track}&level=A1` as Href)}
+          style={({ pressed }) => [
+            styles.exam,
+            { backgroundColor: colors.tint },
+            pressed && styles.pressed,
+          ]}
+        >
+          <MaterialCommunityIcons color={Palette.ink} name="microphone-outline" size={20} />
+          <View style={styles.copy}>
+            <Text style={styles.examTitle}>
+              Practise the {track === 'DE' ? 'Goethe A1' : 'DELE A1'} speaking test
+            </Text>
+            <Text style={styles.meta}>
+              Exam-style cards with your coach. Practice, not a score.
             </Text>
           </View>
-          <View style={styles.track}>
-            <View
-              style={[styles.fill, { backgroundColor: colors.accent, width: `${share * 100}%` }]}
-            />
-          </View>
-        </View>
+          <MaterialCommunityIcons color={Palette.secondary} name="chevron-right" size={20} />
+        </Pressable>
       ) : null}
-      <Text style={styles.advice}>{advice(goal, level)}</Text>
-    </Pressable>
+    </View>
   );
 }
 
@@ -141,6 +172,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 18,
     padding: 16,
   },
+  main: { gap: 12 },
+  exam: { alignItems: 'center', borderRadius: 14, flexDirection: 'row', gap: 10, padding: 12 },
+  examTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: 14 },
   top: { alignItems: 'center', flexDirection: 'row', gap: 12 },
   icon: {
     alignItems: 'center',

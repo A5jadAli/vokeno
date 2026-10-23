@@ -112,6 +112,21 @@ type CoachingState = {
   recordSpeakingPractice: (track: LanguageTrack) => void;
   recordWritingPractice: (track: LanguageTrack) => void;
   recordSignal: (signal: Omit<CoachingSignal, 'count' | 'lastSeenAt'>) => void;
+  /**
+   * What the coach may recall in later unit calls: facts the learner shared and recurring slips.
+   * Stored on this device only (not in cloud sync); the learner can see, edit and clear it.
+   */
+  coachMemory: Partial<Record<LanguageTrack, CoachMemoryEntry>>;
+  /** Unit calls already started, so the free one per unit can be labelled honestly. */
+  usedUnitCalls: string[];
+  saveCallReview: (
+    track: LanguageTrack,
+    review: { facts: string[]; corrections: { said: string; better: string }[] },
+  ) => void;
+  forgetCoachFact: (track: LanguageTrack, fact: string) => void;
+  forgetCoachMistake: (track: LanguageTrack, better: string) => void;
+  clearCoachMemory: (track: LanguageTrack) => void;
+  markUnitCall: (callId: string) => void;
   resetCoaching: () => void;
   setCoachTone: (tone: CoachTone) => void;
   setGoal: (track: LanguageTrack, goal: SpeakingGoal) => void;
@@ -119,8 +134,19 @@ type CoachingState = {
   setTestDate: (track: LanguageTrack, date: string | null, level?: LessonLevel) => void;
 };
 
+export type CoachMemoryEntry = {
+  facts: string[];
+  /** Corrections from calls, most frequent first; the coach recycles the top few. */
+  mistakes: { said: string; better: string; count: number }[];
+};
+
+const MAX_FACTS = 8;
+const MAX_MISTAKES = 10;
+
 export type PersistedCoachingState = Pick<
   CoachingState,
+  | 'coachMemory'
+  | 'usedUnitCalls'
   | 'coachTone'
   | 'completedUnitIds'
   | 'preferences'
@@ -213,6 +239,8 @@ export const useCoachingStore = create<CoachingState>()(
       practiceLog: {},
       activityLog: {},
       sessions: {},
+      coachMemory: {},
+      usedUnitCalls: [],
       testDate: null,
       writingPracticeDates: [],
       foundations: {},
@@ -315,6 +343,68 @@ export const useCoachingStore = create<CoachingState>()(
               : [...state.writingPracticeDates, today].slice(-30),
           };
         }),
+      saveCallReview: (track, review) =>
+        set((state) => {
+          const current = state.coachMemory[track] ?? { facts: [], mistakes: [] };
+          const facts = [...review.facts, ...current.facts]
+            .map((fact) => fact.trim())
+            .filter(
+              (fact, index, all) =>
+                fact &&
+                all.findIndex((other) => other.toLowerCase() === fact.toLowerCase()) === index,
+            )
+            .slice(0, MAX_FACTS);
+          const mistakes = [...current.mistakes];
+          for (const correction of review.corrections) {
+            const found = mistakes.find(
+              (item) => item.better.toLowerCase() === correction.better.toLowerCase(),
+            );
+            if (found) found.count += 1;
+            else mistakes.push({ said: correction.said, better: correction.better, count: 1 });
+          }
+          mistakes.sort((a, b) => b.count - a.count);
+          return {
+            coachMemory: {
+              ...state.coachMemory,
+              [track]: { facts, mistakes: mistakes.slice(0, MAX_MISTAKES) },
+            },
+          };
+        }),
+      forgetCoachFact: (track, fact) =>
+        set((state) => {
+          const current = state.coachMemory[track];
+          if (!current) return {};
+          return {
+            coachMemory: {
+              ...state.coachMemory,
+              [track]: { ...current, facts: current.facts.filter((item) => item !== fact) },
+            },
+          };
+        }),
+      forgetCoachMistake: (track, better) =>
+        set((state) => {
+          const current = state.coachMemory[track];
+          if (!current) return {};
+          return {
+            coachMemory: {
+              ...state.coachMemory,
+              [track]: {
+                ...current,
+                mistakes: current.mistakes.filter((item) => item.better !== better),
+              },
+            },
+          };
+        }),
+      clearCoachMemory: (track) =>
+        set((state) => ({
+          coachMemory: { ...state.coachMemory, [track]: { facts: [], mistakes: [] } },
+        })),
+      markUnitCall: (callId) =>
+        set((state) =>
+          state.usedUnitCalls.includes(callId)
+            ? {}
+            : { usedUnitCalls: [...state.usedUnitCalls, callId] },
+        ),
       resetCoaching: () =>
         set({
           writing: {},
@@ -327,6 +417,8 @@ export const useCoachingStore = create<CoachingState>()(
           practiceLog: {},
           activityLog: {},
           sessions: {},
+          coachMemory: {},
+          usedUnitCalls: [],
           testDate: null,
           writingPracticeDates: [],
         }),
@@ -378,6 +470,8 @@ export const useCoachingStore = create<CoachingState>()(
           activityLog: parseActivityLog(state.activityLog),
           // Sessions are rebuilt each day; an older stored one is never needed.
           sessions: {},
+          coachMemory: {},
+          usedUnitCalls: [],
           testDate: state.testDate ?? null,
           writingPracticeDates: state.writingPracticeDates ?? [],
         };
@@ -395,6 +489,8 @@ export const useCoachingStore = create<CoachingState>()(
       name: 'voka-coaching',
       onRehydrateStorage: () => (state) => state?.setHasHydrated(true),
       partialize: (state) => ({
+        coachMemory: state.coachMemory,
+        usedUnitCalls: state.usedUnitCalls,
         writing: state.writing,
         foundations: state.foundations,
         coachTone: state.coachTone,

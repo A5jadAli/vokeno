@@ -7,7 +7,7 @@ import {
   type FoundationLesson,
 } from '@/features/foundations/catalog';
 import type { FoundationEntry, FoundationProgress } from '@/features/foundations/progress';
-import { finalStep } from '@/features/foundations/types';
+import { finalStep, unitName } from '@/features/foundations/types';
 import type { LanguageTrack } from '@/features/language/config';
 
 export const isFinished = (entry: FoundationEntry | undefined) => Boolean(entry?.attempts.length);
@@ -119,7 +119,7 @@ export function courseUnits(track: LanguageTrack, progress: FoundationProgress):
           ? {
               id,
               title: lesson.unit.title,
-              label: `Unit ${lesson.unit.number} · ${lesson.unit.title}`,
+              label: `${unitName(lesson.unit)} · ${lesson.unit.title}`,
               canDo: lesson.unit.canDo,
               icon: lesson.unit.icon,
               lessons: [],

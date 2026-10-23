@@ -14,9 +14,9 @@ export function learningRecommendation(
       };
     if (ability === 'basics')
       return {
-        title: 'Order at a café',
+        title: 'Unit 6: At a café',
         why: 'Put familiar words to work in a real service conversation.',
-        href: '/foundation/es-cafe',
+        href: '/foundation/es-a1-u6-words',
       };
     return goal === 'work-study'
       ? {

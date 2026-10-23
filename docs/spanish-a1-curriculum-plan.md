@@ -1,6 +1,6 @@
 # Spanish A1: curriculum and learning journey
 
-Research and repository review: 18 October 2026. Status: **curriculum specification; Units 1–5 are now implemented locally, with native review pending**. The remaining units, checkpoints and exam system are planned. See the [implementation milestones](spanish-a1-milestones.md) for delivered work and open gates; this document is not a certification claim.
+Research and repository review: 18 October 2026. Status: **curriculum specification; Units 1–6 and checkpoint 1 are now implemented locally, with native review pending**. The remaining units, checkpoints and exam system are planned. See the [implementation milestones](spanish-a1-milestones.md) for delivered work and open gates; this document is not a certification claim.
 
 The user selected **standard DELE A1** and delegated the choice of Spanish variety. The primary audience remains beginners learning for everyday life. This plan preserves the app's current design and adds a rigorous route towards exam preparation.
 
@@ -20,7 +20,7 @@ The intended outcome is **reliable, natural A1 communication, with evidence of r
 - [Coverage register](spanish-a1-coverage.md): planned teaching, recycling and evidence for language and exam requirements; source-audit rules.
 - [Assessment and native-review specification](spanish-a1-assessment-review.md): exam blueprint, review gates, authoring example and implementation backlog.
 
-These documents specify the whole course. Units 1–5 are now authored in the local catalogue; the remaining specification is still planned. No native-speaker approval is claimed. “Mapped” means assigned in a plan; “covered” will require approved content and evidence.
+These documents specify the whole course. Units 1–6 are now authored in the local catalogue; the remaining specification is still planned. No native-speaker approval is claimed. “Mapped” means assigned in a plan; “covered” will require approved content and evidence.
 
 ### Relationship to existing project decisions
 

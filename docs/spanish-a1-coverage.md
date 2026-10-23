@@ -1,6 +1,6 @@
 # Spanish A1 coverage register
 
-Status on 18 October 2026: **all requirements remain open; none represents approved or assessed new content**. Units 1–5 teaching is now authored locally, with review pending; see the [implementation ledger](spanish-a1-milestones.md). This does not close a row's later retrieval or independent-evidence requirement. Read with the [unit briefs](spanish-a1-units-plan.md) and [assessment specification](spanish-a1-assessment-review.md).
+Status on 18 October 2026: **all requirements remain open; none represents approved or assessed new content**. Units 1–6 teaching is now authored locally, with review pending; see the [implementation ledger](spanish-a1-milestones.md). This does not close a row's later retrieval or independent-evidence requirement. Read with the [unit briefs](spanish-a1-units-plan.md) and [assessment specification](spanish-a1-assessment-review.md).
 
 This is a requirement-level allocation, not a claim to have reproduced every PCIC entry. The full item-level audit is a release gate, especially because the source site was under maintenance during research. No source requirement may disappear because it does not fit the chosen unit count.
 

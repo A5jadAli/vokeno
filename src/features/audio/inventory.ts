@@ -50,7 +50,8 @@ export function lessonLines(lesson: FoundationLesson): SpokenLine[] {
     lesson.checks.forEach((check) => add(track, check.audio));
     return lines;
   }
-  for (const step of lesson.steps) lines.push(...stepLines(track, step));
+  for (const step of [...lesson.steps, ...(lesson.retakeSteps ?? [])])
+    lines.push(...stepLines(track, step));
   return lines;
 }
 

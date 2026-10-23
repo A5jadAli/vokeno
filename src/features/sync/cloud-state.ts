@@ -16,7 +16,10 @@ import { parseWritingProgress } from '@/features/writing/progress';
 import { parsePracticeLog, serializePracticeLog } from '@/features/habits/practice-log';
 
 /** The completion log and today's session stay on the device; streak and progress sync. */
-export type LearningCloudState = Omit<PersistedCoachingState, 'activityLog' | 'sessions'> & {
+export type LearningCloudState = Omit<
+  PersistedCoachingState,
+  'activityLog' | 'sessions' | 'coachMemory' | 'usedUnitCalls'
+> & {
   assessments: AssessmentsByTrack;
   completedScenarioIds: string[];
 };

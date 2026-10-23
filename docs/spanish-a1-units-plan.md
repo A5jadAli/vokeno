@@ -1,6 +1,6 @@
 # Spanish A1: 25 units and 100 session briefs
 
-Companion to the [curriculum plan](spanish-a1-curriculum-plan.md). This is an authoring specification. **Units 1–5 are implemented locally and awaiting native review; Units 6–25 and the checkpoints remain proposed.** See the [implementation ledger](spanish-a1-milestones.md) for exact session IDs, delivered changes and open review gates. Scripts, item banks, media and answer variants require review.
+Companion to the [curriculum plan](spanish-a1-curriculum-plan.md). This is an authoring specification. **Units 1–6 and checkpoint 1 are implemented locally and awaiting native review; Units 7–25 and checkpoints 2–6 remain proposed.** See the [implementation ledger](spanish-a1-milestones.md) for exact session IDs, delivered changes and open review gates. Scripts, item banks, media and answer variants require review.
 
 ## Authoring contract
 
@@ -89,9 +89,11 @@ Implementation note (18 October): the first build put all of this into one Unit 
 | Real talk | “Introduce two people”: identify someone in a small group; ask and answer a follow-up; short `este/esta` introduction.                                      |
 | Exam task | “Tell us about someone”: O2 precursor from a simple cue card; write a few original sentences; read a profile with changed names/relationships.              |
 
-Implementation note (23 October): the [Unit 5 script](../src/features/foundations/spanish-a1-unit-5.ts) is titled “The people in your life”. Words: who is who in a photo (`mi mamá`, `mi hermano`, `¿Quién es?`, `Se llama…`) with partner, housemate and other households in the reference table. Grammar: describing kindly with gender and number agreement, `mis/tus`, and `su` versus `la hermana de Ana`. Real talk: a cousin joins the exchange (`Esta es mi prima`, `Igualmente`, Mexican `mis papás`) and follow-up questions. Exam task: an O2 precursor from a card plus a short reading. The retired starter lesson `es-family` now points to `es-a1-u5-words`. Checkpoint 1 is still to build.
+Implementation note (23 October): the [Unit 5 script](../src/features/foundations/spanish-a1-unit-5.ts) is titled “The people in your life”. Words: who is who in a photo (`mi mamá`, `mi hermano`, `¿Quién es?`, `Se llama…`) with partner, housemate and other households in the reference table. Grammar: describing kindly with gender and number agreement, `mis/tus`, and `su` versus `la hermana de Ana`. Real talk: a cousin joins the exchange (`Esta es mi prima`, `Igualmente`, Mexican `mis papás`) and follow-up questions. Exam task: an O2 precursor from a card plus a short reading. The retired starter lesson `es-family` now points to `es-a1-u5-words`.
 
 **Sound/writing:** `ll/y`, ñ and gender/number endings; plural spelling in taught words. **Recycle:** U8, U12, U24. **CP1 after U5:** meet a new person, interpret a profile, supply contact fields and give a short introduction. Route number errors to U3, spelling and form errors to U4, identity patterns to U2, repair difficulty to U1.
+
+Implementation note (23 October): [Checkpoint 1](../src/features/foundations/spanish-a1-checkpoint-1.ts) sits between Units 5 and 6 as one mixed session. Bruno, from Argentina and living in Puebla, joins the exchange: a heard greeting, his profile, a phone number and a spelled surname, a registration form, agreement, asking him to slow down, introducing him to a friend, his sister’s age and a short spoken introduction. The retake uses Carmen, from Spain and living in Mérida, with the same step kinds and new details. Each graded step routes to its Unit 1–5 lesson, as above.
 
 ## Phase 2: Buy things and describe your home
 
@@ -105,6 +107,8 @@ Implementation note (23 October): the [Unit 5 script](../src/features/foundation
 | Grammar   | “One coffee, without sugar”: `un/una`, numbers, `con/sin`, basic `quiero`/`¿Tiene…?` patterns; revisit agreement.                          |
 | Real talk | “Order and check”: server asks an unannounced choice question; learner confirms a quantity or corrects the order; natural polite ellipsis. |
 | Exam task | “Which order is theirs?”: L1 image-choice precursor and menu reading; use an unseen order and total.                                       |
+
+Implementation note (23 October): the [Unit 6 script](../src/features/foundations/spanish-a1-unit-6.ts) is set in a Mexico City café. Words: drinks and snacks with their article (`un café`, `una concha`, `un jugo de naranja` with Spain's `zumo` labelled), `para aquí / para llevar`. Grammar: `¿Me das…?`, `Quiero…`, `¿Tienen…?`, `con/sin`, plurals. Real talk: an order repeated wrongly and fixed with `No, solo uno`, `¿Algo más?`, `¿Cuánto es?`, a price in pesos, paying by card. Exam task: menu reading, a heard order to match and a heard total. The starter lesson `es-cafe` now points to `es-a1-u6-words`, and learners who know some Spanish start here.
 
 **Sound/writing:** word linking with clear vowels; `qu/c` in known words. **Recycle:** U7, U19, U25. **Regional exposure:** `jugo/zumo`, with context. **Evidence:** handle a changed order without copying a fixed script.
 

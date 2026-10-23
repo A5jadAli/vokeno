@@ -26,9 +26,22 @@ import { Palette, VokaFonts } from '@/constants/theme';
 import { useAssessmentStore } from '@/features/assessment/store';
 import { useCoachingStore } from '@/features/coaching/store';
 import {
+  type CallReview,
   createAssessmentRequest,
+  createCallReview,
+  FreeCallUsedError,
   isConversationBackendConfigured,
 } from '@/features/conversation/backend';
+import { CallReviewCard } from '@/components/call-review-card';
+import { useLessonAudio } from '@/features/audio/use-lesson-audio';
+import { bringBackSooner, cardsForPhrases } from '@/features/coaching/unit-call-review';
+import {
+  getUnitCall,
+  normaliseSpeech,
+  phrasesUsed,
+  UNIT_CALL_SECONDS,
+  type UnitCallPhrase,
+} from '../../supabase/functions/_shared/unit-calls';
 import {
   detectStruggleSignals,
   parseRealtimeEvent,
@@ -85,6 +98,7 @@ export default function ConversationScreen() {
     track?: string;
     unit?: string;
     card?: string;
+    call?: string;
   }>();
   const diagnostic = params.practice === 'diagnostic' || params.diagnostic === '1';
   const [track, setTrack] = useSelectedLanguage();
@@ -150,31 +164,51 @@ export default function ConversationScreen() {
     coachTonePreference === 'tough' || useAdaptiveToughCoach ? 'tough' : 'supportive';
   const requestedUnit = getCurriculumUnit(params.unit);
   const unit = requestedUnit?.track === track ? requestedUnit : undefined;
+  const requestedCall = getUnitCall(params.call);
+  const unitCall = requestedCall?.track === track ? requestedCall : undefined;
+  const coachMemory = useCoachingStore((state) => state.coachMemory[track]);
+  const speech = useLessonAudio(track);
+  const [callReview, setCallReview] = useState<CallReview | null>(null);
+  const [callReviewPending, setCallReviewPending] = useState(false);
+  const [callReviewError, setCallReviewError] = useState('');
+  const [callPhrases, setCallPhrases] = useState<(UnitCallPhrase & { used: boolean })[]>([]);
+  const [freeCallUsed, setFreeCallUsed] = useState(false);
+  const [callStartedAt, setCallStartedAt] = useState<number | null>(null);
+  const [secondsLeft, setSecondsLeft] = useState(UNIT_CALL_SECONDS);
+  const callReviewedRef = useRef(false);
   const requestedCard = getSpeakingCard(params.card);
   const examCard = requestedCard?.track === track ? requestedCard : undefined;
   const baseMode = getConversationMode(track);
-  const mode = unit
+  const mode = unitCall
     ? {
         ...baseMode,
-        description: unit.outcome,
-        level: unit.level,
-        starter: unit.coachBrief,
-        title: unit.title,
+        description: unitCall.learnerGoal,
+        level: unitCall.level,
+        starter: `Start the scene now as ${unitCall.character}. Greet the learner in character in one short sentence and ask your first question.`,
+        title: unitCall.title,
       }
-    : diagnostic
+    : unit
       ? {
           ...baseMode,
-          description: 'Read the sentence, then answer a few short questions.',
-          level: 'Adaptive',
-          starter:
-            track === 'EN'
-              ? 'Run a brief spoken English check. First ask the learner to read: “The bus to the city leaves every twenty minutes.” Then ask two progressively harder everyday questions. Give a broad CEFR range only when there is enough evidence, and explain that it is an estimate rather than a certified result.'
-              : track === 'DE'
-                ? 'Run a brief spoken German check. First ask the learner to read: “Der Bus in die Stadt fährt alle zwanzig Minuten.” Then ask two progressively harder everyday questions. Give a broad CEFR range only when there is enough evidence, and explain that it is an estimate rather than a certified result.'
-                : 'Run a brief spoken Spanish check in everyday Mexican Spanish. First ask the learner to read: “El autobús al centro sale a las nueve.” Then ask two short practical questions. Explain that the result is only a broad, non-certified estimate.',
-          title: 'Spoken level check',
+          description: unit.outcome,
+          level: unit.level,
+          starter: unit.coachBrief,
+          title: unit.title,
         }
-      : baseMode;
+      : diagnostic
+        ? {
+            ...baseMode,
+            description: 'Read the sentence, then answer a few short questions.',
+            level: 'Adaptive',
+            starter:
+              track === 'EN'
+                ? 'Run a brief spoken English check. First ask the learner to read: “The bus to the city leaves every twenty minutes.” Then ask two progressively harder everyday questions. Give a broad CEFR range only when there is enough evidence, and explain that it is an estimate rather than a certified result.'
+                : track === 'DE'
+                  ? 'Run a brief spoken German check. First ask the learner to read: “Der Bus in die Stadt fährt alle zwanzig Minuten.” Then ask two progressively harder everyday questions. Give a broad CEFR range only when there is enough evidence, and explain that it is an estimate rather than a certified result.'
+                  : 'Run a brief spoken Spanish check in everyday Mexican Spanish. First ask the learner to read: “El autobús al centro sale a las nueve.” Then ask two short practical questions. Explain that the result is only a broad, non-certified estimate.',
+            title: 'Spoken level check',
+          }
+        : baseMode;
   const darkAccent = trackColors[track].onDark;
   const active = !['ended', 'error', 'idle'].includes(status);
 
@@ -211,6 +245,55 @@ export default function ConversationScreen() {
       };
     }, [releaseSession]),
   );
+
+  const turnsRef = useRef<TranscriptTurn[]>([]);
+  useEffect(() => {
+    turnsRef.current = turns;
+  }, [turns]);
+
+  // After a unit call: mark which of the unit's phrases came up, bring the others back in
+  // tomorrow's review, then fetch corrections, a tip and things worth remembering.
+  const reviewUnitCall = useCallback(async () => {
+    if (!unitCall || callReviewedRef.current) return;
+    callReviewedRef.current = true;
+    setCallStartedAt(null);
+    const learner = turnsRef.current
+      .filter((turn) => turn.role === 'user' && turn.text.trim() && turn.text !== UNCLEAR_CAPTION)
+      .map((turn) => turn.text);
+    const used = phrasesUsed(unitCall, learner);
+    setCallPhrases(used);
+    const bringBack = (phrases: UnitCallPhrase[]) => {
+      const state = useCoachingStore.getState();
+      const updated = bringBackSooner(state.foundations, cardsForPhrases(track, unitCall, phrases));
+      for (const [id, entry] of Object.entries(updated))
+        if (entry && entry !== state.foundations[id]) state.saveFoundation(id, entry);
+    };
+    bringBack(used.filter((item) => !item.used));
+    if (!learner.length) return;
+    setCallReviewPending(true);
+    setCallReviewError('');
+    try {
+      const review = await createCallReview(track, unitCall.id, turnsRef.current);
+      setCallReview(review);
+      useCoachingStore.getState().saveCallReview(track, review);
+      // A unit phrase the coach had to correct comes back sooner as well.
+      bringBack(
+        unitCall.phrases.filter((item) =>
+          review.corrections.some((correction) =>
+            item.match.some((fragment) =>
+              normaliseSpeech(correction.better).includes(` ${fragment}`),
+            ),
+          ),
+        ),
+      );
+    } catch (reason) {
+      setCallReviewError(
+        reason instanceof Error ? reason.message : 'The call review is not available right now.',
+      );
+    } finally {
+      setCallReviewPending(false);
+    }
+  }, [track, unitCall]);
 
   const handleEvent = useCallback(
     (event: RealtimeEvent) => {
@@ -340,6 +423,11 @@ export default function ConversationScreen() {
     setError('');
     setSignals([]);
     setTurns([]);
+    setCallReview(null);
+    setCallReviewError('');
+    setCallPhrases([]);
+    setFreeCallUsed(false);
+    callReviewedRef.current = false;
     userTurnIdsRef.current.clear();
     const generation = ++generationRef.current;
     const startAbort = new AbortController();
@@ -361,6 +449,7 @@ export default function ConversationScreen() {
           }
           if (next === 'ended' && sessionRef.current) {
             releaseSession();
+            void reviewUnitCall();
             if (userTurnIdsRef.current.size >= 2) {
               recordSpeakingPractice(track);
               recordActivity(`speaking:${unit?.id ?? track}`, track);
@@ -376,8 +465,16 @@ export default function ConversationScreen() {
         starter: examCard ? mode.starter : `${mode.starter} ${BRIEF_OPENING}`,
         startMuted: true,
         track,
-        unitId: unit?.id,
+        unitId: unitCall ? undefined : unit?.id,
         cardId: examCard?.id,
+        callId: unitCall?.id,
+        memory:
+          unitCall && coachMemory
+            ? {
+                facts: coachMemory.facts,
+                mistakes: coachMemory.mistakes.slice(0, 3).map((item) => item.better),
+              }
+            : undefined,
       });
       if (startAbort.signal.aborted || generationRef.current !== generation) {
         session.stop();
@@ -385,9 +482,15 @@ export default function ConversationScreen() {
       }
       sessionRef.current = session;
       session.setMuted(!greetingDoneRef.current || mutedRef.current);
+      if (unitCall) {
+        useCoachingStore.getState().markUnitCall(unitCall.id);
+        setSecondsLeft(UNIT_CALL_SECONDS);
+        setCallStartedAt(Date.now());
+      }
     } catch (reason) {
       if (startAbort.signal.aborted || generationRef.current !== generation) return;
       releaseSession();
+      if (reason instanceof FreeCallUsedError) setFreeCallUsed(true);
       setError(reason instanceof Error ? reason.message : 'The live coach could not connect.');
       setStatus('error');
     } finally {
@@ -427,6 +530,7 @@ export default function ConversationScreen() {
   const stop = async () => {
     releaseSession();
     setStatus('ended');
+    void reviewUnitCall();
     if (unit && userTurnIdsRef.current.size >= 2) completeUnit(unit.id);
     if (userTurnIdsRef.current.size >= 2) {
       recordSpeakingPractice(track);
@@ -434,6 +538,23 @@ export default function ConversationScreen() {
     }
     if (diagnostic) await calculateAssessment();
   };
+
+  const stopRef = useRef(stop);
+  useEffect(() => {
+    stopRef.current = stop;
+  });
+  useEffect(() => {
+    if (!unitCall || callStartedAt === null) return;
+    const tick = setInterval(() => {
+      const left = Math.max(0, UNIT_CALL_SECONDS - Math.round((Date.now() - callStartedAt) / 1000));
+      setSecondsLeft(left);
+      if (left === 0) {
+        clearInterval(tick);
+        void stopRef.current();
+      }
+    }, 1000);
+    return () => clearInterval(tick);
+  }, [callStartedAt, unitCall]);
 
   const toggleMute = () => {
     const next = !muted;
@@ -455,15 +576,38 @@ export default function ConversationScreen() {
 
       <View style={styles.body}>
         <Eyebrow color={darkAccent}>
-          {examCard ? 'Exam mock' : 'Natural conversation'} · {mode.level}
+          {examCard
+            ? 'Exam mock'
+            : unitCall
+              ? `Unit ${unitCall.unitNumber} call`
+              : 'Natural conversation'}{' '}
+          · {mode.level}
         </Eyebrow>
         <Text style={styles.title}>{mode.title}</Text>
         <Text style={styles.description}>{mode.description}</Text>
         <Text style={styles.description}>
-          Up to five minutes. Stop any time; the microphone stops when you leave.
+          {unitCall
+            ? `Three minutes with ${unitCall.character}. Corrections are on. Stop any time; the microphone stops when you leave.`
+            : 'Up to five minutes. Stop any time; the microphone stops when you leave.'}
         </Text>
 
-        {!diagnostic && !unit ? (
+        {unitCall && !callPhrases.length ? (
+          <View style={styles.practiceCard}>
+            <View style={styles.practiceHeading}>
+              <MaterialCommunityIcons color={darkAccent} name="target" size={18} />
+              <Text style={styles.practiceFocus}>Try to use these from the unit</Text>
+            </View>
+            <View style={styles.phraseRow}>
+              {unitCall.phrases.map((item) => (
+                <Text key={item.say} style={styles.phraseChip}>
+                  {item.say}
+                </Text>
+              ))}
+            </View>
+          </View>
+        ) : null}
+
+        {!diagnostic && !unit && !unitCall ? (
           <LanguageSwitch
             disabled={active || permissionPending}
             groupLabel="Conversation language"
@@ -619,6 +763,22 @@ export default function ConversationScreen() {
               </Text>
             </Pressable>
           ) : null}
+          {unitCall && active && callStartedAt !== null ? (
+            <Text accessibilityLiveRegion="polite" style={styles.statusHint}>
+              {Math.floor(secondsLeft / 60)}:{String(secondsLeft % 60).padStart(2, '0')} left
+            </Text>
+          ) : null}
+          {freeCallUsed ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push('/plus' as Href)}
+              style={{ padding: 16 }}
+            >
+              <Text style={{ color: Palette.cream, textDecorationLine: 'underline' }}>
+                See Vokeno Plus
+              </Text>
+            </Pressable>
+          ) : null}
           {diagnostic && status === 'ended' && turns.length > 0 ? (
             <Pressable
               accessibilityRole="button"
@@ -634,6 +794,17 @@ export default function ConversationScreen() {
             </Pressable>
           ) : null}
         </View>
+
+        {unitCall && callPhrases.length ? (
+          <CallReviewCard
+            review={callReview}
+            pending={callReviewPending}
+            error={callReviewError}
+            phrases={callPhrases}
+            speech={speech}
+            accent={darkAccent}
+          />
+        ) : null}
 
         {turns.some((turn) => turn.role === 'assistant') ? (
           <View style={styles.reportRow}>

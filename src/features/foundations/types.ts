@@ -56,6 +56,15 @@ export type SceneLine = {
   realMeaning?: string;
 };
 
+/** The skill a checkpoint question gives evidence for. */
+export type Skill = 'reading' | 'listening' | 'writing' | 'speaking';
+
+/**
+ * Checkpoint tags on a marked step: the skill it shows, and the lesson to revisit when it is missed.
+ * Ordinary unit sessions leave them out.
+ */
+type Evidence = { skill?: Skill; revisit?: string };
+
 /**
  * One screen of a unit session. Teaching steps (scene, teach, rule, speak) are not marked;
  * the others are, and count towards "right first time".
@@ -68,7 +77,7 @@ export type LessonStep =
       items: { target: string; meaning: string; note?: string }[];
     }
   | { kind: 'rule'; title: string; body: string; table?: [string, string][]; examples?: string[] }
-  | {
+  | (Evidence & {
       kind: 'choose';
       prompt: string;
       options: string[];
@@ -78,8 +87,8 @@ export type LessonStep =
       audio?: string;
       /** A short text (sign, message, form) the question is about. */
       context?: string;
-    }
-  | {
+    })
+  | (Evidence & {
       kind: 'build';
       prompt: string;
       /** The words of the sentence in the right order; they are shown shuffled as tiles. */
@@ -89,8 +98,8 @@ export type LessonStep =
       /** Other correct orders of the same tiles, as sentences (German word order is flexible). */
       also?: string[];
       explanation: string;
-    }
-  | {
+    })
+  | (Evidence & {
       kind: 'type';
       prompt: string;
       accepted: string[];
@@ -102,8 +111,8 @@ export type LessonStep =
       audio?: string;
       /** Details and spelling exercises need exact characters instead of phrase tolerance. */
       answerKind?: 'text' | 'digits' | 'email';
-    }
-  | {
+    })
+  | (Evidence & {
       kind: 'form';
       prompt: string;
       context: string;
@@ -116,8 +125,8 @@ export type LessonStep =
         hint: string;
       }[];
       explanation: string;
-    }
-  | { kind: 'match'; prompt: string; pairs: [target: string, meaning: string][] }
+    })
+  | (Evidence & { kind: 'match'; prompt: string; pairs: [target: string, meaning: string][] })
   | {
       kind: 'speak';
       prompt: string;
@@ -149,12 +158,34 @@ export type StepLesson = LessonBase & {
     canDo: string;
     /** A MaterialCommunityIcons name for the unit's topic, shown on Today and in the course. */
     icon?: string;
+    /** Set for a checkpoint after a group of units: shown as "Checkpoint 1", not "Unit 5". */
+    checkpoint?: number;
   };
   /** One of the unit's sessions, e.g. "Words", "Grammar", "Real talk", "Exam task". */
   session: string;
   minutes: number;
   steps: LessonStep[];
+  /**
+   * A parallel version with new people and details, used on every second attempt, so a
+   * checkpoint retake shows learning rather than a remembered answer.
+   */
+  retakeSteps?: LessonStep[];
 };
+
+/** "Unit 3" or "Checkpoint 1": how learners see where a session belongs. */
+export const unitName = (unit: StepLesson['unit']) =>
+  unit.checkpoint ? `Checkpoint ${unit.checkpoint}` : `Unit ${unit.number}`;
+
+/**
+ * Whether this run uses the retake version: after a finished run of the main version, the next
+ * run takes the retake, and so on. Each finished attempt records which version it used.
+ */
+export const usesRetake = (lesson: StepLesson, attempts: readonly { retake?: boolean }[]) =>
+  Boolean(lesson.retakeSteps && attempts.length > 0 && !attempts.at(-1)?.retake);
+
+/** The steps for this run: the main version or, on alternate runs, the retake version. */
+export const stepsForRun = (lesson: StepLesson, attempts: readonly { retake?: boolean }[]) =>
+  usesRetake(lesson, attempts) ? lesson.retakeSteps! : lesson.steps;
 
 export type FoundationLesson = ClassicLesson | StepLesson;
 

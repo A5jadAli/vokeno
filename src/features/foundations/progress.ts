@@ -11,7 +11,13 @@ export const foundationDraftLimit = (lesson: FoundationLesson, step: number) =>
     ? MAX_FORM_DRAFT_LENGTH
     : MAX_DRAFT_LENGTH;
 
-export type FoundationAttempt = { at: string; correctFirstTry: number; spoken: boolean };
+export type FoundationAttempt = {
+  at: string;
+  correctFirstTry: number;
+  spoken: boolean;
+  /** This run used the lesson's retake version (checkpoints alternate between two versions). */
+  retake?: boolean;
+};
 export type FoundationEntry = {
   step: number;
   answers: number[];
@@ -57,7 +63,12 @@ export function contentVersion(lesson: FoundationLesson) {
   if (!version) {
     version = fingerprint(
       JSON.stringify(
-        lesson.format === 'steps' ? lesson.steps : [lesson.checks, lesson.writing.accepted],
+        lesson.format === 'steps'
+          ? // Only lessons with a retake version hash it, so other versions never change.
+            lesson.retakeSteps
+            ? [lesson.steps, lesson.retakeSteps]
+            : lesson.steps
+          : [lesson.checks, lesson.writing.accepted],
       ),
     );
     versions.set(lesson.id, version);
@@ -149,8 +160,13 @@ export function parseFoundationProgress(value: unknown): FoundationProgress {
               a.correctFirstTry <= 1000 &&
               typeof a.spoken === 'boolean',
           )
-          // A lesson with fewer marked items now still keeps its earlier completions.
-          .map((a) => ({ ...a, correctFirstTry: Math.min(a.correctFirstTry, gradedCount(lesson)) }))
+          .map((a) => ({
+            at: a.at,
+            // A lesson with fewer marked items now still keeps its earlier completions.
+            correctFirstTry: Math.min(a.correctFirstTry, gradedCount(lesson)),
+            spoken: a.spoken,
+            ...(a.retake === true ? { retake: true } : {}),
+          }))
           .slice(-MAX_FOUNDATION_ATTEMPTS)
       : [];
     const aligned = alignCards(lesson, entry);

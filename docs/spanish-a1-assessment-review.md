@@ -2,7 +2,7 @@
 
 Companion to the [curriculum plan](spanish-a1-curriculum-plan.md), [100 session briefs](spanish-a1-units-plan.md) and [coverage register](spanish-a1-coverage.md). Status: specification for implementation and review, 18 October 2026.
 
-Implementation now includes Units 1–5, optional speaking models, dictation, a three-field details form in Unit 3 and a five-field registration precursor in Unit 4. See the [implementation ledger](spanish-a1-milestones.md) and [pilot review packet](spanish-a1-units-1-3-review.md). No assessed oral evidence, complete checkpoint, full DELE W1 runner or DELE mock has been implemented. The tables below remain the specification for those later capabilities.
+Implementation now includes Units 1–6, optional speaking models, dictation, a three-field details form in Unit 3 and a five-field registration precursor in Unit 4. See the [implementation ledger](spanish-a1-milestones.md) and [pilot review packet](spanish-a1-units-1-3-review.md). No assessed oral evidence, complete checkpoint, full DELE W1 runner or DELE mock has been implemented. The tables below remain the specification for those later capabilities.
 
 ## Exam blueprint
 
