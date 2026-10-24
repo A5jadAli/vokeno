@@ -544,7 +544,14 @@ const styles = StyleSheet.create({
     fontSize: FontSize.label,
     lineHeight: LineHeight.label,
   },
-  noteRow: { alignItems: 'flex-start', flexDirection: 'row', gap: space(2), minHeight: 44 },
+  // The same inset as the level heading above it.
+  noteRow: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: space(2),
+    minHeight: 44,
+    paddingHorizontal: space(1),
+  },
   noteText: { flex: 1 },
   noteMore: {
     color: Palette.ink,
