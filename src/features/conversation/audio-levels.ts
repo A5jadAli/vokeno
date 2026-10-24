@@ -43,13 +43,6 @@ export function createSpeechGate(holdMs = 600) {
   };
 }
 
-/** The Vokeno mark at x from 0 to 1: a small rise, a deep dip, a small rise, level at the ends. */
-export function voiceLineShape(x: number) {
-  'worklet';
-  const middle = Math.sin(Math.PI * x);
-  return -Math.sin(3 * Math.PI * x) * (0.35 + 0.65 * middle * middle);
-}
-
 /** The level of one stat type, or undefined when the phone does not report it. */
 async function levelOf(endpoint: Endpoint | undefined, type: string) {
   if (!endpoint?.getStats) return undefined;

@@ -735,20 +735,35 @@ export default function ConversationScreen() {
               </View>
               <Text style={styles.micAlertText}>
                 Another app may be using it, or a Bluetooth headset may have taken over. Close other
-                apps that record, check Vokeno can use the microphone, then end this call and start
-                again.
+                apps that record and check Vokeno can use the microphone, then end this call and
+                start a new one.
               </Text>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() =>
-                  void Linking.openSettings().catch(() =>
-                    setError('Open your phone settings, then Vokeno, Permissions and Microphone.'),
-                  )
-                }
-                style={({ pressed }) => [styles.micAlertButton, pressed && styles.pressed]}
-              >
-                <Text style={styles.micAlertButtonText}>Check microphone permission</Text>
-              </Pressable>
+              <View style={styles.micAlertActions}>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => void stop()}
+                  style={({ pressed }) => [
+                    styles.micAlertButton,
+                    styles.micAlertPrimary,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <Text style={[styles.micAlertButtonText, { color: Palette.ink }]}>End call</Text>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() =>
+                    void Linking.openSettings().catch(() =>
+                      setError(
+                        'Open your phone settings, then Vokeno, Permissions and Microphone.',
+                      ),
+                    )
+                  }
+                  style={({ pressed }) => [styles.micAlertButton, pressed && styles.pressed]}
+                >
+                  <Text style={styles.micAlertButtonText}>Microphone settings</Text>
+                </Pressable>
+              </View>
             </View>
           ) : null}
           {active ? (
@@ -1095,16 +1110,22 @@ const styles = StyleSheet.create({
     fontSize: FontSize.label,
     lineHeight: LineHeight.label,
   },
+  micAlertActions: { flexDirection: 'row', flexWrap: 'wrap', gap: space(2), marginTop: space(1) },
+  // Dark-screen actions: cream for the main one, a cream outline for the other.
   micAlertButton: {
-    alignSelf: 'flex-start',
+    alignItems: 'center',
+    borderColor: Palette.cream,
+    borderRadius: Radius.pill,
+    borderWidth: 1.5,
     justifyContent: 'center',
     minHeight: 44,
+    paddingHorizontal: space(4),
   },
+  micAlertPrimary: { backgroundColor: Palette.cream },
   micAlertButtonText: {
     color: Palette.cream,
     fontFamily: VokaFonts.bodySemiBold,
     fontSize: FontSize.label,
-    textDecorationLine: 'underline',
   },
   status: {
     color: Palette.cream,

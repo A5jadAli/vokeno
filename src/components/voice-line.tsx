@@ -2,14 +2,16 @@ import { View } from 'react-native';
 import Animated, { type SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 
 import { Radius } from '@/constants/theme';
-import { voiceLineShape } from '@/features/conversation/audio-levels';
 
-type Size = { width: number; height: number; thickness: number };
+import { type LineSegment, voiceLineSegments } from './voice-line-geometry';
+
+type Size = { height: number; thickness: number; piece: number };
 
 /**
- * The Vokeno voice line, drawn from overlapping dots so it needs no SVG renderer.
- * Live: `level` (0 to 1) is the real voice level, so the line is flat in silence and takes
- * the mark's shape only as loud as someone is speaking. Only `translateY` moves, on the UI thread.
+ * The Vokeno voice line, drawn from the app icon's own curve as short round-ended pieces, so
+ * it needs no SVG renderer and its edge stays smooth. Live: `level` (0 to 1) is the real voice
+ * level, so the line is flat in silence and takes the mark's shape only as loud as someone is
+ * speaking. Only transforms move, on the UI thread.
  */
 export function VoiceLine({
   level,
@@ -24,8 +26,8 @@ export function VoiceLine({
   height?: number;
   thickness?: number;
 }) {
-  const size = { width, height, thickness };
-  const count = Math.round(width / (thickness * 0.35));
+  const segments = voiceLineSegments(width, height, thickness);
+  const size = { height, thickness, piece: pieceWidth(segments, thickness) };
   return (
     <View
       accessibilityElementsHidden
@@ -33,8 +35,8 @@ export function VoiceLine({
       pointerEvents="none"
       style={{ width, height }}
     >
-      {Array.from({ length: count }, (_, index) => (
-        <LiveDot key={index} color={color} level={level} size={size} x={index / (count - 1)} />
+      {segments.map((segment, index) => (
+        <LivePiece key={index} color={color} level={level} segment={segment} size={size} />
       ))}
     </View>
   );
@@ -52,8 +54,8 @@ export function VoiceLineMark({
   height?: number;
   thickness?: number;
 }) {
-  const size = { width, height, thickness };
-  const count = Math.round(width / (thickness * 0.35));
+  const segments = voiceLineSegments(width, height, thickness);
+  const size = { height, thickness, piece: pieceWidth(segments, thickness) };
   return (
     <View
       accessibilityElementsHidden
@@ -61,48 +63,64 @@ export function VoiceLineMark({
       pointerEvents="none"
       style={{ width, height }}
     >
-      {Array.from({ length: count }, (_, index) => {
-        const x = index / (count - 1);
-        return (
-          <View
-            key={index}
-            style={[
-              dotStyle(size, x, color),
-              { transform: [{ translateY: voiceLineShape(x) * reach(size) }] },
-            ]}
-          />
-        );
-      })}
+      {segments.map((segment, index) => (
+        <View
+          key={index}
+          style={[
+            pieceStyle(size, color),
+            {
+              transform: [
+                { translateX: segment.x - size.piece / 2 },
+                { translateY: segment.y },
+                { rotate: `${Math.atan2(segment.dy, segment.dx)}rad` },
+              ],
+            },
+          ]}
+        />
+      ))}
     </View>
   );
 }
 
-function LiveDot({
+function LivePiece({
   color,
   level,
+  segment,
   size,
-  x,
 }: {
   color: string;
   level: SharedValue<number>;
+  segment: LineSegment;
   size: Size;
-  x: number;
 }) {
-  const lift = voiceLineShape(x) * reach(size);
-  const moving = useAnimatedStyle(() => ({ transform: [{ translateY: lift * level.value }] }));
-  return <Animated.View style={[dotStyle(size, x, color), moving]} />;
+  const { x, y, dx, dy } = segment;
+  const left = x - size.piece / 2;
+  const moving = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: left },
+      { translateY: y * level.value },
+      { rotate: `${Math.atan2(dy * level.value, dx)}rad` },
+    ],
+  }));
+  return <Animated.View style={[pieceStyle(size, color), moving]} />;
 }
 
-/** How far the deepest point travels from the middle without leaving the box. */
-const reach = ({ height, thickness }: Size) => (height - thickness) / 2;
+/**
+ * Every piece is one pill the length of the longest piece plus its round ends; the pieces are
+ * cut at equal lengths, so that is at most a hair over each. All of them share one size and
+ * left edge and are placed with transforms, because layout snaps sizes and positions to the
+ * pixel grid and would leave the round ends of neighbours a pixel apart.
+ */
+const pieceWidth = (segments: LineSegment[], thickness: number) =>
+  Math.max(...segments.map((segment) => segment.length)) + thickness;
 
-const dotStyle = ({ width, height, thickness }: Size, x: number, color: string) =>
+const pieceStyle = ({ height, thickness, piece }: Size, color: string) =>
   ({
     backgroundColor: color,
     borderRadius: Radius.pill,
     height: thickness,
-    left: x * (width - thickness),
+    left: 0,
     position: 'absolute',
     top: (height - thickness) / 2,
-    width: thickness,
+    width: piece,
   }) as const;

@@ -6,9 +6,9 @@ import {
   lineLevel,
   loudness,
   SPEECH_LOUDNESS,
-  voiceLineShape,
   watchAudioLevels,
 } from '@/features/conversation/audio-levels';
+import { markPoints, voiceLineSegments } from '@/components/voice-line-geometry';
 
 const db = (value: number) => 10 ** (value / 20);
 
@@ -28,12 +28,37 @@ describe('voice line levels', () => {
     expect(lineLevel({ input: db(-20), output: db(-40) })).toBeCloseTo(30 / 38);
   });
 
-  it('draws the mark: level ends, small rises, the deep dip in the middle', () => {
-    expect(voiceLineShape(0)).toBeCloseTo(0);
-    expect(voiceLineShape(1)).toBeCloseTo(0);
-    expect(voiceLineShape(0.5)).toBeCloseTo(1);
-    expect(voiceLineShape(1 / 6)).toBeLessThan(0);
-    expect(voiceLineShape(5 / 6)).toBeCloseTo(voiceLineShape(1 / 6));
+  it('draws the icon mark: level ends, small rises, the deep dip in the middle', () => {
+    const points = markPoints();
+    const at = (x: number) =>
+      points.reduce((best, p) => (Math.abs(p[0] - x) < Math.abs(best[0] - x) ? p : best));
+    expect(points[0]).toEqual([0, 0]);
+    expect(points[points.length - 1]).toEqual([1, 0]);
+    expect(at(0.5)[1]).toBeCloseTo(1);
+    expect(Math.min(...points.map((p) => p[1]))).toBeCloseTo(-0.375);
+    // The ends leave level, as on the app icon: almost no rise over the first 2%.
+    expect(Math.abs(at(0.02)[1])).toBeLessThan(0.03);
+    expect(at(0.8)[1]).toBeCloseTo(at(0.2)[1]);
+  });
+
+  it('cuts the line into short joined pieces that span the box', () => {
+    const segments = voiceLineSegments(220, 88, 7);
+    expect(segments.length).toBeGreaterThan(40);
+    expect(segments.length).toBeLessThan(80);
+    for (const [index, piece] of segments.entries()) {
+      expect(piece.length).toBeLessThan(7);
+      const next = segments[index + 1];
+      if (next) {
+        // Each piece ends where the next begins.
+        expect(piece.x + piece.dx / 2).toBeCloseTo(next.x - next.dx / 2);
+        expect(piece.y + piece.dy / 2).toBeCloseTo(next.y - next.dy / 2);
+      }
+    }
+    const first = segments[0];
+    const last = segments[segments.length - 1];
+    expect(first.x - first.dx / 2).toBeCloseTo(3.5);
+    expect(last.x + last.dx / 2).toBeCloseTo(216.5);
+    expect(Math.max(...segments.map((piece) => piece.y))).toBeLessThanOrEqual(40.5);
   });
 
   it('holds the still line through short pauses, then lets it fall flat', () => {

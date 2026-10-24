@@ -41,16 +41,20 @@ Status as of 30 September 2026. Items marked **Done** are implemented and verifi
 
 **Data safety (draft answers):**
 
-| Data type                                                    | Collected                   | Shared                                    | Purpose                   | Notes                                         |
-| ------------------------------------------------------------ | --------------------------- | ----------------------------------------- | ------------------------- | --------------------------------------------- |
-| Email address, name                                          | Yes (accounts)              | No                                        | Account management        | Optional: guests can learn without an account |
-| Voice or sound recordings                                    | Yes, processed in real time | Yes, with OpenAI as service provider      | App functionality         | Not stored by Vokeno                          |
-| Other user-generated content (writing, transcripts, reports) | Yes                         | Yes, with xAI/OpenAI as service providers | App functionality, safety | Deleted with the account                      |
-| App activity (learning progress)                             | Yes                         | No                                        | App functionality         | Synced to the account                         |
-| Purchase history                                             | Yes                         | Yes, with RevenueCat                      | Subscriptions             |                                               |
-| User IDs                                                     | Yes                         | Yes, with RevenueCat                      | Subscriptions             | Supabase account UUID                         |
+| Data type                                                    | Collected                   | Shared                                    | Purpose                   | Notes                                                                                                                                                  |
+| ------------------------------------------------------------ | --------------------------- | ----------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Email address, name                                          | Yes (accounts)              | No                                        | Account management        | Optional: guests can learn without an account                                                                                                          |
+| Voice or sound recordings                                    | Yes, processed in real time | Yes, with OpenAI as service provider      | App functionality         | Not stored by Vokeno                                                                                                                                   |
+| Other user-generated content (writing, transcripts, reports) | Yes                         | Yes, with xAI/OpenAI as service providers | App functionality, safety | Deleted with the account                                                                                                                               |
+| App activity (learning progress)                             | Yes                         | No                                        | App functionality         | Synced to the account                                                                                                                                  |
+| Purchase history                                             | Yes                         | Yes, with RevenueCat                      | Subscriptions             |                                                                                                                                                        |
+| User IDs                                                     | Yes                         | Yes, with RevenueCat                      | Subscriptions             | Supabase account UUID                                                                                                                                  |
+| App interactions (App activity)                              | Yes                         | No                                        | Analytics                 | Anonymous daily counts: active day, call started, call finished, per language. Not linked to the account. Required (no opt-out). Since 24 October 2026 |
+| Device or other IDs                                          | Yes                         | No                                        | Analytics                 | A random install ID made on the phone for those counts; not the advertising ID or any hardware ID. Since 24 October 2026                               |
 
-Data is encrypted in transit; users can request deletion (in app and via the web page).
+Data is encrypted in transit; users can request deletion (in app and via the web page). The usage counts are not tied to an account, so account deletion does not reach them; they are removed after 13 months. Answer "Is all of the user data collected by your app encrypted in transit?" Yes.
+
+**When the counts ship:** update the form before or with the release that carries them (the preview update of 24 October 2026 does). Google compares the form with what the app sends.
 
 **App access for reviewers:** Vokeno works as a guest. Add review notes: "Lessons, review, placement and writing work without an account. Live voice needs network and microphone permission; AI features have a daily free allowance." If you enable any account-only feature, provide a test account.
 
