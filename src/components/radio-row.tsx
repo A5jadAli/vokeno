@@ -1,10 +1,11 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Brand, FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
+import { FontSize, LineHeight, Palette, Selection, space, VokaFonts } from '@/constants/theme';
 
 /**
- * One choice in a pick-one list inside a settings card, like WhatsApp's settings rows: label,
- * optional description, optional value on the right, divider between rows.
+ * One choice in a pick-one list inside a settings card: label, optional description, optional
+ * value, then the app's one radio mark on the right (as on every pick-one list), divider between.
  */
 export function RadioRow({
   label,
@@ -32,14 +33,16 @@ export function RadioRow({
       onPress={onPress}
       style={({ pressed }) => [styles.row, !last && styles.divider, pressed && styles.pressed]}
     >
-      <View style={[styles.radio, selected && styles.radioSelected]}>
-        {selected ? <View style={styles.radioDot} /> : null}
-      </View>
       <View style={styles.copy}>
         <Text style={styles.label}>{label}</Text>
         {description ? <Text style={styles.description}>{description}</Text> : null}
       </View>
       {value ? <Text style={styles.value}>{value}</Text> : null}
+      <MaterialCommunityIcons
+        color={selected ? Selection.border : Palette.muted}
+        name={selected ? 'radiobox-marked' : 'radiobox-blank'}
+        size={24}
+      />
     </Pressable>
   );
 }
@@ -48,23 +51,12 @@ const styles = StyleSheet.create({
   row: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: space(4),
+    gap: space(3),
     minHeight: 56,
     paddingHorizontal: space(4),
     paddingVertical: space(3),
   },
   divider: { borderBottomColor: Palette.line, borderBottomWidth: 1 },
-  radio: {
-    alignItems: 'center',
-    borderColor: Palette.muted,
-    borderRadius: Radius.pill,
-    borderWidth: 1.5,
-    height: 22,
-    justifyContent: 'center',
-    width: 22,
-  },
-  radioSelected: { borderColor: Brand.accent },
-  radioDot: { backgroundColor: Brand.accent, borderRadius: Radius.pill, height: 12, width: 12 },
   copy: { flex: 1, gap: space(0.5) },
   label: { color: Palette.ink, fontFamily: VokaFonts.bodyMedium, fontSize: FontSize.body },
   description: {

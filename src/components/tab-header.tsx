@@ -30,7 +30,7 @@ import { getProfileDisplayName, getProfileInitials } from '@/features/profile/na
 export const languageAudience: Record<LanguageTrack, string> = {
   DE: 'From your first words',
   ES: 'From your first words',
-  EN: 'For learners who know the basics (A2 and up)',
+  EN: 'For learners heading to B1–C1 and IELTS',
 };
 
 /** The same header on every main tab: where you are, which language, and your account. */
@@ -168,7 +168,7 @@ export function LanguagePicker({
                       </View>
                       <MaterialCommunityIcons
                         color={selected ? Palette.ink : Palette.muted}
-                        name={selected ? 'check-circle' : 'circle-outline'}
+                        name={selected ? 'radiobox-marked' : 'radiobox-blank'}
                         size={22}
                       />
                     </Pressable>

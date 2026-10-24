@@ -82,24 +82,27 @@ export default function ProgressScreen() {
             const built = section.groups.length > 0;
             return (
               <View key={section.level} style={styles.levelBlock}>
+                {/* Pill and name together, then the bar with its count, as on Course. */}
                 <View style={styles.unitRow}>
-                  <View style={styles.unitTop}>
-                    <View style={styles.levelHead}>
-                      <LevelPill label={section.label} built={built} track={track} />
-                      <Text style={[styles.levelName, !built && styles.later]}>{section.name}</Text>
-                    </View>
-                    <Text style={styles.unitCount}>{built ? text : 'Coming later'}</Text>
+                  <View style={styles.levelHead}>
+                    <LevelPill label={section.label} built={built} track={track} />
+                    <Text style={[styles.levelName, !built && styles.later]}>{section.name}</Text>
                   </View>
                   {built ? (
-                    <View style={styles.unitBar}>
-                      <ProgressFill
-                        value={value}
-                        color={colors.deep}
-                        track={Palette.soft}
-                        height={6}
-                      />
+                    <View style={styles.levelBar}>
+                      <View style={styles.unitBar}>
+                        <ProgressFill
+                          value={value}
+                          color={colors.deep}
+                          track={Palette.soft}
+                          height={6}
+                        />
+                      </View>
+                      <Text style={styles.unitCount}>{text}</Text>
                     </View>
-                  ) : null}
+                  ) : (
+                    <Text style={[styles.unitCount, styles.laterNote]}>Coming later</Text>
+                  )}
                 </View>
                 {section === here
                   ? section.groups.map((unit) => (
@@ -283,13 +286,8 @@ const styles = StyleSheet.create({
   },
   unitList: { gap: space(4), marginTop: space(1) },
   levelBlock: { gap: space(2) },
-  levelHead: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space(2),
-  },
+  levelHead: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: space(2) },
+  levelBar: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
   levelName: {
     color: Palette.ink,
     flexShrink: 1,
@@ -298,6 +296,7 @@ const styles = StyleSheet.create({
     lineHeight: LineHeight.body,
   },
   later: { color: Palette.secondary },
+  laterNote: { textAlign: 'left' },
   unitInLevel: { paddingLeft: space(3) },
   unitRow: { gap: space(1.5) },
   unitTop: { alignItems: 'flex-start', flexDirection: 'row', gap: space(2) },

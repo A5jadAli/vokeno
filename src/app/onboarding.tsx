@@ -105,7 +105,7 @@ export default function OnboardingScreen() {
                   </View>
                   <MaterialCommunityIcons
                     color={selected ? Palette.ink : Palette.muted}
-                    name={selected ? 'check-circle' : 'circle-outline'}
+                    name={selected ? 'radiobox-marked' : 'radiobox-blank'}
                     size={24}
                   />
                 </Pressable>
