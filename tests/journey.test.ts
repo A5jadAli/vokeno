@@ -7,8 +7,11 @@ import { freshFoundationEntry, type FoundationProgress } from '@/features/founda
 import { dayFromNumber, dayNumberOf, type PracticeLog } from '@/features/habits/practice-log';
 import { ACTIVITY_LOG_DAYS, addActivity, parseActivityLog } from '@/features/journey/activity-log';
 import {
+  courseLevels,
   courseUnits,
+  levelProgress,
   coursePosition,
+  groupsAround,
   findNextLesson,
   lessonIdFromHref,
 } from '@/features/journey/course';
@@ -190,5 +193,64 @@ describe('activity log', () => {
         'not-a-day': ['lesson:x'],
       }),
     ).toEqual({ [TODAY]: ['lesson:de-a1-u1-hallo'] });
+  });
+});
+
+describe('course levels', () => {
+  it('lays each language out from its first level to B2, in course order', () => {
+    expect(courseLevels('ES', {}).map((level) => level.level)).toEqual(['A1', 'A2', 'B1', 'B2']);
+    expect(courseLevels('DE', {}).map((level) => level.level)).toEqual(['A1', 'A2', 'B1', 'B2']);
+    expect(courseLevels('EN', {}).map((level) => level.level)).toEqual(['B1', 'B2', 'C1']);
+    // English is B1 to C1: its older A2 lessons are a warm-up inside B1, never labelled A2.
+    const english = courseLevels('EN', {});
+    expect(english[0].groups[0].label).toBe('Warm-up before B1');
+    expect(
+      english.flatMap((level) => [level.label, ...level.groups.map((group) => group.label)]).join(),
+    ).not.toMatch(/A2/);
+    expect(english[2]).toMatchObject({ level: 'C1', lessons: 0, label: 'C1' });
+    // The warm-up is in B1 but not B1 content: it does not count towards B1.
+    const warmUp = english[0].groups[0].lessons.length;
+    const inB1 = english[0].groups.reduce((sum, group) => sum + group.lessons.length, 0);
+    expect(english[0].lessons).toBe(inB1 - warmUp);
+    const spanish = courseLevels('ES', {});
+    // Levels not built yet are listed, empty, so the way to B2 is visible but nothing is claimed.
+    expect(spanish.find((level) => level.level === 'B2')?.lessons).toBe(0);
+    expect(spanish.find((level) => level.level === 'B2')?.label).toBe('B2');
+    const a1 = spanish[0];
+    expect(a1.label).toBe('A1 starter');
+    expect(a1.note).toMatch(/does not mean you have reached A1/);
+    expect(a1.groups.some((group) => group.kind === 'checkpoint')).toBe(true);
+    // Checkpoints and older lessons are not counted as units.
+    expect(a1.units).toBe(a1.groups.filter((group) => group.kind === 'unit').length);
+    const all = courseUnits('ES', {}).reduce((sum, group) => sum + group.lessons.length, 0);
+    expect(spanish.reduce((sum, level) => sum + level.lessons, 0)).toBe(all);
+  });
+
+  it('opens around you are here: one group before and two after', () => {
+    const groups = courseLevels('DE', {})[0].groups;
+    expect(groupsAround(groups, groups[5].id).map((group) => group.id)).toEqual(
+      groups.slice(4, 8).map((group) => group.id),
+    );
+    expect(groupsAround(groups, groups[0].id)).toEqual(groups.slice(0, 3));
+    expect(groupsAround(groups, 'somewhere-else')).toEqual(groups.slice(0, 3));
+  });
+
+  it('always shows the next checkpoint after the units around you', () => {
+    const groups = courseLevels('ES', {})[0].groups;
+    const shown = groupsAround(groups, groups[0].id);
+    expect(shown.slice(0, 3)).toEqual(groups.slice(0, 3));
+    expect(shown.at(-1)?.kind).toBe('checkpoint');
+  });
+
+  it('counts one way: the words and the bar agree, and covered is said', () => {
+    const a1 = courseLevels('ES', {})[0];
+    expect(levelProgress(a1)).toMatchObject({ value: 0, text: `0 of ${a1.units} units` });
+    const covered = { ...a1, unitsDone: 5, unitsCovered: 5 };
+    expect(levelProgress(covered)).toEqual({
+      value: 5 / a1.units,
+      text: `5 of ${a1.units} units, 5 covered`,
+      label: `5 of ${a1.units} units done, 5 covered`,
+    });
+    expect(levelProgress({ ...a1, reached: true }).text).toBe('A1 reached');
   });
 });

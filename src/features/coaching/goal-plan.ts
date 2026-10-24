@@ -2,6 +2,7 @@
 // honest on-track verdict and how many lessons today's session needs.
 
 import { getTrackLessons, levelOrder } from '@/features/foundations/catalog';
+import { courseLevelOf, levelRange } from '@/features/foundations/level-status';
 import type { FoundationProgress } from '@/features/foundations/progress';
 import type { LessonLevel } from '@/features/foundations/types';
 import { dayNumberOf, localDay } from '@/features/habits/practice-log';
@@ -53,15 +54,19 @@ export function defaultGoalLevel(
   track: LanguageTrack,
   startAt?: string,
 ): LessonLevel {
-  return (
-    lessonsAhead(progress, track, startAt)[0]?.level ?? getTrackLessons(track).at(-1)?.level ?? 'A1'
+  // A warm-up is not a level to aim at: its goal is the course's first level.
+  return courseLevelOf(
+    track,
+    lessonsAhead(progress, track, startAt)[0]?.level ??
+      getTrackLessons(track).at(-1)?.level ??
+      levelRange[track][0],
   );
 }
 
 /** Levels a goal can aim at in this language, in course order. */
 export function goalLevels(track: LanguageTrack): LessonLevel[] {
   const present = new Set(getTrackLessons(track).map((lesson) => lesson.level));
-  return levelOrder.filter((level) => present.has(level));
+  return levelRange[track].filter((level) => present.has(level));
 }
 
 export function buildGoalPlan(input: GoalInput): GoalPlan | null {
@@ -70,7 +75,11 @@ export function buildGoalPlan(input: GoalInput): GoalPlan | null {
   const today = dayNumberOf(localDay(now));
   const target = dayNumberOf(date);
   const daysLeft = target - today;
-  const level = input.level ?? defaultGoalLevel(progress, track, input.startAt);
+  // A goal saved before English started at B1 ("A2") now aims at the course's first level.
+  const level = courseLevelOf(
+    track,
+    input.level ?? defaultGoalLevel(progress, track, input.startAt),
+  );
   const rank = levelOrder.indexOf(level);
   const ahead = lessonsAhead(progress, track, input.startAt).filter(
     (lesson) => levelOrder.indexOf(lesson.level) <= rank,

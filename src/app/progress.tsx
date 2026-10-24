@@ -3,6 +3,7 @@ import { type Href, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { LevelPill } from '@/components/course-view';
 import { ProgressFill } from '@/components/motion';
 import { StreakStrip } from '@/components/streak-strip';
 import { SyncStatusNotice } from '@/components/sync-status';
@@ -12,7 +13,7 @@ import { FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/const
 import { testDateFor, useCoachingStore } from '@/features/coaching/store';
 import { curriculumUnits } from '@/features/curriculum/catalog';
 import { useHabits } from '@/features/habits/use-habits';
-import { courseUnits, coursePosition } from '@/features/journey/course';
+import { courseLevels, coursePosition, levelProgress } from '@/features/journey/course';
 import {
   languageDetails,
   languageTracks,
@@ -42,12 +43,14 @@ export default function ProgressScreen() {
   const colors = trackColors[track];
   const language = languageDetails[track].name;
   const position = coursePosition(progress, track, preferences[track].startAt);
-  const units = courseUnits(track, progress);
+  const levels = courseLevels(track, progress);
+  const here =
+    levels.find((section) => section.groups.some((group) => group.id === position.unit?.id)) ??
+    levels.find((section) => section.groups.length > 0);
   const words = reviewSummary(progress, track);
   const dialogues = listeningScenarios.filter((scenario) => scenario.track === track);
   const conversations = curriculumUnits.filter((unit) => unit.track === track);
   const daysLeft = daysUntilTest(testDate);
-  const unitsDone = units.filter((unit) => unit.done === unit.lessons.length).length;
 
   return (
     <AppScreen activeNav="progress">
@@ -66,31 +69,64 @@ export default function ProgressScreen() {
           height={10}
         />
         <Text style={styles.meta}>
-          {unitsDone} of {units.length} {units.length === 1 ? 'section' : 'sections'} complete
+          {here?.reached
+            ? `${here.level} reached`
+            : `Working towards ${here?.level ?? levels[0].level}`}
           {position.next ? ` · now in ${position.unit?.label ?? position.next.lesson.level}` : ''}
+          {position.coveredLessons ? ` · ${position.coveredLessons} covered by a checkpoint` : ''}
         </Text>
+        {/* The same levels and counts as Course, so the two tabs always agree. */}
         <View style={styles.unitList}>
-          {units.map((unit) => (
-            <View key={unit.id} style={styles.unitRow}>
-              {/* Name and count on one line, the bar below, so names keep the full width. */}
-              <View style={styles.unitTop}>
-                <Text style={styles.unitName} numberOfLines={2}>
-                  {unit.label}
-                </Text>
-                <Text style={styles.unitCount}>
-                  {unit.done}/{unit.lessons.length}
-                </Text>
+          {levels.map((section) => {
+            const { text, value } = levelProgress(section);
+            const built = section.groups.length > 0;
+            return (
+              <View key={section.level} style={styles.levelBlock}>
+                <View style={styles.unitRow}>
+                  <View style={styles.unitTop}>
+                    <View style={styles.levelHead}>
+                      <LevelPill label={section.label} built={built} track={track} />
+                      <Text style={[styles.levelName, !built && styles.later]}>{section.name}</Text>
+                    </View>
+                    <Text style={styles.unitCount}>{built ? text : 'Coming later'}</Text>
+                  </View>
+                  {built ? (
+                    <View style={styles.unitBar}>
+                      <ProgressFill
+                        value={value}
+                        color={colors.deep}
+                        track={Palette.soft}
+                        height={6}
+                      />
+                    </View>
+                  ) : null}
+                </View>
+                {section === here
+                  ? section.groups.map((unit) => (
+                      <View key={unit.id} style={[styles.unitRow, styles.unitInLevel]}>
+                        {/* Name and count on one line, the bar below, so names keep the full width. */}
+                        <View style={styles.unitTop}>
+                          <Text style={styles.unitName} numberOfLines={2}>
+                            {unit.label}
+                          </Text>
+                          <Text style={styles.unitCount}>
+                            {unit.done}/{unit.lessons.length}
+                          </Text>
+                        </View>
+                        <View style={styles.unitBar}>
+                          <ProgressFill
+                            value={unit.done / unit.lessons.length}
+                            color={colors.deep}
+                            track={Palette.soft}
+                            height={6}
+                          />
+                        </View>
+                      </View>
+                    ))
+                  : null}
               </View>
-              <View style={styles.unitBar}>
-                <ProgressFill
-                  value={unit.done / unit.lessons.length}
-                  color={colors.deep}
-                  track={Palette.soft}
-                  height={6}
-                />
-              </View>
-            </View>
-          ))}
+            );
+          })}
         </View>
         <Pressable
           accessibilityRole="button"
@@ -245,7 +281,24 @@ const styles = StyleSheet.create({
     fontSize: FontSize.label,
     lineHeight: LineHeight.label,
   },
-  unitList: { gap: space(2), marginTop: space(1) },
+  unitList: { gap: space(4), marginTop: space(1) },
+  levelBlock: { gap: space(2) },
+  levelHead: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space(2),
+  },
+  levelName: {
+    color: Palette.ink,
+    flexShrink: 1,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
+  later: { color: Palette.secondary },
+  unitInLevel: { paddingLeft: space(3) },
   unitRow: { gap: space(1.5) },
   unitTop: { alignItems: 'flex-start', flexDirection: 'row', gap: space(2) },
   unitName: {

@@ -1,7 +1,7 @@
 import type { LanguageTrack } from '@/features/language/config';
 
 export type LessonTrack = LanguageTrack;
-export type LessonLevel = 'A1' | 'A2' | 'B1' | 'B2';
+export type LessonLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
 
 export type LessonCheck = {
   prompt: string;

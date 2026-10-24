@@ -116,6 +116,15 @@ The authoring package also requires, beyond those sessions:
 - Three full original exam forms: one familiarisation form, then two unseen readiness forms on separate days. Official samples remain external familiarisation/benchmark resources, not repeated score-training material.
 - A reviewable vocabulary/chunk inventory: lemma, article/plural where applicable, sense, register, region, first use, subsequent retrieval and accepted alternatives. Set quantities after auditing the actual inventory and pilot load. A vocabulary count alone does not establish A1.
 
+## Checkpoint pass mark
+
+Decided 24 October 2026, for every language (`CHECKPOINT_PASS_MARK` in `src/features/journey/checkpoints.ts`):
+
+- **Pass:** at least 80% of the checkpoint's marked tasks right first time, and its speaking task done aloud when the version has one. Speaking is practised, not scored, but it is required, because speaking is what Vokeno promises. Each run is judged against the version it used (main or retake); the first passing run is the one shown.
+- **No locks.** Every unit stays open. Opening a unit past a checkpoint not yet taken shows one note, once per checkpoint, with two equal choices: take the checkpoint, or start anyway.
+- **Test out.** Passing a checkpoint covers the lessons since the previous checkpoint in that level: they count as done for "what next" and progress, and Course marks them "Covered", never as taken.
+- **Level claims.** Vokeno says a learner has reached a level only when the level's content has passed every quality gate (`levelStatus` is `complete`) and every checkpoint in it is passed. Until then the wording stays "working towards" or "starter set". No level is complete yet, so no level is claimed today.
+
 ## Keep the app comfortable as content grows
 
 Preserve the [implemented journey decisions](ux-redesign-2026-10.md), language switcher, shared components, typography, colours and four tabs. The October UX review predates these changes; its old findings should not be presented as current defects without rechecking.

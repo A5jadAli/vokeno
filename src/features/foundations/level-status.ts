@@ -23,12 +23,33 @@ export const exams: Partial<Record<LanguageTrack, Partial<Record<LessonLevel, st
   EN: { B1: 'IELTS or Cambridge', B2: 'IELTS or Cambridge' },
 };
 
+/**
+ * The levels each course is built to, in order (decided 7 October 2026): German and Spanish
+ * from A1 to at least B2; English for B1 to C1 fluency and IELTS, with no A1 or A2 labels.
+ */
+export const levelRange: Record<LanguageTrack, LessonLevel[]> = {
+  DE: ['A1', 'A2', 'B1', 'B2'],
+  ES: ['A1', 'A2', 'B1', 'B2'],
+  EN: ['B1', 'B2', 'C1'],
+};
+
+const order: LessonLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1'];
+
+/** Lessons below a course's first level are a warm-up for it, never labelled with their level. */
+export const isWarmUp = (track: LanguageTrack, level: LessonLevel) =>
+  order.indexOf(level) < order.indexOf(levelRange[track][0]);
+
+/** The course level a lesson belongs under: its own, or the first level for a warm-up. */
+export const courseLevelOf = (track: LanguageTrack, level: LessonLevel) =>
+  isWarmUp(track, level) ? levelRange[track][0] : level;
+
 export function isStarterLevel(track: LanguageTrack, level: LessonLevel) {
   return levelStatus[track][level] !== 'complete';
 }
 
 /** Short label for tabs and headers: "A1 starter" while the units are still being written. */
 export function levelLabel(track: LanguageTrack, level: LessonLevel) {
+  if (isWarmUp(track, level)) return 'Warm-up';
   return levelStatus[track][level] === 'units' || !isStarterLevel(track, level)
     ? level
     : `${level} starter`;
@@ -36,6 +57,8 @@ export function levelLabel(track: LanguageTrack, level: LessonLevel) {
 
 /** One honest sentence about what finishing this level's lessons does and does not mean. */
 export function levelNote(track: LanguageTrack, level: LessonLevel) {
+  if (isWarmUp(track, level))
+    return `A short warm-up before ${levelRange[track][0]}: it tunes your ear and everyday phrases, and is not a level of its own.`;
   if (!isStarterLevel(track, level)) return '';
   const exam = exams[track]?.[level];
   if (levelStatus[track][level] === 'units')

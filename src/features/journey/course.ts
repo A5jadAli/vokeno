@@ -7,8 +7,17 @@ import {
   type FoundationLesson,
 } from '@/features/foundations/catalog';
 import type { FoundationEntry, FoundationProgress } from '@/features/foundations/progress';
-import { finalStep, unitName } from '@/features/foundations/types';
+import {
+  courseLevelOf,
+  isWarmUp,
+  levelLabel,
+  levelNote,
+  levelRange,
+} from '@/features/foundations/level-status';
+import { finalStep, unitName, type LessonLevel } from '@/features/foundations/types';
 import type { LanguageTrack } from '@/features/language/config';
+
+import { coveredLessons, levelReached } from './checkpoints';
 
 export const isFinished = (entry: FoundationEntry | undefined) => Boolean(entry?.attempts.length);
 
@@ -69,9 +78,11 @@ export function findNextLesson(
     0,
     lessons.findIndex((lesson) => lesson.id === pathStart(track, startAt)),
   );
-  const fresh =
-    lessons.slice(start).find((lesson) => !isFinished(progress[lesson.id])) ??
-    lessons.find((lesson) => !isFinished(progress[lesson.id]));
+  // Lessons a passed checkpoint tested the learner out of are not offered as next.
+  const covered = coveredLessons(lessons, progress);
+  const open = (lesson: FoundationLesson) =>
+    !isFinished(progress[lesson.id]) && !covered.has(lesson.id);
+  const fresh = lessons.slice(start).find(open) ?? lessons.find(open);
   return fresh ? { lesson: fresh, reason: 'start' } : null;
 }
 
@@ -82,11 +93,19 @@ export function lessonsAhead(progress: FoundationProgress, track: LanguageTrack,
     0,
     lessons.findIndex((lesson) => lesson.id === pathStart(track, startAt)),
   );
-  return lessons.slice(start).filter((lesson) => !isFinished(progress[lesson.id]));
+  const covered = coveredLessons(lessons, progress);
+  return lessons
+    .slice(start)
+    .filter((lesson) => !isFinished(progress[lesson.id]) && !covered.has(lesson.id));
 }
 
 export type UnitSummary = {
   id: string;
+  /**
+   * A unit, a checkpoint after a group of units, a level's older lessons, a warm-up below the
+   * course's first level, or saved lessons.
+   */
+  kind: 'unit' | 'checkpoint' | 'lessons' | 'warm-up' | 'saved';
   title: string;
   /** "Unit 2 · Woher kommst du?" for units, the level for older lessons. */
   label: string;
@@ -94,21 +113,27 @@ export type UnitSummary = {
   /** The unit's topic icon, when it has one. */
   icon?: string;
   lessons: FoundationLesson[];
+  /** Lessons finished, or covered by a passed checkpoint. */
   done: number;
+  /** Of those, the ones covered by a passed checkpoint without being taken. */
+  covered: number;
 };
 
 /** The course grouped the way learners see it: units, then the older lessons of each level. */
 export function courseUnits(track: LanguageTrack, progress: FoundationProgress): UnitSummary[] {
   const groups: UnitSummary[] = [];
   const saved = savedEarlierLessons(track, progress);
+  const covered = coveredLessons(getTrackLessons(track), progress);
   if (saved.length)
     groups.push({
       id: `${track}-saved-lessons`,
+      kind: 'saved',
       title: 'Saved lessons',
       label: 'Saved lessons',
       canDo: 'Finish your earlier lesson, then continue with the updated course.',
       lessons: saved,
       done: 0,
+      covered: 0,
     });
   for (const lesson of getTrackLessons(track)) {
     const id = lesson.format === 'steps' ? lesson.unit.id : `${track}-${lesson.level}-lessons`;
@@ -118,25 +143,44 @@ export function courseUnits(track: LanguageTrack, progress: FoundationProgress):
         lesson.format === 'steps'
           ? {
               id,
+              kind: lesson.unit.checkpoint ? 'checkpoint' : 'unit',
               title: lesson.unit.title,
               label: `${unitName(lesson.unit)} · ${lesson.unit.title}`,
               canDo: lesson.unit.canDo,
               icon: lesson.unit.icon,
               lessons: [],
               done: 0,
+              covered: 0,
             }
-          : {
-              id,
-              title: `${lesson.level} lessons`,
-              label: `${lesson.level} lessons`,
-              canDo: 'Short lessons from the starter set, until full units are ready.',
-              lessons: [],
-              done: 0,
-            };
+          : isWarmUp(track, lesson.level)
+            ? {
+                id,
+                kind: 'warm-up',
+                title: 'Warm-up',
+                label: `Warm-up before ${levelRange[track][0]}`,
+                canDo: `Short lessons that tune your ear before ${levelRange[track][0]}.`,
+                lessons: [],
+                done: 0,
+                covered: 0,
+              }
+            : {
+                id,
+                kind: 'lessons',
+                title: `${lesson.level} lessons`,
+                label: `${lesson.level} lessons`,
+                canDo: 'Short lessons from the starter set, until full units are ready.',
+                lessons: [],
+                done: 0,
+                covered: 0,
+              };
       groups.push(group);
     }
     group.lessons.push(lesson);
     if (isFinished(progress[lesson.id])) group.done += 1;
+    else if (covered.has(lesson.id)) {
+      group.done += 1;
+      group.covered += 1;
+    }
   }
   return groups;
 }
@@ -147,7 +191,10 @@ export type CoursePosition = {
   unit?: UnitSummary;
   /** 1-based position of the next lesson inside its unit. */
   lessonNumber?: number;
+  /** Lessons finished or covered by a passed checkpoint: the one count used everywhere. */
   finishedLessons: number;
+  /** Of those, lessons covered by a checkpoint rather than taken. */
+  coveredLessons: number;
   totalLessons: number;
   started: boolean;
 };
@@ -165,7 +212,8 @@ export function coursePosition(
     next,
     unit,
     lessonNumber: next && unit ? unit.lessons.indexOf(next.lesson) + 1 : undefined,
-    finishedLessons: lessons.filter((lesson) => isFinished(progress[lesson.id])).length,
+    finishedLessons: units.reduce((sum, item) => sum + (item.kind === 'saved' ? 0 : item.done), 0),
+    coveredLessons: units.reduce((sum, item) => sum + item.covered, 0),
     totalLessons: lessons.length,
     started: allTrackLessons(track).some(
       (lesson) => isFinished(progress[lesson.id]) || (progress[lesson.id]?.step ?? 0) > 0,
@@ -195,3 +243,103 @@ export function lessonIdFromHref(href: string) {
 /** Approximate minutes for a lesson: units carry their own; older lessons take about five. */
 export const lessonMinutes = (lesson: FoundationLesson) =>
   lesson.format === 'steps' ? lesson.minutes : 5;
+
+/** What each level lets a learner do, in a few words, after the CEFR descriptors. */
+export const levelNames: Record<LessonLevel, string> = {
+  A1: 'Everyday basics',
+  A2: 'Getting by',
+  B1: 'Independent',
+  B2: 'Confident',
+  C1: 'Advanced',
+};
+
+export type LevelSection = {
+  level: LessonLevel;
+  /** "A1" once a level's units are all built, "A1 starter" before. */
+  label: string;
+  name: string;
+  /** One honest sentence on what finishing this level's lessons does and does not mean. */
+  note: string;
+  groups: UnitSummary[];
+  units: number;
+  /** Units finished or covered by a passed checkpoint. */
+  unitsDone: number;
+  /** Of those, the units a checkpoint covered rather than the learner taking every lesson. */
+  unitsCovered: number;
+  lessons: number;
+  /** Lessons finished or covered by a passed checkpoint. */
+  lessonsDone: number;
+  lessonsCovered: number;
+  /** Only true once the level is complete and every checkpoint in it is passed. */
+  reached: boolean;
+};
+
+/**
+ * The course as levels, in the language's own range (A1 to B2, or B1 to C1 for English), each
+ * holding its units, checkpoints and older lessons in course order. Lessons below the range are
+ * a warm-up at the start of the first level. A level with nothing built yet has no groups.
+ */
+export function courseLevels(track: LanguageTrack, progress: FoundationProgress): LevelSection[] {
+  const groups = courseUnits(track, progress);
+  const levelOf = (group: UnitSummary) => courseLevelOf(track, group.lessons[0].level);
+  return levelRange[track].map((level) => {
+    const inLevel = groups.filter((group) => levelOf(group) === level);
+    const units = inLevel.filter((group) => group.kind === 'unit');
+    // A warm-up sits in the level but is not its content, so it never moves the level's count.
+    const content = inLevel.filter((group) => group.kind !== 'warm-up');
+    const done = units.filter((unit) => unit.done === unit.lessons.length);
+    return {
+      level,
+      // A level with nothing built yet is not a starter set either: just its name.
+      label: inLevel.length ? levelLabel(track, level) : level,
+      name: levelNames[level],
+      note: inLevel.length ? levelNote(track, level) : '',
+      groups: inLevel,
+      units: units.length,
+      unitsDone: done.length,
+      unitsCovered: done.filter((unit) => unit.covered > 0).length,
+      lessons: content.reduce((sum, group) => sum + group.lessons.length, 0),
+      lessonsDone: content.reduce((sum, group) => sum + group.done, 0),
+      lessonsCovered: content.reduce((sum, group) => sum + group.covered, 0),
+      reached: levelReached(track, level, getTrackLessons(track), progress),
+    };
+  });
+}
+
+/**
+ * How far through a level, counted one way everywhere (Course and Progress): by units when the
+ * level has units, by lessons otherwise, with covered ones said out loud. The bar uses the same
+ * count as the words.
+ */
+export function levelProgress(section: LevelSection) {
+  const byUnits = section.units > 0;
+  const done = byUnits ? section.unitsDone : section.lessonsDone;
+  const total = byUnits ? section.units : section.lessons;
+  const covered = byUnits ? section.unitsCovered : section.lessonsCovered;
+  const noun = byUnits ? 'units' : 'lessons';
+  const coveredText = covered ? `, ${covered} covered` : '';
+  return {
+    value: total ? done / total : 0,
+    text: section.reached
+      ? `${section.level} reached`
+      : `${done} of ${total} ${noun}${coveredText}`,
+    /** For screen readers: "3 of 6 units done, 2 covered". */
+    label: section.reached
+      ? `${section.level} reached`
+      : `${done} of ${total} ${noun} done${coveredText}`,
+  };
+}
+
+/**
+ * The groups to show in an open level without a long scroll: one before "you are here" and two
+ * after it (or the first three when you are not in this level), plus the next checkpoint after
+ * them, because the next milestone is what keeps people going.
+ */
+export function groupsAround(groups: UnitSummary[], currentId?: string, before = 1, after = 2) {
+  const here = groups.findIndex((group) => group.id === currentId);
+  const start = here < 0 ? 0 : Math.max(0, here - before);
+  const end = here < 0 ? before + after : here + after + 1;
+  const shown = groups.slice(start, end);
+  const gate = groups.slice(end).find((group) => group.kind === 'checkpoint');
+  return gate ? [...shown, gate] : shown;
+}

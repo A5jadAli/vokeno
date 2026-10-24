@@ -36,7 +36,7 @@ export const foundationLessons: FoundationLesson[] = [
   ...spanishA2Lessons,
 ];
 
-export const levelOrder: LessonLevel[] = ['A1', 'A2', 'B1', 'B2'];
+export const levelOrder: LessonLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1'];
 
 /**
  * The learning path: every lesson of a language, without retired ones, level by level (the

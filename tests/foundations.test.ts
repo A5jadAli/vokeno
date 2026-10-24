@@ -21,7 +21,7 @@ import { gradedCount, MAX_LESSON_CHECKS, type LessonTrack } from '@/features/fou
 const classicPath = (track: LessonTrack) =>
   classicLessons.filter((lesson) => lesson.track === track && !lesson.retired);
 
-const levelRank = { A1: 0, A2: 1, B1: 2, B2: 3 } as const;
+const levelRank = { A1: 0, A2: 1, B1: 2, B2: 3, C1: 4 } as const;
 
 describe('guided lesson content', () => {
   it('has unique ids, translated phrases, valid checks and model writing answers', () => {

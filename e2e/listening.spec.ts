@@ -187,7 +187,7 @@ test('sets, displays and removes a goal date', async ({ page }) => {
   // Today shows the plan towards the date: the level, the weeks and whether it is on track.
   await page.goto('/');
   await expect(
-    page.getByRole('button', { name: /^\w+ A\d( starter)? by .*Week 1 of \d+.*Change goal$/ }),
+    page.getByRole('button', { name: /^\w+ [ABC]\d( starter)? by .*Week 1 of \d+.*Change goal$/ }),
   ).toBeVisible();
 
   await page.goto('/profile');
