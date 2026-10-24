@@ -8,11 +8,18 @@ import {
 } from '@/features/feedback/sounds';
 
 const mockCalls: string[] = [];
+let mockStatusListener: ((status: { didJustFinish: boolean }) => void) | undefined;
 const mockPlayer = {
   currentTime: 0,
-  addListener: jest.fn(),
+  loop: true,
+  addListener: jest.fn((_event: string, listener: (status: { didJustFinish: boolean }) => void) => {
+    mockStatusListener = listener;
+  }),
   play: jest.fn(() => mockCalls.push('play')),
-  seekTo: jest.fn(async () => undefined),
+  pause: jest.fn(() => mockCalls.push('pause')),
+  seekTo: jest.fn(async () => {
+    mockCalls.push('seek');
+  }),
 };
 jest.mock('expo-audio', () => ({
   createAudioPlayer: jest.fn(() => mockPlayer),
@@ -67,5 +74,15 @@ describe('answer sound', () => {
     now += 1000;
     await playAnswerSound();
     expect(mockCalls).toContain('play');
+  });
+
+  it('plays once: when the chime ends it pauses before rewinding, so it cannot replay itself', async () => {
+    prepareAnswerSound();
+    expect(mockPlayer.loop).toBe(false);
+    mockCalls.length = 0;
+    mockStatusListener?.({ didJustFinish: false });
+    expect(mockCalls).toEqual([]);
+    mockStatusListener?.({ didJustFinish: true });
+    expect(mockCalls).toEqual(['pause', 'seek']);
   });
 });

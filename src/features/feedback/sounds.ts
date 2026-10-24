@@ -31,11 +31,17 @@ let lastPlayed = 0;
 /** Loads the chime before the first answer, so it lands together with the haptic. */
 export function prepareAnswerSound() {
   if (Platform.OS === 'web' || player) return;
-  player = createAudioPlayer(require('../../../assets/sounds/correct.wav'));
-  player.addListener('playbackStatusUpdate', (status) => {
-    // Rewind as soon as it ends, so the next answer can play it without waiting for a seek.
-    if (status.didJustFinish) void player?.seekTo(0);
+  const chime = createAudioPlayer(require('../../../assets/sounds/correct.wav'));
+  chime.loop = false;
+  chime.addListener('playbackStatusUpdate', (status) => {
+    if (!status.didJustFinish) return;
+    // Pause first: the player still wants to play after it ends, so rewinding alone would start
+    // the chime again, and again (shipped by mistake on 24 October 2026). Then rewind, so the
+    // next answer can play it without waiting for a seek.
+    chime.pause();
+    void chime.seekTo(0);
   });
+  player = chime;
 }
 
 /**
