@@ -3,6 +3,8 @@ import { describe, expect, it } from '@jest/globals';
 import { buildTodayPlan, type TodayPlanInput } from '@/features/coaching/daily-plan';
 import { getTrackLessons } from '@/features/foundations/catalog';
 import { nextLesson } from '@/features/foundations/next';
+import { contentLevel } from '@/features/foundations/level-status';
+import { fittingConversations, fittingScenarios } from '@/features/journey/practice';
 import { freshFoundationEntry, type FoundationProgress } from '@/features/foundations/progress';
 import { dayFromNumber, dayNumberOf, type PracticeLog } from '@/features/habits/practice-log';
 import { ACTIVITY_LOG_DAYS, addActivity, parseActivityLog } from '@/features/journey/activity-log';
@@ -252,5 +254,24 @@ describe('course levels', () => {
       label: `5 of ${a1.units} units done, 5 covered`,
     });
     expect(levelProgress({ ...a1, reached: true }).text).toBe('A1 reached');
+  });
+});
+
+describe('levels shown for practice content', () => {
+  it('never shows A1 or A2 for English, and keeps other languages as they are', () => {
+    expect(contentLevel('EN', 'A1')).toBe('Warm-up');
+    expect(contentLevel('EN', 'A2')).toBe('Warm-up');
+    expect(contentLevel('EN', 'B1')).toBe('B1');
+    expect(contentLevel('ES', 'A1')).toBe('A1');
+    expect(contentLevel('DE', 'A2–B2')).toBe('A2–B2');
+  });
+
+  it('matches English practice to B1 and up, not the warm-up', () => {
+    expect(fittingConversations('EN', 'B1').map((unit) => unit.level)).toEqual(['B1']);
+    expect(new Set(fittingScenarios('EN', 'B1').map((item) => item.level))).toEqual(
+      new Set(['B1']),
+    );
+    // German at A1 still gets its A1 talks.
+    expect(fittingConversations('DE', 'A1').every((unit) => unit.level === 'A1')).toBe(true);
   });
 });

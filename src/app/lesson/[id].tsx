@@ -6,6 +6,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { SessionFooter } from '@/components/session-footer';
 import { AnswerChoice } from '@/components/answer-choice';
+import { PrimaryButton } from '@/components/lesson-ui';
 import { VoiceLineMark } from '@/components/voice-line';
 import {
   Dark,
@@ -25,6 +26,7 @@ import { scenarioLines } from '@/features/audio/inventory';
 import { useLessonAudio } from '@/features/audio/use-lesson-audio';
 import { trackColors } from '@/features/language/config';
 import { useCoachingStore } from '@/features/coaching/store';
+import { contentLevel } from '@/features/foundations/level-status';
 
 export default function ListeningLessonScreen() {
   const router = useRouter();
@@ -96,7 +98,7 @@ export default function ListeningLessonScreen() {
         <HeaderBack dark variant="close" />
         <View style={styles.headerTitle}>
           <Eyebrow color={trackColors[scenario.track].onDark}>
-            {scenario.level} · Real-life listening
+            {contentLevel(scenario.track, scenario.level)} · Real-life listening
           </Eyebrow>
           <Text numberOfLines={1} style={styles.title}>
             {scenario.title}
@@ -260,21 +262,13 @@ export default function ListeningLessonScreen() {
             </Text>
           ) : null}
           {checked && isCorrect ? null : (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityState={{ disabled: selectedAnswer === undefined }}
-              accessibilityLabel="Check answer"
-              disabled={selectedAnswer === undefined}
-              onPress={checkAnswer}
-              style={({ pressed }) => [
-                styles.checkButton,
-                { backgroundColor: Palette.cream },
-                selectedAnswer === undefined && styles.disabled,
-                pressed && styles.pressed,
-              ]}
-            >
-              <Text style={[styles.checkText, { color: Palette.ink }]}>Check answer</Text>
-            </Pressable>
+            <View style={styles.checkButton}>
+              <PrimaryButton
+                title="Check answer"
+                disabled={selectedAnswer === undefined}
+                onPress={checkAnswer}
+              />
+            </View>
           )}
         </View>
       </View>
@@ -406,14 +400,6 @@ const styles = StyleSheet.create({
   },
   feedbackCorrect: { color: Feedback.correctText },
   feedbackWrong: { color: Feedback.wrongText },
-  checkButton: {
-    alignItems: 'center',
-    backgroundColor: Palette.cream,
-    borderRadius: Radius.lg,
-    marginTop: space(4),
-    padding: space(4),
-  },
-  checkText: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
-  disabled: { opacity: 0.35 },
+  checkButton: { marginTop: space(4) },
   pressed: { opacity: 0.72 },
 });

@@ -3,24 +3,43 @@
 
 import { examMockUnitIds, getCurriculumUnits } from '@/features/curriculum/catalog';
 import type { LessonLevel } from '@/features/foundations/types';
+import { levelRange } from '@/features/foundations/level-status';
 import type { LanguageTrack } from '@/features/language/config';
 import { listeningScenarios } from '@/features/listening/scenarios';
 
 const levels = ['A1', 'A2', 'B1', 'B2', 'C1'] as const;
 const rank = (level: string) => levels.indexOf(level as (typeof levels)[number]);
 
-/** Dialogues at or below the learner's level, or all of them if none fit. */
-export function fittingScenarios(track: LanguageTrack, level: LessonLevel) {
-  const all = listeningScenarios.filter((scenario) => scenario.track === track);
-  const fitting = all.filter((scenario) => rank(scenario.level) <= Math.max(0, rank(level)));
-  return fitting.length ? fitting : all;
+/**
+ * Items at the learner's level: from the course's first level (B1 for English) up to theirs.
+ * Below the range is a warm-up, so it only fills in when nothing in range exists; then
+ * anything at or below their level, then everything.
+ */
+function atLevel<T extends { level: string }>(all: T[], track: LanguageTrack, level: LessonLevel) {
+  const top = Math.max(0, rank(level));
+  const floor = rank(levelRange[track][0]);
+  const inRange = all.filter((item) => rank(item.level) >= floor && rank(item.level) <= top);
+  if (inRange.length) return inRange;
+  const below = all.filter((item) => rank(item.level) <= top);
+  return below.length ? below : all;
 }
 
-/** Conversation scenarios at or below the learner's level, without exam mocks. */
+/** Dialogues at the learner's level. */
+export function fittingScenarios(track: LanguageTrack, level: LessonLevel) {
+  return atLevel(
+    listeningScenarios.filter((scenario) => scenario.track === track),
+    track,
+    level,
+  );
+}
+
+/** Conversation scenarios at the learner's level, without exam mocks. */
 export function fittingConversations(track: LanguageTrack, level: LessonLevel) {
-  const all = getCurriculumUnits(track).filter((unit) => !examMockUnitIds.includes(unit.id));
-  const fitting = all.filter((unit) => rank(unit.level) <= Math.max(0, rank(level)));
-  return fitting.length ? fitting : all;
+  return atLevel(
+    getCurriculumUnits(track).filter((unit) => !examMockUnitIds.includes(unit.id)),
+    track,
+    level,
+  );
 }
 
 /** The first dialogue not heard yet; after all are heard, one that rotates by day. */

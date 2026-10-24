@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
 import { haptic } from '@/features/feedback/haptics';
+import { BottomSheet } from '@/components/bottom-sheet';
 import { ReportContent } from '@/components/report-content';
 import { VoiceLine, VoiceLineMark } from '@/components/voice-line';
 
@@ -73,7 +74,7 @@ import type {
 } from '@/features/conversation/realtime-types';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { recordUsage } from '@/features/usage/usage';
-import { trackColors } from '@/features/language/config';
+import { trackColors, type LanguageTrack } from '@/features/language/config';
 import { getCurriculumUnit } from '@/features/curriculum/catalog';
 import { formatClock, useMockNotes } from '@/features/speaking-mock/store';
 import {
@@ -81,6 +82,7 @@ import {
   type SpeakingCard,
 } from '../../supabase/functions/_shared/speaking-cards';
 import { LanguageSwitch } from '@/components/language-switch';
+import { contentLevel } from '@/features/foundations/level-status';
 
 const BRIEF_OPENING =
   'Keep this opening very short: one brief greeting and one simple question, under eight seconds of speech. Then stop and wait for the learner.';
@@ -123,6 +125,7 @@ export default function ConversationScreen() {
   // An open microphone reporting exact silence for 5 seconds is blocked or dead, not a quiet room.
   const [microphoneDead, setMicrophoneDead] = useState(false);
   const [captions, setCaptions] = useState(true);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [muted, setMuted] = useState(false);
   const [turns, setTurns] = useState<TranscriptTurn[]>([]);
   const [signals, setSignals] = useState<StruggleSignal[]>([]);
@@ -631,8 +634,43 @@ export default function ConversationScreen() {
                 ? 'Level check'
                 : 'Live practice'}
         </Text>
-        <View style={styles.headerSpacer} />
+        <Pressable
+          accessibilityLabel="About this call"
+          accessibilityRole="button"
+          hitSlop={8}
+          onPress={() => setAboutOpen(true)}
+          style={({ pressed }) => [styles.infoButton, pressed && styles.pressed]}
+        >
+          <MaterialCommunityIcons color={Palette.cream} name="information-outline" size={24} />
+        </Pressable>
       </View>
+
+      {/* The small print lives here, so the line and Start are most of what the screen shows. */}
+      <BottomSheet
+        visible={aboutOpen}
+        onClose={() => setAboutOpen(false)}
+        closeLabel="Close about this call"
+      >
+        <View style={styles.about}>
+          <Text accessibilityRole="header" style={styles.aboutTitle}>
+            About this call
+          </Text>
+          {[
+            unitCall
+              ? `Three minutes with ${unitCall.addressedAs ?? unitCall.character}. Corrections are on.`
+              : 'Up to five minutes.',
+            'Stop any time; the microphone stops when you leave.',
+            'Replies use your phone’s current audio output, including Bluetooth.',
+            'Pauses and requests for help become gentle tips. No made-up scores.',
+            'Microphone audio is processed only for this live session. Captions are generated live and may contain mistakes.',
+          ].map((line) => (
+            <View key={line} style={styles.aboutRow}>
+              <View style={styles.aboutDot} />
+              <Text style={styles.aboutText}>{line}</Text>
+            </View>
+          ))}
+        </View>
+      </BottomSheet>
 
       <View style={styles.body}>
         <Eyebrow color={darkAccent}>
@@ -641,15 +679,10 @@ export default function ConversationScreen() {
             : unitCall
               ? `Unit ${unitCall.unitNumber} call`
               : 'Natural conversation'}{' '}
-          · {mode.level}
+          · <LevelText track={track} level={mode.level} />
         </Eyebrow>
         <Text style={styles.title}>{mode.title}</Text>
         <Text style={styles.description}>{mode.description}</Text>
-        <Text style={styles.description}>
-          {unitCall
-            ? `Three minutes with ${unitCall.addressedAs ?? unitCall.character}. Corrections are on. Stop any time; the microphone stops when you leave.`
-            : 'Up to five minutes. Stop any time; the microphone stops when you leave.'}
-        </Text>
 
         {unitCall && !callPhrases.length ? (
           <View style={styles.practiceCard}>
@@ -688,7 +721,7 @@ export default function ConversationScreen() {
         {unit && !examCard ? (
           <View style={styles.practiceCard}>
             <View style={styles.practiceHeading}>
-              <MaterialCommunityIcons color={darkAccent} name="waveform" size={18} />
+              <VoiceLineMark color={Palette.lime} />
               <Text style={styles.practiceFocus}>{unit.pronunciationFocus}</Text>
             </View>
             <View style={styles.phraseRow}>
@@ -765,11 +798,6 @@ export default function ConversationScreen() {
                 </Pressable>
               </View>
             </View>
-          ) : null}
-          {active ? (
-            <Text style={styles.audioRouteHint}>
-              Replies use your phone’s current audio output, including Bluetooth.
-            </Text>
           ) : null}
 
           {active ? (
@@ -921,64 +949,65 @@ export default function ConversationScreen() {
           </View>
         ) : null}
 
-        <View style={styles.captionHeader}>
-          <View>
-            <Eyebrow color={Palette.cream}>Live captions</Eyebrow>
-            <Text style={styles.captionHint}>Follow along without losing the conversation.</Text>
-          </View>
-          <Switch
-            // React Native Web colours the knob from activeThumbColor when on (teal by default).
-            {...{ activeThumbColor: Palette.ink }}
-            thumbColor={captions ? Palette.ink : Palette.cream}
-            accessibilityLabel="Show live captions"
-            onValueChange={setCaptions}
-            trackColor={{ false: Dark.switchOff, true: Palette.cream }}
-            value={captions}
-          />
-        </View>
+        {/* Captions belong to a call: nothing to show before one starts. */}
+        {active || turns.length ? (
+          <>
+            <View style={styles.captionHeader}>
+              <View>
+                <Eyebrow color={Palette.cream}>Live captions</Eyebrow>
+                <Text style={styles.captionHint}>
+                  Follow along without losing the conversation.
+                </Text>
+              </View>
+              <Switch
+                // On dark screens the knob carries the state: cream when on, grey when off. Android
+                // draws the track half see-through, so an ink knob on it all but disappeared.
+                // React Native Web colours the knob from activeThumbColor when on (teal by default).
+                {...{ activeThumbColor: Palette.cream }}
+                thumbColor={captions ? Palette.cream : Palette.muted}
+                accessibilityLabel="Show live captions"
+                onValueChange={setCaptions}
+                trackColor={{ false: Dark.switchOff, true: Palette.muted }}
+                value={captions}
+              />
+            </View>
 
-        {captions ? (
-          <View style={styles.transcript}>
-            {turns.length ? (
-              turns.slice(-6).map((turn) => (
-                <View
-                  key={`${turn.role}-${turn.id}`}
-                  style={[styles.turn, turn.role === 'user' && styles.userTurn]}
-                >
-                  <Text style={styles.turnRole}>
-                    {turn.role === 'user' ? 'YOU' : (unitCall?.character.toUpperCase() ?? 'VOKENO')}
-                  </Text>
-                  <Text style={styles.turnText}>{turn.text}</Text>
-                </View>
-              ))
-            ) : (
-              <Text style={styles.emptyTranscript}>
-                Your conversation will appear here. Captions are generated live and may contain
-                mistakes.
-              </Text>
-            )}
-          </View>
+            {captions ? (
+              <View style={styles.transcript}>
+                {turns.length ? (
+                  turns.slice(-6).map((turn) => (
+                    <View
+                      key={`${turn.role}-${turn.id}`}
+                      style={[styles.turn, turn.role === 'user' && styles.userTurn]}
+                    >
+                      <Text style={styles.turnRole}>
+                        {turn.role === 'user'
+                          ? 'YOU'
+                          : (unitCall?.character.toUpperCase() ?? 'VOKENO')}
+                      </Text>
+                      <Text style={styles.turnText}>{turn.text}</Text>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={styles.emptyTranscript}>Captions appear here as you talk.</Text>
+                )}
+              </View>
+            ) : null}
+          </>
         ) : null}
 
-        <View style={styles.coachCard}>
-          <View style={styles.coachHeading}>
-            <MaterialCommunityIcons color={darkAccent} name="creation" size={20} />
-            <Text style={styles.coachTitle}>Vokeno notices the struggle, not just the mistake</Text>
-          </View>
-          {signals.length ? (
-            signals.map((signal, index) => (
+        {/* Tips only when the coach has noticed something; how it works is in "About this call". */}
+        {signals.length ? (
+          <View style={styles.coachCard}>
+            <Text style={styles.coachTitle}>What the coach noticed</Text>
+            {signals.map((signal, index) => (
               <View key={`${signal.label}-${index}`} style={styles.signal}>
                 <Text style={[styles.signalLabel, { color: darkAccent }]}>{signal.label}</Text>
                 <Text style={styles.signalReason}>{signal.reason}</Text>
               </View>
-            ))
-          ) : (
-            <Text style={styles.coachCopy}>
-              Pauses and requests for help become gentle tips. No made-up scores.
-            </Text>
-          )}
-        </View>
-        <Text style={styles.privacy}>Microphone audio is processed for this live session.</Text>
+            ))}
+          </View>
+        ) : null}
       </View>
     </AppScreen>
   );
@@ -1016,7 +1045,29 @@ const styles = StyleSheet.create({
     fontSize: FontSize.body,
     textAlign: 'center',
   },
-  headerSpacer: { width: 40 },
+  infoButton: { alignItems: 'center', height: 40, justifyContent: 'center', width: 40 },
+  about: { gap: space(3), paddingBottom: space(2) },
+  aboutTitle: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.title,
+    lineHeight: LineHeight.title,
+  },
+  aboutRow: { alignItems: 'flex-start', flexDirection: 'row', gap: space(3) },
+  aboutDot: {
+    backgroundColor: Palette.ink,
+    borderRadius: Radius.pill,
+    height: 6,
+    marginTop: space(2),
+    width: 6,
+  },
+  aboutText: {
+    color: Palette.ink,
+    flex: 1,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
   body: { paddingBottom: space(8), paddingHorizontal: space(5), paddingTop: space(4) },
   title: {
     color: Palette.cream,
@@ -1142,14 +1193,6 @@ const styles = StyleSheet.create({
     marginTop: space(2),
     textAlign: 'center',
   },
-  audioRouteHint: {
-    color: OnDark.textFaint,
-    fontFamily: VokaFonts.body,
-    fontSize: FontSize.caption,
-    lineHeight: LineHeight.caption,
-    marginTop: space(2),
-    textAlign: 'center',
-  },
   startButton: {
     alignItems: 'center',
     borderRadius: Radius.lg,
@@ -1225,19 +1268,11 @@ const styles = StyleSheet.create({
     marginTop: space(4),
     padding: space(4),
   },
-  coachHeading: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
   coachTitle: {
     color: Palette.cream,
     flex: 1,
     fontFamily: VokaFonts.bodyBold,
     fontSize: FontSize.body,
-  },
-  coachCopy: {
-    color: OnDark.textFaint,
-    fontFamily: VokaFonts.body,
-    fontSize: FontSize.caption,
-    lineHeight: LineHeight.caption,
-    marginTop: space(2),
   },
   signal: {
     borderTopColor: OnDark.line,
@@ -1252,13 +1287,6 @@ const styles = StyleSheet.create({
     fontSize: FontSize.caption,
     lineHeight: LineHeight.caption,
     marginTop: space(1),
-  },
-  privacy: {
-    color: OnDark.textFaint,
-    fontFamily: VokaFonts.bodyMedium,
-    fontSize: FontSize.caption,
-    marginTop: space(4),
-    textAlign: 'center',
   },
   pressed: { opacity: 0.7, transform: [{ scale: 0.99 }] },
   disabled: { opacity: 0.5 },
@@ -1304,4 +1332,9 @@ function ExamCardPanel({ card, active }: { card: SpeakingCard; active: boolean }
       {notes ? <Text style={styles.examNotes}>Your notes: {notes}</Text> : null}
     </View>
   );
+}
+
+/** A talk's level as shown: English shows no A1 or A2, since talks below B1 are the warm-up. */
+function LevelText({ track, level }: { track: LanguageTrack; level: string }) {
+  return <>{contentLevel(track, level)}</>;
 }

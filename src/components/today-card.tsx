@@ -22,6 +22,9 @@ import type { useHabits } from '@/features/habits/use-habits';
 import { reviewSummary } from '@/features/review/schedule';
 import { isFinished, lessonContext } from '@/features/journey/course';
 import { languageDetails, trackColors, type LanguageTrack } from '@/features/language/config';
+import { SpeakGlyph } from '@/components/voice-line';
+
+const speaks = (name: string) => name === 'microphone-outline' || name === 'account-voice';
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
@@ -227,11 +230,15 @@ export function TodayCard({
                 { backgroundColor: tile.highlight ? colors.accent : colors.tint },
               ]}
             >
-              <MaterialCommunityIcons
-                color={tile.highlight ? colors.onAccent : Palette.ink}
-                name={tile.icon}
-                size={22}
-              />
+              {speaks(tile.icon) ? (
+                <SpeakGlyph color={tile.highlight ? colors.onAccent : Palette.ink} />
+              ) : (
+                <MaterialCommunityIcons
+                  color={tile.highlight ? colors.onAccent : Palette.ink}
+                  name={tile.icon}
+                  size={22}
+                />
+              )}
             </View>
             <Text style={styles.tileTitle}>{tile.title}</Text>
             <Text numberOfLines={2} style={styles.tileMeta}>
@@ -241,7 +248,7 @@ export function TodayCard({
         ))}
       </View>
 
-      <StreakStrip streak={streak} track={track} week={week} showCount={false} />
+      <StreakStrip streak={streak} week={week} showCount={false} />
     </PrimaryAccent>
   );
 }
@@ -249,7 +256,7 @@ export function TodayCard({
 const guidePoints: [IconName, string, string][] = [
   ['home-outline', 'Today', 'Tap the big button. It is always your next step.'],
   ['map-outline', 'Course', 'Your whole path in order, if you want to look ahead.'],
-  ['dumbbell', 'Practice', 'Extra review, listening and talking, whenever you like.'],
+  ['lightning-bolt-outline', 'Practice', 'Extra review, listening and talking, whenever you like.'],
 ];
 
 /** A short guide for new learners: where to go each day. It stays away once dismissed. */
@@ -319,7 +326,11 @@ function Focus({
           <MaterialCommunityIcons color={colors.accent} name={icon} size={112} />
         </View>
         <View style={[styles.bandIcon, { backgroundColor: colors.accent }]}>
-          <MaterialCommunityIcons color={colors.onAccent} name={icon} size={24} />
+          {speaks(icon) ? (
+            <SpeakGlyph color={colors.onAccent} size={24} />
+          ) : (
+            <MaterialCommunityIcons color={colors.onAccent} name={icon} size={24} />
+          )}
         </View>
         <View style={styles.bandCopy}>
           <Text numberOfLines={1} style={styles.bandLabel}>
@@ -404,6 +415,8 @@ function StepRow({
           <Animated.View entering={ZoomIn.springify().damping(14)}>
             <MaterialCommunityIcons color={onAccent} name="check" size={16} />
           </Animated.View>
+        ) : speaks(kindIcon[step.kind]) ? (
+          <SpeakGlyph color={current ? Palette.ink : Palette.muted} size={15} />
         ) : (
           <MaterialCommunityIcons
             color={current ? Palette.ink : Palette.muted}

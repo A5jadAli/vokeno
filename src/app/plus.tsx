@@ -34,6 +34,7 @@ import {
   subscriptionManagementUrl,
 } from '@/features/subscription/billing';
 import type { PlanId, PlusPlan, PlusState, PurchaseOutcome } from '@/features/subscription/types';
+import { SpeakGlyph } from '@/components/voice-line';
 
 /** What the learner agrees to, next to the button that agrees to it. */
 function planTerms(plan: PlusPlan) {
@@ -184,7 +185,7 @@ function PlusContent() {
       </View>
       <View style={[styles.body, state?.isPlus && styles.activeBody]}>
         <View style={[styles.icon, state?.isPlus && styles.activeIcon]}>
-          <MaterialCommunityIcons color={Palette.ink} name="creation" size={32} />
+          <SpeakGlyph color={Palette.ink} size={32} />
         </View>
         <Eyebrow color={Brand.onDark}>
           {state?.isPlus

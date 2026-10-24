@@ -80,7 +80,13 @@ test('opens the live coach and recovers safely when live audio is unavailable', 
 }) => {
   await page.goto('/conversation?track=EN');
   await expect(page.getByText('Modern interview English')).toBeVisible();
-  await expect(page.getByText('Live captions', { exact: true })).toBeVisible();
+  // Before a call: the line and Start, with the small print behind "About this call".
+  await expect(page.getByText('Live captions', { exact: true })).toHaveCount(0);
+  await page.getByLabel('About this call').click();
+  await expect(page.getByText('Up to five minutes.', { exact: true })).toBeVisible();
+  // Back on Android, Escape on the web: the sheet closes either way.
+  await page.keyboard.press('Escape');
+  await expect(page.getByText('Up to five minutes.', { exact: true })).toHaveCount(0);
 
   await page.getByLabel('Start live conversation').click();
   await expect(page.getByText('Connection needs attention')).toBeVisible();
@@ -156,7 +162,7 @@ test('exposes profile initials, coaching settings, version and password recovery
   await expect(page.getByText('Private by design')).toBeVisible();
   await page.getByLabel('Open settings').click();
 
-  await expect(page.getByText('Choose how Vokeno pushes you')).toBeVisible();
+  await expect(page.getByText('Tough feedback is your choice', { exact: false })).toBeVisible();
   await page.getByRole('radio', { name: 'Tough coach coaching' }).click();
   await expect(page.getByRole('radio', { name: 'Tough coach coaching' })).toBeChecked();
   await expect(page.getByText('Vokeno version')).toBeVisible();
@@ -254,7 +260,8 @@ test('validates writing, records completion and gives a clear next action', asyn
   await expect(page.getByText(/Writing activity complete/)).toBeVisible();
   await page.getByRole('button', { name: 'View my progress' }).click();
   await expect(page).toHaveURL(/\/progress$/);
-  await expect(page.getByText('Writing days')).toBeVisible();
+  await page.getByRole('button', { name: 'How the streak works' }).click();
+  await expect(page.getByText(/Writing days so far: 1\./)).toBeVisible();
 });
 
 test('finishes the complete vocabulary deck without looping', async ({ page }) => {

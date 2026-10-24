@@ -23,6 +23,10 @@ import { useSelectedLanguage } from '@/features/language/selection';
 import { formatTestDate, getTestDatePlan } from '@/features/profile/test-date';
 import { useProgressStore } from '@/features/progress/store';
 import { reviewSummary } from '@/features/review/schedule';
+import { contentLevel, courseLevelOf, levelRange } from '@/features/foundations/level-status';
+import { SpeakGlyph } from '@/components/voice-line';
+
+const speaks = (name: string) => name === 'microphone-outline' || name === 'account-voice';
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
@@ -40,18 +44,50 @@ export default function PracticeScreen() {
   const language = languageDetails[track].name;
   const [day] = useState(() => dayNumberOf(localDay(Date.now())));
   const position = coursePosition(progress, track, startAt);
-  const level = position.next?.lesson.level ?? getTrackLessons(track).at(-1)?.level ?? 'A1';
+  // The course level, so a warm-up lesson does not make A1 and A2 content count as "your level".
+  const level = courseLevelOf(
+    track,
+    position.next?.lesson.level ?? getTrackLessons(track).at(-1)?.level ?? levelRange[track][0],
+  );
   const review = reviewSummary(progress, track, day);
   const scenario = suggestedScenario(track, level, heard, day);
   const conversation = suggestedConversation(track, level, practisedUnits, day);
   const scenarios = fittingScenarios(track, level);
   const conversations = fittingConversations(track, level);
+  // The suggestion above is not repeated in the list below it.
+  const atLevel = conversations.filter((unit) => unit.id !== conversation?.id).slice(0, 4);
   const allConversations = getCurriculumUnits(track).filter(
     (unit) => !examMockUnitIds.includes(unit.id),
   );
   const [showAll, setShowAll] = useState(false);
   const go = (href: string) => router.push(href as Href);
 
+  const listEmpty = !showAll && !atLevel.length;
+  const moreConversations = (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={
+        showAll
+          ? 'Show conversations at your level'
+          : `Show all ${allConversations.length} conversations`
+      }
+      accessibilityState={{ expanded: showAll }}
+      aria-expanded={showAll}
+      onPress={() => setShowAll(!showAll)}
+      style={({ pressed }) => [styles.more, pressed && styles.pressed]}
+    >
+      <Text style={styles.moreText}>
+        {showAll
+          ? 'Show conversations at your level'
+          : `Show all ${allConversations.length} conversations`}
+      </Text>
+      <MaterialCommunityIcons
+        color={Palette.ink}
+        name={showAll ? 'chevron-up' : 'chevron-down'}
+        size={20}
+      />
+    </Pressable>
+  );
   return (
     <AppScreen activeNav="practice">
       <TabHeader title="Practice" track={track} onTrack={setTrack} />
@@ -107,7 +143,7 @@ export default function PracticeScreen() {
           <Row
             icon="headphones"
             tint={colors.tint}
-            label={`Listening · ${scenario.level} · ${scenario.duration}`}
+            label={`Listening · ${contentLevel(track, scenario.level)} · ${scenario.duration}`}
             title={scenario.title}
             meta={scenario.context}
             onPress={() => go(`/lesson/${scenario.id}`)}
@@ -117,7 +153,9 @@ export default function PracticeScreen() {
           icon="microphone-outline"
           tint={colors.tint}
           label={
-            conversation ? `Speaking · ${conversation.level} · live coach` : 'Speaking · live coach'
+            conversation
+              ? `Speaking · ${contentLevel(track, conversation.level)} · live coach`
+              : 'Speaking · live coach'
           }
           title={conversation ? conversation.title : `A short ${language} conversation`}
           meta={
@@ -131,6 +169,7 @@ export default function PracticeScreen() {
             )
           }
         />
+        {listEmpty && allConversations.length > atLevel.length ? moreConversations : null}
       </Section>
 
       <Section title="Skills">
@@ -164,43 +203,22 @@ export default function PracticeScreen() {
         ) : null}
       </Section>
 
-      <Section title={showAll ? 'All conversations' : 'Conversations at your level'}>
-        {(showAll ? allConversations : conversations.slice(0, 4)).map((unit) => (
-          <Row
-            key={unit.id}
-            icon={practisedUnits.includes(unit.id) ? 'check-circle-outline' : 'account-voice'}
-            label={`${unit.level} · ${unit.context}`}
-            title={unit.title}
-            meta={practisedUnits.includes(unit.id) ? 'Practised · again any time' : unit.outcome}
-            onPress={() => go(`/conversation?track=${track}&unit=${unit.id}`)}
-          />
-        ))}
-        {allConversations.length > Math.min(4, conversations.length) ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={
-              showAll
-                ? 'Show conversations at your level'
-                : `Show all ${allConversations.length} conversations`
-            }
-            accessibilityState={{ expanded: showAll }}
-            aria-expanded={showAll}
-            onPress={() => setShowAll(!showAll)}
-            style={({ pressed }) => [styles.more, pressed && styles.pressed]}
-          >
-            <Text style={styles.moreText}>
-              {showAll
-                ? 'Show conversations at your level'
-                : `Show all ${allConversations.length} conversations`}
-            </Text>
-            <MaterialCommunityIcons
-              color={Palette.ink}
-              name={showAll ? 'chevron-up' : 'chevron-down'}
-              size={20}
+      {/* With nothing left after the suggestion, no empty heading: the link sits above. */}
+      {listEmpty ? null : (
+        <Section title={showAll ? 'All conversations' : 'More at your level'}>
+          {(showAll ? allConversations : atLevel).map((unit) => (
+            <Row
+              key={unit.id}
+              icon={practisedUnits.includes(unit.id) ? 'check-circle-outline' : 'account-voice'}
+              label={`${contentLevel(track, unit.level)} · ${unit.context}`}
+              title={unit.title}
+              meta={practisedUnits.includes(unit.id) ? 'Practised · again any time' : unit.outcome}
+              onPress={() => go(`/conversation?track=${track}&unit=${unit.id}`)}
             />
-          </Pressable>
-        ) : null}
-      </Section>
+          ))}
+          {allConversations.length > atLevel.length ? moreConversations : null}
+        </Section>
+      )}
 
       <Section title="Exams and level checks">
         <Row
@@ -282,7 +300,12 @@ function Row({
       style={({ pressed }) => [styles.row, pressed && styles.pressed]}
     >
       <View style={[styles.rowIcon, tint ? { backgroundColor: tint } : null]}>
-        <MaterialCommunityIcons color={Palette.ink} name={icon} size={20} />
+        {/* Speaking carries Vokeno's voice mark, not a generic microphone. */}
+        {speaks(icon) ? (
+          <SpeakGlyph color={Palette.ink} size={20} />
+        ) : (
+          <MaterialCommunityIcons color={Palette.ink} name={icon} size={20} />
+        )}
       </View>
       <View style={styles.copy}>
         {label ? <Text style={styles.eyebrow}>{label}</Text> : null}

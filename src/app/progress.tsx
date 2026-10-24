@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -29,6 +30,7 @@ import { reviewSummary } from '@/features/review/schedule';
 /** Progress: what you have learned in this language, then this week, then the rest. */
 export default function ProgressScreen() {
   const router = useRouter();
+  const [streakInfo, setStreakInfo] = useState(false);
   const [track, setTrack] = useSelectedLanguage();
   const progress = useCoachingStore((state) => state.foundations);
   const preferences = useCoachingStore((state) => state.preferences);
@@ -51,6 +53,24 @@ export default function ProgressScreen() {
   const dialogues = listeningScenarios.filter((scenario) => scenario.track === track);
   const conversations = curriculumUnits.filter((unit) => unit.track === track);
   const daysLeft = daysUntilTest(testDate);
+  const stats = [
+    {
+      value: words.learning,
+      label: 'phrases learned',
+      detail: words.strong ? `${words.strong} well remembered` : 'in your review queue',
+    },
+    {
+      value: heard.filter((id) => dialogues.some((item) => item.id === id)).length,
+      label: 'dialogues heard',
+      detail: `of ${dialogues.length}`,
+    },
+    {
+      value: conversations.filter((unit) => practisedUnits.includes(unit.id)).length,
+      // Short enough to stay whole at large text sizes ("conversations" broke mid-word).
+      label: 'calls',
+      detail: `of ${conversations.length}`,
+    },
+  ].filter((stat) => stat.value > 0);
 
   return (
     <AppScreen activeNav="progress">
@@ -141,33 +161,36 @@ export default function ProgressScreen() {
         </Pressable>
       </Animated.View>
 
-      <View style={styles.stats}>
-        <Stat
-          value={words.learning}
-          label="phrases learned"
-          detail={words.strong ? `${words.strong} well remembered` : 'in your review queue'}
-        />
-        <Stat
-          value={heard.filter((id) => dialogues.some((item) => item.id === id)).length}
-          label="dialogues heard"
-          detail={`of ${dialogues.length}`}
-        />
-        <Stat
-          value={conversations.filter((unit) => practisedUnits.includes(unit.id)).length}
-          label="conversations"
-          detail={`of ${conversations.length}`}
-        />
-      </View>
+      {/* Only what there is to count: a row of zeros discourages more than it informs. */}
+      {stats.length ? (
+        <View style={styles.stats}>
+          {stats.map((stat) => (
+            <Stat key={stat.label} {...stat} />
+          ))}
+        </View>
+      ) : null}
 
       <Text accessibilityRole="header" style={styles.sectionTitle}>
         This week
       </Text>
-      <StreakStrip streak={habits.streak} track={track} week={habits.week} />
-      <Text style={styles.note}>
-        The streak counts days you practise any language. One missed day a week is covered as a rest
-        day, and nothing you have learned is lost when a run ends. Writing days so far:{' '}
-        {writingDays}.
-      </Text>
+      <StreakStrip streak={habits.streak} week={habits.week} />
+      {/* How the streak works, on request rather than under every visit. */}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ expanded: streakInfo }}
+        aria-expanded={streakInfo}
+        onPress={() => setStreakInfo(!streakInfo)}
+        style={({ pressed }) => [styles.infoRow, pressed && styles.pressed]}
+      >
+        <MaterialCommunityIcons color={Palette.secondary} name="information-outline" size={18} />
+        <Text style={styles.infoLink}>How the streak works</Text>
+      </Pressable>
+      {streakInfo ? (
+        <Text style={styles.note}>
+          It counts days you practise any language. One missed day a week is covered as a rest day,
+          and nothing you have learned is lost when a run ends. Writing days so far: {writingDays}.
+        </Text>
+      ) : null}
 
       {testDate ? (
         <Pressable
@@ -296,6 +319,20 @@ const styles = StyleSheet.create({
     lineHeight: LineHeight.body,
   },
   later: { color: Palette.secondary },
+  // Lined up with the cards above and below it.
+  infoRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: space(1.5),
+    marginHorizontal: space(4),
+    minHeight: 44,
+  },
+  infoLink: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.label,
+    textDecorationLine: 'underline',
+  },
   laterNote: { textAlign: 'left' },
   unitInLevel: { paddingLeft: space(3) },
   unitRow: { gap: space(1.5) },

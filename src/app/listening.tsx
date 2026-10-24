@@ -8,6 +8,7 @@ import { getScenarios } from '@/features/listening/scenarios';
 import { languageDetails, trackColors } from '@/features/language/config';
 import { useProgressStore } from '@/features/progress/store';
 import { LanguageSwitch } from '@/components/language-switch';
+import { contentLevel } from '@/features/foundations/level-status';
 
 export default function ListeningLibrary() {
   const router = useRouter();
@@ -75,7 +76,7 @@ export default function ListeningLibrary() {
             </View>
             <View style={{ flex: 1, gap: space(0.5) }}>
               <Text style={styles.meta}>
-                {scenario.level} · {scenario.duration}
+                {contentLevel(scenario.track, scenario.level)} · {scenario.duration}
                 {completed.includes(scenario.id) ? ' · Practised' : ''}
               </Text>
               <Text style={styles.cardTitle}>{scenario.title}</Text>

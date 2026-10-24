@@ -3,7 +3,6 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import type { StreakSummary, WeekDayState } from '@/features/habits/practice-log';
-import { trackColors, type LanguageTrack } from '@/features/language/config';
 
 const stateNames: Record<WeekDayState, string> = {
   done: 'practised',
@@ -20,7 +19,8 @@ function caption(streak: StreakSummary) {
       ? `Your best is ${streak.best} days. Start a new run today.`
       : 'Practise today to start a streak.';
   if (!streak.practisedToday) return 'Practise today to keep it going.';
-  if (streak.current >= streak.best && streak.current > 1) return 'Your best run yet. Nice.';
+  if (streak.current >= streak.best && streak.current > 1)
+    return `Your longest run so far: ${streak.current} days.`;
   // The streak only knows that you practised; whether today's session is done is shown above.
   return streak.restDays > 0
     ? 'You practised today. A missed day was covered as a rest day.'
@@ -57,16 +57,13 @@ export function StreakChip({ streak, onPress }: { streak: StreakSummary; onPress
 export function StreakStrip({
   streak,
   week,
-  track,
   showCount = true,
 }: {
   streak: StreakSummary;
   week: { day: string; label: string; state: WeekDayState }[];
-  track: LanguageTrack;
   /** Off where the count is already shown, as in the Today header. */
   showCount?: boolean;
 }) {
-  const colors = trackColors[track];
   const lit = streak.current > 0;
   return (
     <View style={styles.card}>
@@ -97,14 +94,15 @@ export function StreakStrip({
             <View
               style={[
                 styles.dot,
-                day.state === 'done' && { backgroundColor: colors.accent },
-                day.state === 'today' && { borderColor: colors.deep, borderWidth: 2 },
+                // Ink, not a language colour: the streak counts days in any language.
+                day.state === 'done' && { backgroundColor: Palette.ink },
+                day.state === 'today' && { borderColor: Palette.ink, borderWidth: 2 },
                 day.state === 'rest' && styles.rest,
                 (day.state === 'future' || day.state === 'before') && styles.future,
               ]}
             >
               {day.state === 'done' ? (
-                <MaterialCommunityIcons color={colors.onAccent} name="check" size={14} />
+                <MaterialCommunityIcons color={Palette.cream} name="check" size={14} />
               ) : day.state === 'rest' ? (
                 <MaterialCommunityIcons color={Palette.secondary} name="sleep" size={13} />
               ) : null}

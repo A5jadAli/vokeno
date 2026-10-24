@@ -51,6 +51,7 @@ export function CourseView({ track }: { track: LanguageTrack }) {
   // The level and unit you are in start open; anything you open or close yourself stays that way.
   const [levelToggled, setLevelToggled] = useState<Partial<Record<LessonLevel, boolean>>>({});
   const [showAll, setShowAll] = useState<Partial<Record<LessonLevel, boolean>>>({});
+  const [noteOpen, setNoteOpen] = useState<Partial<Record<LessonLevel, boolean>>>({});
   const [toggled, setToggled] = useState<Record<string, boolean>>({});
   const isLevelOpen = (level: LessonLevel) => levelToggled[level] ?? level === currentLevel;
   const isOpen = (unit: UnitSummary) => toggled[unit.id] ?? unit.id === position.unit?.id;
@@ -103,7 +104,28 @@ export function CourseView({ track }: { track: LanguageTrack }) {
             />
             {open ? (
               <Animated.View entering={FadeIn.duration(200)} style={styles.units}>
-                {section.note ? <Text style={styles.levelNote}>{section.note}</Text> : null}
+                {section.note ? (
+                  // The honest note stays, one line until the learner asks for more.
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={section.note}
+                    accessibilityHint={
+                      noteOpen[section.level] ? 'Shows less' : 'Shows the whole note'
+                    }
+                    onPress={() =>
+                      setNoteOpen((state) => ({ ...state, [section.level]: !state[section.level] }))
+                    }
+                    style={styles.noteRow}
+                  >
+                    <Text
+                      numberOfLines={noteOpen[section.level] ? undefined : 1}
+                      style={[styles.levelNote, styles.noteText]}
+                    >
+                      {section.note}
+                    </Text>
+                    <Text style={styles.noteMore}>{noteOpen[section.level] ? 'Less' : 'More'}</Text>
+                  </Pressable>
+                ) : null}
                 {shown.map((unit) =>
                   unit.kind === 'checkpoint' && unit.lessons.length === 1 ? (
                     <GateRow
@@ -522,6 +544,15 @@ const styles = StyleSheet.create({
     fontSize: FontSize.label,
     lineHeight: LineHeight.label,
   },
+  noteRow: { alignItems: 'flex-start', flexDirection: 'row', gap: space(2), minHeight: 44 },
+  noteText: { flex: 1 },
+  noteMore: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    textDecorationLine: 'underline',
+  },
   levelNote: {
     color: Palette.secondary,
     fontFamily: VokaFonts.body,
@@ -552,7 +583,8 @@ const styles = StyleSheet.create({
     lineHeight: LineHeight.label,
   },
   levelBar: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
-  levelBarFill: { flex: 1 },
+  // A fixed height: on Android the bar would otherwise grow to the count's line height.
+  levelBarFill: { flex: 1, height: 6 },
   levelTitle: {
     color: Palette.ink,
     flexShrink: 1,

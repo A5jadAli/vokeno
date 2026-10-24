@@ -124,3 +124,19 @@ const pieceStyle = ({ height, thickness, piece }: Size, color: string) =>
     top: (height - thickness) / 2,
     width: piece,
   }) as const;
+
+/**
+ * The voice mark at icon size, for speaking: Vokeno's own shape means "talk" across the app
+ * instead of a generic microphone. It takes exactly the icon's width (`size`), so labels next
+ * to it line up with the labels next to other icons.
+ */
+export function SpeakGlyph({ color, size = 22 }: { color: string; size?: number }) {
+  return (
+    <VoiceLineMark
+      color={color}
+      height={Math.round(size * 0.6)}
+      thickness={Math.max(2, Math.round(size / 9))}
+      width={size}
+    />
+  );
+}

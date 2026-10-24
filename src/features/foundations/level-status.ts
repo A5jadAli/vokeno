@@ -39,6 +39,13 @@ const order: LessonLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1'];
 export const isWarmUp = (track: LanguageTrack, level: LessonLevel) =>
   order.indexOf(level) < order.indexOf(levelRange[track][0]);
 
+/**
+ * How a dialogue, talk or lesson's level is shown: its level, or "Warm-up" below the course's
+ * range, so English never shows A1 or A2.
+ */
+export const contentLevel = (track: LanguageTrack, level: string) =>
+  order.includes(level as LessonLevel) && isWarmUp(track, level as LessonLevel) ? 'Warm-up' : level;
+
 /** The course level a lesson belongs under: its own, or the first level for a warm-up. */
 export const courseLevelOf = (track: LanguageTrack, level: LessonLevel) =>
   isWarmUp(track, level) ? levelRange[track][0] : level;

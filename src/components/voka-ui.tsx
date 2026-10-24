@@ -1,3 +1,4 @@
+import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { Href } from 'expo-router';
 import { useRouter } from 'expo-router';
@@ -46,7 +47,12 @@ export type NavKey = 'today' | 'course' | 'practice' | 'progress';
 const navItems: { icon: IconName; activeIcon: IconName; label: string; key: NavKey }[] = [
   { key: 'today', icon: 'home-outline', activeIcon: 'home', label: 'Today' },
   { key: 'course', icon: 'map-outline', activeIcon: 'map', label: 'Course' },
-  { key: 'practice', icon: 'dumbbell', activeIcon: 'dumbbell', label: 'Practice' },
+  {
+    key: 'practice',
+    icon: 'lightning-bolt-outline',
+    activeIcon: 'lightning-bolt',
+    label: 'Practice',
+  },
   { key: 'progress', icon: 'chart-box-outline', activeIcon: 'chart-box', label: 'Progress' },
 ];
 
@@ -133,6 +139,8 @@ export function AppScreen({
       edges={showNav ? ['top', 'left', 'right'] : ['top', 'right', 'bottom', 'left']}
       style={[styles.screen, { backgroundColor }]}
     >
+      {/* Light icons on dark screens, dark on cream; the most recent screen's choice wins. */}
+      <StatusBar style={dark ? 'light' : 'dark'} />
       {content}
       {footer}
       {showNav ? <BottomNav active={activeNav} dark={dark} /> : null}

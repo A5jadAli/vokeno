@@ -122,6 +122,12 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
   );
   const index = pinned ?? (firstUnanswered >= 0 ? firstUnanswered : entry.answers.length);
   const question = checks[index];
+  // Back in a lesson whose checks are all answered: go straight on to writing rather than a
+  // screen that only says so.
+  const checksDone = entry.step === 1 && !question;
+  useEffect(() => {
+    if (checksDone) save(lesson.id, { ...entry, step: 2, updatedAt: new Date().toISOString() });
+  }, [checksDone, entry, lesson.id, save]);
   const totalChecks = checks.length + 1;
   const lastAttempt = entry.attempts.at(-1);
   const correctNow = result?.tone === 'correct';
@@ -402,11 +408,7 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
                 />
                 {showHelp ? <PhraseList lesson={lesson} speech={speech} /> : null}
               </>
-            ) : (
-              <Text style={lessonText.lead}>
-                All checks are complete. Next, use a phrase yourself.
-              </Text>
-            )
+            ) : null
           ) : null}
 
           {entry.step === 2 ? (

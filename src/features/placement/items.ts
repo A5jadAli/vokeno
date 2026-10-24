@@ -1,4 +1,5 @@
 import { getTrackLessons, type LessonTrack } from '@/features/foundations/catalog';
+import { isWarmUp, levelRange } from '@/features/foundations/level-status';
 
 type PlacementTrack = LessonTrack;
 
@@ -610,6 +611,13 @@ function recommend(track: PlacementTrack, failedLevel: PlacementLevel | null) {
   const lessons = getTrackLessons(track);
   const language = { DE: 'German', EN: 'English', ES: 'Spanish' }[track];
   const start = failedLevel ? lessons.find((lesson) => lesson.level === failedLevel) : undefined;
+  // English starts at B1: lessons below it are the warm-up, never named A1 or A2.
+  if (start && isWarmUp(track, start.level))
+    return {
+      title: `Start with the warm-up: ${start.title}`,
+      why: `This is the first lesson of the warm-up before ${levelRange[track][0]} in the ${language} path.`,
+      href: `/foundation/${start.id}`,
+    };
   if (start)
     return {
       title: `Start with ${start.level}: ${start.title}`,

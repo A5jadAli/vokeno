@@ -80,7 +80,6 @@ export default function SettingsScreen() {
 
       <View style={styles.body}>
         <Eyebrow color={Brand.accent}>Coaching</Eyebrow>
-        <Text style={styles.title}>Choose how Vokeno pushes you</Text>
         <Text style={styles.description}>
           Tough feedback is your choice, and it is only ever about your practice.
         </Text>
@@ -103,9 +102,7 @@ export default function SettingsScreen() {
           <>
             <Eyebrow color={Brand.accent}>Daily reminder</Eyebrow>
             <Text style={styles.description}>
-              One reminder around the time you choose (your phone may send it a little later to save
-              battery), skipped on days you have already practised. If you are away for a week,
-              reminders pause until you come back.
+              One reminder around your time, skipped on days you have practised.
             </Text>
             <View style={styles.card}>
               <ReminderPicker variant="list" />
@@ -220,13 +217,6 @@ const styles = StyleSheet.create({
   headerTitle: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.heading },
   headerSpacer: { width: 40 },
   body: { paddingBottom: space(7), paddingHorizontal: space(5) },
-  title: {
-    color: Palette.ink,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: FontSize.title,
-    lineHeight: LineHeight.title,
-    marginTop: space(2),
-  },
   description: {
     color: Palette.muted,
     fontFamily: VokaFonts.body,

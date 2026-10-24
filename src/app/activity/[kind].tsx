@@ -18,6 +18,7 @@ import {
 import { useLessonAudio } from '@/features/audio/use-lesson-audio';
 import { listeningWarmUpSample } from '@/features/audio/spoken-texts';
 import { AnswerChoice } from '@/components/answer-choice';
+import { ActionBar, PrimaryButton } from '@/components/lesson-ui';
 import { VoiceLineMark } from '@/components/voice-line';
 import { WritingActivity } from '@/components/writing-activity';
 import { useSelectedLanguage } from '@/features/language/selection';
@@ -73,33 +74,25 @@ function ListeningActivity() {
   const sample = listeningWarmUpSample;
   const play = (rate = 0.92) => void speech.play(sample, rate);
   const footer = (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={feedback && selected === 1 ? 'Continue' : 'Check answer'}
-      accessibilityState={{ disabled: selected === null }}
-      disabled={selected === null}
-      onPress={() => {
-        if (feedback && selected === 1) {
-          router.push('/lesson/coffee-run');
-          return;
-        }
-        if (selected === 1) useCoachingStore.getState().recordPractice('listening', 'EN');
-        setFeedback(
-          selected === 1
-            ? 'Correct. They will meet outside the station.'
-            : 'Not quite. Replay it slowly and listen for the place.',
-        );
-      }}
-      style={({ pressed }) => [
-        styles.checkButton,
-        selected === null && styles.actionDisabled,
-        pressed && styles.pressed,
-      ]}
-    >
-      <Text style={styles.primaryActionText}>
-        {feedback && selected === 1 ? 'Continue' : 'Check'}
-      </Text>
-    </Pressable>
+    <ActionBar>
+      <PrimaryButton
+        title={feedback && selected === 1 ? 'Continue' : 'Check'}
+        accessibilityLabel={feedback && selected === 1 ? 'Continue' : 'Check answer'}
+        disabled={selected === null}
+        onPress={() => {
+          if (feedback && selected === 1) {
+            router.push('/lesson/coffee-run');
+            return;
+          }
+          if (selected === 1) useCoachingStore.getState().recordPractice('listening', 'EN');
+          setFeedback(
+            selected === 1
+              ? 'Correct. They will meet outside the station.'
+              : 'Not quite. Replay it slowly and listen for the place.',
+          );
+        }}
+      />
+    </ActionBar>
   );
   return (
     <AppScreen footer={footer} showNav={false}>
@@ -241,13 +234,7 @@ const styles = StyleSheet.create({
   progressBar: { borderRadius: Radius.pill, height: 5, width: 20 },
   progressDone: { backgroundColor: Palette.ink },
   activityBody: { flex: 1, paddingHorizontal: space(4), paddingTop: space(3) },
-  primaryActionText: {
-    color: Palette.cream,
-    fontFamily: VokaFonts.bodyBold,
-    fontSize: FontSize.heading,
-  },
   pressed: { opacity: 0.7 },
-  actionDisabled: { opacity: 0.45 },
   audioCard: { backgroundColor: Palette.ink, borderRadius: Radius.xl, padding: space(5) },
   pauseButton: {
     alignItems: 'center',
@@ -307,14 +294,6 @@ const styles = StyleSheet.create({
     marginTop: space(4),
   },
   answerFeedbackCorrect: { color: Feedback.correctText },
-  checkButton: {
-    alignItems: 'center',
-    backgroundColor: Palette.ink,
-    borderRadius: Radius.lg,
-    justifyContent: 'center',
-    margin: space(4),
-    minHeight: 60,
-  },
   header: {
     alignItems: 'center',
     flexDirection: 'row',

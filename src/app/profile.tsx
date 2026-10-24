@@ -9,7 +9,6 @@ import {
   Feedback,
   FontSize,
   LineHeight,
-  OnDark,
   Palette,
   Radius,
   space,
@@ -23,7 +22,10 @@ import { getProfileDisplayName, getProfileInitials } from '@/features/profile/na
 import { formatTestDate } from '@/features/profile/test-date';
 import { useCoachingStore, testDateFor } from '@/features/coaching/store';
 import { useLanguageSelection } from '@/features/language/selection';
+import { courseLevelOf, levelRange } from '@/features/foundations/level-status';
+import { coursePosition } from '@/features/journey/course';
 import { languageDetails, languageTracks, trackColors } from '@/features/language/config';
+import { SpeakGlyph } from '@/components/voice-line';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -38,6 +40,13 @@ export default function ProfileScreen() {
   const initials = getProfileInitials(displayName);
   const assessments = useAssessmentStore((state) => state.assessments);
   const track = useLanguageSelection((state) => state.track);
+  const foundations = useCoachingStore((state) => state.foundations);
+  const startAt = useCoachingStore((state) => state.preferences[track].startAt);
+  const assessed = languageTracks.filter((item) => assessments[item]?.estimatedLevel);
+  const towards = courseLevelOf(
+    track,
+    coursePosition(foundations, track, startAt).next?.lesson.level ?? levelRange[track][0],
+  );
   const testDate = useCoachingStore((state) => testDateFor(state, track));
 
   const handleAccount = () => {
@@ -110,20 +119,24 @@ export default function ProfileScreen() {
           <Text numberOfLines={1} style={styles.name}>
             {loading ? 'Loading…' : displayName}
           </Text>
-          <View style={styles.badges}>
-            {languageTracks.map((item) => {
-              const level = assessments[item]?.estimatedLevel;
-              return (
+          {/* Only levels a check has measured; until then, where the course is heading. */}
+          {assessed.length ? (
+            <View style={styles.badges}>
+              {assessed.map((item) => (
                 <Text
                   key={item}
-                  accessibilityLabel={`${languageDetails[item].name}: ${level ?? 'not assessed'}`}
+                  accessibilityLabel={`${languageDetails[item].name}: ${assessments[item]?.estimatedLevel}`}
                   style={[styles.badge, { backgroundColor: trackColors[item].tint }]}
                 >
-                  {item} · {level ?? '–'}
+                  {item} · {assessments[item]?.estimatedLevel}
                 </Text>
-              );
-            })}
-          </View>
+              ))}
+            </View>
+          ) : (
+            <Text style={styles.towards}>
+              Working towards {towards} in {languageDetails[track].name}
+            </Text>
+          )}
         </View>
       </View>
 
@@ -133,7 +146,6 @@ export default function ProfileScreen() {
         onPress={() => router.push((isPermanent ? '/plus' : '/auth?mode=sign-up') as Href)}
         style={styles.planCard}
       >
-        <View style={styles.planGlow} />
         <View>
           <Eyebrow color={Brand.onDark}>Vokeno Plus</Eyebrow>
           <Text style={styles.planTitle}>Make room for more practice</Text>
@@ -193,34 +205,11 @@ export default function ProfileScreen() {
 
       <View style={styles.settings}>
         <Pressable
-          accessibilityLabel="Open settings"
-          onPress={() => router.push('/settings')}
-          style={({ pressed }) => [styles.settingRow, pressed && styles.pressed]}
-        >
-          <MaterialCommunityIcons color={Palette.ink} name="cog-outline" size={20} />
-          <Text style={styles.settingLabel}>Settings &amp; app version</Text>
-          <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
-        </Pressable>
-        {isPermanent ? (
-          <Pressable
-            accessibilityLabel="Delete account"
-            accessibilityRole="button"
-            disabled={accountPending}
-            onPress={handleDeleteAccount}
-            style={({ pressed }) => [styles.settingRow, pressed && styles.pressed]}
-          >
-            <MaterialCommunityIcons color={Feedback.wrongText} name="delete-outline" size={20} />
-            <Text style={[styles.settingLabel, styles.dangerText]}>Delete account</Text>
-            <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
-          </Pressable>
-        ) : null}
-        <Setting icon="web" label="Support language" value="English" />
-        <Pressable
           accessibilityLabel="Open speaking style and goals"
           onPress={() => router.push('/accent')}
           style={({ pressed }) => [styles.settingRow, pressed && styles.pressed]}
         >
-          <MaterialCommunityIcons color={Palette.ink} name="waveform" size={20} />
+          <SpeakGlyph color={Palette.ink} size={20} />
           <Text style={styles.settingLabel}>Speaking style &amp; goals</Text>
           <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
         </Pressable>
@@ -235,21 +224,12 @@ export default function ProfileScreen() {
           }
           style={({ pressed }) => [styles.settingRow, pressed && styles.pressed]}
         >
-          <MaterialCommunityIcons color={Palette.ink} name="account-voice" size={20} />
+          <MaterialCommunityIcons color={Palette.ink} name="gauge" size={20} />
           <Text style={styles.settingLabel}>
             {assessments[track]
               ? `Latest ${languageDetails[track].name} assessment`
               : 'Spoken level check'}
           </Text>
-          <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
-        </Pressable>
-        <Pressable
-          accessibilityLabel="Replay app tour"
-          onPress={() => router.push('/onboarding?replay=1')}
-          style={({ pressed }) => [styles.settingRow, pressed && styles.pressed]}
-        >
-          <MaterialCommunityIcons color={Palette.ink} name="map-marker-path" size={20} />
-          <Text style={styles.settingLabel}>Replay app tour</Text>
           <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
         </Pressable>
         <Pressable
@@ -275,6 +255,19 @@ export default function ProfileScreen() {
         </Pressable>
       </View>
 
+      <View style={styles.settings}>
+        <Pressable
+          accessibilityLabel="Open settings"
+          onPress={() => router.push('/settings')}
+          style={({ pressed }) => [styles.settingRow, pressed && styles.pressed]}
+        >
+          <MaterialCommunityIcons color={Palette.ink} name="cog-outline" size={20} />
+          <Text style={styles.settingLabel}>Settings &amp; app version</Text>
+          <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
+        </Pressable>
+        <Setting icon="web" label="Support language" value="English" />
+      </View>
+
       <View style={styles.identityNote}>
         <View style={styles.identityIcon}>
           <MaterialCommunityIcons color={Brand.onAccent} name="account-lock-outline" size={23} />
@@ -286,6 +279,23 @@ export default function ProfileScreen() {
           </Text>
         </View>
       </View>
+
+      {/* Destructive, so last and on its own, as both platforms' guidelines ask. */}
+      {isPermanent ? (
+        <View style={styles.settings}>
+          <Pressable
+            accessibilityLabel="Delete account"
+            accessibilityRole="button"
+            disabled={accountPending}
+            onPress={handleDeleteAccount}
+            style={({ pressed }) => [styles.settingRow, pressed && styles.pressed]}
+          >
+            <MaterialCommunityIcons color={Feedback.wrongText} name="delete-outline" size={20} />
+            <Text style={[styles.settingLabel, styles.dangerText]}>Delete account</Text>
+            <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
+          </Pressable>
+        </View>
+      ) : null}
     </AppScreen>
   );
 }
@@ -324,6 +334,13 @@ const styles = StyleSheet.create({
   },
   name: { color: Palette.ink, fontFamily: VokaFonts.displayExtraBold, fontSize: FontSize.title },
   badges: { flexDirection: 'row', flexWrap: 'wrap', gap: space(2), marginTop: space(2) },
+  towards: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    marginTop: space(1),
+  },
   badge: {
     backgroundColor: Palette.soft,
     borderRadius: Radius.pill,
@@ -340,15 +357,6 @@ const styles = StyleSheet.create({
     marginTop: space(6),
     overflow: 'hidden',
     padding: space(6),
-  },
-  planGlow: {
-    backgroundColor: OnDark.fill,
-    borderRadius: Radius.pill,
-    height: 150,
-    position: 'absolute',
-    right: -40,
-    top: -40,
-    width: 150,
   },
   planTitle: {
     color: Palette.cream,
