@@ -120,8 +120,8 @@ export default function SettingsScreen() {
             <View style={styles.rowCopy}>
               <Text style={styles.rowLabel}>Answer sounds</Text>
               <Text style={styles.rowHint}>
-                A short chime when an answer is right. Silent when your phone is on silent or
-                vibrate.
+                A short chime when an answer is right. It plays at your media volume, like the
+                lesson audio.
               </Text>
             </View>
             <Switch

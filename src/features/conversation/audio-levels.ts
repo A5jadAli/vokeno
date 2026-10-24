@@ -55,18 +55,21 @@ async function levelOf(endpoint: Endpoint | undefined, type: string) {
   return level;
 }
 
-/** How long a reported microphone level of exactly zero means the microphone is not working. */
-export const DEAD_MICROPHONE_MS = 5000;
+/** How long an open microphone may report nothing at all before the call says so. */
+export const DEAD_MICROPHONE_MS = 8000;
 
 /**
- * A working microphone always picks up some room sound; a blocked or dead one reports exact
- * digital silence. True once an open microphone has reported zero for the whole turn so far
- * (at least DEAD_MICROPHONE_MS). Phones that never report a level never trigger it.
+ * True when an open microphone has reported exact silence for DEAD_MICROPHONE_MS and has not
+ * picked up any sound at all in this call. Some phones' noise suppression reports exact zero in
+ * a quiet room (seen on a vivo V2061), so silence after the microphone has once heard something
+ * is a quiet room, never a dead microphone. Phones that report no level never trigger it.
  */
 export function createDeadMicrophoneCheck() {
   let silentSince: number | null = null;
+  let heard = false;
   return (levels: AudioLevels | null, now: number) => {
-    if (!levels?.inputReported || levels.input > 0) {
+    if (levels?.inputReported && levels.input > 0) heard = true;
+    if (heard || !levels?.inputReported) {
       silentSince = null;
       return false;
     }

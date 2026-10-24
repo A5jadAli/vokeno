@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { type AudioPlayer, createAudioPlayer, setAudioModeAsync } from 'expo-audio';
+import { type AudioPlayer, createAudioPlayer } from 'expo-audio';
 import { Platform } from 'react-native';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -45,9 +45,14 @@ export function prepareAnswerSound() {
 }
 
 /**
- * A 180 ms chime for a right answer. Silent when the phone is on silent or vibrate, when the
- * learner turned answer sounds off, while a lesson voice is speaking, and when two parts of a
- * screen report the same answer within a moment of each other.
+ * A 180 ms chime for a right answer, at media volume like every other sound in the app. Silent
+ * when the learner turned answer sounds off, while a lesson voice is speaking, and when two
+ * parts of a screen report the same answer within a moment of each other.
+ *
+ * It does not change the audio mode to follow the ringer: on Android, expo-audio's
+ * setAudioModeAsync also forces the speakerphone, which would move a later call's audio to the
+ * loudspeaker, and it delayed the chime past the haptic. Following silent or vibrate needs a
+ * native ringer check in the next store build.
  */
 export async function playAnswerSound() {
   const now = Date.now();
@@ -55,15 +60,9 @@ export async function playAnswerSound() {
   if (now - lastPlayed < 400) return;
   lastPlayed = now;
   try {
-    // Android checks the ringer when play() is called. Only for that moment, silent mode is
-    // respected and other audio (the learner's music) is mixed with, not paused. Then the default
-    // mode comes back (the app sets no other), so lesson audio behaves exactly as before.
-    await setAudioModeAsync({ playsInSilentMode: false, interruptionMode: 'mixWithOthers' });
     if (player.currentTime > 0) await player.seekTo(0);
     player.play();
   } catch {
     // A missing chime never interrupts the lesson.
-  } finally {
-    await setAudioModeAsync({}).catch(() => undefined);
   }
 }

@@ -42,14 +42,10 @@ describe('answer sound', () => {
     expect(mockCalls).toEqual([]);
   });
 
-  it('plays with silent mode respected, then gives the default mode back', async () => {
+  it('plays without touching the audio mode, which would force the speakerphone on Android', async () => {
     prepareAnswerSound();
     await playAnswerSound();
-    expect(mockCalls).toEqual([
-      'mode {"playsInSilentMode":false,"interruptionMode":"mixWithOthers"}',
-      'play',
-      'mode {}',
-    ]);
+    expect(mockCalls).toEqual(['play']);
   });
 
   it('plays once when two parts of a screen report the same answer', async () => {

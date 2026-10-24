@@ -53,7 +53,7 @@ export function markPoints(perCurve = 96) {
 export type LineSegment = { x: number; y: number; dx: number; dy: number; length: number };
 
 /**
- * The mark cut into equal pieces along its length, each about 0.8 of the stroke long, so the
+ * The mark cut into equal pieces along its length, each about one stroke-width long, so the
  * round ends of neighbouring pieces overlap into one smooth stroke. At level `a` a piece moves
  * to y·a and turns to atan2(dy·a, dx); its length stays the full-shape length, which at lower
  * levels only overlaps its neighbours along the same line.
@@ -69,7 +69,8 @@ export function voiceLineSegments(width: number, height: number, thickness: numb
     distance.push(distance[index - 1] + Math.hypot(x1 - x0, y1 - y0));
   }
   const total = distance[distance.length - 1];
-  const count = Math.max(8, Math.ceil(total / (thickness * 0.8)));
+  // About 38 pieces for the call line: the straight pieces stay within half a pixel of the curve.
+  const count = Math.max(8, Math.ceil(total / thickness));
   const pointAt = (target: number) => {
     let index = 1;
     while (index < dense.length - 1 && distance[index] < target) index += 1;

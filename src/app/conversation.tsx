@@ -458,6 +458,8 @@ export default function ConversationScreen() {
     userTurnIdsRef.current.clear();
     const generation = ++generationRef.current;
     const speaking = createSpeechGate();
+    // The level last sent to the line; a change smaller than this is not worth a frame.
+    let shownLevel = -1;
     const deadMicrophone = createDeadMicrophoneCheck();
     const startAbort = new AbortController();
     startAbortRef.current = startAbort;
@@ -475,13 +477,11 @@ export default function ConversationScreen() {
           const level = lineLevel(levels);
           setMicrophoneDead(deadMicrophone(levels, Date.now()));
           // Reduce motion: the line stands still, raised while someone speaks and flat otherwise.
-          voiceLevel.set(
-            reduceMotion
-              ? speaking(level, Date.now())
-                ? 0.6
-                : 0
-              : withTiming(level, { duration: 120 }),
-          );
+          const target = reduceMotion ? (speaking(level, Date.now()) ? 0.6 : 0) : level;
+          // Silence and steady speech send nothing, so the UI thread rests.
+          if (Math.abs(target - shownLevel) < 0.03) return;
+          shownLevel = target;
+          voiceLevel.set(reduceMotion ? target : withTiming(target, { duration: 120 }));
         },
         onStatus: (next) => {
           if (generationRef.current !== generation) return;

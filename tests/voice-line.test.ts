@@ -43,10 +43,10 @@ describe('voice line levels', () => {
 
   it('cuts the line into short joined pieces that span the box', () => {
     const segments = voiceLineSegments(220, 88, 7);
-    expect(segments.length).toBeGreaterThan(40);
-    expect(segments.length).toBeLessThan(80);
+    expect(segments.length).toBeGreaterThan(30);
+    expect(segments.length).toBeLessThan(50);
     for (const [index, piece] of segments.entries()) {
-      expect(piece.length).toBeLessThan(7);
+      expect(piece.length).toBeLessThanOrEqual(7.01);
       const next = segments[index + 1];
       if (next) {
         // Each piece ends where the next begins.
@@ -127,15 +127,20 @@ describe('watching call audio levels', () => {
 });
 
 describe('dead microphone', () => {
-  it('warns only after an open microphone reports exact silence for five seconds', () => {
+  it('warns only when an open microphone has heard nothing for eight seconds', () => {
     const dead = createDeadMicrophoneCheck();
     const silent = { input: 0, output: 0, inputReported: true };
     expect(dead(silent, 0)).toBe(false);
-    expect(dead(silent, 4900)).toBe(false);
-    expect(dead(silent, 5000)).toBe(true);
-    // Any room sound, even very quiet, means the microphone works.
-    expect(dead({ ...silent, input: 0.0001 }, 5100)).toBe(false);
-    expect(dead(silent, 5200)).toBe(false);
+    expect(dead(silent, 7900)).toBe(false);
+    expect(dead(silent, 8000)).toBe(true);
+  });
+
+  it('treats silence after any sound as a quiet room (noise suppression reports zero)', () => {
+    const dead = createDeadMicrophoneCheck();
+    const silent = { input: 0, output: 0, inputReported: true };
+    expect(dead({ ...silent, input: 0.0001 }, 0)).toBe(false);
+    expect(dead(silent, 1000)).toBe(false);
+    expect(dead(silent, 60_000)).toBe(false);
   });
 
   it('never warns for a closed microphone or a phone that does not report a level', () => {
