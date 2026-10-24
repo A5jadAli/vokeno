@@ -270,7 +270,7 @@ export default function AuthScreen() {
         <View style={styles.icon}>
           <MaterialCommunityIcons color={Brand.onAccent} name="account-voice" size={34} />
         </View>
-        <Eyebrow color={Brand.accent}>Your VOKENO account</Eyebrow>
+        <Eyebrow color={Brand.accent}>Your Vokeno account</Eyebrow>
         <Text style={styles.title}>
           {mode === 'sign-in'
             ? 'Welcome back'

@@ -61,10 +61,11 @@ const feedbackLooks = {
 } as const;
 
 /** Close control, a thin progress bar and an optional label, as in modern lesson players. */
-export function LessonTopBar({ progress, label }: { progress: number; label?: string }) {
+/** Close, then the session's progress. Without `progress` (nothing to go through) only the close shows. */
+export function LessonTopBar({ progress, label }: { progress?: number; label?: string }) {
   const accent = useAccentColors();
   const router = useRouter();
-  const value = Math.max(0, Math.min(1, progress));
+  const value = Math.max(0, Math.min(1, progress ?? 0));
   return (
     <View style={styles.topBar}>
       <Pressable
@@ -76,13 +77,15 @@ export function LessonTopBar({ progress, label }: { progress: number; label?: st
       >
         <MaterialCommunityIcons name="close" size={24} color={Palette.ink} />
       </Pressable>
-      <View
-        accessibilityRole="progressbar"
-        accessibilityValue={{ min: 0, max: 100, now: Math.round(value * 100) }}
-        style={styles.track}
-      >
-        <ProgressFill value={value} color={accent?.deep ?? Palette.ink} track={Palette.soft} />
-      </View>
+      {progress === undefined ? null : (
+        <View
+          accessibilityRole="progressbar"
+          accessibilityValue={{ min: 0, max: 100, now: Math.round(value * 100) }}
+          style={styles.track}
+        >
+          <ProgressFill value={value} color={accent?.deep ?? Palette.ink} track={Palette.soft} />
+        </View>
+      )}
       {label ? <Text style={styles.topLabel}>{label}</Text> : null}
     </View>
   );

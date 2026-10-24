@@ -983,7 +983,7 @@ export default function ConversationScreen() {
                       <Text style={styles.turnRole}>
                         {turn.role === 'user'
                           ? 'YOU'
-                          : (unitCall?.character.toUpperCase() ?? 'VOKENO')}
+                          : (unitCall?.character.toUpperCase() ?? 'COACH')}
                       </Text>
                       <Text style={styles.turnText}>{turn.text}</Text>
                     </View>

@@ -516,8 +516,9 @@ function UnitCard({
                     {lessonMinutes(lesson)} min
                   </Text>
                   <Text style={styles.lessonTitle}>{lesson.title}</Text>
+                  {/* Under the title, so large text never squeezes the title into a column. */}
+                  {action ? <Text style={styles.lessonAction}>{action}</Text> : null}
                 </View>
-                {action ? <Text style={styles.lessonAction}>{action}</Text> : null}
                 <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={20} />
               </Pressable>
             );
@@ -736,6 +737,8 @@ const styles = StyleSheet.create({
     color: Palette.ink,
     fontFamily: VokaFonts.bodySemiBold,
     fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+    textDecorationLine: 'underline',
   },
   links: { backgroundColor: Palette.white, borderRadius: Radius.lg, marginTop: space(2) },
   link: {

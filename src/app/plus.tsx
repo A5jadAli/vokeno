@@ -180,7 +180,7 @@ function PlusContent() {
     <AppScreen backgroundColor={Palette.ink} dark showNav={false}>
       <View style={styles.header}>
         <HeaderBack dark />
-        <Text style={styles.logo}>VOKENO PLUS</Text>
+        <Text style={styles.logo}>Vokeno Plus</Text>
         <View style={styles.spacer} />
       </View>
       <View style={[styles.body, state?.isPlus && styles.activeBody]}>
@@ -398,10 +398,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: space(4),
   },
+  // A screen header like the others ("Live practice", "Settings"), not a wordmark.
   logo: {
     color: Palette.cream,
-    fontFamily: VokaFonts.displayExtraBold,
-    fontSize: FontSize.heading,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+    textAlign: 'center',
   },
   spacer: { width: 40 },
   body: { padding: space(6), paddingTop: space(8) },

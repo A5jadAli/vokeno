@@ -241,9 +241,8 @@ export function TodayCard({
               )}
             </View>
             <Text style={styles.tileTitle}>{tile.title}</Text>
-            <Text numberOfLines={2} style={styles.tileMeta}>
-              {tile.meta}
-            </Text>
+            {/* Wraps at large text: a cut-off line hides information as shrinking does. */}
+            <Text style={styles.tileMeta}>{tile.meta}</Text>
           </Pressable>
         ))}
       </View>

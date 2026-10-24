@@ -201,3 +201,7 @@ Primary integration references:
 [webhook authentication and delivery](https://www.revenuecat.com/docs/integrations/webhooks),
 [Google Play product IDs](https://www.revenuecat.com/docs/getting-started/entitlements/android-products),
 [customer identity](https://www.revenuecat.com/docs/customers/identifying-customers).
+
+## Before sales open: the Profile card for guests
+
+The Profile Plus card reads "Vokeno Plus · Coming soon" until the subscription service says sales are open (`config.enabled && config.salesEnabled`). Only a signed-in account can ask (`fetchPlusAccess` refuses anonymous sessions), so guests always see "Coming soon". When sales open, give guests a public read of that switch (for example an unauthenticated `config` action on `subscription-status`) so their card says "See plans" too.

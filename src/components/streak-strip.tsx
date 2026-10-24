@@ -20,7 +20,8 @@ function caption(streak: StreakSummary) {
       : 'Practise today to start a streak.';
   if (!streak.practisedToday) return 'Practise today to keep it going.';
   if (streak.current >= streak.best && streak.current > 1)
-    return `Your longest run so far: ${streak.current} days.`;
+    // The card shows the number already.
+    return 'Your longest run so far.';
   // The streak only knows that you practised; whether today's session is done is shown above.
   return streak.restDays > 0
     ? 'You practised today. A missed day was covered as a rest day.'

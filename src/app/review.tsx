@@ -110,7 +110,8 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
           )
         }
       >
-        <LessonTopBar progress={total ? 1 : 0} />
+        {/* A finished session shows its full bar; with nothing to review there is no bar. */}
+        <LessonTopBar progress={total ? 1 : undefined} />
         <View style={styles.center}>
           <Animated.View entering={ZoomIn.springify().damping(12)} style={styles.badge}>
             <MaterialCommunityIcons

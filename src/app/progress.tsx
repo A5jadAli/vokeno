@@ -14,7 +14,12 @@ import { FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/const
 import { testDateFor, useCoachingStore } from '@/features/coaching/store';
 import { curriculumUnits } from '@/features/curriculum/catalog';
 import { useHabits } from '@/features/habits/use-habits';
-import { courseLevels, coursePosition, levelProgress } from '@/features/journey/course';
+import {
+  courseLevels,
+  coursePosition,
+  groupsAround,
+  levelProgress,
+} from '@/features/journey/course';
 import {
   languageDetails,
   languageTracks,
@@ -108,7 +113,8 @@ export default function ProgressScreen() {
                     <LevelPill label={section.label} built={built} track={track} />
                     <Text style={[styles.levelName, !built && styles.later]}>{section.name}</Text>
                   </View>
-                  {built ? (
+                  {/* A bar only for the level you are in; the others say where they stand. */}
+                  {built && section === here ? (
                     <View style={styles.levelBar}>
                       <View style={styles.unitBar}>
                         <ProgressFill
@@ -121,11 +127,14 @@ export default function ProgressScreen() {
                       <Text style={styles.unitCount}>{text}</Text>
                     </View>
                   ) : (
-                    <Text style={[styles.unitCount, styles.laterNote]}>Coming later</Text>
+                    <Text style={[styles.unitCount, styles.laterNote]}>
+                      {built ? text : 'Coming later'}
+                    </Text>
                   )}
                 </View>
+                {/* The units around you, as on Course; the whole list is one tap away there. */}
                 {section === here
-                  ? section.groups.map((unit) => (
+                  ? groupsAround(section.groups, position.unit?.id).map((unit) => (
                       <View key={unit.id} style={[styles.unitRow, styles.unitInLevel]}>
                         {/* Name and count on one line, the bar below, so names keep the full width. */}
                         <View style={styles.unitTop}>

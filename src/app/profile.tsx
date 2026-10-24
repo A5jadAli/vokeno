@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow } from '@/components/voka-ui';
@@ -18,6 +18,7 @@ import { useAssessmentStore } from '@/features/assessment/store';
 import { deleteCurrentAccount } from '@/features/auth/account';
 import { supabase } from '@/features/auth/supabase';
 import { useAuthSession } from '@/features/auth/use-auth-session';
+import { fetchPlusAccess, isVokaPlusConfigured } from '@/features/subscription/billing';
 import { getProfileDisplayName, getProfileInitials } from '@/features/profile/name';
 import { formatTestDate } from '@/features/profile/test-date';
 import { useCoachingStore, testDateFor } from '@/features/coaching/store';
@@ -32,6 +33,22 @@ export default function ProfileScreen() {
   const { loading, session } = useAuthSession();
   const [accountPending, setAccountPending] = useState(false);
   const isPermanent = Boolean(session && !session.user.is_anonymous);
+  // Whether Plus can be bought: only a signed-in account can ask, so guests see "coming soon".
+  const [plusOpen, setPlusOpen] = useState(false);
+  const accountId = isPermanent ? session?.user.id : undefined;
+  useEffect(() => {
+    if (!accountId || !isVokaPlusConfigured) return;
+    let live = true;
+    fetchPlusAccess(accountId).then(
+      (access) => {
+        if (live) setPlusOpen(access.config.enabled && access.config.salesEnabled);
+      },
+      () => undefined,
+    );
+    return () => {
+      live = false;
+    };
+  }, [accountId]);
   const displayName = getProfileDisplayName({
     email: session?.user.email,
     isPermanent,
@@ -147,13 +164,22 @@ export default function ProfileScreen() {
         style={styles.planCard}
       >
         <View>
-          <Eyebrow color={Brand.onDark}>Vokeno Plus</Eyebrow>
-          <Text style={styles.planTitle}>Make room for more practice</Text>
-          {[
-            'Explore live practice plans',
-            'See your subscription and allowance',
-            'Your free lessons stay free',
-          ].map((benefit) => (
+          {/* Says "coming soon" until sales are open, so the card never promises a checkout
+              that the Plus screen then says is not available. */}
+          <Eyebrow color={Brand.onDark}>
+            {plusOpen ? 'Vokeno Plus' : 'Vokeno Plus · Coming soon'}
+          </Eyebrow>
+          <Text style={styles.planTitle}>
+            {plusOpen ? 'Make room for more practice' : 'More live practice is on its way'}
+          </Text>
+          {(plusOpen
+            ? [
+                'Explore live practice plans',
+                'See your subscription and allowance',
+                'Your free lessons stay free',
+              ]
+            : ['Your free lessons stay free']
+          ).map((benefit) => (
             <View key={benefit} style={styles.benefit}>
               <View style={styles.benefitCheck}>
                 <MaterialCommunityIcons color={Palette.ink} name="check" size={14} />
@@ -163,7 +189,7 @@ export default function ProfileScreen() {
           ))}
           {/* The card's action, drawn as a button: cream on dark, like every action there. */}
           <View style={styles.planButton}>
-            <Text style={styles.planButtonText}>See plans</Text>
+            <Text style={styles.planButtonText}>{plusOpen ? 'See plans' : 'What is planned'}</Text>
             <MaterialCommunityIcons color={Palette.ink} name="arrow-right" size={18} />
           </View>
         </View>

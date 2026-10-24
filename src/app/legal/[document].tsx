@@ -12,7 +12,7 @@ export default function LegalScreen() {
     <AppScreen showNav={false}>
       <View style={styles.header}>
         <HeaderBack />
-        <Eyebrow color={Brand.accent}>VOKENO</Eyebrow>
+        <Eyebrow color={Brand.accent}>Vokeno</Eyebrow>
         <View style={styles.spacer} />
       </View>
       <View style={styles.body}>

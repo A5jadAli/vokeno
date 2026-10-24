@@ -54,7 +54,7 @@ test('connects the four labelled destinations and the account button', async ({ 
   await expect(page).toHaveURL(/\/profile$/);
   await expect(page.getByLabel('Guest learner profile initials')).toBeVisible();
   await expect(page.getByRole('button', { name: 'View Vokeno Plus' })).toContainText(
-    'Make room for more practice',
+    'More live practice is on its way',
   );
 });
 

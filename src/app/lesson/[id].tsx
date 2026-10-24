@@ -39,11 +39,14 @@ export default function ListeningLessonScreen() {
   const [isSlow, setIsSlow] = useState(false);
   const [lineIndex, setLineIndex] = useState(0);
   const [subtitleMode, setSubtitleMode] = useState<SubtitleMode>('target');
+  // Listen first: the words stay hidden until the first play, or until the learner asks.
+  const [heard, setHeard] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number>();
   const [checked, setChecked] = useState(false);
   const completeScenario = useProgressStore((state) => state.completeScenario);
 
   const replay = async (slow = isSlow) => {
+    setHeard(true);
     setLineIndex(0);
     await speech.playSequence(
       scenario.lines.map((line) => line.text),
@@ -100,7 +103,7 @@ export default function ListeningLessonScreen() {
           <Eyebrow color={trackColors[scenario.track].onDark}>
             {contentLevel(scenario.track, scenario.level)} · Real-life listening
           </Eyebrow>
-          <Text numberOfLines={1} style={styles.title}>
+          <Text numberOfLines={2} style={styles.title}>
             {scenario.title}
           </Text>
         </View>
@@ -195,7 +198,20 @@ export default function ListeningLessonScreen() {
         </View>
 
         <View style={styles.subtitleArea}>
-          {subtitleMode === 'off' ? (
+          {!heard ? (
+            <View style={styles.listenFirst}>
+              <Text style={styles.subtitleOff}>
+                Listen first. The words appear once you play it.
+              </Text>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setHeard(true)}
+                style={({ pressed }) => [styles.showText, pressed && styles.pressed]}
+              >
+                <Text style={styles.showTextLabel}>Show text</Text>
+              </Pressable>
+            </View>
+          ) : subtitleMode === 'off' ? (
             <Text style={styles.subtitleOff}>Subtitles are off. Listen for the situation.</Text>
           ) : (
             <>
@@ -210,7 +226,13 @@ export default function ListeningLessonScreen() {
 
       <View style={styles.lightPanel}>
         <Eyebrow>Listen for these</Eyebrow>
-        <View style={styles.phraseList}>
+        {/* The key phrases are the audio's words, so they wait for the first play too. */}
+        {!heard ? (
+          <Text style={styles.meaning}>
+            {scenario.phrases.length} phrases to listen for appear here once you play it.
+          </Text>
+        ) : null}
+        <View style={[styles.phraseList, !heard && styles.hidden]}>
           {scenario.phrases.map((phrase) => (
             <View key={phrase.heard} style={styles.phraseRow}>
               {/* Language content: the tint with deep text. The solid fill is for badges only. */}
@@ -327,6 +349,15 @@ const styles = StyleSheet.create({
     fontSize: FontSize.label,
   },
   subtitleArea: { justifyContent: 'center', minHeight: 150, paddingVertical: space(6) },
+  listenFirst: { alignItems: 'flex-start', gap: space(2) },
+  hidden: { display: 'none' },
+  showText: { justifyContent: 'center', minHeight: 44 },
+  showTextLabel: {
+    color: Palette.cream,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.body,
+    textDecorationLine: 'underline',
+  },
   speaker: {
     color: Palette.cream,
     fontFamily: VokaFonts.bodySemiBold,
