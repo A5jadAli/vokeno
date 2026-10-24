@@ -48,6 +48,7 @@ import { languageDetails, trackColors } from '@/features/language/config';
 import { lessonLines } from '@/features/audio/inventory';
 import { useLessonAudio, type LessonAudio } from '@/features/audio/use-lesson-audio';
 import { REVIEW_INTERVALS, seedCards } from '@/features/review/schedule';
+import { answeredRight, useAnswerSound } from '@/features/feedback/answer';
 import { haptic } from '@/features/feedback/haptics';
 import { levelLabel } from '@/features/foundations/level-status';
 
@@ -81,6 +82,7 @@ type Result = { tone: 'correct' | 'wrong' | 'close'; title: string; message?: st
 
 function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
   const router = useRouter();
+  useAnswerSound();
   useFocusEffect(
     useCallback(() => {
       useLanguageSelection.getState().choose(lesson.track);
@@ -162,7 +164,7 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
     Keyboard.dismiss();
     const grade = gradeFoundationWriting(lesson, entry.draft);
     if (grade.status === 'correct' || grade.status === 'accents') {
-      haptic.correct();
+      answeredRight();
       setResult({
         tone: 'correct',
         title: 'Correct',

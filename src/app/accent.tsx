@@ -102,7 +102,7 @@ export default function AccentScreen() {
                   <Text style={styles.goalDescription}>{speakingGoalCopy[goal].description}</Text>
                 </View>
                 <MaterialCommunityIcons
-                  color={selected ? Selection.border : Palette.handle}
+                  color={selected ? Selection.border : Palette.muted}
                   name={selected ? 'radiobox-marked' : 'radiobox-blank'}
                   size={24}
                 />

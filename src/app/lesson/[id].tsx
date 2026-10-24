@@ -6,7 +6,9 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { SessionFooter } from '@/components/session-footer';
 import { AnswerChoice } from '@/components/answer-choice';
+import { VoiceLineMark } from '@/components/voice-line';
 import {
+  Dark,
   Feedback,
   FontSize,
   LineHeight,
@@ -134,7 +136,15 @@ export default function ListeningLessonScreen() {
               />
             )}
           </Pressable>
-          <Waveform active={isPlaying} />
+          <View style={styles.waveform}>
+            {/* Still: lime while the voice plays, faint otherwise. No made-up audio shape. */}
+            <VoiceLineMark
+              color={isPlaying ? Palette.lime : Dark.lineRest}
+              height={44}
+              thickness={5}
+              width={150}
+            />
+          </View>
         </View>
         <Text accessibilityLiveRegion="polite" style={styles.audioStatus}>
           {speech.loading
@@ -201,8 +211,9 @@ export default function ListeningLessonScreen() {
         <View style={styles.phraseList}>
           {scenario.phrases.map((phrase) => (
             <View key={phrase.heard} style={styles.phraseRow}>
-              <View style={[styles.heardPill, { backgroundColor: colors.accent }]}>
-                <Text style={[styles.heardText, { color: colors.onAccent }]}>{phrase.heard}</Text>
+              {/* Language content: the tint with deep text. The solid fill is for badges only. */}
+              <View style={[styles.heardPill, { backgroundColor: colors.tint }]}>
+                <Text style={[styles.heardText, { color: colors.deep }]}>{phrase.heard}</Text>
               </View>
               <View style={styles.phraseCopy}>
                 {phrase.plain ? (
@@ -271,20 +282,6 @@ export default function ListeningLessonScreen() {
   );
 }
 
-function Waveform({ active }: { active: boolean }) {
-  const heights = [13, 25, 37, 21, 43, 30, 49, 35, 22, 39, 17, 28, 12];
-  return (
-    <View style={styles.waveform}>
-      {heights.map((height, index) => (
-        <View
-          key={index}
-          style={[styles.waveBar, { height }, active && index < 8 && styles.waveBarActive]}
-        />
-      ))}
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
@@ -318,9 +315,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 66,
   },
-  waveform: { alignItems: 'center', flex: 1, flexDirection: 'row', gap: space(1), height: 58 },
-  waveBar: { backgroundColor: OnDark.fillStrong, borderRadius: Radius.pill, flex: 1 },
-  waveBarActive: { backgroundColor: Palette.cream },
+  waveform: { alignItems: 'center', flex: 1, height: 58, justifyContent: 'center' },
   controls: { flexDirection: 'row', flexWrap: 'wrap', gap: space(2), marginTop: space(5) },
   control: {
     minHeight: 44,

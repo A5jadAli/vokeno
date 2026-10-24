@@ -1,6 +1,7 @@
 import type { LanguageTrack } from '@/features/listening/scenarios';
 import type { SpeakingGoal } from '@/features/coaching/store';
 
+import type { AudioLevels } from './audio-levels';
 import type { RealtimeEvent } from './events';
 
 export type RealtimeSessionStatus =
@@ -10,6 +11,8 @@ export type StartRealtimeSessionOptions = {
   coachTone: 'supportive' | 'tough';
   goal: SpeakingGoal;
   onEvent: (event: RealtimeEvent) => void;
+  /** Real microphone and coach levels, about ten times a second while the call is live. */
+  onLevels?: (levels: AudioLevels) => void;
   onStatus: (status: RealtimeSessionStatus) => void;
   practice: 'conversation' | 'diagnostic';
   signal?: AbortSignal;

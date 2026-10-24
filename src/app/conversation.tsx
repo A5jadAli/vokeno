@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   AppState,
@@ -11,15 +11,10 @@ import {
   Text,
   View,
 } from 'react-native';
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-} from 'react-native-reanimated';
+import { useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
 import { haptic } from '@/features/feedback/haptics';
 import { ReportContent } from '@/components/report-content';
+import { VoiceLine, VoiceLineMark } from '@/components/voice-line';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import {
@@ -64,6 +59,11 @@ import {
   upsertTranscriptTurn,
   UNCLEAR_CAPTION,
 } from '@/features/conversation/events';
+import {
+  createDeadMicrophoneCheck,
+  createSpeechGate,
+  lineLevel,
+} from '@/features/conversation/audio-levels';
 import { getConversationMode } from '@/features/conversation/modes';
 import { startRealtimeSession } from '@/features/conversation/realtime-session';
 import { prepareMicrophoneAccess } from '@/features/conversation/microphone-access';
@@ -116,6 +116,11 @@ export default function ConversationScreen() {
   const diagnostic = params.practice === 'diagnostic' || params.diagnostic === '1';
   const [track, setTrack] = useSelectedLanguage();
   const [status, setStatus] = useState<RealtimeSessionStatus | 'idle'>('idle');
+  // The voice line's height: the real level of whoever is speaking, smoothed on the UI thread.
+  const voiceLevel = useSharedValue(0);
+  const reduceMotion = useReducedMotion();
+  // An open microphone reporting exact silence for 5 seconds is blocked or dead, not a quiet room.
+  const [microphoneDead, setMicrophoneDead] = useState(false);
   const [captions, setCaptions] = useState(true);
   const [muted, setMuted] = useState(false);
   const [turns, setTurns] = useState<TranscriptTurn[]>([]);
@@ -440,6 +445,7 @@ export default function ConversationScreen() {
       return;
 
     setError('');
+    setMicrophoneDead(false);
     setSignals([]);
     setTurns([]);
     setCallReview(null);
@@ -450,6 +456,8 @@ export default function ConversationScreen() {
     callReviewedRef.current = false;
     userTurnIdsRef.current.clear();
     const generation = ++generationRef.current;
+    const speaking = createSpeechGate();
+    const deadMicrophone = createDeadMicrophoneCheck();
     const startAbort = new AbortController();
     startAbortRef.current = startAbort;
     greetingDoneRef.current = false;
@@ -460,6 +468,19 @@ export default function ConversationScreen() {
         goal,
         onEvent: (event) => {
           if (generationRef.current === generation) handleEvent(event);
+        },
+        onLevels: (levels) => {
+          if (generationRef.current !== generation) return;
+          const level = lineLevel(levels);
+          setMicrophoneDead(deadMicrophone(levels, Date.now()));
+          // Reduce motion: the line stands still, raised while someone speaks and flat otherwise.
+          voiceLevel.set(
+            reduceMotion
+              ? speaking(level, Date.now())
+                ? 0.6
+                : 0
+              : withTiming(level, { duration: 120 }),
+          );
         },
         onStatus: (next) => {
           if (generationRef.current !== generation) return;
@@ -587,7 +608,11 @@ export default function ConversationScreen() {
     setMuted(next);
   };
 
-  const voiceLive = status === 'listening' || status === 'speaking';
+  // Lime for the whole call, from the greeting's first word, so it never flickers between turns.
+  const lineLive = active && status !== 'connecting';
+  useEffect(() => {
+    if (!lineLive) voiceLevel.set(0);
+  }, [lineLive, voiceLevel]);
   return (
     <AppScreen activeNav="practice" backgroundColor={Palette.ink} dark>
       <View style={styles.header}>
@@ -673,21 +698,17 @@ export default function ConversationScreen() {
         ) : null}
 
         <View style={[styles.stage, { borderColor: OnDark.border }]}>
-          {/* Lime only while a voice is live; it pulses only while the coach is speaking. */}
-          <PulseOrb
-            color={voiceLive ? Palette.lime : OnDark.fillStrong}
-            pulsing={status === 'speaking'}
-          >
-            {['connecting', 'joining'].includes(status) || permissionPending ? (
+          {/* The voice line: lime while the call is live, moving only with a real voice. */}
+          <View style={styles.lineStage}>
+            {status === 'connecting' || permissionPending ? (
               <ActivityIndicator color={Palette.cream} size="large" />
+            ) : lineLive ? (
+              <VoiceLine color={Palette.lime} level={voiceLevel} />
             ) : (
-              <MaterialCommunityIcons
-                color={voiceLive ? Palette.ink : Palette.cream}
-                name={status === 'listening' ? 'microphone' : 'account-voice'}
-                size={42}
-              />
+              // At rest: the mark itself, still, until a call connects.
+              <VoiceLineMark color={Dark.lineRest} height={88} thickness={7} width={220} />
             )}
-          </PulseOrb>
+          </View>
           <Text accessibilityLiveRegion="polite" style={styles.status}>
             {permissionPending ? 'Getting your microphone ready…' : statusCopy[status]}
           </Text>
@@ -698,6 +719,34 @@ export default function ConversationScreen() {
                 ? 'Speak normally. Pauses, corrections and interruptions are welcome.'
                 : 'A short, adaptive conversation with live help when you get stuck.')}
           </Text>
+          {lineLive && microphoneDead ? (
+            <View
+              accessibilityLiveRegion="assertive"
+              accessibilityRole="alert"
+              style={styles.micAlert}
+            >
+              <View style={styles.micAlertHeading}>
+                <MaterialCommunityIcons color={Dark.errorText} name="microphone-off" size={20} />
+                <Text style={styles.micAlertTitle}>We can’t hear your microphone</Text>
+              </View>
+              <Text style={styles.micAlertText}>
+                Another app may be using it, or a Bluetooth headset may have taken over. Close other
+                apps that record, check Vokeno can use the microphone, then end this call and start
+                again.
+              </Text>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() =>
+                  void Linking.openSettings().catch(() =>
+                    setError('Open your phone settings, then Vokeno, Permissions and Microphone.'),
+                  )
+                }
+                style={({ pressed }) => [styles.micAlertButton, pressed && styles.pressed]}
+              >
+                <Text style={styles.micAlertButtonText}>Check microphone permission</Text>
+              </Pressable>
+            </View>
+          ) : null}
           {active ? (
             <Text style={styles.audioRouteHint}>
               Replies use your phone’s current audio output, including Bluetooth.
@@ -746,7 +795,7 @@ export default function ConversationScreen() {
                 pressed && styles.pressed,
               ]}
             >
-              <MaterialCommunityIcons color={Palette.ink} name="microphone" size={22} />
+              <VoiceLineMark color={Palette.ink} />
               <Text style={[styles.startText, { color: Palette.ink }]}>
                 {permissionPending
                   ? 'Checking microphone…'
@@ -1019,12 +1068,39 @@ const styles = StyleSheet.create({
     marginTop: space(4),
     padding: space(6),
   },
-  orb: {
-    alignItems: 'center',
-    borderRadius: Radius.pill,
-    height: 82,
+  lineStage: { alignItems: 'center', height: 88, justifyContent: 'center' },
+  micAlert: {
+    alignSelf: 'stretch',
+    backgroundColor: Dark.raised,
+    borderRadius: Radius.lg,
+    gap: space(2),
+    marginTop: space(4),
+    padding: space(4),
+  },
+  micAlertHeading: { alignItems: 'center', flexDirection: 'row', gap: space(2) },
+  micAlertTitle: {
+    color: Palette.cream,
+    flex: 1,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
+  micAlertText: {
+    color: OnDark.textSecondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
+  micAlertButton: {
+    alignSelf: 'flex-start',
     justifyContent: 'center',
-    width: 82,
+    minHeight: 44,
+  },
+  micAlertButtonText: {
+    color: Palette.cream,
+    fontFamily: VokaFonts.bodySemiBold,
+    fontSize: FontSize.label,
+    textDecorationLine: 'underline',
   },
   status: {
     color: Palette.cream,
@@ -1202,29 +1278,5 @@ function ExamCardPanel({ card, active }: { card: SpeakingCard; active: boolean }
       ))}
       {notes ? <Text style={styles.examNotes}>Your notes: {notes}</Text> : null}
     </View>
-  );
-}
-
-/** The coach orb breathes while connecting and while the coach is talking. */
-function PulseOrb({
-  color,
-  pulsing,
-  children,
-}: {
-  color: string;
-  pulsing: boolean;
-  children: ReactNode;
-}) {
-  const scale = useSharedValue(1);
-  useEffect(() => {
-    scale.value = pulsing
-      ? withRepeat(withTiming(1.08, { duration: 700, easing: Easing.inOut(Easing.quad) }), -1, true)
-      : withTiming(1, { duration: 200 });
-  }, [pulsing, scale]);
-  const style = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
-  return (
-    <Animated.View style={[styles.orb, { backgroundColor: color }, style]}>
-      {children}
-    </Animated.View>
   );
 }

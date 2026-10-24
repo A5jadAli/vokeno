@@ -1,9 +1,10 @@
 import type { AudioPlayer } from 'expo-audio';
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 
 import { languageDetails, type LanguageTrack } from '@/features/language/config';
+import { markVoice } from '@/features/feedback/sounds';
 import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
 
 import * as clipCache from './clip-cache';
@@ -143,6 +144,12 @@ export function useLessonAudio(track: LanguageTrack) {
   );
 
   const recorded = phase !== 'idle';
+  const busy = recorded || device.busy;
+  // The answer chime waits for silence: it never plays over a lesson voice.
+  useEffect(() => {
+    markVoice(token, busy);
+    return () => markVoice(token, false);
+  }, [busy]);
   return {
     play,
     playSequence,
@@ -150,7 +157,7 @@ export function useLessonAudio(track: LanguageTrack) {
     stop,
     playing: recorded ? phase === 'playing' : device.playing,
     loading: recorded ? phase === 'loading' : device.loading,
-    busy: recorded || device.busy,
+    busy,
     activeText: recorded ? activeText : device.activeText,
     activeRate: recorded ? activeRate : device.activeRate,
     error: device.error,

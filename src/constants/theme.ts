@@ -105,6 +105,8 @@ export const Dark = {
   border: '#302E2B',
   control: '#3A3733',
   switchOff: '#47443F',
+  /** The voice line at rest. Opaque, because its dots overlap and an alpha colour would bead. */
+  lineRest: '#55524D',
   errorText: '#FFB49E',
 } as const;
 

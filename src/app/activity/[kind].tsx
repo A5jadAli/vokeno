@@ -5,6 +5,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import {
+  Dark,
   Feedback,
   FontSize,
   LineHeight,
@@ -17,6 +18,7 @@ import {
 import { useLessonAudio } from '@/features/audio/use-lesson-audio';
 import { listeningWarmUpSample } from '@/features/audio/spoken-texts';
 import { AnswerChoice } from '@/components/answer-choice';
+import { VoiceLineMark } from '@/components/voice-line';
 import { WritingActivity } from '@/components/writing-activity';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { useCoachingStore } from '@/features/coaching/store';
@@ -133,7 +135,15 @@ function ListeningActivity() {
               />
             )}
           </Pressable>
-          <Waveform />
+          <View style={styles.wave}>
+            {/* Still: lime while the voice plays, faint otherwise. No made-up audio shape. */}
+            <VoiceLineMark
+              color={speech.playing ? Palette.lime : Dark.lineRest}
+              height={44}
+              thickness={5}
+              width={150}
+            />
+          </View>
           <Text
             accessibilityLiveRegion="polite"
             style={{
@@ -225,16 +235,6 @@ function ListeningActivity() {
   );
 }
 
-function Waveform() {
-  return (
-    <View style={styles.wave}>
-      {[10, 20, 30, 18, 35, 27, 41, 30, 18, 26, 14, 22].map((height, index) => (
-        <View key={index} style={[styles.waveBar, { height }, index > 6 && styles.waveMuted]} />
-      ))}
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   headerSpacer: { width: 40 },
   progressBars: { flexDirection: 'row', gap: space(1) },
@@ -259,14 +259,10 @@ const styles = StyleSheet.create({
   },
   wave: {
     alignItems: 'center',
-    flexDirection: 'row',
-    gap: space(1),
     height: 50,
     marginLeft: space(18),
     marginTop: -54,
   },
-  waveBar: { backgroundColor: Palette.cream, borderRadius: Radius.sm, flex: 1 },
-  waveMuted: { backgroundColor: OnDark.fillStrong },
   audioControls: { flexDirection: 'row', flexWrap: 'wrap', gap: space(2), marginTop: space(4) },
   audioControl: { minHeight: 44, justifyContent: 'center' },
   audioTranscript: {

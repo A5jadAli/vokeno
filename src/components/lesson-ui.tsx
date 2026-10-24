@@ -282,7 +282,7 @@ export function ActionRow({
               : 'chevron-right'
         }
         size={22}
-        color={selected ? Palette.ink : choice ? Palette.handle : Palette.muted}
+        color={selected ? Palette.ink : Palette.muted}
       />
     </Pressable>
   );

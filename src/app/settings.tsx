@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
 import { type Href, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
 import { Brand, FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
@@ -12,6 +12,7 @@ import { downloadAvailableUpdate, restartWithDownloadedUpdate } from '@/features
 import appConfig from '../../app.json';
 import { ReminderPicker } from '@/components/reminder-picker';
 import { remindersSupported } from '@/features/habits/reminder-scheduler';
+import { useSoundSettings } from '@/features/feedback/sounds';
 import { RadioRow } from '@/components/radio-row';
 
 const toneOptions: { description: string; label: string; value: CoachTone }[] = [
@@ -37,6 +38,8 @@ export default function SettingsScreen() {
   const { session } = useAuthSession();
   const coachTone = useCoachingStore((state) => state.coachTone);
   const setCoachTone = useCoachingStore((state) => state.setCoachTone);
+  const answerSounds = useSoundSettings((state) => state.answerSounds);
+  const setAnswerSounds = useSoundSettings((state) => state.setAnswerSounds);
   const [checking, setChecking] = useState(false);
   const version = Application.nativeApplicationVersion ?? appConfig.expo.version;
   const build = Application.nativeBuildVersion;
@@ -109,6 +112,29 @@ export default function SettingsScreen() {
             </View>
           </>
         ) : null}
+
+        <Eyebrow color={Brand.accent}>Sounds</Eyebrow>
+        <View style={styles.card}>
+          <View style={styles.versionRow}>
+            <MaterialCommunityIcons color={Palette.ink} name="music-note-outline" size={21} />
+            <View style={styles.rowCopy}>
+              <Text style={styles.rowLabel}>Answer sounds</Text>
+              <Text style={styles.rowHint}>
+                A short chime when an answer is right. Silent when your phone is on silent or
+                vibrate.
+              </Text>
+            </View>
+            <Switch
+              // React Native Web colours the knob from activeThumbColor when on (teal by default).
+              {...{ activeThumbColor: Palette.white }}
+              accessibilityLabel="Answer sounds"
+              onValueChange={setAnswerSounds}
+              thumbColor={Palette.white}
+              trackColor={{ false: Palette.muted, true: Palette.ink }}
+              value={answerSounds}
+            />
+          </View>
+        </View>
 
         <Eyebrow color={Brand.accent}>Account &amp; app</Eyebrow>
         <View style={styles.card}>
@@ -239,6 +265,13 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: VokaFonts.bodyMedium,
     fontSize: FontSize.body,
+  },
+  rowCopy: { flex: 1, gap: space(1), paddingVertical: space(3) },
+  rowHint: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.body,
+    fontSize: FontSize.caption,
+    lineHeight: LineHeight.caption,
   },
   rowValue: {
     color: Palette.secondary,

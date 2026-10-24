@@ -20,6 +20,7 @@ import {
   space,
   VokaFonts,
 } from '@/constants/theme';
+import { answeredRight, useAnswerSound } from '@/features/feedback/answer';
 import { haptic } from '@/features/feedback/haptics';
 
 // A choice is marked by shape as well as colour: an empty or filled radio before checking, then a
@@ -45,6 +46,7 @@ export function AnswerChoice({
   disabled?: boolean;
   onPress: () => void;
 }) {
+  useAnswerSound();
   const look = looks[result ?? (selected ? 'selected' : 'idle')];
   const shake = useSharedValue(0);
   const pop = useSharedValue(1);
@@ -64,7 +66,7 @@ export function AnswerChoice({
     }
     if (result === 'correct') {
       pop.value = withSequence(withSpring(1.035, { stiffness: 500 }), withSpring(1));
-      haptic.correct();
+      answeredRight();
     }
   }, [pop, result, shake]);
   const popStyle = useAnimatedStyle(() => ({
@@ -108,7 +110,7 @@ export function AnswerChoice({
                     : 'radiobox-blank'
             }
             size={24}
-            color={result || selected ? look.border : Palette.handle}
+            color={result || selected ? look.border : Palette.muted}
           />
         </View>
       </Tactile>

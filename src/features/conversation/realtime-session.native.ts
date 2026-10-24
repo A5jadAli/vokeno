@@ -6,6 +6,7 @@ import {
   type MediaStreamTrack,
 } from 'react-native-webrtc';
 
+import { watchAudioLevels } from './audio-levels';
 import { createConversationRequest } from './backend';
 import type { RealtimeSessionHandle, StartRealtimeSessionOptions } from './realtime-types';
 
@@ -39,6 +40,7 @@ async function waitForIceGathering(peer: RTCPeerConnection, signal?: AbortSignal
 export async function startRealtimeSession({
   coachTone,
   onEvent,
+  onLevels,
   onStatus,
   goal,
   practice,
@@ -59,12 +61,14 @@ export async function startRealtimeSession({
   let stopped = false;
   let closeRemote: (() => Promise<void>) | undefined;
   let durationTimer: ReturnType<typeof setTimeout> | undefined;
+  let stopLevels: (() => void) | undefined;
   let channel: ReturnType<RTCPeerConnection['createDataChannel']> | undefined;
 
   const cleanup = (failed = false) => {
     if (stopped) return;
     stopped = true;
     clearTimeout(durationTimer);
+    stopLevels?.();
     void closeRemote?.().catch(() => undefined); // Durable worker retries when offline.
     signal?.removeEventListener('abort', abort);
     microphone?.getTracks().forEach((trackItem) => trackItem.stop());
@@ -163,6 +167,8 @@ export async function startRealtimeSession({
     );
     await peer.setRemoteDescription(new RTCSessionDescription({ sdp: answerSdp, type: 'answer' }));
     onStatus('listening');
+    if (onLevels)
+      stopLevels = watchAudioLevels(peer, () => microphoneTrack?.enabled === true, onLevels);
 
     return {
       setMuted: (muted) => {

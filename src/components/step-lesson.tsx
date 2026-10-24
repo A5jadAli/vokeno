@@ -33,6 +33,7 @@ import {
   VokaFonts,
 } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
+import { answeredRight, useAnswerSound } from '@/features/feedback/answer';
 import { haptic } from '@/features/feedback/haptics';
 import {
   foundationLessons,
@@ -70,6 +71,7 @@ const keyboardNote = {
 
 /** A unit session: a short run of varied steps, saved after every step. */
 export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
+  useAnswerSound();
   useFocusEffect(
     useCallback(() => {
       useLanguageSelection.getState().choose(lesson.track);
@@ -166,7 +168,7 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
   };
   const report = (correct: boolean, title: string, message: string, firstTry = correct) => {
     if (correct) {
-      haptic.correct();
+      answeredRight();
       // A plain “Correct” becomes varied praise; after a retry it is plainer and still honest.
       const verdict =
         title !== 'Correct'
