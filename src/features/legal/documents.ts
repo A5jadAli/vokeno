@@ -4,7 +4,7 @@ export const SUPPORT_EMAIL = 'support@vokeno.com';
 
 export const documents = {
   privacy: {
-    intro: 'Effective 23 October 2026',
+    intro: 'Effective 24 October 2026',
     sections: [
       [
         'What Vokeno processes',
@@ -13,6 +13,10 @@ export const documents = {
       [
         'Practice history and reminders',
         'We keep a short record of which days you practised and what you did (for example a lesson or a review) to show your streak and plan each day. It is kept for 120 days and synced to your account. If you turn on daily reminders, they are scheduled on your phone only; no reminder data is sent to us, and you can turn them off at any time in Settings.',
+      ],
+      [
+        'Anonymous usage counts',
+        'To learn whether changes to Vokeno help people keep practising, the app sends a few anonymous daily counts: that you practised a language that day, and that a live call started or finished. Each count holds only the event, the day and the language, under a random ID made on your phone that is not linked to your account, name or email. No content, audio, answers or device details are included. Counts are kept for 13 months. Clearing Vokeno’s storage in your phone settings replaces the random ID.',
       ],
       [
         'Signing in with Google',

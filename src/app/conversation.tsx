@@ -72,6 +72,7 @@ import type {
   RealtimeSessionStatus,
 } from '@/features/conversation/realtime-types';
 import { useSelectedLanguage } from '@/features/language/selection';
+import { recordUsage } from '@/features/usage/usage';
 import { trackColors } from '@/features/language/config';
 import { getCurriculumUnit } from '@/features/curriculum/catalog';
 import { formatClock, useMockNotes } from '@/features/speaking-mock/store';
@@ -492,6 +493,7 @@ export default function ConversationScreen() {
             releaseSession();
             void reviewUnitCall();
             if (userTurnIdsRef.current.size >= 2) {
+              recordUsage('call_completed', track);
               recordSpeakingPractice(track);
               recordActivity(`speaking:${unit?.id ?? track}`, track);
               if (unit) completeUnit(unit.id);
@@ -526,6 +528,7 @@ export default function ConversationScreen() {
         return;
       }
       sessionRef.current = session;
+      recordUsage('call_started', track);
       session.setMuted(!greetingDoneRef.current || mutedRef.current);
       if (unitCall) {
         useCoachingStore.getState().markUnitCall(unitCall.id);
@@ -578,6 +581,7 @@ export default function ConversationScreen() {
     void reviewUnitCall();
     if (unit && userTurnIdsRef.current.size >= 2) completeUnit(unit.id);
     if (userTurnIdsRef.current.size >= 2) {
+      recordUsage('call_completed', track);
       recordSpeakingPractice(track);
       recordActivity(`speaking:${unit?.id ?? track}`, track);
     }

@@ -21,11 +21,13 @@ import {
 } from '@/components/cloud-sync-provider';
 import { useLanguageSelection } from '@/features/language/selection';
 import { useReminderSync } from '@/features/habits/use-reminder-sync';
+import { startUsageTracking } from '@/features/usage/usage';
 
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useReminderSync();
+  useEffect(startUsageTracking, []);
   const [fontsLoaded, fontError] = useFonts({
     BricolageGrotesque_800ExtraBold,
     PlusJakartaSans_400Regular,
