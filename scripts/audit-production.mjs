@@ -11,6 +11,12 @@ const accepted = {
     reason:
       'No patched release (1.4.0 is the latest and affected). Used only by the Expo CLI and expo-updates code-signing tooling at build time; not in the app bundle.',
   },
+  'https://github.com/advisories/GHSA-mrhx-c7xc-m3w5': {
+    name: 'zod',
+    until: '2026-11-08',
+    reason:
+      'Fixed only in zod 4.6.6; no patched 3.x. @expo/cli 57 (latest 57.0.32) requires zod ^3.25, so it cannot be upgraded until Expo moves. Used only by the Expo CLI at build time to validate this project’s own config, not untrusted input; not in the app bundle (the app imports no zod since the unused form packages were removed).',
+  },
   'https://github.com/advisories/GHSA-vfj7-8cjw-p6xm': {
     name: 'braces',
     until: '2026-11-08',
