@@ -8,7 +8,7 @@ const versionA: LessonStep[] = [
   {
     kind: 'rule',
     title: 'A new face at the exchange',
-    body: 'Bruno has just joined the language exchange. Use what you learned in Units 1 to 5: understand his greeting, read his profile, take down his details and introduce him. Afterwards you will see how each skill went and what to practise next. It is practice, not an exam.',
+    body: 'Bruno has just joined the language exchange. Use what you learned in Units 1 to 5: understand his greeting, read his profile, take down his details and introduce him. Afterwards you will see how each skill went and what to practise next. It is a check-in, not a test: get at least 4 in 5 right first time and say the speaking task aloud to pass it.',
   },
   {
     kind: 'choose',
@@ -156,7 +156,7 @@ const versionB: LessonStep[] = [
   {
     kind: 'rule',
     title: 'Another new face',
-    body: 'This time Carmen joins the exchange: a new person, new details, the same kinds of tasks. Use what you learned in Units 1 to 5. Afterwards you will see how each skill went and what to practise next. It is practice, not an exam.',
+    body: 'This time Carmen joins the exchange: a new person, new details, the same kinds of tasks. Use what you learned in Units 1 to 5. Afterwards you will see how each skill went and what to practise next. It is a check-in, not a test: get at least 4 in 5 right first time and say the speaking task aloud to pass it.',
   },
   {
     kind: 'choose',

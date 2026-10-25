@@ -294,18 +294,6 @@ export default function ProfileScreen() {
         <Setting icon="web" label="Support language" value="English" />
       </View>
 
-      <View style={styles.identityNote}>
-        <View style={styles.identityIcon}>
-          <MaterialCommunityIcons color={Brand.onAccent} name="account-lock-outline" size={23} />
-        </View>
-        <View style={styles.identityCopy}>
-          <Eyebrow>Private by design</Eyebrow>
-          <Text style={styles.identityText}>
-            Your initials come from your name. Vokeno has no profile photos or public profiles.
-          </Text>
-        </View>
-      </View>
-
       {/* Destructive, so last and on its own, as both platforms' guidelines ask. */}
       {isPermanent ? (
         <View style={styles.settings}>
@@ -463,32 +451,5 @@ const styles = StyleSheet.create({
   },
   settingValue: { color: Palette.muted, fontFamily: VokaFonts.body, fontSize: FontSize.label },
   dangerText: { color: Feedback.wrongText },
-  identityNote: {
-    alignItems: 'center',
-    backgroundColor: Palette.soft,
-    borderRadius: Radius.xl,
-    flexDirection: 'row',
-    gap: space(3),
-    marginBottom: space(7),
-    marginHorizontal: space(4),
-    marginTop: -4,
-    padding: space(4),
-  },
-  identityIcon: {
-    alignItems: 'center',
-    backgroundColor: Palette.ink,
-    borderRadius: Radius.md,
-    height: 44,
-    justifyContent: 'center',
-    width: 44,
-  },
-  identityCopy: { flex: 1 },
-  identityText: {
-    color: Palette.secondary,
-    fontFamily: VokaFonts.body,
-    fontSize: FontSize.caption,
-    lineHeight: LineHeight.caption,
-    marginTop: space(1),
-  },
   pressed: { opacity: 0.7, transform: [{ scale: 0.99 }] },
 });

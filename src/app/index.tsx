@@ -48,7 +48,10 @@ export default function TodayScreen() {
         track={track}
         onTrack={setTrack}
         accessory={
-          <StreakChip streak={habits.streak} onPress={() => router.push('/progress' as Href)} />
+          <StreakChip
+            streak={habits.streak}
+            onPress={() => router.push('/progress?focus=streak' as Href)}
+          />
         }
       />
       <TodayCard track={track} habits={habits} />

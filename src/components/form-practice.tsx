@@ -28,6 +28,7 @@ export function FormPractice({
   onDraft,
   setReady,
   report,
+  onEdit,
   complete,
   speech,
   onHelp,
@@ -37,6 +38,8 @@ export function FormPractice({
   onDraft: (draft: string) => void;
   setReady: (ready: { check: () => void } | null) => void;
   report: (correct: boolean, title: string, message: string) => void;
+  /** The learner changed a field after a check: the last verdict no longer applies. */
+  onEdit?: () => void;
   complete: boolean;
   speech: LessonAudio;
   onHelp: () => void;
@@ -48,8 +51,9 @@ export function FormPractice({
     const results = step.fields.map((field, index) => formFieldCorrect(field, answers[index]));
     setChecked(results);
     const correct = results.every(Boolean);
-    if (correct) Keyboard.dismiss();
-    else inputs.current[results.indexOf(false)]?.focus();
+    // The keyboard closes either way, so the result sheet sits at the bottom, not above it.
+    // The marked fields carry their own hints; tapping one starts the next attempt.
+    Keyboard.dismiss();
     report(
       correct,
       correct ? 'Correct' : 'Check the marked fields',
@@ -109,6 +113,7 @@ export function FormPractice({
               );
               onDraft(writeFormDraft(next));
               setChecked(null);
+              onEdit?.();
               setReady({ check: () => check(next) });
             }}
           />

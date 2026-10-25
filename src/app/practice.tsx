@@ -55,39 +55,21 @@ export default function PracticeScreen() {
   const scenarios = fittingScenarios(track, level);
   const conversations = fittingConversations(track, level);
   // The suggestion above is not repeated in the list below it.
-  const atLevel = conversations.filter((unit) => unit.id !== conversation?.id).slice(0, 4);
+  const atLevel = conversations.filter((unit) => unit.id !== conversation?.id).slice(0, 3);
   const allConversations = getCurriculumUnits(track).filter(
     (unit) => !examMockUnitIds.includes(unit.id),
   );
-  const [showAll, setShowAll] = useState(false);
   const go = (href: string) => router.push(href as Href);
-
-  const listEmpty = !showAll && !atLevel.length;
-  const moreConversations = (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={
-        showAll
-          ? 'Show conversations at your level'
-          : `Show all ${allConversations.length} conversations`
-      }
-      accessibilityState={{ expanded: showAll }}
-      aria-expanded={showAll}
-      onPress={() => setShowAll(!showAll)}
-      style={({ pressed }) => [styles.more, pressed && styles.pressed]}
-    >
-      <Text style={styles.moreText}>
-        {showAll
-          ? 'Show conversations at your level'
-          : `Show all ${allConversations.length} conversations`}
-      </Text>
-      <MaterialCommunityIcons
-        color={Palette.ink}
-        name={showAll ? 'chevron-up' : 'chevron-down'}
-        size={20}
+  // "See all" opens its own screen: a right chevron goes somewhere, and the list keeps growing.
+  const seeAll =
+    allConversations.length > atLevel.length + (conversation ? 1 : 0) ? (
+      <Row
+        icon="format-list-bulleted"
+        title={`All conversations · ${allConversations.length}`}
+        meta="Every talk with the coach, by level"
+        onPress={() => go(`/conversations?track=${track}`)}
       />
-    </Pressable>
-  );
+    ) : null;
   return (
     <AppScreen activeNav="practice">
       <TabHeader title="Practice" track={track} onTrack={setTrack} />
@@ -169,7 +151,7 @@ export default function PracticeScreen() {
             )
           }
         />
-        {listEmpty && allConversations.length > atLevel.length ? moreConversations : null}
+        {atLevel.length ? null : seeAll}
       </Section>
 
       <Section title="Skills">
@@ -203,10 +185,10 @@ export default function PracticeScreen() {
         ) : null}
       </Section>
 
-      {/* With nothing left after the suggestion, no empty heading: the link sits above. */}
-      {listEmpty ? null : (
-        <Section title={showAll ? 'All conversations' : 'More at your level'}>
-          {(showAll ? allConversations : atLevel).map((unit) => (
+      {/* With nothing left after the suggestion, no empty heading: "See all" sits above. */}
+      {atLevel.length ? (
+        <Section title="More at your level">
+          {atLevel.map((unit) => (
             <Row
               key={unit.id}
               icon={practisedUnits.includes(unit.id) ? 'check-circle-outline' : 'account-voice'}
@@ -216,9 +198,9 @@ export default function PracticeScreen() {
               onPress={() => go(`/conversation?track=${track}&unit=${unit.id}`)}
             />
           ))}
-          {allConversations.length > atLevel.length ? moreConversations : null}
+          {seeAll}
         </Section>
-      )}
+      ) : null}
 
       <Section title="Exams and level checks">
         <Row
@@ -229,7 +211,7 @@ export default function PracticeScreen() {
         />
         {track === 'ES' ? (
           <Row
-            icon="account-voice"
+            icon="gauge"
             title="Spoken level check"
             meta="A short estimate, not a certificate"
             onPress={() => go('/level-check')}
@@ -384,13 +366,5 @@ const styles = StyleSheet.create({
     fontSize: FontSize.body,
     lineHeight: LineHeight.body,
   },
-  more: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: space(2),
-    justifyContent: 'center',
-    minHeight: 52,
-  },
-  moreText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.body },
   pressed: { opacity: 0.7 },
 });

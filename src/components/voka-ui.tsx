@@ -3,7 +3,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { Href } from 'expo-router';
 import { useRouter } from 'expo-router';
 import {
+  createContext,
   useCallback,
+  useContext,
   useEffect,
   useRef,
   type ComponentProps,
@@ -63,6 +65,18 @@ const navHref: Record<NavKey, string> = {
   progress: '/progress',
 };
 
+/**
+ * Scrolls something on the current screen into view: what a tap opens must appear where the
+ * learner is looking. 'nearest' brings its bottom into view without pushing its top off;
+ * 'top' lines its top up with the top of the screen.
+ */
+type Reveal = (node: View | null, align?: 'nearest' | 'top') => void;
+const RevealContext = createContext<Reveal>(() => undefined);
+export const useRevealInScroll = () => useContext(RevealContext);
+
+/** How long an opening card's layout animation takes before it is measured. */
+const REVEAL_AFTER_MS = 240;
+
 type AppScreenProps = PropsWithChildren<{
   activeNav?: NavKey;
   backgroundColor?: string;
@@ -70,6 +84,8 @@ type AppScreenProps = PropsWithChildren<{
   footer?: ReactNode;
   keyboardAware?: boolean;
   scroll?: boolean;
+  /** When this changes (a new lesson step), the screen starts again at the top. */
+  scrollKey?: string | number;
   showNav?: boolean;
 }>;
 
@@ -81,10 +97,32 @@ export function AppScreen({
   footer,
   keyboardAware = false,
   scroll = true,
+  scrollKey,
   showNav = true,
 }: AppScreenProps) {
   const scrollRef = useRef<ScrollView>(null);
   const scrollOffset = useRef(0);
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+  }, [scrollKey]);
+  const reveal = useCallback<Reveal>((node, align = 'nearest') => {
+    setTimeout(() => {
+      const scrollView = scrollRef.current?.getNativeScrollRef();
+      if (!node || !scrollView) return;
+      scrollView.measureInWindow((_x, top, _width, height) => {
+        node.measureInWindow((_nodeX, nodeTop, _nodeWidth, nodeHeight) => {
+          const fromTop = nodeTop - top - space(2);
+          const below = nodeTop + nodeHeight - (top + height) + space(4);
+          const by = align === 'top' ? fromTop : below > 0 ? Math.min(below, fromTop) : 0;
+          if (by !== 0)
+            scrollRef.current?.scrollTo({
+              y: Math.max(0, scrollOffset.current + by),
+              animated: true,
+            });
+        });
+      });
+    }, REVEAL_AFTER_MS);
+  }, []);
   const revealInput = useCallback(() => {
     if (!keyboardAware || Platform.OS === 'web' || !Keyboard.isVisible()) return;
     const input = TextInput.State.currentlyFocusedInput();
@@ -141,7 +179,7 @@ export function AppScreen({
     >
       {/* Light icons on dark screens, dark on cream; the most recent screen's choice wins. */}
       <StatusBar style={dark ? 'light' : 'dark'} />
-      {content}
+      <RevealContext.Provider value={reveal}>{content}</RevealContext.Provider>
       {footer}
       {showNav ? <BottomNav active={activeNav} dark={dark} /> : null}
     </SafeAreaView>
@@ -342,8 +380,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingHorizontal: space(2),
   },
+  // The whole cell is the touch target, the bar's full 68 high: centred alone, a tab measured
+  // 34 on Android (below the 48 minimum), with its label hanging outside.
   navButton: {
     alignItems: 'center',
+    alignSelf: 'stretch',
     flex: 1,
     gap: space(0.5),
     justifyContent: 'center',

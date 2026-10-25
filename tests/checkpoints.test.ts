@@ -68,3 +68,20 @@ describe('checkpoints', () => {
     expect(levelReached('ES', 'A1', lessons, { [checkpoint.id]: run(graded) })).toBe(false);
   });
 });
+
+describe('checkpoint wording', () => {
+  it('states the same pass mark as the code', () => {
+    // The intro says "at least 4 in 5"; if CHECKPOINT_PASS_MARK changes, so must the text.
+    expect(CHECKPOINT_PASS_MARK).toBe(4 / 5);
+    const intros = lessons
+      .filter(isCheckpoint)
+      .flatMap((lesson) =>
+        lesson.format === 'steps' ? [lesson.steps, lesson.retakeSteps ?? []] : [],
+      )
+      .map((steps) => steps.find((step) => step.kind === 'rule'))
+      .filter((step) => step?.kind === 'rule');
+    expect(intros.length).toBeGreaterThan(0);
+    for (const intro of intros)
+      if (intro?.kind === 'rule') expect(intro.body).toMatch(/at least 4 in 5 right first time/);
+  });
+});

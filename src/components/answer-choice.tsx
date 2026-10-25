@@ -5,7 +5,6 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSequence,
-  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 
@@ -49,29 +48,23 @@ export function AnswerChoice({
   useAnswerSound();
   const look = looks[result ?? (selected ? 'selected' : 'idle')];
   const shake = useSharedValue(0);
-  const pop = useSharedValue(1);
   const previous = useRef(result);
   useEffect(() => {
     if (result === previous.current) return;
     previous.current = result;
+    // One short shake for a wrong pick; a right one only changes colour and gains its ✓, since
+    // the chime and haptic already celebrate. Only the result sheet moves.
     if (result === 'incorrect') {
       shake.value = withSequence(
-        withTiming(-8, { duration: 50 }),
-        withTiming(8, { duration: 70 }),
-        withTiming(-5, { duration: 60 }),
-        withTiming(5, { duration: 60 }),
+        withTiming(-6, { duration: 50 }),
+        withTiming(6, { duration: 100 }),
         withTiming(0, { duration: 50 }),
       );
       haptic.wrong();
     }
-    if (result === 'correct') {
-      pop.value = withSequence(withSpring(1.035, { stiffness: 500 }), withSpring(1));
-      answeredRight();
-    }
-  }, [pop, result, shake]);
-  const popStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: shake.value }, { scale: pop.value }],
-  }));
+    if (result === 'correct') answeredRight();
+  }, [result, shake]);
+  const popStyle = useAnimatedStyle(() => ({ transform: [{ translateX: shake.value }] }));
   return (
     <Animated.View style={popStyle}>
       <Tactile

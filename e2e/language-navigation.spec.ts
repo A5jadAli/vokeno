@@ -51,12 +51,12 @@ test('a first practice starts the streak without claiming today’s lesson is do
   await page.getByRole('button', { name: 'Check answer' }).click();
 
   await page.goto('/');
-  await expect(page.getByLabel('1-day streak. Best 1 days.')).toBeVisible();
+  await expect(page.getByLabel('1-day streak. Best 1 day.')).toBeVisible();
   await expect(page.getByText('You practised today.')).toBeVisible();
   // Listening is not today's lesson: the lesson is still the next thing to do.
   await expect(page.getByRole('button', { name: /^Start lesson: / })).toBeVisible();
   await page.reload();
-  await expect(page.getByLabel('1-day streak. Best 1 days.')).toBeVisible();
+  await expect(page.getByLabel('1-day streak. Best 1 day.')).toBeVisible();
   await expect(page.getByLabel(/: practised$/)).toHaveCount(1);
 });
 

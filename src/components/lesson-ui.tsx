@@ -2,7 +2,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { type ComponentProps, type PropsWithChildren } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View, type TextInputProps } from 'react-native';
-import Animated, { FadeIn, SlideInDown, ZoomIn } from 'react-native-reanimated';
+import Animated, {
+  Easing,
+  type EntryAnimationsValues,
+  type ExitAnimationsValues,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { useAccentColors } from '@/components/accent-context';
 import { AudioIconButton } from '@/components/lesson-audio-button';
@@ -185,8 +190,43 @@ export function TextButton({
 }
 
 /**
- * Sticky bottom area. With `feedback`, it becomes a result sheet that rises from the bottom: a
- * badge that pops in, a short verdict and the reason, above the next action.
+ * The result sheet's motion: predictable, fast and without bounce, as Apple and Material ask
+ * for feedback sheets. It rises from just below its own resting place (its height plus 24),
+ * fading in over 220 ms with an ease-out, and leaves the same way in 150 ms. A spring from the
+ * screen's bottom overshot to the middle of the screen. With reduce motion on, it simply appears.
+ */
+const SHEET_IN = { duration: 220, easing: Easing.out(Easing.cubic) };
+const SHEET_OUT = { duration: 150, easing: Easing.in(Easing.cubic) };
+
+function sheetIn(values: EntryAnimationsValues) {
+  'worklet';
+  return {
+    initialValues: { opacity: 0, transform: [{ translateY: values.targetHeight + 24 }] },
+    animations: {
+      opacity: withTiming(1, SHEET_IN),
+      transform: [{ translateY: withTiming(0, SHEET_IN) }],
+    },
+  };
+}
+
+function sheetOut(values: ExitAnimationsValues) {
+  'worklet';
+  return {
+    initialValues: { opacity: 1, transform: [{ translateY: 0 }] },
+    animations: {
+      opacity: withTiming(0, SHEET_OUT),
+      transform: [{ translateY: withTiming(values.currentHeight + 24, SHEET_OUT) }],
+    },
+  };
+}
+
+/** A right answer's title, varied a little so a session's thirtieth is not the same word. */
+export const praise = (seed: number) =>
+  ['Right', 'Nice', 'That’s it', 'Exactly', 'Spot on'][Math.abs(seed) % 5];
+
+/**
+ * Sticky bottom area. With `feedback`, it becomes a result sheet fixed to the bottom: the ✓ or ✗
+ * badge and the verdict on one line, the reason, then the next action, always in the same place.
  */
 export function ActionBar({
   children,
@@ -199,28 +239,22 @@ export function ActionBar({
   return (
     <Animated.View
       key={`${feedback.tone}-${feedback.title}`}
-      entering={SlideInDown.springify().damping(20).stiffness(220)}
+      entering={sheetIn}
+      exiting={sheetOut}
       style={[styles.actionBar, styles.sheet, { backgroundColor: look.bg }]}
     >
+      {/* Everything arrives with the sheet, at once: no second bounce, no late message. */}
       <View accessibilityLiveRegion="polite" style={styles.feedbackCopy}>
         <View style={styles.feedbackHeading}>
-          <Animated.View
-            entering={ZoomIn.delay(90).springify().damping(11)}
-            style={[styles.feedbackBadge, { backgroundColor: look.accent }]}
-          >
+          <View style={[styles.feedbackBadge, { backgroundColor: look.accent }]}>
             <MaterialCommunityIcons name={look.icon} size={22} color={look.onAccent} />
-          </Animated.View>
+          </View>
           <Text accessibilityRole="header" style={[styles.feedbackTitle, { color: look.ink }]}>
             {feedback.title}
           </Text>
         </View>
         {feedback.message ? (
-          <Animated.Text
-            entering={FadeIn.delay(120).duration(200)}
-            style={[styles.feedbackMessage, { color: look.ink }]}
-          >
-            {feedback.message}
-          </Animated.Text>
+          <Text style={[styles.feedbackMessage, { color: look.ink }]}>{feedback.message}</Text>
         ) : null}
       </View>
       {children}

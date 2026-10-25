@@ -29,7 +29,7 @@ function caption(streak: StreakSummary) {
 }
 
 const streakLabel = (streak: StreakSummary) =>
-  `${streak.current}-day streak. Best ${streak.best} days.`;
+  `${streak.current}-day streak. Best ${streak.best} ${streak.best === 1 ? 'day' : 'days'}.`;
 
 /** The streak as a small chip for a header: a flame and the number of days. */
 export function StreakChip({ streak, onPress }: { streak: StreakSummary; onPress: () => void }) {

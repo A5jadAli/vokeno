@@ -17,6 +17,7 @@ import {
   SectionLabel,
   TextButton,
   PrimaryAccent,
+  praise,
 } from '@/components/lesson-ui';
 import { SessionFooter } from '@/components/session-footer';
 import { StepLessonPlayer } from '@/components/step-lesson';
@@ -49,6 +50,7 @@ import { lessonLines } from '@/features/audio/inventory';
 import { useLessonAudio, type LessonAudio } from '@/features/audio/use-lesson-audio';
 import { REVIEW_INTERVALS, seedCards } from '@/features/review/schedule';
 import { answeredRight, useAnswerSound } from '@/features/feedback/answer';
+import { wrongChoiceMessage } from '@/features/foundations/wrong-answer';
 import { haptic } from '@/features/feedback/haptics';
 import { levelLabel } from '@/features/foundations/level-status';
 
@@ -100,6 +102,8 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
   const [result, setResult] = useState<Result | null>(null);
   const [showHelp, setShowHelp] = useState(false);
   const [showTranslation, setShowTranslation] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [tried, setTried] = useState<Record<number, number[]>>({});
 
   const update = (change: Partial<FoundationEntry>) =>
     save(lesson.id, { ...entry, ...change, updatedAt: new Date().toISOString() });
@@ -153,16 +157,26 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
     update({ answers, firstTry });
     if (correct) {
       setPinned(index);
-      setResult({ tone: 'correct', title: 'Correct', message: question.explanation });
+      // What was heard goes in the sheet, so the screen above it stays still.
+      const heard =
+        question.audio && !question.explanation.toLowerCase().includes(question.audio.toLowerCase())
+          ? `You heard “${question.audio}”. `
+          : '';
+      setResult({ tone: 'correct', title: praise(index), message: heard + question.explanation });
     } else {
+      // The wrong pick stays marked and closed; another option is one tap away.
+      setTried((list) => ({ ...list, [index]: [...(list[index] ?? []), selected] }));
+      setSelected(null);
       setResult({
         tone: 'wrong',
         title: 'Not quite',
-        message: question.audio
-          ? 'Listen again, slowly if you like, then try another answer.'
-          : question.useReading
-            ? 'Read the text again, then try another answer.'
-            : 'Look at the phrases again if you need to, then try another answer.',
+        message: wrongChoiceMessage(
+          lesson.track,
+          question.options[selected],
+          question.audio
+            ? 'Listen again, slowly if you like, and pick another answer.'
+            : 'Pick another answer.',
+        ),
       });
     }
   };
@@ -173,7 +187,7 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
       answeredRight();
       setResult({
         tone: 'correct',
-        title: 'Correct',
+        title: praise(lesson.checks.length),
         message:
           grade.status === 'accents'
             ? `Watch the accents: ${grade.expected}. ${lesson.writing.explanation}`
@@ -252,14 +266,9 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
               else resetTransient();
             }}
           />
-        ) : result ? (
-          <PrimaryButton
-            title="Try again"
-            onPress={() => {
-              setResult(null);
-              setSelected(null);
-            }}
-          />
+        ) : result && selected === null ? (
+          // After a wrong pick: no dead button in the sheet, just what to do next.
+          <Text style={styles.footerHint}>Pick another answer above.</Text>
         ) : (
           <PrimaryButton title="Check" disabled={selected === null} onPress={checkAnswer} />
         )}
@@ -294,7 +303,7 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
 
   return (
     <PrimaryAccent colors={trackColors[lesson.track]}>
-      <AppScreen showNav={false} keyboardAware footer={footer}>
+      <AppScreen showNav={false} keyboardAware footer={footer} scrollKey={`${entry.step}-${index}`}>
         <LessonTopBar
           progress={position / segments}
           label={levelLabel(lesson.track, lesson.level)}
@@ -383,13 +392,13 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
                       label={question.options[choice]}
                       selected={selected === choice}
                       result={
-                        result && selected === choice
-                          ? correctNow
+                        tried[index]?.includes(choice)
+                          ? 'incorrect'
+                          : correctNow && selected === choice
                             ? 'correct'
-                            : 'incorrect'
-                          : undefined
+                            : undefined
                       }
-                      disabled={correctNow}
+                      disabled={correctNow || Boolean(tried[index]?.includes(choice))}
                       onPress={() => {
                         setSelected(choice);
                         setResult(null);
@@ -397,11 +406,6 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
                     />
                   ))}
                 </View>
-                {correctNow && question.audio && !question.explanation.includes(question.audio) ? (
-                  <InfoCard icon="text-box-outline" title="You heard">
-                    {question.audio}
-                  </InfoCard>
-                ) : null}
                 <TextButton
                   title={showHelp ? 'Hide phrase help' : 'Show phrase help'}
                   onPress={() => setShowHelp(!showHelp)}
@@ -444,17 +448,18 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
                     ? 'Capitals and punctuation don’t count. Missing accents are fine; ñ counts.'
                     : 'Punctuation and capital letters are not marked. Your draft is saved.'}
               </Text>
+              {/* Under the field, not in the result sheet, so it stays while the learner types. */}
               {entry.writingMistakes >= 2 && !correctNow ? (
-                <TextButton
-                  title="Show one possible answer"
-                  onPress={() =>
-                    setResult({
-                      tone: 'close',
-                      title: 'One possible answer',
-                      message: `${lesson.writing.accepted[0]}. Type it yourself to continue.`,
-                    })
-                  }
-                />
+                showAnswer ? (
+                  <InfoCard icon="lightbulb-outline" title="One possible answer" tone="quiet">
+                    {`${lesson.writing.accepted[0]}. Type it yourself to continue.`}
+                  </InfoCard>
+                ) : (
+                  <TextButton
+                    title="Show one possible answer"
+                    onPress={() => setShowAnswer(true)}
+                  />
+                )
               ) : null}
               <TextButton
                 title={showHelp ? 'Hide phrase help' : 'Show phrase help'}
@@ -590,6 +595,13 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
+  footerHint: {
+    color: Palette.secondary,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.label,
+    paddingVertical: space(2),
+    textAlign: 'center',
+  },
   body: {
     gap: space(4),
     paddingBottom: space(8),

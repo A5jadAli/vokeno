@@ -205,6 +205,7 @@ function PlacementCheck({
   return (
     <AppScreen
       showNav={false}
+      scrollKey={`${stageIndex}-${itemIndex}`}
       footer={
         <ActionBar>
           <PrimaryButton

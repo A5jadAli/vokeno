@@ -16,6 +16,7 @@ import {
   PrimaryAccent,
   PrimaryButton,
   TextButton,
+  praise,
 } from '@/components/lesson-ui';
 import { ProgressFill, Tactile } from '@/components/motion';
 import { SessionFooter } from '@/components/session-footer';
@@ -34,6 +35,8 @@ import {
 } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { answeredRight, useAnswerSound } from '@/features/feedback/answer';
+import { wrongChoiceMessage } from '@/features/foundations/wrong-answer';
+import { CHECKPOINT_PASS_MARK } from '@/features/journey/checkpoints';
 import { haptic } from '@/features/feedback/haptics';
 import {
   foundationLessons,
@@ -61,7 +64,6 @@ import { seedCards } from '@/features/review/schedule';
 import { formFieldCorrect } from '@/features/foundations/form-practice';
 
 type Result = { tone: 'correct' | 'wrong' | 'close'; title: string; message?: string };
-const PRAISE = ['Nice!', 'Exactly!', 'Well done!', 'Spot on!', 'Correct!'];
 
 const keyboardNote = {
   DE: 'Capitals and punctuation don’t count. No ß or umlauts? Type ss, ae, oe or ue.',
@@ -174,8 +176,8 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
         title !== 'Correct'
           ? title
           : firstTry && entry.firstTry[gradedIndex] !== false
-            ? PRAISE[index % PRAISE.length]
-            : 'That’s it!';
+            ? praise(index)
+            : 'That’s it';
       setResult({ tone: 'correct', title: verdict, message });
     } else {
       haptic.wrong();
@@ -197,7 +199,13 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
           </>
         ) : (
           <PrimaryButton
-            title={step.kind === 'rule' ? 'Got it' : 'Continue'}
+            title={
+              lesson.unit.checkpoint && index === 0
+                ? 'Start checkpoint'
+                : step.kind === 'rule'
+                  ? 'Got it'
+                  : 'Continue'
+            }
             icon="arrow-right"
             onPress={() => advance()}
           />
@@ -209,7 +217,7 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
       <ActionBar feedback={result ?? undefined}>
         {correctNow ? (
           <PrimaryButton title="Continue" icon="arrow-right" onPress={() => advance()} />
-        ) : result && step.kind !== 'type' && step.kind !== 'form' ? (
+        ) : result && step.kind !== 'type' && step.kind !== 'form' && step.kind !== 'choose' ? (
           <PrimaryButton
             title="Try again"
             onPress={() => {
@@ -220,6 +228,9 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
           />
         ) : step.kind === 'match' ? (
           <Text style={styles.footerHint}>Match every pair to continue.</Text>
+        ) : step.kind === 'choose' && result && !ready ? (
+          // After a wrong pick: no dead button in the sheet, just what to do next.
+          <Text style={styles.footerHint}>Pick another answer above.</Text>
         ) : (
           <PrimaryButton title="Check" disabled={!ready} onPress={() => ready?.check()} />
         )}
@@ -230,7 +241,7 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
 
   return (
     <PrimaryAccent colors={colors}>
-      <AppScreen showNav={false} keyboardAware footer={footer}>
+      <AppScreen showNav={false} keyboardAware footer={footer} scrollKey={index}>
         <LessonTopBar progress={progress} label={unitName(lesson.unit)} />
         <View style={styles.body}>
           {speech.error ? (
@@ -335,6 +346,9 @@ function StepView(props: StepProps) {
           onDraft={props.onDraft}
           setReady={props.setReady}
           report={props.report}
+          onEdit={() => {
+            if (props.result && props.result.tone !== 'correct') props.setResult(null);
+          }}
           complete={props.result?.tone === 'correct'}
           speech={props.speech}
           onHelp={props.onHelp}
@@ -392,8 +406,12 @@ function SceneStep({ step, speech }: StepProps & { step: Of<'scene'> }) {
           onPress={() => setEnglish(!english)}
           style={[styles.chip, english && styles.chipOn]}
         >
-          <MaterialCommunityIcons name="translate" size={16} color={Palette.ink} />
-          <Text style={styles.chipText}>English</Text>
+          <MaterialCommunityIcons
+            name="translate"
+            size={16}
+            color={english ? Palette.cream : Palette.ink}
+          />
+          <Text style={[styles.chipText, english && styles.chipTextOn]}>English</Text>
         </Pressable>
       </View>
       {hasReal ? (
@@ -536,26 +554,42 @@ function ChooseStep({
   lesson,
   speech,
   result,
+  setResult,
   setReady,
   report,
 }: StepProps & { step: Of<'choose'> }) {
   const [selected, setSelected] = useState<number | null>(null);
+  // Wrong picks stay marked and closed; the others stay open, so trying again is one tap.
+  const [tried, setTried] = useState<number[]>([]);
   const correctNow = result?.tone === 'correct';
   const choose = (choice: number) => {
+    if (result && !correctNow) setResult(null);
     setSelected(choice);
     setReady({
-      check: () =>
+      check: () => {
+        const right = choice === step.answer;
+        if (!right) {
+          setTried((list) => [...list, choice]);
+          setSelected(null);
+          setReady(null);
+        }
         report(
-          choice === step.answer,
-          choice === step.answer ? 'Correct' : 'Not quite',
-          choice === step.answer
-            ? step.explanation
-            : step.audio
-              ? 'Listen again, slowly if you like, then try another answer.'
-              : step.context
-                ? 'Read the text again, then try another answer.'
-                : 'Read the question once more, then pick another answer.',
-        ),
+          right,
+          right ? 'Correct' : 'Not quite',
+          right
+            ? // What was heard goes in the sheet, so the screen above it stays still.
+              step.audio && !step.explanation.toLowerCase().includes(step.audio.toLowerCase())
+              ? `You heard “${step.audio}”. ${step.explanation}`
+              : step.explanation
+            : wrongChoiceMessage(
+                lesson.track,
+                step.options[choice],
+                step.audio
+                  ? 'Listen again, slowly if you like, and pick another answer.'
+                  : 'Pick another answer.',
+              ),
+        );
+      },
     });
   };
   return (
@@ -600,18 +634,17 @@ function ChooseStep({
             label={step.options[choice]}
             selected={selected === choice}
             result={
-              result && selected === choice ? (correctNow ? 'correct' : 'incorrect') : undefined
+              tried.includes(choice)
+                ? 'incorrect'
+                : correctNow && selected === choice
+                  ? 'correct'
+                  : undefined
             }
-            disabled={correctNow || Boolean(result)}
+            disabled={correctNow || tried.includes(choice)}
             onPress={() => choose(choice)}
           />
         ))}
       </View>
-      {correctNow && step.audio ? (
-        <InfoCard icon="text-box-outline" title="You heard">
-          {step.audio}
-        </InfoCard>
-      ) : null}
     </View>
   );
 }
@@ -753,6 +786,7 @@ function TypeStep({
   onHelp,
 }: StepProps & { step: Of<'type'> }) {
   const correctNow = result?.tone === 'correct';
+  const [showAnswer, setShowAnswer] = useState(false);
   const check = (value: string) => {
     Keyboard.dismiss();
     const grade = step.answerKind
@@ -825,22 +859,23 @@ function TypeStep({
         value={draft}
         editable={!correctNow}
         onChangeText={(value) => {
+          // A new attempt: the last verdict goes, so no sheet waits above the keyboard.
+          if (result && !correctNow) setResult(null);
           onDraft(value);
           setReady(value.trim() ? { check: () => check(value) } : null);
         }}
       />
       <Text style={lessonText.small}>{keyboardNote[lesson.track]}</Text>
+      {/* The answer is shown here, under the field, not in the result sheet: the learner keeps
+          typing, and a sheet would sit above the keyboard in the middle of the screen. */}
       {mistakes >= 2 && !correctNow ? (
-        <TextButton
-          title="Show one possible answer"
-          onPress={() =>
-            setResult({
-              tone: 'close',
-              title: 'One possible answer',
-              message: `${step.accepted[0]} Type it yourself to continue.`,
-            })
-          }
-        />
+        showAnswer ? (
+          <InfoCard icon="lightbulb-outline" title="One possible answer" tone="quiet">
+            {`${step.accepted[0]} Type it yourself to continue.`}
+          </InfoCard>
+        ) : (
+          <TextButton title="Show one possible answer" onPress={() => setShowAnswer(true)} />
+        )
       ) : null}
     </View>
   );
@@ -1047,6 +1082,12 @@ function CheckpointResults({
     }
     if (!right && step.revisit && !revisit.includes(step.revisit)) revisit.push(step.revisit);
   });
+  // The same pass mark as the course uses for level claims (journey/checkpoints).
+  const rightFirstTime = marked.filter((_, index) => firstTry[index] === true).length;
+  const passed =
+    marked.length > 0 &&
+    rightFirstTime / marked.length >= CHECKPOINT_PASS_MARK &&
+    (spoken || !steps.some((step) => step.kind === 'speak'));
   const lessons = revisit
     .map((id) => foundationLessons.find((item) => item.id === id))
     .filter((item): item is StepLesson => Boolean(item && item.format === 'steps'))
@@ -1108,8 +1149,9 @@ function CheckpointResults({
         <Text style={styles.unitStepNote}>Everything here was right first time. Carry on.</Text>
       )}
       <Text style={styles.unitStepNote}>
-        A checkpoint shows what to practise. It is not an exam score, and the next unit is open
-        either way.
+        {passed
+          ? 'Checkpoint passed. It counts towards the level, and the units before it are covered.'
+          : `To pass: ${Math.round(CHECKPOINT_PASS_MARK * 100)}% right first time and the speaking task said aloud. Try it again whenever you like; the next unit is open either way.`}
       </Text>
     </View>
   );
@@ -1172,7 +1214,9 @@ const styles = StyleSheet.create({
     minHeight: 44,
     paddingHorizontal: space(4),
   },
-  chipOn: { backgroundColor: Palette.white, borderColor: Palette.ink },
+  // On is ink, like every other selected control; an outline alone did not read as on.
+  chipOn: { backgroundColor: Palette.ink, borderColor: Palette.ink },
+  chipTextOn: { color: Palette.cream },
   chipText: { color: Palette.ink, fontFamily: VokaFonts.bodySemiBold, fontSize: FontSize.label },
   bubbles: { gap: space(2) },
   bubbleRow: { alignItems: 'flex-start' },

@@ -24,8 +24,9 @@ async function playStep(page: Page, step: LessonStep, spoke = true, language = '
       .getByRole('button', { name: spoke ? 'I said it aloud' : 'Skip speaking for now' })
       .click();
   if (step.kind === 'scene' || step.kind === 'teach') return next.click();
+  // A checkpoint's opening rule starts it; every other rule is "Got it".
   if (step.kind === 'rule')
-    return page.getByRole('button', { name: 'Got it', exact: true }).click();
+    return page.getByRole('button', { name: /^(Got it|Start checkpoint)$/ }).click();
   if (step.kind === 'choose')
     await page.getByRole('radio', { name: step.options[step.answer], exact: true }).click();
   if (step.kind === 'build')
@@ -90,7 +91,8 @@ test('Spanish Units 1 to 6 guide a beginner through twenty-four sessions with sa
         await page.getByRole('button', { name: 'Check', exact: true }).click();
         await expect(page.getByText('Check the marked fields', { exact: true })).toBeVisible();
         await expect(page.getByText(wrong.hint, { exact: true })).toBeVisible();
-        await expect(wrongBox).toBeFocused();
+        // The keyboard stays closed so the sheet sits at the bottom; the field is marked instead.
+        await expect(wrongBox).not.toBeFocused();
         await wrongBox.scrollIntoViewIfNeeded();
         await page.screenshot({
           path: testInfo.outputPath(`spanish-form-feedback-${lesson.id}.png`),
@@ -168,7 +170,8 @@ test('a complete beginner gets correction, a persistent draft, evidence and a ne
   await page.getByRole('radio', { name: wrong, exact: true }).click();
   await page.getByRole('button', { name: 'Check', exact: true }).click();
   await expect(page.getByText('Not quite', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Try again' }).click();
+  // Picking again is one tap: the wrong option stays marked and closed.
+  await expect(page.getByRole('radio', { name: wrong, exact: true })).toBeDisabled();
   await playStep(page, question);
   // The typed draft survives a reload, and a wrong answer gets a hint.
   while (steps[0].kind !== 'type') await playStep(page, steps.shift()!);

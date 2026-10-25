@@ -332,7 +332,7 @@ function Focus({
           )}
         </View>
         <View style={styles.bandCopy}>
-          <Text numberOfLines={1} style={styles.bandLabel}>
+          <Text numberOfLines={2} style={styles.bandLabel}>
             {context ? context.unit.label : kindLabel[step.kind]}
           </Text>
           {context && lessons.length <= 8 ? (
@@ -466,7 +466,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: space(4),
     paddingVertical: space(4),
   },
-  bandCopy: { flex: 1, gap: space(2) },
+  // Clear of the faint art on the right (where step 5's face will sit), and free to wrap.
+  bandCopy: { flex: 1, gap: space(2), paddingRight: space(16) },
   bandArt: { opacity: 0.22, position: 'absolute', right: -14, top: -16 },
   bandIcon: {
     alignItems: 'center',
@@ -475,7 +476,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 48,
   },
-  bandLabel: { color: Palette.ink, fontFamily: VokaFonts.bodyBold, fontSize: FontSize.body },
+  bandLabel: {
+    color: Palette.ink,
+    fontFamily: VokaFonts.bodyBold,
+    fontSize: FontSize.body,
+    lineHeight: LineHeight.body,
+  },
   bandMeta: {
     color: Palette.secondary,
     fontFamily: VokaFonts.bodySemiBold,

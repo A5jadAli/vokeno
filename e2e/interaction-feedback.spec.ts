@@ -107,7 +107,9 @@ test('German meaning checks mark the chosen answer and preserve correct feedback
     'background-color',
     'rgb(253, 235, 231)',
   );
-  await page.getByRole('button', { name: 'Try again' }).click();
+  // The wrong pick stays marked and closed; another answer is one tap away, no "Try again".
+  await expect(wrong).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Try again' })).toHaveCount(0);
   const right = page.getByRole('radio', { name: 'Guten Tag!', exact: true });
   await right.click();
   await page.getByRole('button', { name: 'Check', exact: true }).click();

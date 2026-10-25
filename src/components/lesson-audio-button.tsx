@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.soft,
   },
   roundAccent: { backgroundColor: Palette.ink },
+  slowLabel: { fontFamily: VokaFonts.bodyBold, fontSize: FontSize.caption },
   roundActive: {
     backgroundColor: Selection.faceStrong,
     borderWidth: 2,
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
   },
 });
 
-/** A compact round play control for dense lists; slow playback uses a tortoise icon. */
+/** A compact round play control for dense lists; slow playback is labelled "Slow". */
 export function AudioIconButton({
   speech,
   text,
@@ -171,9 +172,14 @@ export function AudioIconButton({
     >
       {loading ? (
         <ActivityIndicator size="small" color={Palette.ink} />
+      ) : slow && !active ? (
+        // A word, not a tortoise: at this size the tortoise read as a bird.
+        <Text style={[styles.slowLabel, { color: accent ? Palette.cream : Palette.ink }]}>
+          Slow
+        </Text>
       ) : (
         <MaterialCommunityIcons
-          name={active ? 'stop' : slow ? 'tortoise' : 'volume-high'}
+          name={active ? 'stop' : 'volume-high'}
           size={Math.round(size * 0.46)}
           color={accent && !active ? Palette.cream : Palette.ink}
         />

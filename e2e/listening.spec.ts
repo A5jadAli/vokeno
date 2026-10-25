@@ -159,7 +159,7 @@ test('exposes profile initials, coaching settings, version and password recovery
 }) => {
   await page.goto('/profile');
   await expect(page.getByLabel('Guest learner profile initials')).toBeVisible();
-  await expect(page.getByText('Private by design')).toBeVisible();
+  await expect(page.getByText('Private by design')).toHaveCount(0);
   await page.getByLabel('Open settings').click();
 
   await expect(page.getByText('Tough feedback is your choice', { exact: false })).toBeVisible();
@@ -219,8 +219,11 @@ test('configures a speaking goal and opens a focused German curriculum unit', as
   await expect(page.getByLabel('Work & study speaking goal')).toBeChecked();
 
   await page.goto('/practice?track=DE');
-  await page.getByRole('button', { name: /^Show all \d+ conversations$/ }).click();
-  await page.getByRole('button', { name: /^B1 · .*Am Telefon/ }).click();
+  // "See all" opens its own screen, grouped by level.
+  await page.getByRole('button', { name: /^All conversations · \d+\./ }).click();
+  await expect(page).toHaveURL(/\/conversations\?track=DE$/);
+  await expect(page.getByRole('heading', { name: 'German conversations' })).toBeVisible();
+  await page.getByRole('button', { name: /^Am Telefon\./ }).click();
   await expect(page.getByText('Am Telefon').last()).toBeVisible();
   await expect(page.getByText('Kommt drauf an.')).toBeVisible();
   await expect(page.getByRole('tab', { name: 'Practice', exact: true }).last()).toBeVisible();

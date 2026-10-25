@@ -13,6 +13,7 @@ import {
   lessonText,
   PrimaryButton,
   PrimaryAccent,
+  praise,
 } from '@/components/lesson-ui';
 import { SessionFooter } from '@/components/session-footer';
 import { AppScreen } from '@/components/voka-ui';
@@ -155,7 +156,7 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
           ? outcome === 'correct'
             ? {
                 tone: 'correct',
-                title: 'Correct',
+                title: praise(position),
                 message: `${item.target} means “${item.meaning}”`,
               }
             : {
@@ -212,7 +213,7 @@ function ReviewSession({ track }: { track: LanguageTrack }) {
   );
 
   return (
-    <AppScreen showNav={false} footer={footer}>
+    <AppScreen showNav={false} footer={footer} scrollKey={position}>
       <LessonTopBar
         progress={position / queue.length}
         label={`${Math.min(position + 1, queue.length)}/${queue.length}`}

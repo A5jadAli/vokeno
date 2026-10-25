@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { type Href, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { type Href, useLocalSearchParams, useRouter } from 'expo-router';
+import { type RefObject, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -9,7 +9,7 @@ import { ProgressFill } from '@/components/motion';
 import { StreakStrip } from '@/components/streak-strip';
 import { SyncStatusNotice } from '@/components/sync-status';
 import { TabHeader } from '@/components/tab-header';
-import { AppScreen } from '@/components/voka-ui';
+import { AppScreen, useRevealInScroll } from '@/components/voka-ui';
 import { FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import { testDateFor, useCoachingStore } from '@/features/coaching/store';
 import { curriculumUnits } from '@/features/curriculum/catalog';
@@ -36,6 +36,8 @@ import { reviewSummary } from '@/features/review/schedule';
 export default function ProgressScreen() {
   const router = useRouter();
   const [streakInfo, setStreakInfo] = useState(false);
+  const { focus } = useLocalSearchParams<{ focus?: string }>();
+  const streakSection = useRef<View>(null);
   const [track, setTrack] = useSelectedLanguage();
   const progress = useCoachingStore((state) => state.foundations);
   const preferences = useCoachingStore((state) => state.preferences);
@@ -79,6 +81,7 @@ export default function ProgressScreen() {
 
   return (
     <AppScreen activeNav="progress">
+      <RevealOnOpen target={streakSection} when={focus === 'streak'} />
       <TabHeader title="Progress" track={track} onTrack={setTrack} />
       <SyncStatusNotice />
 
@@ -179,9 +182,12 @@ export default function ProgressScreen() {
         </View>
       ) : null}
 
-      <Text accessibilityRole="header" style={styles.sectionTitle}>
-        This week
-      </Text>
+      {/* Opened from the streak chip, Progress lands here rather than at its top. */}
+      <View ref={streakSection}>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
+          This week
+        </Text>
+      </View>
       <StreakStrip streak={habits.streak} week={habits.week} />
       {/* How the streak works, on request rather than under every visit. */}
       <Pressable
@@ -286,6 +292,15 @@ function Stat({ value, label, detail }: { value: number; label: string; detail: 
       <Text style={styles.statDetail}>{detail}</Text>
     </View>
   );
+}
+
+/** Scrolls to a section once, on arrival (from the streak chip, to the streak). */
+function RevealOnOpen({ target, when }: { target: RefObject<View | null>; when: boolean }) {
+  const reveal = useRevealInScroll();
+  useEffect(() => {
+    if (when) reveal(target.current, 'top');
+  }, [reveal, target, when]);
+  return null;
 }
 
 const styles = StyleSheet.create({

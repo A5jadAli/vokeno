@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { type Href, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   FadeIn,
@@ -10,6 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { ProgressFill } from '@/components/motion';
+import { useRevealInScroll } from '@/components/voka-ui';
 import { FontSize, LineHeight, Palette, Radius, space, VokaFonts } from '@/constants/theme';
 import { useCoachingStore } from '@/features/coaching/store';
 import { getTrackLessons, type FoundationLesson } from '@/features/foundations/catalog';
@@ -52,6 +53,8 @@ export function CourseView({ track }: { track: LanguageTrack }) {
   const [levelToggled, setLevelToggled] = useState<Partial<Record<LessonLevel, boolean>>>({});
   const [showAll, setShowAll] = useState<Partial<Record<LessonLevel, boolean>>>({});
   const [noteOpen, setNoteOpen] = useState<Partial<Record<LessonLevel, boolean>>>({});
+  const levelRefs = useRef<Partial<Record<LessonLevel, View | null>>>({});
+  const reveal = useRevealInScroll();
   const [toggled, setToggled] = useState<Record<string, boolean>>({});
   const isLevelOpen = (level: LessonLevel) => levelToggled[level] ?? level === currentLevel;
   const isOpen = (unit: UnitSummary) => toggled[unit.id] ?? unit.id === position.unit?.id;
@@ -92,6 +95,9 @@ export function CourseView({ track }: { track: LanguageTrack }) {
         return (
           <Animated.View
             key={section.level}
+            ref={(node: View | null) => {
+              levelRefs.current[section.level] = node;
+            }}
             layout={LinearTransition.duration(220)}
             style={styles.level}
           >
@@ -100,7 +106,11 @@ export function CourseView({ track }: { track: LanguageTrack }) {
               open={open}
               current={section.level === currentLevel}
               track={track}
-              onToggle={() => setLevelToggled((state) => ({ ...state, [section.level]: !open }))}
+              onToggle={() => {
+                setLevelToggled((state) => ({ ...state, [section.level]: !open }));
+                // What opens comes into view, rather than opening below the fold.
+                if (!open) reveal(levelRefs.current[section.level] ?? null);
+              }}
             />
             {open ? (
               <Animated.View entering={FadeIn.duration(200)} style={styles.units}>
@@ -406,8 +416,11 @@ function UnitCard({
   const chevron = useAnimatedStyle(() => ({
     transform: [{ rotate: withTiming(open ? '180deg' : '0deg', { duration: 200 }) }],
   }));
+  const card = useRef<View>(null);
+  const reveal = useRevealInScroll();
   return (
     <Animated.View
+      ref={card}
       layout={LinearTransition.duration(220)}
       style={[styles.unit, current && { borderColor: colors.deep }]}
     >
@@ -416,7 +429,11 @@ function UnitCard({
         accessibilityState={{ expanded: open }}
         aria-expanded={open}
         accessibilityLabel={`${sentence(unit.label)} ${unit.done} of ${total} done${current ? '. You are here' : ''}`}
-        onPress={onToggle}
+        onPress={() => {
+          onToggle();
+          // Opening a card near the bottom scrolls its lessons into view.
+          if (!open) reveal(card.current);
+        }}
         style={({ pressed }) => [styles.unitHeader, pressed && styles.pressed]}
       >
         <View
@@ -738,7 +755,6 @@ const styles = StyleSheet.create({
     fontFamily: VokaFonts.bodySemiBold,
     fontSize: FontSize.label,
     lineHeight: LineHeight.label,
-    textDecorationLine: 'underline',
   },
   links: { backgroundColor: Palette.white, borderRadius: Radius.lg, marginTop: space(2) },
   link: {
