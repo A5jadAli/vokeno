@@ -102,6 +102,7 @@ export function FormPractice({
             maxLength={MAX_FORM_FIELD_LENGTH}
             value={values[index]}
             editable={!complete}
+            onFocus={onEdit}
             style={[
               styles.input,
               checked?.[index] === false && styles.wrong,

@@ -252,7 +252,8 @@ export function StepLessonPlayer({ lesson }: { lesson: StepLesson }) {
           {index === 0 && step ? (
             <View style={styles.intro}>
               <Text style={lessonText.meta}>
-                {unitName(lesson.unit)} · {lesson.unit.title} · {lesson.session}
+                {unitName(lesson.unit)} · {lesson.track === 'EN' ? '' : `${lesson.unit.title} · `}
+                {lesson.session}
               </Text>
               <Text accessibilityRole="header" style={lessonText.title}>
                 {lesson.title}
@@ -359,7 +360,7 @@ function StepView(props: StepProps) {
 
 type Of<K extends LessonStep['kind']> = Extract<LessonStep, { kind: K }>;
 
-function SceneStep({ step, speech }: StepProps & { step: Of<'scene'> }) {
+function SceneStep({ step, speech, lesson }: StepProps & { step: Of<'scene'> }) {
   // The second speaker's bubbles take the language tint: green is kept for right answers.
   const accent = useAccentColors();
   const hasReal = step.lines.some((line) => line.real);
@@ -402,16 +403,18 @@ function SceneStep({ step, speech }: StepProps & { step: Of<'scene'> }) {
           accessibilityRole="switch"
           accessibilityState={{ checked: english }}
           aria-checked={english}
-          accessibilityLabel="Show English"
+          accessibilityLabel={lesson.track === 'EN' ? 'Show meaning' : 'Show English'}
           onPress={() => setEnglish(!english)}
           style={[styles.chip, english && styles.chipOn]}
         >
           <MaterialCommunityIcons
-            name="translate"
+            name={lesson.track === 'EN' ? 'information-outline' : 'translate'}
             size={16}
             color={english ? Palette.cream : Palette.ink}
           />
-          <Text style={[styles.chipText, english && styles.chipTextOn]}>English</Text>
+          <Text style={[styles.chipText, english && styles.chipTextOn]}>
+            {lesson.track === 'EN' ? 'Meaning' : 'English'}
+          </Text>
         </Pressable>
       </View>
       {hasReal ? (
@@ -584,9 +587,7 @@ function ChooseStep({
             : wrongChoiceMessage(
                 lesson.track,
                 step.options[choice],
-                step.audio
-                  ? 'Listen again, slowly if you like, and pick another answer.'
-                  : 'Pick another answer.',
+                step.audio ? 'Listen again, slowly if you like.' : '',
               ),
         );
       },
@@ -858,6 +859,11 @@ function TypeStep({
         ]}
         value={draft}
         editable={!correctNow}
+        // Back to the field: the verdict goes before the keyboard comes up, so it never floats
+        // above the keyboard; its hint stays under the field below.
+        onFocus={() => {
+          if (result && !correctNow) setResult(null);
+        }}
         onChangeText={(value) => {
           // A new attempt: the last verdict goes, so no sheet waits above the keyboard.
           if (result && !correctNow) setResult(null);
@@ -865,6 +871,9 @@ function TypeStep({
           setReady(value.trim() ? { check: () => check(value) } : null);
         }}
       />
+      {mistakes > 0 && !result && !correctNow ? (
+        <Text style={styles.retryHint}>{step.hint}</Text>
+      ) : null}
       <Text style={lessonText.small}>{keyboardNote[lesson.track]}</Text>
       {/* The answer is shown here, under the field, not in the result sheet: the learner keeps
           typing, and a sheet would sit above the keyboard in the middle of the screen. */}
@@ -1001,7 +1010,9 @@ function Complete({
       </Animated.View>
       {results}
       <UnitStep lesson={lesson} />
-      {lesson.session === 'Exam task' ? <UnitCallInvite lesson={lesson} /> : null}
+      {lesson.session === 'Exam task' || lesson.session === 'Use it yourself' ? (
+        <UnitCallInvite lesson={lesson} />
+      ) : null}
       <InfoCard icon="check-circle-outline" title="What you practised">
         {lesson.outcome}
       </InfoCard>
@@ -1168,6 +1179,12 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  retryHint: {
+    color: Feedback.wrongText,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
   footerHint: {
     color: Palette.secondary,
     fontFamily: VokaFonts.bodyMedium,

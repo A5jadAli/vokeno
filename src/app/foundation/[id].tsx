@@ -173,9 +173,7 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
         message: wrongChoiceMessage(
           lesson.track,
           question.options[selected],
-          question.audio
-            ? 'Listen again, slowly if you like, and pick another answer.'
-            : 'Pick another answer.',
+          question.audio ? 'Listen again, slowly if you like.' : '',
         ),
       });
     }
@@ -436,11 +434,19 @@ function GuidedLesson({ lesson }: { lesson: ClassicLesson }) {
                 ]}
                 value={entry.draft}
                 editable={!correctNow}
+                // Back to the field: the verdict goes before the keyboard comes up, so it never
+                // floats above the keyboard; its hint stays under the field below.
+                onFocus={() => {
+                  if (result && !correctNow) setResult(null);
+                }}
                 onChangeText={(draft) => {
                   setResult(null);
                   update({ draft });
                 }}
               />
+              {entry.writingMistakes > 0 && !result && !correctNow ? (
+                <Text style={styles.retryHint}>{lesson.writing.hint}</Text>
+              ) : null}
               <Text style={lessonText.small}>
                 {lesson.track === 'DE'
                   ? 'Capitals and punctuation don’t count. No ß or umlauts? Type ss, ae, oe or ue.'
@@ -595,6 +601,12 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
+  retryHint: {
+    color: Feedback.wrongText,
+    fontFamily: VokaFonts.bodyMedium,
+    fontSize: FontSize.label,
+    lineHeight: LineHeight.label,
+  },
   footerHint: {
     color: Palette.secondary,
     fontFamily: VokaFonts.bodyMedium,

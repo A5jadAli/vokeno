@@ -46,10 +46,11 @@ const shortUse = (use: string) => (use && use.length <= 80 ? ` ${use.replace(/\.
 export function wrongChoiceMessage(track: LanguageTrack, option: string, retry: string) {
   const { target, meaning } = phrases(track);
   const asTarget = target.get(clean(option));
-  if (asTarget)
-    return `“${asTarget.target}” means “${asTarget.meaning}”.${shortUse(asTarget.use)} ${retry}`;
-  const asMeaning = meaning.get(clean(option));
-  if (asMeaning && clean(asMeaning.target) !== clean(option))
-    return `“${asMeaning.meaning}” would be “${asMeaning.target}”. ${retry}`;
-  return retry;
+  const asMeaning = asTarget ? undefined : meaning.get(clean(option));
+  const why = asTarget
+    ? `“${asTarget.target}” means “${asTarget.meaning}”.${shortUse(asTarget.use)}`
+    : asMeaning && clean(asMeaning.target) !== clean(option)
+      ? `“${asMeaning.meaning}” would be “${asMeaning.target}”.`
+      : '';
+  return [why, retry].filter(Boolean).join(' ');
 }
