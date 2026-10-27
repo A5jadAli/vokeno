@@ -36,6 +36,9 @@ function phrases(track: LanguageTrack) {
   return found;
 }
 
+/** A quote that already ends a sentence ("Goodbye.") takes no second full stop after it. */
+const quoted = (text: string) => `“${text}”${/[.!?…]$/.test(text) ? '' : '.'}`;
+
 /** A short "use" line reads as a reason; a long one would bury the retry. */
 const shortUse = (use: string) => (use && use.length <= 80 ? ` ${use.replace(/\.?$/, '.')}` : '');
 
@@ -48,9 +51,9 @@ export function wrongChoiceMessage(track: LanguageTrack, option: string, retry: 
   const asTarget = target.get(clean(option));
   const asMeaning = asTarget ? undefined : meaning.get(clean(option));
   const why = asTarget
-    ? `“${asTarget.target}” means “${asTarget.meaning}”.${shortUse(asTarget.use)}`
+    ? `“${asTarget.target}” means ${quoted(asTarget.meaning)}${shortUse(asTarget.use)}`
     : asMeaning && clean(asMeaning.target) !== clean(option)
-      ? `“${asMeaning.meaning}” would be “${asMeaning.target}”.`
+      ? `“${asMeaning.meaning}” would be ${quoted(asMeaning.target)}`
       : '';
   return [why, retry].filter(Boolean).join(' ');
 }

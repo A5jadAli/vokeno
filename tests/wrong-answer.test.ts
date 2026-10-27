@@ -10,13 +10,19 @@ const phrase = allTrackLessons('DE')
 describe('wrong choice messages', () => {
   it('says what a taught phrase means, then how to try again', () => {
     const message = wrongChoiceMessage('DE', phrase.target, 'Pick another answer.');
-    expect(message.startsWith(`“${phrase.target}” means “${phrase.meaning}”.`)).toBe(true);
+    expect(message.startsWith('“Hallo!” means “Hello! / Hi!”')).toBe(true);
     expect(message.endsWith('Pick another answer.')).toBe(true);
   });
 
   it('turns a picked meaning back into the phrase, without giving the answer', () => {
     expect(wrongChoiceMessage('DE', phrase.meaning, 'Pick another answer.')).toBe(
-      `“${phrase.meaning}” would be “${phrase.target}”. Pick another answer.`,
+      '“Hello! / Hi!” would be “Hallo!” Pick another answer.',
+    );
+  });
+
+  it('adds no second full stop after a meaning that already ends a sentence', () => {
+    expect(wrongChoiceMessage('EN', 'Bye.', '')).toBe(
+      '“Bye.” means “Goodbye.” Use it when you leave.',
     );
   });
 

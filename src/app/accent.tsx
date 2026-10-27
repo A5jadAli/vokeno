@@ -79,7 +79,7 @@ export default function AccentScreen() {
             </Text>
             <Text style={styles.referenceText}>
               {track === 'EN'
-                ? 'Your coach and model phrases use this choice. Scene characters keep their own accents. Browser and offline audio depend on the voices installed on your device.'
+                ? 'Your coach and model phrases use this choice. Scene characters keep their own accents.'
                 : track === 'DE'
                   ? 'Widely understood German from Germany, while recognising natural reductions and regional variation.'
                   : 'Clear everyday speech from Mexico, with notes about other common Spanish varieties. Your own accent is welcome.'}
@@ -88,7 +88,7 @@ export default function AccentScreen() {
         </View>
 
         {track === 'EN' ? (
-          <View style={styles.goalList}>
+          <View style={styles.referenceList}>
             {englishReferences.map((reference) => (
               <ActionRow
                 key={reference}
@@ -194,6 +194,7 @@ const styles = StyleSheet.create({
     marginTop: space(1),
   },
   goalList: { gap: space(2), marginTop: space(3) },
+  referenceList: { gap: space(2), marginVertical: space(3) },
   goalCard: {
     alignItems: 'center',
     backgroundColor: Palette.white,
