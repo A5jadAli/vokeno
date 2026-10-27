@@ -32,7 +32,7 @@ Behavioural rules adapted from Andrej Karpathy's guidelines (forrestchang/andrej
 
 ## Project rules
 
-- **Levels must be true.** A level label (A1 to C1) is claimed only when the content would get a learner there and through the matching exam. English is B1 to C1 and IELTS: no A1 or A2 labels, lessons below B1 are a warm-up. See `docs/curriculum-standards-audit.md` and `docs/spanish-a1-curriculum-plan.md` (checkpoint pass mark).
+- **Levels must be true.** A level label (A1 to C1) is claimed only when the content would get a learner there and through the matching exam; until then it is a starter set. Each language's plan sets its range: `docs/english-curriculum-plan.md` (one American and British course from A1 to C1, IELTS an optional branch), `docs/spanish-a1-curriculum-plan.md` (and its checkpoint pass mark), `docs/curriculum-standards-audit.md`.
 - **Content is native-first.** Modern, natural language with register labels; official word lists only as a coverage benchmark. Answer keys accept every reasonable answer.
 - **Design follows `docs/design-system.md`.** Tokens from `src/constants/theme.ts` only (lint enforces it); ink actions, lime only for voice on ink, one radio mark, the calm result sheet, say less.
 - **The preview channel reaches real users.** An OTA update is a release: run the full checks first. Native modules and config changes need a store build, never an OTA.
