@@ -18,6 +18,10 @@ import { lessonIdFromHref } from '@/features/journey/course';
 import { useSelectedLanguage } from '@/features/language/selection';
 import { languageDetails } from '@/features/language/config';
 import { LanguageSwitch } from '@/components/language-switch';
+import {
+  englishReferenceLabel,
+  englishReferences,
+} from '../../supabase/functions/_shared/english-reference';
 
 /** Choose where to start: how much you know decides your first lesson. */
 export default function LearningPlanScreen() {
@@ -25,6 +29,8 @@ export default function LearningPlanScreen() {
   const [track, setTrack] = useSelectedLanguage();
   const preferences = useCoachingStore((state) => state.preferences[track]);
   const setChoices = useCoachingStore((state) => state.setLearningChoices);
+  const englishReference = useCoachingStore((state) => state.preferences.EN.reference);
+  const setEnglishReference = useCoachingStore((state) => state.setEnglishReference);
   const ability = preferences.ability ?? 'new';
   const goal = preferences.studyGoal ?? 'everyday';
   const language = languageDetails[track].name;
@@ -41,6 +47,9 @@ export default function LearningPlanScreen() {
     ['work-study', 'Work and study'],
     ...(track === 'EN'
       ? ([
+          ['interviews', 'Job interviews'],
+          ['meetings', 'Meetings and teamwork'],
+          ['presentations', 'Presentations'],
           ['ielts-academic', 'IELTS Academic'],
           ['ielts-general', 'IELTS General Training'],
         ] as [StudyGoal, string][])
@@ -96,9 +105,9 @@ export default function LearningPlanScreen() {
         />
 
         {track === 'EN' && ability === 'new' ? (
-          <InfoCard icon="information-outline" title="English here starts at A2">
-            These lessons start at A2, for learners who know some basics. A beginner course is not
-            ready yet.
+          <InfoCard icon="information-outline" title="Start with three small A1 units">
+            Meet someone, share a little about yourself and order a drink. More beginner units are
+            being built. Examples and instructions currently use English.
           </InfoCard>
         ) : null}
 
@@ -122,6 +131,24 @@ export default function LearningPlanScreen() {
             />
           ))}
         </View>
+        {track === 'EN' ? (
+          <View style={styles.group}>
+            <SectionLabel>Your speaking model</SectionLabel>
+            {englishReferences.map((reference) => (
+              <ActionRow
+                key={reference}
+                title={englishReferenceLabel[reference]}
+                choice
+                selected={englishReference === reference}
+                onPress={() => setEnglishReference(reference)}
+              />
+            ))}
+            <Text style={lessonText.small}>
+              Both are valid. Scene speakers keep their own accents. Change your model any time in
+              Speaking profile.
+            </Text>
+          </View>
+        ) : null}
         <Text style={lessonText.small}>
           Practice supports learning; it is not a certified CEFR level or exam result.
         </Text>

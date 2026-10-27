@@ -6,6 +6,7 @@ import {
 import { parseSpokenAssessment } from '@/features/assessment/types';
 import type { LanguageTrack } from '@/features/language/config';
 import type { TranscriptTurn } from './events';
+import type { EnglishGoal } from '../../../supabase/functions/_shared/english-reference';
 
 export const conversationApiUrl =
   process.env.EXPO_PUBLIC_VOKA_API_URL?.trim() || getSupabaseFunctionUrl();
@@ -59,6 +60,8 @@ export async function createConversationRequest(
   options: {
     coachTone: 'supportive' | 'tough';
     goal: string;
+    englishReference?: 'en-GB' | 'en-US';
+    englishGoal?: EnglishGoal;
     practice: string;
     unitId?: string;
     cardId?: string;

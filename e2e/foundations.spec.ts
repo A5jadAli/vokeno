@@ -6,6 +6,7 @@ import {
   type StepLesson,
 } from '../src/features/foundations/catalog';
 import { placementStages } from '../src/features/placement/items';
+import { englishA1Units } from '../src/features/foundations/english-a1-units';
 import { spanishA1Units } from '../src/features/foundations/spanish-a1-units';
 import { chooseLanguage } from './nav';
 
@@ -56,6 +57,55 @@ test.beforeEach(async ({ page }) => {
       ? route.continue()
       : route.abort(),
   );
+});
+
+test('English pilot has a clear twelve-session route and a supported stopping point', async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(180_000);
+  page.setDefaultTimeout(15_000);
+  await page.goto('/learning-plan?track=EN');
+  await page.getByRole('radio', { name: 'American English', exact: true }).click();
+  await page.getByRole('radio', { name: 'Meetings and teamwork', exact: true }).click();
+  await page.getByRole('button', { name: 'Start: Unit 1: Hello, I’m Alex', exact: true }).click();
+  for (const [index, lesson] of englishA1Units.entries()) {
+    await expect(page).toHaveURL(new RegExp(`/foundation/${lesson.id}$`));
+    await expect(page.getByRole('heading', { name: lesson.title })).toBeVisible();
+    if (index === 0)
+      await page.screenshot({
+        path: testInfo.outputPath('english-first-step.png'),
+        fullPage: true,
+      });
+    for (const step of lesson.steps) await playStep(page, step, false, 'English');
+    await expect(
+      page.getByText(`${markedSteps(lesson)}/${markedSteps(lesson)} right first time`),
+    ).toBeVisible();
+    if (lesson.session === 'Use it yourself') {
+      await expect(
+        page.getByRole('button', { name: 'Talk it through: a three-minute call with Robin' }),
+      ).toBeVisible();
+    }
+    if (index < englishA1Units.length - 1)
+      await page
+        .getByRole('button', { name: `One more: ${englishA1Units[index + 1].title}`, exact: true })
+        .click();
+  }
+  await expect(
+    page.getByRole('button', { name: 'One more: English sounds that change meaning' }),
+  ).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /^One more: Speak:/ })).toBeVisible();
+  await page.goto('/?track=EN');
+  await expect(page.getByRole('button', { name: /Start lesson:/ })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /^Optional: Speak:/ })).toBeInViewport();
+  await page.screenshot({ path: testInfo.outputPath('english-after-pilot.png'), fullPage: true });
+  await page.goto('/accent?track=EN');
+  await expect(page.getByRole('radio', { name: 'American English', exact: true })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await expect(
+    page.getByRole('button', { name: 'Meetings and teamwork: Change your learning goal' }),
+  ).toBeVisible();
 });
 
 test('Spanish Units 1 to 6 guide a beginner through twenty-four sessions with saved forms and listening help', async ({

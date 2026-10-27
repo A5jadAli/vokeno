@@ -1,5 +1,9 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import {
+  englishReferenceOrDefault,
+  type EnglishReference,
+} from '../../../supabase/functions/_shared/english-reference';
 
 import type { LanguageTrack } from '@/features/listening/scenarios';
 import { scopedLearningStorage } from '@/features/sync/scoped-storage';
@@ -41,7 +45,14 @@ export type { CoachingSignal } from './store-types';
 export type SpeakingGoal = 'everyday' | 'interviews' | 'work-study';
 export type CoachTone = 'adaptive' | 'supportive' | 'tough';
 export type StartingAbility = 'new' | 'basics' | 'conversational';
-export type StudyGoal = 'everyday' | 'work-study' | 'ielts-academic' | 'ielts-general';
+export type StudyGoal =
+  | 'everyday'
+  | 'work-study'
+  | 'interviews'
+  | 'meetings'
+  | 'presentations'
+  | 'ielts-academic'
+  | 'ielts-general';
 /**
  * `testDate` (YYYY-MM-DD) is this language's exam date, e.g. IELTS or Goethe. `startAt` is the
  * lesson the learner chose to start from (their answer in setup, or an accepted placement).
@@ -58,13 +69,13 @@ type LearningChoices = {
 
 export type SpeakingPreferences = {
   DE: { goal: SpeakingGoal; reference: 'de-DE' } & LearningChoices;
-  EN: { goal: SpeakingGoal; reference: 'en-GB' } & LearningChoices;
+  EN: { goal: SpeakingGoal; reference: EnglishReference } & LearningChoices;
   ES: { goal: SpeakingGoal; reference: 'es-MX' } & LearningChoices;
 };
 
 const defaultPreferences: SpeakingPreferences = {
   DE: { goal: 'everyday', reference: 'de-DE' },
-  EN: { goal: 'interviews', reference: 'en-GB' },
+  EN: { goal: 'everyday', reference: 'en-GB' },
   ES: { goal: 'everyday', reference: 'es-MX' },
 };
 
@@ -73,7 +84,11 @@ function withLanguageDefaults(
 ): SpeakingPreferences {
   return {
     DE: { ...defaultPreferences.DE, ...value?.DE },
-    EN: { ...defaultPreferences.EN, ...value?.EN },
+    EN: {
+      ...defaultPreferences.EN,
+      ...value?.EN,
+      reference: englishReferenceOrDefault(value?.EN?.reference),
+    },
     ES: { ...defaultPreferences.ES, ...value?.ES },
   };
 }
@@ -130,6 +145,7 @@ type CoachingState = {
   resetCoaching: () => void;
   setCoachTone: (tone: CoachTone) => void;
   setGoal: (track: LanguageTrack, goal: SpeakingGoal) => void;
+  setEnglishReference: (reference: EnglishReference) => void;
   setHasHydrated: (hydrated: boolean) => void;
   setTestDate: (track: LanguageTrack, date: string | null, level?: LessonLevel) => void;
 };
@@ -222,9 +238,11 @@ export const useCoachingStore = create<CoachingState>()(
               ability,
               studyGoal,
               goal:
-                studyGoal === 'work-study'
+                studyGoal === 'work-study' ||
+                studyGoal === 'meetings' ||
+                studyGoal === 'presentations'
                   ? 'work-study'
-                  : studyGoal.startsWith('ielts')
+                  : studyGoal === 'interviews' || studyGoal.startsWith('ielts')
                     ? 'interviews'
                     : 'everyday',
             },
@@ -313,8 +331,18 @@ export const useCoachingStore = create<CoachingState>()(
         set((state) => {
           const { [track]: _dropped, ...sessions } = state.sessions;
           return {
-            // A new starting point changes what today's lesson should be.
-            sessions,
+            // Fix the chosen first activity before opening it. Otherwise entering from setup
+            // (without visiting Today) can build a new session only after the lesson is done,
+            // showing 0 completed and turning the next lesson into another requirement.
+            sessions: lessonId
+              ? {
+                  ...sessions,
+                  [track]: {
+                    day: localDay(Date.now()),
+                    keys: [`lesson:${lessonId}` as ActivityKey],
+                  },
+                }
+              : sessions,
             preferences: {
               ...state.preferences,
               [track]: { ...state.preferences[track], startAt: lessonId },
@@ -423,6 +451,13 @@ export const useCoachingStore = create<CoachingState>()(
           writingPracticeDates: [],
         }),
       setCoachTone: (coachTone) => set({ coachTone }),
+      setEnglishReference: (reference) =>
+        set((state) => ({
+          preferences: {
+            ...state.preferences,
+            EN: { ...state.preferences.EN, reference: englishReferenceOrDefault(reference) },
+          },
+        })),
       setGoal: (track, goal) =>
         set((state) => ({
           preferences: {
@@ -483,6 +518,7 @@ export const useCoachingStore = create<CoachingState>()(
         return {
           ...current,
           ...saved,
+          preferences: withLanguageDefaults(saved.preferences ?? current.preferences),
           foundations: parseFoundationProgress(saved.foundations ?? current.foundations),
         };
       },

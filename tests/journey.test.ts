@@ -202,18 +202,19 @@ describe('course levels', () => {
   it('lays each language out from its first level to B2, in course order', () => {
     expect(courseLevels('ES', {}).map((level) => level.level)).toEqual(['A1', 'A2', 'B1', 'B2']);
     expect(courseLevels('DE', {}).map((level) => level.level)).toEqual(['A1', 'A2', 'B1', 'B2']);
-    expect(courseLevels('EN', {}).map((level) => level.level)).toEqual(['B1', 'B2', 'C1']);
-    // English is B1 to C1: its older A2 lessons are a warm-up inside B1, never labelled A2.
     const english = courseLevels('EN', {});
-    expect(english[0].groups[0].label).toBe('Warm-up before B1');
-    expect(
-      english.flatMap((level) => [level.label, ...level.groups.map((group) => group.label)]).join(),
-    ).not.toMatch(/A2/);
-    expect(english[2]).toMatchObject({ level: 'C1', lessons: 0, label: 'C1' });
-    // The warm-up is in B1 but not B1 content: it does not count towards B1.
-    const warmUp = english[0].groups[0].lessons.length;
-    const inB1 = english[0].groups.reduce((sum, group) => sum + group.lessons.length, 0);
-    expect(english[0].lessons).toBe(inB1 - warmUp);
+    expect(english.map((level) => level.level)).toEqual(['A1', 'A2', 'B1', 'B2', 'C1']);
+    expect(english[0]).toMatchObject({
+      label: 'A1 starter',
+      units: 3,
+      lessons: 12,
+      reached: false,
+    });
+    expect(english[1]).toMatchObject({ level: 'A2', label: 'A2 starter', lessons: 3 });
+    expect(english[4]).toMatchObject({ level: 'C1', lessons: 0, label: 'C1' });
+    expect(english.flatMap((level) => level.groups).some((group) => group.kind === 'warm-up')).toBe(
+      false,
+    );
     const spanish = courseLevels('ES', {});
     // Levels not built yet are listed, empty, so the way to B2 is visible but nothing is claimed.
     expect(spanish.find((level) => level.level === 'B2')?.lessons).toBe(0);
@@ -258,20 +259,27 @@ describe('course levels', () => {
 });
 
 describe('levels shown for practice content', () => {
-  it('never shows A1 or A2 for English, and keeps other languages as they are', () => {
-    expect(contentLevel('EN', 'A1')).toBe('Warm-up');
-    expect(contentLevel('EN', 'A2')).toBe('Warm-up');
+  it('shows the actual English levels now that A1 exists, keeping other languages unchanged', () => {
+    expect(contentLevel('EN', 'A1')).toBe('A1');
+    expect(contentLevel('EN', 'A2')).toBe('A2');
     expect(contentLevel('EN', 'B1')).toBe('B1');
     expect(contentLevel('ES', 'A1')).toBe('A1');
     expect(contentLevel('DE', 'A2–B2')).toBe('A2–B2');
   });
 
-  it('matches English practice to B1 and up, not the warm-up', () => {
+  it('prefers practice at the current level and never fills an A1 gap with A2', () => {
     expect(fittingConversations('EN', 'B1').map((unit) => unit.level)).toEqual(['B1']);
     expect(new Set(fittingScenarios('EN', 'B1').map((item) => item.level))).toEqual(
       new Set(['B1']),
     );
+    expect(fittingScenarios('EN', 'A1')).toEqual([]);
     // German at A1 still gets its A1 talks.
     expect(fittingConversations('DE', 'A1').every((unit) => unit.level === 'A1')).toBe(true);
+  });
+
+  it('keeps German and Spanish practice spanning their range up to the learner’s level', () => {
+    const levels = new Set(fittingConversations('DE', 'A2').map((unit) => unit.level));
+    expect(levels.has('A1')).toBe(true);
+    expect(fittingScenarios('ES', 'A2').length).toBeGreaterThan(0);
   });
 });

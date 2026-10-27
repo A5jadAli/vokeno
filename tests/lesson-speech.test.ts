@@ -34,6 +34,49 @@ afterEach(() => {
 });
 
 describe('screen-owned lesson audio', () => {
+  it('uses the selected English voice and keeps scene varieties per line', async () => {
+    jest.mocked(Speech.getAvailableVoicesAsync).mockResolvedValue([
+      { identifier: 'gb', language: 'en-GB', name: 'British', quality: 'Default' },
+      { identifier: 'us', language: 'en-US', name: 'American', quality: 'Default' },
+    ] as Speech.Voice[]);
+    const hook = await renderHook(() => useLessonSpeech('en-US'));
+    await act(async () => {
+      await hook.result.current.play('Hello.');
+    });
+    expect(Speech.speak).toHaveBeenLastCalledWith(
+      'Hello.',
+      expect.objectContaining({ voice: 'us' }),
+    );
+    await act(async () => {
+      await hook.result.current.playSequence(['Hello.', 'Hi.'], 0.82, undefined, [
+        'en-GB',
+        'en-US',
+      ]);
+    });
+    expect(
+      jest
+        .mocked(Speech.speak)
+        .mock.calls.slice(-2)
+        .map(([, options]) => options?.voice),
+    ).toEqual(['gb', 'us']);
+    await hook.unmount();
+  });
+
+  it('does not silently substitute British audio when the American device voice is missing', async () => {
+    jest
+      .mocked(Speech.getAvailableVoicesAsync)
+      .mockResolvedValue([
+        { identifier: 'gb', language: 'en-GB', name: 'British', quality: 'Default' },
+      ] as Speech.Voice[]);
+    const hook = await renderHook(() => useLessonSpeech('en-US'));
+    await act(async () => {
+      await hook.result.current.play('Hello.');
+    });
+    expect(Speech.speak).not.toHaveBeenCalled();
+    expect(hook.result.current.error).toContain('English variety');
+    await hook.unmount();
+  });
+
   it('stops playing audio when the app backgrounds and when the screen leaves', async () => {
     const hook = await renderHook(() => useLessonSpeech('de-DE'));
     await act(async () => {

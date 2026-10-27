@@ -34,6 +34,8 @@ export async function startRealtimeSession({
   onLevels,
   onStatus,
   goal,
+  englishReference,
+  englishGoal,
   practice,
   signal,
   starter,
@@ -130,6 +132,8 @@ export async function startRealtimeSession({
       {
         coachTone,
         goal,
+        englishReference,
+        englishGoal,
         practice,
         unitId,
         cardId,

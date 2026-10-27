@@ -16,13 +16,13 @@ export type ConversationMode = {
 export const conversationModes: ConversationMode[] = [
   {
     description:
-      'A quick, natural British conversation with current expressions, connected speech and interview-style follow-ups.',
+      'A short English conversation using your chosen American or British model, with help matched to your level.',
     id: 'interview',
     language: 'English',
     languageCode: 'en',
     level: 'B1–C1',
-    starter: 'Start with a warm, surprising interview question about everyday life.',
-    title: 'Modern interview English',
+    starter: 'Begin with a short, friendly question matched to the learner’s goal and level.',
+    title: 'Everyday and professional English',
     track: 'EN',
   },
   {

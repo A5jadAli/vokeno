@@ -3,6 +3,7 @@
 // Voices are OpenAI text-to-speech voices; directions steer accent, age and manner.
 
 import type { LanguageTrack } from '@/features/language/config';
+import type { EnglishReference } from '../../../supabase/functions/_shared/english-reference';
 
 export type Voice =
   | 'alloy'
@@ -18,7 +19,10 @@ export type Voice =
   | 'shimmer'
   | 'verse';
 
-export type Casting = { voice: Voice; direction: string };
+export type Casting = { voice: Voice; direction: string; reference?: EnglishReference };
+
+export const americanDirection =
+  'Speak as a native speaker of broadly understood contemporary American English, at a relaxed conversational pace. Use natural American pronunciation, rhythm and weak forms. Sound like a real person, not an announcer or a textbook recording.';
 
 /** How everyone in a language speaks, before the character's own direction. */
 export const nativeDirection: Record<LanguageTrack, string> = {
@@ -141,6 +145,25 @@ export const characters: Record<LanguageTrack, Record<string, Casting>> = {
     ),
   },
   EN: {
+    Alex: {
+      voice: 'cedar',
+      direction: 'Alex, a friendly American adult meeting a new classmate. Clear and relaxed.',
+      reference: 'en-US',
+    },
+    Casey: {
+      voice: 'coral',
+      direction:
+        'Casey, a friendly American cafe worker. Warm and clear, with short pauses for a beginner.',
+      reference: 'en-US',
+    },
+    Ella: cast(
+      'shimmer',
+      'Ella, a friendly adult from England meeting a new classmate. Clear and relaxed.',
+    ),
+    Ben: cast(
+      'verse',
+      'Ben, a friendly cafe worker from England. Warm and clear, with short pauses for a beginner.',
+    ),
     Barista: cast(
       'verse',
       'A young barista in London during the morning rush. Friendly and quick.',
@@ -166,6 +189,12 @@ export const characters: Record<LanguageTrack, Record<string, Casting>> = {
 };
 
 /** The voice for a line: the character's own, or the narrator for everything else. */
-export function castingFor(track: LanguageTrack, speaker?: string): Casting {
-  return (speaker && characters[track][speaker]) || narrator[track];
+export function castingFor(
+  track: LanguageTrack,
+  speaker?: string,
+  reference: EnglishReference = 'en-GB',
+): Casting {
+  // A scene character keeps their identity when the learner changes their model.
+  if (speaker && characters[track][speaker]) return characters[track][speaker];
+  return track === 'EN' && reference === 'en-US' ? { ...narrator.EN, reference } : narrator[track];
 }

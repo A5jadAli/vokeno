@@ -1,5 +1,5 @@
 import { getCurriculumUnits } from '@/features/curriculum/catalog';
-import { foundationLessons } from '@/features/foundations/catalog';
+import { foundationLessons, getTrackLessons } from '@/features/foundations/catalog';
 import type { FoundationProgress } from '@/features/foundations/progress';
 import {
   dayNumberOf,
@@ -21,6 +21,7 @@ import { suggestedConversation, suggestedScenario } from '@/features/journey/pra
 import type { LanguageTrack } from '@/features/language/config';
 import { listeningScenarios } from '@/features/listening/scenarios';
 import { reviewSummary, REVIEW_SESSION_SIZE } from '@/features/review/schedule';
+import { getUnitCall, unitCalls } from '../../../supabase/functions/_shared/unit-calls';
 
 export type PlanStepKind = 'lesson' | 'review' | 'listening' | 'speaking';
 
@@ -89,7 +90,10 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
   const day = dayNumberOf(today);
   const { stage, returning } = practiceStage(languageLog(input.log, track), today);
   const position = coursePosition(progress, track, input.startAt);
-  const level = position.next?.lesson.level ?? foundationLessons.at(-1)?.level ?? 'A1';
+  const level =
+    position.next?.lesson.level ??
+    (position.waitingForContent ? 'A1' : getTrackLessons(track).at(-1)?.level) ??
+    'A1';
   const done = (key: ActivityKey) =>
     finishedOn(activities, today, key) ||
     // A lesson finished today on another device arrives through its attempt history.
@@ -164,18 +168,29 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
 
   const speakingStep = (id: string): PlanStep | null => {
     const unit = getCurriculumUnits(track).find((item) => item.id === id);
+    const call = getUnitCall(id);
     const key: ActivityKey = `speaking:${id}`;
     const finished = done(key);
     return {
       kind: 'speaking',
       key,
-      title: unit ? `Speak: ${unit.title}` : 'Speak with your coach',
+      title: call
+        ? `Speak: ${call.title}`
+        : unit
+          ? `Speak: ${unit.title}`
+          : 'Speak with your coach',
       why: finished
         ? 'Done. Nice speaking!'
+        : call
+          ? call.learnerGoal
+          : unit
+            ? unit.outcome
+            : 'A short, friendly chat with your coach.',
+      href: call
+        ? `/conversation?track=${track}&call=${call.id}`
         : unit
-          ? unit.outcome
-          : 'A short, friendly chat with your coach.',
-      href: unit ? `/conversation?track=${track}&unit=${unit.id}` : `/conversation?track=${track}`,
+          ? `/conversation?track=${track}&unit=${unit.id}`
+          : `/conversation?track=${track}`,
       action: finished ? 'Speak again' : 'Start speaking',
       minutes: 5,
       done: finished,
@@ -193,15 +208,31 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
   // Candidates for a fresh session, chosen once and then kept for the rest of the day.
   const scenario = suggestedScenario(track, level, input.completedScenarioIds, day);
   const speakingUnit = suggestedConversation(track, level, input.completedUnitIds, day);
+  const englishCalls =
+    track === 'EN' && level === 'A1'
+      ? unitCalls.filter((call) => {
+          const unitLessons = getTrackLessons(track).filter(
+            (lesson) => lesson.format === 'steps' && lesson.unit.id === call.unitId,
+          );
+          return (
+            call.track === 'EN' &&
+            unitLessons.length > 0 &&
+            unitLessons.every((lesson) => progress[lesson.id]?.attempts.length)
+          );
+        })
+      : [];
+  const linkedCall = englishCalls.length ? englishCalls[day % englishCalls.length] : undefined;
   const nextLessonKey: ActivityKey | null = position.next
     ? `lesson:${position.next.lesson.id}`
     : null;
   const reviewKey: ActivityKey | null =
     reviewSummary(progress, track, day).due > 0 ? `review:${track}` : null;
   const listeningKey: ActivityKey | null = scenario ? `listening:${scenario.id}` : null;
-  const speakingKey: ActivityKey = `speaking:${speakingUnit?.id ?? track}`;
+  const speakingKey: ActivityKey = `speaking:${linkedCall?.id ?? speakingUnit?.id ?? track}`;
   // Listening and speaking take turns by day, so practice never feels the same twice.
-  const practice = day % 2 === 0 ? [listeningKey, speakingKey] : [speakingKey, listeningKey];
+  const eligibleSpeaking = track === 'EN' && level === 'A1' && !linkedCall ? null : speakingKey;
+  const practice =
+    day % 2 === 0 ? [listeningKey, eligibleSpeaking] : [eligibleSpeaking, listeningKey];
   // A learner who has not finished a single lesson always starts with one.
   const firstSteps = position.finishedLessons === 0 && nextLessonKey;
   // A goal date can need more than one new lesson a day: the lessons after the next one join the
@@ -268,15 +299,17 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
     doneCount,
     minutes: steps.reduce((total, step) => total + step.minutes, 0),
     bonus: bonus ?? undefined,
-    footnote: returning
-      ? 'Welcome back. One small step is enough today.'
-      : stage === 'warm-up'
-        ? 'Start small: one step a day builds the habit.'
-        : stage === 'building'
-          ? 'Missed a day? Your progress waits for you.'
-          : 'You have a real routine now. Keep it light and steady.',
+    footnote: position.waitingForContent
+      ? 'Your first three A1 units are done. Keep practising while more beginner units are being built.'
+      : returning
+        ? 'Welcome back. One small step is enough today.'
+        : stage === 'warm-up'
+          ? 'Start small: one step a day builds the habit.'
+          : stage === 'building'
+            ? 'Missed a day? Your progress waits for you.'
+            : 'You have a real routine now. Keep it light and steady.',
     position,
-    courseFinished: position.next === null,
+    courseFinished: position.next === null && !position.waitingForContent,
     snapshot: { day: today, keys },
   };
 }

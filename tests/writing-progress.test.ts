@@ -17,16 +17,15 @@ describe('learning plans, writing drafts and reading content', () => {
           true,
         );
       }
-    // IELTS learners who know some English start at the first IELTS lesson, so Today continues
-    // through the IELTS lessons in order.
+    // Knowing only words and short phrases still starts with the beginner pilot, even for an exam goal.
     expect(learningRecommendation('EN', 'basics', 'ielts-academic').href).toBe(
-      '/foundation/en-ielts-listening',
+      '/foundation/en-a1-u1-meet',
     );
     expect(learningRecommendation('EN', 'conversational', 'ielts-general').href).toBe(
       '/foundation/en-ielts-listening',
     );
     expect(learningRecommendation('EN', 'new', 'ielts-academic').href).toBe(
-      '/foundation/en-sounds',
+      '/foundation/en-a1-u1-meet',
     );
   });
   it('bounds and validates drafts without conflating a draft and submitted response', () => {

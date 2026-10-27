@@ -1,0 +1,2763 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Vokeno English pilot review</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #f3efe5;
+        color: #191815;
+        font:
+          17px/1.55 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 960px;
+        margin: auto;
+        padding: 24px;
+      }
+      h1 {
+        font-size: 32px;
+        line-height: 1.2;
+      }
+      h2 {
+        font-size: 24px;
+      }
+      h3 {
+        font-size: 20px;
+      }
+      section,
+      details {
+        background: #fff;
+        border: 1px solid #ddd8ce;
+        border-radius: 16px;
+        padding: 20px;
+        margin: 18px 0;
+      }
+      summary {
+        font-weight: 700;
+        cursor: pointer;
+      }
+      label {
+        display: block;
+        margin-top: 12px;
+      }
+      input,
+      select,
+      textarea,
+      button {
+        font: inherit;
+        max-width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #8c877d;
+      }
+      textarea {
+        width: 100%;
+        min-height: 78px;
+      }
+      button {
+        background: #191815;
+        color: white;
+        cursor: pointer;
+        margin: 12px 8px 0 0;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      a {
+        color: #8a4100;
+      }
+      audio {
+        width: 100%;
+        margin: 12px 0;
+      }
+      small,
+      .meta {
+        color: #5e5a53;
+      }
+      .script {
+        white-space: pre-wrap;
+        border-left: 3px solid #ef7518;
+        padding-left: 14px;
+      }
+      .decision {
+        border-top: 1px solid #ddd8ce;
+        margin-top: 18px;
+      }
+      #status {
+        padding: 12px;
+        background: #fff1db;
+      }
+      #progress {
+        font-weight: 600;
+      }
+      select:focus,
+      button:focus,
+      textarea:focus,
+      input:focus {
+        outline: 3px solid #aa4c00;
+        outline-offset: 2px;
+      }
+      @media (max-width: 500px) {
+        main {
+          padding: 14px;
+        }
+        section,
+        details {
+          padding: 14px;
+        }
+        h1 {
+          font-size: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>English A1 pilot review</h1>
+      <p>
+        Internal review of three starter units. These findings do not certify A1 or establish native
+        fluency. Review the language and recordings separately.
+      </p>
+      <p>
+        Use a reviewer code, not a learner's name. Findings stay in this browser until you export
+        them. Audio loads from Vokeno's public recording store only when played. Export regularly;
+        browser storage can be cleared.
+      </p>
+      <section>
+        <h2>Your review</h2>
+        <label
+          >Reviewer code
+          <input id="reviewer" maxlength="60" autocomplete="off" placeholder="For example, UK-01"
+        /></label>
+        <label for="role">Review role</label
+        ><select id="role">
+          <option value="">Choose a role</option>
+          <option>American English reviewer</option>
+          <option>British English reviewer</option>
+          <option>English teacher</option>
+          <option>Technical reviewer</option>
+        </select>
+        <button id="begin">Start or resume this review</button
+        ><button id="export" disabled>Export findings</button>
+        <p id="status" role="status">
+          Choose your code and role. Use a separate code for a separate reviewer.
+        </p>
+        <p id="progress">No human approval is pre-filled.</p>
+        <p>
+          <a href="english-m3-participant-guide.md">Beginner observation and delayed tasks</a> ·
+          <a href="english-a1-pilot-review.md">Review criteria and release gate</a>
+        </p>
+      </section>
+      <section>
+        <h2>Decisions</h2>
+        <p>
+          <strong>No issue found</strong> means you checked this item.
+          <strong>Change needed</strong> needs an explanation and severity. A blocker prevents use
+          or teaches/marks the wrong meaning. A major issue materially confuses or misleads; a minor
+          issue is an editorial improvement. Unchecked items remain pending. The app may still have
+          issues outside this packet.
+        </p>
+        <p>
+          For scripts, check prerequisites, context, valid alternatives and the answer rationale.
+          For audio, listen for words, endings, stress, variety, speaker identity and naturalness.
+          Listen on headphones and a phone speaker. Mark an item only after checking it.
+        </p>
+      </section>
+      <div id="lessons"></div>
+      <section>
+        <h2>Recordings</h2>
+        <label for="variety">Show variety</label
+        ><select id="variety">
+          <option value="all">All recordings</option>
+          <option value="en-GB">British models</option>
+          <option value="en-US">American models</option>
+        </select>
+        <p>
+          Named characters keep their own variety. Both reviewers should also check understanding of
+          the other variety. A file hash identifies the audited recording; native quality has not
+          been approved.
+        </p>
+        <div id="audio"></div>
+      </section>
+      <section>
+        <h2>Live coach samples</h2>
+        <p>
+          These calls use synthetic text replies and generated spoken output. They are not human
+          microphone or learning tests. Check the voice, turn length, task scope and feedback.
+          Recordings are included in the review bundle; extract the whole bundle before opening this
+          page.
+        </p>
+        <div id="live"></div>
+      </section>
+      <p class="meta">
+        Export includes the packet fingerprint and individual lesson versions. Findings from an
+        older version are retained but do not count as current review.
+      </p>
+    </main>
+    <script id="packet" type="application/json">
+      {
+        "schema": 1,
+        "lessons": [
+          {
+            "id": "en-a1-u1-meet",
+            "title": "Hello, I’m Alex",
+            "unit": 1,
+            "version": "r4jh9z",
+            "outcome": "Say hello and understand a name.",
+            "steps": [
+              {
+                "kind": "scene",
+                "title": "Meet Ella and Alex",
+                "intro": "Tap play. Listen. Tap again to listen again. Ella and Alex meet at a class.",
+                "lines": [
+                  {
+                    "speaker": "Ella",
+                    "text": "Hello. I’m Ella.",
+                    "meaning": "Ella says hello and gives her name."
+                  },
+                  {
+                    "speaker": "Alex",
+                    "text": "Hi. I’m Alex.",
+                    "meaning": "Alex says hello and gives a name."
+                  }
+                ],
+                "note": "Ella uses British English. Alex uses American English. Both say I’m + name."
+              },
+              {
+                "kind": "teach",
+                "title": "Hello and a name",
+                "items": [
+                  {
+                    "target": "Hello.",
+                    "meaning": "Say hello.",
+                    "note": "Use it when you meet someone."
+                  },
+                  {
+                    "target": "Hi.",
+                    "meaning": "A friendly hello.",
+                    "note": "Hi and Hello both work here."
+                  },
+                  {
+                    "target": "I’m Alex.",
+                    "meaning": "My name is Alex.",
+                    "note": "I’m means I am. Change Alex to your name."
+                  }
+                ]
+              },
+              {
+                "kind": "choose",
+                "prompt": "Listen. Choose the name.",
+                "audio": "Hi. I’m Alex.",
+                "options": ["Ella", "Alex", "Ben"],
+                "answer": 1,
+                "explanation": "You heard “I’m Alex.” The name is Alex. Listen again if you need to."
+              },
+              {
+                "kind": "choose",
+                "prompt": "You meet Ella. Say hello.",
+                "options": ["Hello.", "Alex.", "Ella."],
+                "answer": 0,
+                "explanation": "Hello greets someone. Alex and Ella are names. Hi also works as a greeting."
+              },
+              {
+                "kind": "build",
+                "prompt": "Use the tiles to say the name Alex. Start with I’m.",
+                "answer": ["I’m", "Alex."],
+                "explanation": "I’m Alex. I’m + name tells someone your name."
+              },
+              {
+                "kind": "speak",
+                "prompt": "Say hello. Say your name. You can use Alex or a made-up name.",
+                "lines": ["Hi. I’m Alex."],
+                "tip": "Make the name clear. Say “I’m Alex” together, with a small pause after Hello.",
+                "mission": {
+                  "checks": ["Did I say hello?", "Could someone hear the name?"],
+                  "twist": "Meet a new person. Say Hello instead of Hi, then give a different name."
+                }
+              }
+            ]
+          },
+          {
+            "id": "en-a1-u1-build",
+            "title": "What’s your name?",
+            "unit": 1,
+            "version": "14032np",
+            "outcome": "Ask a name and answer the same question.",
+            "steps": [
+              {
+                "kind": "choose",
+                "prompt": "Read the badge. Choose the introduction.",
+                "context": "Name: Alex",
+                "options": ["I’m Ella.", "I’m Alex.", "Hello, Ella."],
+                "answer": 1,
+                "explanation": "The badge says Alex. “I’m Alex” gives that name."
+              },
+              {
+                "kind": "scene",
+                "title": "Ask and answer",
+                "intro": "Alex asks. Ella answers.",
+                "lines": [
+                  {
+                    "speaker": "Alex",
+                    "text": "What’s your name?",
+                    "meaning": "Alex asks Ella’s name."
+                  },
+                  {
+                    "speaker": "Ella",
+                    "text": "I’m Ella. Nice to meet you.",
+                    "meaning": "Ella gives her name and a friendly welcome."
+                  },
+                  {
+                    "speaker": "Alex",
+                    "text": "Nice to meet you, too.",
+                    "meaning": "Alex returns the friendly welcome."
+                  }
+                ]
+              },
+              {
+                "kind": "teach",
+                "title": "A question and a friendly reply",
+                "items": [
+                  {
+                    "target": "What’s your name?",
+                    "meaning": "Tell me your name, please.",
+                    "note": "What’s means What is."
+                  },
+                  {
+                    "target": "Nice to meet you.",
+                    "meaning": "I’m happy to meet you.",
+                    "note": "Use it when you meet for the first time."
+                  },
+                  {
+                    "target": "Nice to meet you, too.",
+                    "meaning": "I’m happy to meet you as well.",
+                    "note": "A friendly reply. “You too” also works."
+                  }
+                ]
+              },
+              {
+                "kind": "build",
+                "prompt": "Ask the name. Start with What’s.",
+                "answer": ["What’s", "your", "name?"],
+                "extra": ["I’m"],
+                "explanation": "What’s your name? asks for a name. I’m starts your answer."
+              },
+              {
+                "kind": "type",
+                "prompt": "Complete: I’m ___. Use the badge.",
+                "context": "Name: Ella",
+                "accepted": ["Ella"],
+                "hint": "Copy the name: Ella.",
+                "explanation": "I’m Ella. This task uses the badge name. In your own introduction, use any name you choose."
+              },
+              {
+                "kind": "choose",
+                "prompt": "Ella asks: What’s your name? Answer as Alex.",
+                "options": ["Nice to meet you.", "I’m Alex.", "Hello, Ella."],
+                "answer": 1,
+                "explanation": "I’m Alex answers the name question. The other replies are friendly but do not give a name."
+              },
+              {
+                "kind": "speak",
+                "prompt": "Ask a name. Imagine the reply “I’m Ella.” Say Nice to meet you.",
+                "lines": ["What’s your name?", "Nice to meet you."],
+                "tip": "Listen to the question, then try it. Your voice does not need to match the speaker’s accent."
+              }
+            ]
+          },
+          {
+            "id": "en-a1-u1-listen",
+            "title": "Please say that again",
+            "unit": 1,
+            "version": "1n7sa8v",
+            "outcome": "Ask for repetition, understand the reply and say goodbye.",
+            "steps": [
+              {
+                "kind": "teach",
+                "title": "When you miss something",
+                "items": [
+                  {
+                    "target": "Please say that again.",
+                    "meaning": "Repeat it, please.",
+                    "note": "Use it when you do not hear or understand."
+                  },
+                  {
+                    "target": "Thanks.",
+                    "meaning": "Thank you.",
+                    "note": "Use it when someone helps you."
+                  },
+                  { "target": "Bye.", "meaning": "Goodbye.", "note": "Use it when you leave." }
+                ]
+              },
+              {
+                "kind": "scene",
+                "title": "Try again",
+                "intro": "Ella misses the name. Alex repeats it.",
+                "lines": [
+                  { "speaker": "Alex", "text": "Hi. I’m Alex.", "meaning": "Alex gives a name." },
+                  {
+                    "speaker": "Ella",
+                    "text": "Please say that again.",
+                    "meaning": "Ella asks to hear it again."
+                  },
+                  { "speaker": "Alex", "text": "Alex.", "meaning": "Alex repeats the name." },
+                  {
+                    "speaker": "Ella",
+                    "text": "Thanks, Alex. I’m Ella.",
+                    "meaning": "Ella thanks Alex and gives her name."
+                  }
+                ],
+                "note": "Asking again helps you communicate. You do not need to guess."
+              },
+              {
+                "kind": "choose",
+                "prompt": "You did not hear the name. What helps?",
+                "options": ["Bye.", "Please say that again.", "Nice to meet you."],
+                "answer": 1,
+                "explanation": "Please say that again asks for repetition. You can use it as often as you need."
+              },
+              {
+                "kind": "choose",
+                "prompt": "Listen to the repeated name.",
+                "audio": "Alex. I’m Alex.",
+                "options": ["Ben", "Ella", "Alex"],
+                "answer": 2,
+                "explanation": "The repeated name is Alex."
+              },
+              {
+                "kind": "choose",
+                "prompt": "Listen. Is the person arriving or leaving?",
+                "audio": "Thanks. Bye.",
+                "options": ["Leaving", "Arriving", "Asking a name"],
+                "answer": 0,
+                "explanation": "Bye closes the conversation. Thanks adds a thank-you."
+              },
+              {
+                "kind": "type",
+                "prompt": "Ask someone to repeat: Please say that ___.",
+                "accepted": ["again", "once more", "one more time"],
+                "hint": "Again means one more time.",
+                "explanation": "Please say that again. Once more and one more time also ask for a repeat. Use the complete request when you miss something."
+              },
+              {
+                "kind": "speak",
+                "prompt": "You miss a name. Ask to hear it again. Imagine the reply “Ella.” Thank Ella, then say goodbye.",
+                "lines": ["Please say that again.", "Thanks, Ella. Bye."],
+                "mission": {
+                  "checks": ["Did I ask again?", "Did I say thanks and goodbye?"],
+                  "twist": "This time the repeated name is Alex. Thank Alex and say goodbye."
+                }
+              }
+            ]
+          },
+          {
+            "id": "en-a1-u1-use",
+            "title": "Your first short conversation",
+            "unit": 1,
+            "version": "5mmyyr",
+            "outcome": "Introduce yourself, ask a name and close the conversation.",
+            "steps": [
+              {
+                "kind": "choose",
+                "prompt": "Ella says: Nice to meet you. Choose a friendly reply.",
+                "options": [
+                  "Please say that again.",
+                  "Nice to meet you, too.",
+                  "What’s your name?"
+                ],
+                "answer": 1,
+                "explanation": "Nice to meet you, too returns the welcome. Asking again is useful if you missed her words, but this task asks for a welcome."
+              },
+              {
+                "kind": "type",
+                "prompt": "Write the introduction using I’m and the badge name.",
+                "context": "Name: Ben",
+                "accepted": ["I’m Ben.", "I am Ben."],
+                "hint": "I’m + Ben.",
+                "explanation": "I’m Ben. I am Ben is also correct. This is a supplied practice name, not your personal information."
+              },
+              {
+                "kind": "choose",
+                "prompt": "Listen. What does Ella want you to do?",
+                "audio": "Please say that again.",
+                "options": ["Repeat your words", "Leave", "Say thanks"],
+                "answer": 0,
+                "explanation": "She asks you to repeat. Say the same words more clearly."
+              },
+              {
+                "kind": "build",
+                "prompt": "Thank Ella and leave. Start with Thanks.",
+                "answer": ["Thanks,", "Ella.", "Bye."],
+                "explanation": "Thanks, Ella. Bye. You can thank someone by name before leaving."
+              },
+              {
+                "kind": "speak",
+                "prompt": "Meet Ella. Say hello and a name. Ask her name. Give a friendly reply and say goodbye. Try first without the example.",
+                "lines": ["Hi. I’m Ben. What’s your name?", "Nice to meet you.", "Bye, Ella."],
+                "mission": {
+                  "checks": [
+                    "I said hello and a name.",
+                    "I asked the other person’s name.",
+                    "I gave a friendly reply and said goodbye."
+                  ],
+                  "twist": "Meet Alex instead. You miss the name. Ask again before saying goodbye."
+                },
+                "tip": "If one part is hard, practise just that part, then try the exchange again. Pauses are fine."
+              },
+              {
+                "kind": "rule",
+                "title": "Next: a little about you",
+                "body": "You can meet someone and ask them to repeat. Unit 2 adds where you are from and where you live. Your phrases will also return in review. Speaking here is self-practice, not an assessed language level."
+              }
+            ]
+          },
+          {
+            "id": "en-a1-u2-meet",
+            "title": "From one place, living in another",
+            "unit": 2,
+            "version": "11tg0hf",
+            "outcome": "Understand the difference between where someone is from and where they live.",
+            "steps": [
+              {
+                "kind": "choose",
+                "prompt": "Meet Alex again. Alex asks: What’s your name? Answer as Ella.",
+                "options": ["I’m Ella.", "Bye, Alex.", "Thanks."],
+                "answer": 0,
+                "explanation": "I’m Ella gives your name. This uses the introduction from Unit 1."
+              },
+              {
+                "kind": "teach",
+                "title": "Two places",
+                "items": [
+                  {
+                    "target": "Where are you from?",
+                    "meaning": "What place do you come from?",
+                    "note": "You can answer with a city or a country."
+                  },
+                  {
+                    "target": "I’m from London.",
+                    "meaning": "London is where I come from.",
+                    "note": "London is a city. Replace London with your place."
+                  },
+                  {
+                    "target": "Where do you live?",
+                    "meaning": "Where is your home now?",
+                    "note": "This asks about your home now, not your full address."
+                  },
+                  {
+                    "target": "I live in Boston.",
+                    "meaning": "Boston is my home now.",
+                    "note": "Boston is a city. Your home can be different from where you are from."
+                  }
+                ]
+              },
+              {
+                "kind": "scene",
+                "title": "Ella’s two places",
+                "intro": "Ella is from London. Her home now is Boston.",
+                "lines": [
+                  {
+                    "speaker": "Alex",
+                    "text": "Where are you from?",
+                    "meaning": "Alex asks where Ella comes from."
+                  },
+                  {
+                    "speaker": "Ella",
+                    "text": "I’m from London.",
+                    "meaning": "Ella comes from London."
+                  },
+                  {
+                    "speaker": "Alex",
+                    "text": "Where do you live?",
+                    "meaning": "Alex asks about Ella’s home now."
+                  },
+                  {
+                    "speaker": "Ella",
+                    "text": "I live in Boston.",
+                    "meaning": "Ella’s home now is Boston."
+                  }
+                ]
+              },
+              {
+                "kind": "choose",
+                "prompt": "Read. Where is Ella’s home now?",
+                "context": "I’m Ella. I’m from London. I live in Boston.",
+                "options": ["London", "Boston", "The text does not say"],
+                "answer": 1,
+                "explanation": "I live in Boston tells you her home now. I’m from London tells you where she comes from."
+              },
+              {
+                "kind": "choose",
+                "prompt": "You want to know where Alex comes from. Ask the question.",
+                "options": ["Where do you live?", "What’s your name?", "Where are you from?"],
+                "answer": 2,
+                "explanation": "Where are you from? asks where someone comes from. Where do you live? asks about their home now."
+              },
+              {
+                "kind": "match",
+                "prompt": "Match each question to its answer.",
+                "pairs": [
+                  ["What’s your name?", "I’m Ella."],
+                  ["Where are you from?", "I’m from London."],
+                  ["Where do you live?", "I live in Boston."]
+                ]
+              },
+              {
+                "kind": "speak",
+                "prompt": "Be Ella. Say your name, where you are from and where you live.",
+                "lines": ["I’m Ella. I’m from London. I live in Boston."],
+                "tip": "Pause between the short sentences. Make each place name clear."
+              }
+            ]
+          },
+          {
+            "id": "en-a1-u2-build",
+            "title": "I live here. I work here.",
+            "unit": 2,
+            "version": "1oll7hm",
+            "outcome": "Build short replies about home, work and study.",
+            "steps": [
+              {
+                "kind": "build",
+                "prompt": "Say where you come from. Start with I’m.",
+                "answer": ["I’m", "from", "London."],
+                "extra": ["in"],
+                "explanation": "I’m from London. Use from for where you come from."
+              },
+              {
+                "kind": "type",
+                "prompt": "Use the pattern I live in + city. Complete: I live ___ Boston.",
+                "accepted": ["in"],
+                "hint": "Use in for a city where you live.",
+                "explanation": "I live in Boston. Do not use from after live in this pattern."
+              },
+              {
+                "kind": "teach",
+                "title": "Work or study",
+                "items": [
+                  {
+                    "target": "I’m a student.",
+                    "meaning": "I study at a school, college or university.",
+                    "note": "Use a before student: a student."
+                  },
+                  {
+                    "target": "I work in a shop.",
+                    "meaning": "My job is in a shop.",
+                    "note": "A shop sells things. Store is a common American alternative."
+                  },
+                  {
+                    "target": "I work in a store.",
+                    "meaning": "My job is in a store.",
+                    "note": "Store and shop both work in this practice situation."
+                  }
+                ]
+              },
+              {
+                "kind": "choose",
+                "prompt": "Read the profile. Choose the matching sentence.",
+                "context": "Alex studies at a college. Alex has no job.",
+                "options": ["I work in a shop.", "I’m a student.", "I live in a shop."],
+                "answer": 1,
+                "explanation": "I’m a student fits someone studying at college. Work tells us about a job; live tells us about a home."
+              },
+              {
+                "kind": "build",
+                "prompt": "Build the student reply. Start with I’m.",
+                "answer": ["I’m", "a", "student."],
+                "explanation": "I’m a student. Keep a before student."
+              },
+              {
+                "kind": "type",
+                "prompt": "Complete the work sentence with either word: shop or store.",
+                "context": "I work in a ___.",
+                "accepted": ["shop", "store"],
+                "hint": "Both shop and store are valid here.",
+                "explanation": "I work in a shop. I work in a store. Both are correct; neither variety is a mistake."
+              },
+              {
+                "kind": "speak",
+                "prompt": "Be Ella. You live in Boston and study at college. Say the two facts.",
+                "lines": ["I live in Boston. I’m a student."],
+                "mission": {
+                  "checks": ["Did I say where I live?", "Did I say that I’m a student?"],
+                  "twist": "Now imagine you work in a shop instead. Keep Boston as your home and change the work/study sentence."
+                }
+              }
+            ]
+          },
+          {
+            "id": "en-a1-u2-listen",
+            "title": "Listen for the place",
+            "unit": 2,
+            "version": "vjha8c",
+            "outcome": "Follow two short introductions and check a place you missed.",
+            "steps": [
+              {
+                "kind": "scene",
+                "title": "Two English voices",
+                "intro": "Listen to Alex’s American English and Ella’s British English. Both use the same patterns.",
+                "lines": [
+                  {
+                    "speaker": "Alex",
+                    "text": "Hi. I’m Alex. I’m from Boston. I live in London.",
+                    "meaning": "Alex: from Boston; home now in London."
+                  },
+                  {
+                    "speaker": "Ella",
+                    "text": "Hello. I’m Ella. I’m from London. I live in Boston.",
+                    "meaning": "Ella: from London; home now in Boston."
+                  }
+                ],
+                "note": "An accent does not tell you where someone lives. Listen to the words."
+              },
+              {
+                "kind": "choose",
+                "prompt": "Listen. Where does this person live now?",
+                "audio": "I’m from Boston. I live in London.",
+                "options": ["Boston", "London", "The speaker does not say"],
+                "answer": 1,
+                "explanation": "I live in London gives the home now. Boston is where the person comes from."
+              },
+              {
+                "kind": "choose",
+                "prompt": "Listen. Where does this person come from?",
+                "audio": "I’m from London. I live in Boston.",
+                "options": ["Boston", "The speaker does not say", "London"],
+                "answer": 2,
+                "explanation": "I’m from London answers the origin question. The home now is Boston."
+              },
+              {
+                "kind": "choose",
+                "prompt": "You miss the place. Ask to hear it again.",
+                "options": ["Please say that again.", "Bye.", "Nice to meet you."],
+                "answer": 0,
+                "explanation": "Use the repetition request from Unit 1. Asking again is part of a successful conversation."
+              },
+              {
+                "kind": "type",
+                "prompt": "Listen to the repeat. Complete: I live in ___.",
+                "audio": "Boston. I live in Boston.",
+                "accepted": ["Boston"],
+                "hint": "The place starts with B.",
+                "explanation": "The speaker repeats Boston. You can replay the recording before answering."
+              },
+              {
+                "kind": "speak",
+                "prompt": "Someone asks: Where do you live? Give your city or a made-up city. Then ask the same question back.",
+                "lines": ["I live in London. Where do you live?"],
+                "mission": {
+                  "checks": [
+                    "Did I answer with my home now?",
+                    "Did I ask the other person a question?"
+                  ],
+                  "twist": "Now the question is Where are you from? Answer that question instead."
+                }
+              }
+            ]
+          },
+          {
+            "id": "en-a1-u2-use",
+            "title": "A short introduction",
+            "unit": 2,
+            "version": "1xxnpba",
+            "outcome": "Write a supplied introduction, then try one with your own details.",
+            "steps": [
+              {
+                "kind": "form",
+                "prompt": "Use the profile. Complete the introduction as Alex.",
+                "context": "Name: Alex\nFrom: Boston\nHome now: London\nWork/study: student",
+                "fields": [
+                  {
+                    "label": "I’m ___ (name).",
+                    "accepted": ["Alex"],
+                    "kind": "text",
+                    "hint": "Use the profile name."
+                  },
+                  {
+                    "label": "I’m from ___.",
+                    "accepted": ["Boston"],
+                    "kind": "text",
+                    "hint": "Where Alex comes from."
+                  },
+                  {
+                    "label": "I live in ___.",
+                    "accepted": ["London"],
+                    "kind": "text",
+                    "hint": "Alex’s home now."
+                  },
+                  {
+                    "label": "I’m a ___.",
+                    "accepted": ["student"],
+                    "kind": "text",
+                    "hint": "Use the work/study line."
+                  }
+                ],
+                "explanation": "I’m Alex. I’m from Boston. I live in London. I’m a student. From and live in give different facts."
+              },
+              {
+                "kind": "choose",
+                "prompt": "You live in London. Someone says: You live in Boston? Choose the correction.",
+                "options": ["Yes. I’m from Boston.", "No. I live in London.", "I’m a student."],
+                "answer": 1,
+                "explanation": "No. I live in London corrects the home. You can come from Boston without living there now."
+              },
+              {
+                "kind": "type",
+                "prompt": "Write one sentence using I live in and the home shown.",
+                "context": "Home now: Boston",
+                "accepted": ["I live in Boston."],
+                "hint": "I live in + Boston.",
+                "explanation": "I live in Boston. This task asks for one supplied pattern. Your personal introduction can use different facts and wording."
+              },
+              {
+                "kind": "choose",
+                "prompt": "Listen. Choose the question that this reply answers.",
+                "audio": "I’m from London.",
+                "options": ["What’s your name?", "Where do you live?", "Where are you from?"],
+                "answer": 2,
+                "explanation": "I’m from London answers Where are you from? It does not tell us the home now."
+              },
+              {
+                "kind": "speak",
+                "prompt": "Meet a new classmate. Give a name, where you are from and your home now. Add work or study if the examples fit you. Ask one question back. Real or made-up details are fine.",
+                "lines": [
+                  "Hi. I’m Alex. I’m from Boston. I live in London. I’m a student. Where are you from?"
+                ],
+                "mission": {
+                  "checks": [
+                    "Did I give the facts I wanted to share?",
+                    "Did I keep origin and home clear?",
+                    "Did I ask a question back?"
+                  ],
+                  "twist": "Your partner mixes up your home and origin. Say No, then give the correct home. Try again with a different city."
+                },
+                "tip": "Keep each idea short. If a model does not describe you, use a made-up profile for now. More work and daily-life language comes later."
+              },
+              {
+                "kind": "rule",
+                "title": "Next: order a drink",
+                "body": "Unit 3 uses a short question and reply in a cafe. Keep using Please say that again when you need help. You will meet familiar words again in phrase review."
+              }
+            ]
+          },
+          {
+            "id": "en-a1-u3-meet",
+            "title": "I’d like a coffee, please",
+            "unit": 3,
+            "version": "zyah85",
+            "outcome": "Choose a drink and make a polite request.",
+            "steps": [
+              {
+                "kind": "teach",
+                "title": "A small menu",
+                "items": [
+                  {
+                    "target": "coffee",
+                    "meaning": "☕ Coffee",
+                    "note": "A coffee means one cup of coffee in an order."
+                  },
+                  {
+                    "target": "tea",
+                    "meaning": "🍵 Tea",
+                    "note": "A tea means one cup of tea in an order."
+                  },
+                  {
+                    "target": "water",
+                    "meaning": "💧 Water",
+                    "note": "Some water is a useful request. You will learn prices and payment later."
+                  }
+                ]
+              },
+              {
+                "kind": "scene",
+                "title": "At the counter",
+                "intro": "Alex orders. Casey works in the cafe. Both use American English.",
+                "lines": [
+                  { "speaker": "Casey", "text": "Hello.", "meaning": "Casey greets Alex." },
+                  {
+                    "speaker": "Alex",
+                    "text": "Hi. I’d like a coffee, please.",
+                    "meaning": "Alex asks for one coffee."
+                  }
+                ]
+              },
+              {
+                "kind": "teach",
+                "title": "Ask for a drink",
+                "items": [
+                  {
+                    "target": "I’d like a coffee, please.",
+                    "meaning": "One coffee, please.",
+                    "note": "I’d like means I would like. It is a polite request."
+                  },
+                  {
+                    "target": "I’d like a tea, please.",
+                    "meaning": "One tea, please.",
+                    "note": "Keep the pattern and change the drink."
+                  },
+                  {
+                    "target": "I’d like some water, please.",
+                    "meaning": "Some water, please.",
+                    "note": "Use some water for this request."
+                  }
+                ]
+              },
+              {
+                "kind": "choose",
+                "prompt": "Listen. Choose the drink.",
+                "audio": "I’d like a tea, please.",
+                "options": ["☕ Coffee", "💧 Water", "🍵 Tea"],
+                "answer": 2,
+                "explanation": "The request is for tea. Please makes the request polite."
+              },
+              {
+                "kind": "build",
+                "prompt": "Ask for coffee using I’d like. Start with I’d.",
+                "answer": ["I’d", "like", "a", "coffee,", "please."],
+                "extra": ["from"],
+                "explanation": "I’d like a coffee, please. In conversation, “Could I have a coffee, please?” is also natural. This tile task practises I’d like."
+              },
+              {
+                "kind": "speak",
+                "prompt": "Say hello and order tea or coffee.",
+                "lines": ["Hello. I’d like a tea, please."],
+                "tip": "Make the drink clear. You can pause after Hello. You do not have to speak quickly."
+              }
+            ]
+          },
+          {
+            "id": "en-a1-u3-build",
+            "title": "Yes, please. No, thank you.",
+            "unit": 3,
+            "version": "1bqqejf",
+            "outcome": "Accept a drink, decline it and correct the wrong drink.",
+            "steps": [
+              {
+                "kind": "teach",
+                "title": "Choose and correct",
+                "items": [
+                  {
+                    "target": "Yes, please.",
+                    "meaning": "Yes, I want that.",
+                    "note": "Accept an offer."
+                  },
+                  {
+                    "target": "No, thank you.",
+                    "meaning": "No, I do not want that.",
+                    "note": "Decline an offer politely. No, thanks is also natural."
+                  },
+                  {
+                    "target": "No, tea, please.",
+                    "meaning": "Tea is the right drink.",
+                    "note": "Correct someone who thinks you asked for coffee."
+                  }
+                ]
+              },
+              {
+                "kind": "scene",
+                "title": "A small mix-up",
+                "intro": "Ella wants tea. Ben checks the wrong drink. Both use British English.",
+                "lines": [
+                  {
+                    "speaker": "Ella",
+                    "text": "I’d like a tea, please.",
+                    "meaning": "Ella orders tea."
+                  },
+                  {
+                    "speaker": "Ben",
+                    "text": "Coffee?",
+                    "meaning": "Ben checks whether she wants coffee."
+                  },
+                  {
+                    "speaker": "Ella",
+                    "text": "No, tea, please.",
+                    "meaning": "Ella corrects the drink."
+                  },
+                  {
+                    "speaker": "Ben",
+                    "text": "Tea?",
+                    "meaning": "Ben checks the corrected drink."
+                  },
+                  { "speaker": "Ella", "text": "Yes, please.", "meaning": "Ella confirms tea." }
+                ]
+              },
+              {
+                "kind": "choose",
+                "prompt": "You want tea. The server says: Coffee? Choose the correction.",
+                "options": ["Yes, please.", "No, tea, please.", "No, thank you."],
+                "answer": 1,
+                "explanation": "No, tea, please corrects the drink and tells the server what you want. No, thank you declines but does not name the right drink."
+              },
+              {
+                "kind": "choose",
+                "prompt": "You do not want water. Someone offers: Water? Choose the reply.",
+                "options": ["Yes, please.", "I’d like some water, please.", "No, thank you."],
+                "answer": 2,
+                "explanation": "No, thank you declines the water. The other replies ask for or accept water."
+              },
+              {
+                "kind": "type",
+                "prompt": "Complete the reply: Yes, ___.",
+                "accepted": ["please", "thanks", "thank you"],
+                "hint": "Please works here. Thanks or thank you can also accept an offer.",
+                "explanation": "Yes, please accepts an offer. Yes, thanks and Yes, thank you can also accept an offer politely. No, thank you would decline it."
+              },
+              {
+                "kind": "build",
+                "prompt": "Ask for water using I’d like. Start with I’d.",
+                "answer": ["I’d", "like", "some", "water,", "please."],
+                "extra": ["from"],
+                "explanation": "I’d like some water, please. Use the whole pattern, changing the drink."
+              },
+              {
+                "kind": "speak",
+                "prompt": "You want coffee. The server checks: Tea? Correct the drink. Then the server says: Coffee? Confirm it.",
+                "lines": ["No, coffee, please.", "Yes, please."],
+                "mission": {
+                  "checks": ["Did I name the drink I wanted?", "Did I confirm the correct drink?"],
+                  "twist": "Now you want tea and the server says Coffee? Change your correction."
+                }
+              }
+            ]
+          },
+          {
+            "id": "en-a1-u3-listen",
+            "title": "Here or to go?",
+            "unit": 3,
+            "version": "fp2n35",
+            "outcome": "Understand the choice between staying and taking a drink away.",
+            "steps": [
+              {
+                "kind": "teach",
+                "title": "Stay or leave with your drink",
+                "items": [
+                  {
+                    "target": "For here, please.",
+                    "meaning": "I will drink it in the cafe.",
+                    "note": "A natural reply to a service question."
+                  },
+                  {
+                    "target": "To go, please.",
+                    "meaning": "I will take it with me.",
+                    "note": "Common in American English."
+                  },
+                  {
+                    "target": "To take away, please.",
+                    "meaning": "I will take it with me.",
+                    "note": "Common in British English. It means the same as To go."
+                  }
+                ]
+              },
+              {
+                "kind": "rule",
+                "title": "Two ways to ask",
+                "body": "For here or to go? asks: stay in the cafe, or take your drink with you? To have here or take away? asks the same thing. Learn to understand both. Use the reply that feels comfortable.",
+                "examples": ["For here or to go?", "To have here or take away?"]
+              },
+              {
+                "kind": "scene",
+                "title": "The American model",
+                "intro": "Casey asks where Alex wants the drink.",
+                "lines": [
+                  {
+                    "speaker": "Casey",
+                    "text": "For here or to go?",
+                    "meaning": "Stay in the cafe, or take it with you?"
+                  },
+                  {
+                    "speaker": "Alex",
+                    "text": "To go, please.",
+                    "meaning": "Alex will take the drink away."
+                  }
+                ]
+              },
+              {
+                "kind": "scene",
+                "title": "The British model",
+                "intro": "Ben asks Ella the same choice.",
+                "lines": [
+                  {
+                    "speaker": "Ben",
+                    "text": "To have here or take away?",
+                    "meaning": "Stay in the cafe, or take it with you?"
+                  },
+                  {
+                    "speaker": "Ella",
+                    "text": "For here, please.",
+                    "meaning": "Ella will drink it in the cafe."
+                  }
+                ]
+              },
+              {
+                "kind": "choose",
+                "prompt": "Listen. Where will the person drink?",
+                "audio": "For here, please.",
+                "options": ["In the cafe", "Away from the cafe", "The reply does not say"],
+                "answer": 0,
+                "explanation": "For here means staying in the cafe."
+              },
+              {
+                "kind": "choose",
+                "prompt": "Listen. What does the person want?",
+                "audio": "To take away, please.",
+                "options": [
+                  "To stay in the cafe",
+                  "To take the drink with them",
+                  "To change the drink"
+                ],
+                "answer": 1,
+                "explanation": "To take away and to go both mean taking the drink with you."
+              },
+              {
+                "kind": "type",
+                "prompt": "Type either model reply: To go, please. OR To take away, please.",
+                "accepted": ["To go, please.", "To take away, please."],
+                "hint": "Choose one complete model reply. Both mean taking the drink with you.",
+                "explanation": "To take away, please. To go, please. Both choices work for taking your drink with you."
+              },
+              {
+                "kind": "speak",
+                "prompt": "The server asks: For here or to go? Answer. Then imagine the question is To have here or take away? Give the same choice.",
+                "lines": ["To go, please.", "To take away, please."],
+                "mission": {
+                  "checks": [
+                    "Did I choose staying or taking the drink away?",
+                    "Did I understand both questions?"
+                  ],
+                  "twist": "Change your choice: stay in the cafe. Say For here, please."
+                }
+              }
+            ]
+          },
+          {
+            "id": "en-a1-u3-use",
+            "title": "Order, check and correct",
+            "unit": 3,
+            "version": "rmuz2k",
+            "outcome": "Complete a short order and fix a misheard drink.",
+            "steps": [
+              {
+                "kind": "choose",
+                "prompt": "Read the note. Which order matches?",
+                "context": "Drink: tea 🍵\nPlace: in the cafe",
+                "options": [
+                  "I’d like a coffee, please. For here.",
+                  "I’d like a tea, please. For here.",
+                  "I’d like a tea, please. To go."
+                ],
+                "answer": 1,
+                "explanation": "The note asks for tea in the cafe. The other orders change either the drink or the place."
+              },
+              {
+                "kind": "type",
+                "prompt": "Write the short order note: drink + for here. Use the details shown.",
+                "context": "Drink: coffee ☕\nPlace: in the cafe\nPattern: ___, for here.",
+                "accepted": ["Coffee, for here."],
+                "hint": "Coffee + for here.",
+                "explanation": "Coffee, for here. A short note does not need a full sentence. When speaking, add please to make the request polite."
+              },
+              {
+                "kind": "choose",
+                "prompt": "You ordered tea to go. Listen to the check. What needs correcting?",
+                "audio": "Coffee to go?",
+                "options": ["The drink", "The place", "Nothing"],
+                "answer": 0,
+                "explanation": "To go is right. Coffee is wrong because you ordered tea. Say “No, tea, please. To go.”"
+              },
+              {
+                "kind": "build",
+                "prompt": "Correct coffee to tea. Use No at the start.",
+                "answer": ["No,", "tea,", "please."],
+                "explanation": "No, tea, please tells the server the correct drink."
+              },
+              {
+                "kind": "speak",
+                "prompt": "Order tea to go. The server checks “Coffee?” Correct it. Then answer “For here or to go?” Finish with thanks. Try without the example first.",
+                "lines": [
+                  "Hello. I’d like a tea, please.",
+                  "No, tea, please.",
+                  "To go, please. Thanks."
+                ],
+                "mission": {
+                  "checks": [
+                    "Was my drink clear?",
+                    "Did I correct the wrong drink?",
+                    "Did I say whether to stay or take it away?"
+                  ],
+                  "twist": "Order coffee for here. This time the server says Tea? Correct the drink and give your new place choice."
+                },
+                "tip": "Could I have a tea, please? and A tea, please can also work. Aim for a clear request. This is practice, not an accent test."
+              },
+              {
+                "kind": "speak",
+                "prompt": "After the cafe, meet Ella at class. Give a name and your home city. Ask Ella’s name, then say goodbye. Use Unit 1 and Unit 2 again.",
+                "lines": [
+                  "Hello. I’m Alex. I live in London. What’s your name?",
+                  "Nice to meet you. Bye, Ella."
+                ],
+                "mission": {
+                  "checks": ["Could I introduce myself again?", "Did I ask a question and close?"],
+                  "twist": "Use a different name and city. If you miss the reply, ask the person to say it again."
+                }
+              },
+              {
+                "kind": "rule",
+                "title": "Your next small step",
+                "body": "You have practised three everyday situations. Come back for phrase review and try the unit calls with different details. More A1 units are being built. These first three units do not complete A1."
+              }
+            ]
+          }
+        ],
+        "audio": [
+          {
+            "key": "0dh01h31of5rsh",
+            "speaker": "Ella",
+            "variety": "en-GB",
+            "script": "Hello. I’m Ella.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0dh01h31of5rsh.mp3?take=235",
+            "sha256": "dae516695d08cead05cba9a5a506f6b0603d9f2d676945791e3a6a6916a1673a"
+          },
+          {
+            "key": "07yptav1iokqep",
+            "speaker": "Alex",
+            "variety": "en-US",
+            "script": "Hi. I’m Alex.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/07yptav1iokqep.mp3?take=183",
+            "sha256": "1d61240482d977345af6cceba5b482739cd992633d0766a3561150464f8f3658"
+          },
+          {
+            "key": "04wy3rc19wcxa2",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Hello.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/04wy3rc19wcxa2.mp3?take=111",
+            "sha256": "b491ac3d37d2eddf3a3aee5b88da7585a677a410022039d47b91990f71a664bb"
+          },
+          {
+            "key": "04q2lje0yogu68",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Hello.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/04q2lje0yogu68.mp3?take=59",
+            "sha256": "5eb7ebac9c6a79d8298aab9450f29171db44818f58810dfefee8aefebdd8b43e"
+          },
+          {
+            "key": "03kmss50o48km7",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Hi.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/03kmss50o48km7.mp3?take=107",
+            "sha256": "0befe957dd1b85aec806e816cb81f9fb75211cb8b298b768a9e13707c02a9693"
+          },
+          {
+            "key": "0en8rpr05xmefx",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Hi.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0en8rpr05xmefx.mp3?take=92",
+            "sha256": "69e82a61e2064fb0b03964d2b6d0c607629b6bd06ac28b92d288fbf122ec6a60"
+          },
+          {
+            "key": "1n4wnjp1c4jpvb",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I’m Alex.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1n4wnjp1c4jpvb.mp3?take=121",
+            "sha256": "f4385f23224954c2adb2dbcc50e7ce7d624d4e0e4adfe753ca72a24643926e6c"
+          },
+          {
+            "key": "12818yv18nfwi5",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I’m Alex.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/12818yv18nfwi5.mp3?take=116",
+            "sha256": "f0fcb04b923c97f0bf0e4422bc6ee8b0a5ce012db008c54c34c8d68a5f91a6f9"
+          },
+          {
+            "key": "0d1rgkm0aval2c",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Hi. I’m Alex.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0d1rgkm0aval2c.mp3?take=171",
+            "sha256": "8075c74b5bc81231603db1d8487a84a6cd3b338bb2c106e395404212a9f7bb10"
+          },
+          {
+            "key": "1v52zkk0djxpri",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Hi. I’m Alex.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1v52zkk0djxpri.mp3?take=211",
+            "sha256": "d5e33ec179bbc108d9cafb9e2bce0c4a19482580a615b2625a7860f250ff0dc7"
+          },
+          {
+            "key": "17hidm60gm1kyo",
+            "speaker": "Alex",
+            "variety": "en-US",
+            "script": "What’s your name?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/17hidm60gm1kyo.mp3?take=105",
+            "sha256": "b8c19d8b9ca82bc955ff2f86e7c794e6271b593f7c07fbc844a9c55fc67c0a98"
+          },
+          {
+            "key": "03ymrdp0jbn033",
+            "speaker": "Ella",
+            "variety": "en-GB",
+            "script": "I’m Ella. Nice to meet you.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/03ymrdp0jbn033.mp3?take=233",
+            "sha256": "008b76fccc906235ed403c6bd96ad214436cd2a66511294b86c2daf89f61ff1a"
+          },
+          {
+            "key": "06ob0cv0o0qkj5",
+            "speaker": "Alex",
+            "variety": "en-US",
+            "script": "Nice to meet you, too.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/06ob0cv0o0qkj5.mp3?take=152",
+            "sha256": "02253c75e1a2358d2283980dc14ec54595fa5145f37fa69f742777a6d7e446f2"
+          },
+          {
+            "key": "17oypyj0jjc7e1",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "What’s your name?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/17oypyj0jjc7e1.mp3?take=123",
+            "sha256": "1585423f79e4f586f6b52bfaf2be5b9f5ff633035514100d3dd9be190ad82b84"
+          },
+          {
+            "key": "10qzw2h1r3g3v7",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "What’s your name?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/10qzw2h1r3g3v7.mp3?take=122",
+            "sha256": "fe40a0374a97d85193154011ebbd3cab5da3166bde65bb68687f2cb82ee1ce57"
+          },
+          {
+            "key": "06kyypm0zoy0ho",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Nice to meet you.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/06kyypm0zoy0ho.mp3?take=163",
+            "sha256": "35c35674d33590e28c02c0cba02d1454908445b17ff8d5450ad8bacf2441b700"
+          },
+          {
+            "key": "1hv104s1xi4xcy",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Nice to meet you.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1hv104s1xi4xcy.mp3?take=210",
+            "sha256": "b82dd147e74c4c28bf038e4f3c6519cf53d7d80a3a9a315269a6754084215c97"
+          },
+          {
+            "key": "1ewav7k04vb386",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Nice to meet you, too.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1ewav7k04vb386.mp3?take=185",
+            "sha256": "dcf1e83723715bc985af1abfd81ade737d9862d5fc25047f05902b11b4129868"
+          },
+          {
+            "key": "1rnhe2u01mmqx4",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Nice to meet you, too.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1rnhe2u01mmqx4.mp3?take=160",
+            "sha256": "bb0595f16e282d4ef14f34b4f646968e0f8355c7822cbe757094ef29ac699bce"
+          },
+          {
+            "key": "0vxnwiu0bsyotg",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Please say that again.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0vxnwiu0bsyotg.mp3?take=121",
+            "sha256": "eb6b22f6374a230f4b408f53c070d9366c25c4819ec42f148c127131152dc136"
+          },
+          {
+            "key": "1yt66t00h52rke",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Please say that again.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1yt66t00h52rke.mp3?take=184",
+            "sha256": "660d798f2f8b77badd3b48c86ec400bd6dddc2af1081caa4c9f6d6ef336d2410"
+          },
+          {
+            "key": "141y10700kuszh",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Thanks.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/141y10700kuszh.mp3?take=82",
+            "sha256": "11e14ab5c4c2ef0ac9051d2b3c8a0723ba4ba29c6cb1fda82acf0fd3050add5a"
+          },
+          {
+            "key": "1jfn03112hakjz",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Thanks.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1jfn03112hakjz.mp3?take=142",
+            "sha256": "301d1b4a655376068d8d806f801c790e7c53d8b4cf816f2acc5eea9e72f3fa59"
+          },
+          {
+            "key": "0p6uvio0y54roq",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Bye.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0p6uvio0y54roq.mp3?take=79",
+            "sha256": "97645f484d236bc63b6dbfff699a1492aa6cba301ad227e2f8052e3d0fcaa89d"
+          },
+          {
+            "key": "0tk695m0skjj08",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Bye.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0tk695m0skjj08.mp3?take=56",
+            "sha256": "46f4c5cc56309e813e4119be5c86553a5d34d3cf695cc71f26ca27d767e14d17"
+          },
+          {
+            "key": "0md8ex40mtxplm",
+            "speaker": "Ella",
+            "variety": "en-GB",
+            "script": "Please say that again.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0md8ex40mtxplm.mp3?take=152",
+            "sha256": "a33a502fb86e05b175ef8a8ea7ca85266869530ab6b632cfd7cf9ded4af9d44e"
+          },
+          {
+            "key": "0lfryod0xyrvuj",
+            "speaker": "Alex",
+            "variety": "en-US",
+            "script": "Alex.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0lfryod0xyrvuj.mp3?take=75",
+            "sha256": "a023398a1a0f86bd422f21878b83e8f95533c635712447ceead6de45cfb415ef"
+          },
+          {
+            "key": "11jqcoo186kwvq",
+            "speaker": "Ella",
+            "variety": "en-GB",
+            "script": "Thanks, Alex. I’m Ella.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/11jqcoo186kwvq.mp3?take=279",
+            "sha256": "92dd6b8cee5eaed4e2c12a9ca9ed3bf6ab6706af719041e771084f0f43a3e370"
+          },
+          {
+            "key": "16vg57r0w60c05",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Alex. I’m Alex.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/16vg57r0w60c05.mp3?take=199",
+            "sha256": "715b1cd577be9bdc029662e29524960ff9660aed085842fcec13cb89f247fcfc"
+          },
+          {
+            "key": "0j0ufkl1x735in",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Alex. I’m Alex.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0j0ufkl1x735in.mp3?take=227",
+            "sha256": "96dd25631437cf6cde874c938e524da8ec0f55cc0ab9d1d1c9f210dd1c811eff"
+          },
+          {
+            "key": "1ht0y9z1ercn0h",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Thanks. Bye.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1ht0y9z1ercn0h.mp3?take=73",
+            "sha256": "e7240bab7845eb8653e5b44aa53f5a92f226328ed16dfe130e0d31a7f789bec7"
+          },
+          {
+            "key": "065oeb50yj397z",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Thanks. Bye.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/065oeb50yj397z.mp3?take=186",
+            "sha256": "3ed529399c265a9952e099d1a14d5a2925b0ba3e025b0ec7f3018ee48287776b"
+          },
+          {
+            "key": "1meu5651jlzb27",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Thanks, Ella. Bye.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1meu5651jlzb27.mp3?take=225",
+            "sha256": "aaf76e27526db4b1a98c001f9aafa0e7ca0e15ea167ef11d9506c4fd8347556f"
+          },
+          {
+            "key": "01l6gmn1tyysud",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Thanks, Ella. Bye.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/01l6gmn1tyysud.mp3?take=190",
+            "sha256": "d05e2daa98173bd1584ce4e9edc0ddd8a323c79b543ed99975feb24af848373f"
+          },
+          {
+            "key": "1oqmq6810xprwa",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Hi. I’m Ben. What’s your name?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1oqmq6810xprwa.mp3?take=235",
+            "sha256": "fb60525eeb5647cc9a053b7d44422b2659ee2e06a7e4def0d6eb7ae3a42c0e9d"
+          },
+          {
+            "key": "0oj5bmy0kfrz7c",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Hi. I’m Ben. What’s your name?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0oj5bmy0kfrz7c.mp3?take=253",
+            "sha256": "ed704e8a7346e4b492cadb66c7ad6c39144503982c811c4fb7598c8df370cb72"
+          },
+          {
+            "key": "1ez8mhy1c2wd4g",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Bye, Ella.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1ez8mhy1c2wd4g.mp3?take=153",
+            "sha256": "6fdf7eedbae744e985cce353fa3f9abffa3217ea320fb9ff6a2f661c021b0689"
+          },
+          {
+            "key": "18odyg01o58e8u",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Bye, Ella.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/18odyg01o58e8u.mp3?take=134",
+            "sha256": "0e782ab7932779995ee2c9b2032696a36ac9bd7ecb7219503e77f299c5bcd4fb"
+          },
+          {
+            "key": "1mwp6jl06ziszb",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Where are you from?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1mwp6jl06ziszb.mp3?take=178",
+            "sha256": "e7eb0c9bd8b1a334c40d16dbcfaafa07cb985452bd64716ac8640ab1bf03b195"
+          },
+          {
+            "key": "0fn8vt30kexeop",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Where are you from?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0fn8vt30kexeop.mp3?take=132",
+            "sha256": "688e7901f23a4d4811c395b91b2554cef156aee80d4c1f7a902c98e698395420"
+          },
+          {
+            "key": "1ljjoh51frsxvn",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I’m from London.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1ljjoh51frsxvn.mp3?take=199",
+            "sha256": "dde33bfc4ca8c8348384a7075a852e782ed1bea28a9d8480e83a09286bca748b"
+          },
+          {
+            "key": "0l9f0yb1p6xgm9",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I’m from London.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0l9f0yb1p6xgm9.mp3?take=149",
+            "sha256": "f2178e138256cf075039f81e7a0dc1e9b5e72f73fd13f87f33ba0f889fa915d6"
+          },
+          {
+            "key": "1wylftu0jzagrg",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Where do you live?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1wylftu0jzagrg.mp3?take=114",
+            "sha256": "09e14c297489380afd5d6651cc2b8bcde5939924c9528ee60cb86b3190fa1f7c"
+          },
+          {
+            "key": "18knmzw05ywm56",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Where do you live?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/18knmzw05ywm56.mp3?take=118",
+            "sha256": "26d566674c64906a670e66526f8c79b11f50541ac38d27b4c8609c20c0fcec1c"
+          },
+          {
+            "key": "0l19bfx1nwjvjv",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I live in Boston.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0l19bfx1nwjvjv.mp3?take=164",
+            "sha256": "92ed072a906cf710b21c023249fd1426da2bc5d67df269ade593818be829b980"
+          },
+          {
+            "key": "0knnz0r0ywxemt",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I live in Boston.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0knnz0r0ywxemt.mp3?take=164",
+            "sha256": "d70c02d42956ac9209281177c3f09e661812f95fe53861e307b587a567fe15b4"
+          },
+          {
+            "key": "0yoq36s0jywzq6",
+            "speaker": "Alex",
+            "variety": "en-US",
+            "script": "Where are you from?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0yoq36s0jywzq6.mp3?take=156",
+            "sha256": "e26bec3ea072436c09184a0323d17ff570f9a5ed0bf34900880719d7a427c91c"
+          },
+          {
+            "key": "1iitaan1n7nitx",
+            "speaker": "Ella",
+            "variety": "en-GB",
+            "script": "I’m from London.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1iitaan1n7nitx.mp3?take=116",
+            "sha256": "6934a4746ae8f579dfc2af04819c4855876ebb8b60ec335456664ca9559bc252"
+          },
+          {
+            "key": "0dzzuud1wdf5k3",
+            "speaker": "Alex",
+            "variety": "en-US",
+            "script": "Where do you live?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0dzzuud1wdf5k3.mp3?take=156",
+            "sha256": "513b5119f6b807e1639da93d800e1653ba7757952edca2a07f3f7b4541eb3ef8"
+          },
+          {
+            "key": "0ztuy3j1pxiqdt",
+            "speaker": "Ella",
+            "variety": "en-GB",
+            "script": "I live in Boston.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0ztuy3j1pxiqdt.mp3?take=199",
+            "sha256": "77926026b7685851e9e5e9ead35bf77a76d19cced2cf9716a0470a9b9399ed6a"
+          },
+          {
+            "key": "02rzzix1j9bjvr",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I’m Ella. I’m from London. I live in Boston.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/02rzzix1j9bjvr.mp3?take=299",
+            "sha256": "c5b45495e6c90015713ff3b81e80866b912aaeddb1a62a938177ae0cb3647062"
+          },
+          {
+            "key": "1yp3z1z0ya4dwh",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I’m Ella. I’m from London. I live in Boston.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1yp3z1z0ya4dwh.mp3?take=336",
+            "sha256": "94812e7233609845fe8824d8a9bc3bf9374af5386746b994c72e3589ef6fee76"
+          },
+          {
+            "key": "0r8lltr0anq24l",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I’m a student.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0r8lltr0anq24l.mp3?take=126",
+            "sha256": "9741f79aa0147cac34841bf5b3743c25225bf9d50012888d399f9a058025718c"
+          },
+          {
+            "key": "0xnbkvp17nzq7r",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I’m a student.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0xnbkvp17nzq7r.mp3?take=123",
+            "sha256": "2cb264ba433f4b24ef272cf0204a8450f98dbdf51e4cf76ff25d5ae7e4dbd97b"
+          },
+          {
+            "key": "1ezkn5k1yzv1a6",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I work in a shop.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1ezkn5k1yzv1a6.mp3?take=154",
+            "sha256": "b0e69fa2edeadfe260c84f942a21d551fcb24ccf110c9a5c9a25b72c2504e493"
+          },
+          {
+            "key": "1kxrfxq1kvv3rk",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I work in a shop.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1kxrfxq1kvv3rk.mp3?take=158",
+            "sha256": "345f74d90a2fe2e54315030c1ffe96ff89485d3e3dc588fb18d60f777a784daa"
+          },
+          {
+            "key": "0x0j5un06oilth",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I work in a store.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0x0j5un06oilth.mp3?take=154",
+            "sha256": "456e015a2f94c5694bb8acb2d6f93a6e39553428760a38ac9a3c032296bbbc7c"
+          },
+          {
+            "key": "1q0fb3906sgqnr",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I work in a store.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1q0fb3906sgqnr.mp3?take=156",
+            "sha256": "d3c725932525909c83b3c1f3ca05a7e0c4b93b57250acdecc813604b3f577bf5"
+          },
+          {
+            "key": "0i1wksi0gtyo9c",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I live in Boston. I’m a student.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0i1wksi0gtyo9c.mp3?take=289",
+            "sha256": "b5ecf2e7a9fbb938b2db7ca3ebb3a2ff4ef24675578b2c99e8ce3c09d997d661"
+          },
+          {
+            "key": "129bv4w11k41oq",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I live in Boston. I’m a student.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/129bv4w11k41oq.mp3?take=276",
+            "sha256": "f90fdf230fb764e77b053d21ea663b4f6d2487f952cbbc9dc6a8f4328aa48626"
+          },
+          {
+            "key": "13c0mph1ezulzf",
+            "speaker": "Alex",
+            "variety": "en-US",
+            "script": "Hi. I’m Alex. I’m from Boston. I live in London.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/13c0mph1ezulzf.mp3?take=410",
+            "sha256": "347cb54f160ce1239d2505dfda0d8a564717148d72e6e91ef07bf6152ab6367a"
+          },
+          {
+            "key": "1kwomkd0t6pvc3",
+            "speaker": "Ella",
+            "variety": "en-GB",
+            "script": "Hello. I’m Ella. I’m from London. I live in Boston.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1kwomkd0t6pvc3.mp3?take=412",
+            "sha256": "a24103bfeb12a35800b84f1ab7fd0f83c6a20f762b14bfc26ac4d5ec76a206df"
+          },
+          {
+            "key": "04letba1sf4k5s",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I’m from Boston. I live in London.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/04letba1sf4k5s.mp3?take=309",
+            "sha256": "fee35f739e27311facf330eb4fa002229ba09e85c18e0eb231aeade7b5995bee"
+          },
+          {
+            "key": "1m7ztvk181iln2",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I’m from Boston. I live in London.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1m7ztvk181iln2.mp3?take=271",
+            "sha256": "4f5e3552d8e221f6bd7f20c3a32af5930b0cdbd61343ee936984c5e50a520285"
+          },
+          {
+            "key": "1qtsagu0pzg0l4",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I’m from London. I live in Boston.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1qtsagu0pzg0l4.mp3?take=286",
+            "sha256": "6a99fc2bc7dfaf35dce9d3324bfef4203a6c59c1f6ce8794ea6b29e4e329ace0"
+          },
+          {
+            "key": "1if93jc1r016iu",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I’m from London. I live in Boston.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1if93jc1r016iu.mp3?take=249",
+            "sha256": "090a373fe6157853a1bf8984a2f38f2fc56814ff965a4bd87bf916b77faec3a9"
+          },
+          {
+            "key": "07kipuo0o65vpi",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Boston. I live in Boston.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/07kipuo0o65vpi.mp3?take=271",
+            "sha256": "6ad8b18cf2aafa07c602694ea5f6b373fa5613ba3ebd87f9edc241e336a1b90f"
+          },
+          {
+            "key": "1ijk72u1fmfhu0",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Boston. I live in Boston.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1ijk72u1fmfhu0.mp3?take=296",
+            "sha256": "15fd175e08b9edef8e96aad4d70a00923a1983c4cf6119a716d01345856d8722"
+          },
+          {
+            "key": "0k2iu6o1j4cwim",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I live in London. Where do you live?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0k2iu6o1j4cwim.mp3?take=252",
+            "sha256": "530afc6187325b768dd4425228bd064e1fe4351618835a73dd11f120ec6bba4e"
+          },
+          {
+            "key": "0tsccge134hkk8",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I live in London. Where do you live?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0tsccge134hkk8.mp3?take=262",
+            "sha256": "31906511caa311a6a06ec529180dd50ad7d224ca1c37c6ce3cb0cdd9e55af545"
+          },
+          {
+            "key": "0y6y5480ijzek2",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Hi. I’m Alex. I’m from Boston. I live in London. I’m a student. Where are you from?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0y6y5480ijzek2.mp3?take=695",
+            "sha256": "271768f5992101f5fff48f8a042bdc81b6aeb12a92367848505a3cc54c99a8fb"
+          },
+          {
+            "key": "0yk49c20406dr4",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Hi. I’m Alex. I’m from Boston. I live in London. I’m a student. Where are you from?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0yk49c20406dr4.mp3?take=627",
+            "sha256": "73d1268aeed0a2e38807ec5797f0e262e7e8868b67db76949593f81fe1b31850"
+          },
+          {
+            "key": "0a8v8ju0hj1zwk",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "coffee",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0a8v8ju0hj1zwk.mp3?take=61",
+            "sha256": "05a70b82d66906b6112f5abaa891f499ca21c4e5c68f89a5d9e31ff01d310f30"
+          },
+          {
+            "key": "0r7815g0alj7ya",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "coffee",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0r7815g0alj7ya.mp3?take=79",
+            "sha256": "3be4d171a19434b51672a4cab9b5cd8b01d21935f9c350817b4d34b33ae5d2ff"
+          },
+          {
+            "key": "0j891mg1oi4eue",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "tea",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0j891mg1oi4eue.mp3?take=67",
+            "sha256": "3567914bfc7aca1b0bc3f537e28c5de978eedbb30abb88bc22689b122d5cf436"
+          },
+          {
+            "key": "15zzree0krjr2o",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "tea",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/15zzree0krjr2o.mp3?take=89",
+            "sha256": "f6940cc886e4792a61bb091227e4160a1d9f306491210de5087f92979ec3faa0"
+          },
+          {
+            "key": "10m429t0v94mhz",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "water",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/10m429t0v94mhz.mp3?take=105",
+            "sha256": "dfc947fd8e2695be3d595e01e3b49b234d6422cfe7eea6529ee64f2200803900"
+          },
+          {
+            "key": "0wgx7w719c3c1l",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "water",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0wgx7w719c3c1l.mp3?take=67",
+            "sha256": "a45268c262c4a224278a157ff8cd4283e1312ff976c6efce2d114c05634963a6"
+          },
+          {
+            "key": "0jbu97101wy9zn",
+            "speaker": "Casey",
+            "variety": "en-US",
+            "script": "Hello.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0jbu97101wy9zn.mp3?take=111",
+            "sha256": "66569c2b26b827683d884bc4b03bca80723fac4854534aef5b73ee5a23eaeea5"
+          },
+          {
+            "key": "00xgivi1xk39jg",
+            "speaker": "Alex",
+            "variety": "en-US",
+            "script": "Hi. I’d like a coffee, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/00xgivi1xk39jg.mp3?take=240",
+            "sha256": "65e01ede99bbc1c3f2b4f59cecb7965150de88e06461c82ea7d8162a8cb5e0b7"
+          },
+          {
+            "key": "021ac1c08rgmwe",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I’d like a coffee, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/021ac1c08rgmwe.mp3?take=195",
+            "sha256": "93667d522fb0903861b66a731e47a41da56d05c07fb8730c17a5f8c1a61c74ac"
+          },
+          {
+            "key": "0rx3nxa1af1ma0",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I’d like a coffee, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0rx3nxa1af1ma0.mp3?take=152",
+            "sha256": "7207b8b5ce4f3c0e09eeb68428177238daabb3af8b14bfc95373bb62166798cc"
+          },
+          {
+            "key": "002gi3i04371sg",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I’d like a tea, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/002gi3i04371sg.mp3?take=197",
+            "sha256": "f97f90ecb8961be7603454a21b8d8519e6dc7b6f63ccc98737849e3ff5ddd85f"
+          },
+          {
+            "key": "1g04wu816dorsm",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I’d like a tea, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1g04wu816dorsm.mp3?take=254",
+            "sha256": "556235538586ea8ee4c51d1db3b88a6f8d267f41151a7a44c1dd3e644e874659"
+          },
+          {
+            "key": "09az6661odzp64",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "I’d like some water, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/09az6661odzp64.mp3?take=187",
+            "sha256": "9008806231cd75299a746ae3d9a03ac7223d3a4c6d960e0ddf4f29f5088f22e7"
+          },
+          {
+            "key": "19lq87w1nhx4jq",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "I’d like some water, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/19lq87w1nhx4jq.mp3?take=186",
+            "sha256": "27ad246aa671bfbf62037877f5776584a6532bc2984737ea84390004473771c2"
+          },
+          {
+            "key": "07tkg8w0zgds8m",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Hello. I’d like a tea, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/07tkg8w0zgds8m.mp3?take=222",
+            "sha256": "197dee56edd0824e0b3118d4e5e3af4782bedc4005c36c0f7bd0f865102b6662"
+          },
+          {
+            "key": "1oqusau0nyjxvc",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Hello. I’d like a tea, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1oqusau0nyjxvc.mp3?take=227",
+            "sha256": "c1b8f2a0676d5a45de909232f79f96bca2c0f8328740ce5b46e2d60cc3465a45"
+          },
+          {
+            "key": "0xel4zb1lbfyc5",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Yes, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0xel4zb1lbfyc5.mp3?take=155",
+            "sha256": "1ab2cf47213c4d49f121a93baf2c0162064c52ce488ee62900f60ceedcdd3612"
+          },
+          {
+            "key": "0th0tk51q1e2u7",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Yes, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0th0tk51q1e2u7.mp3?take=127",
+            "sha256": "1ea6a9ad20fa9513db09bd239321d3533127610fcd91283070720b5844771f94"
+          },
+          {
+            "key": "091hhae01apzv4",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "No, thank you.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/091hhae01apzv4.mp3?take=165",
+            "sha256": "054860f653f6398decbf407953ee64405a5da0f910a29070cc255b594d1b0c43"
+          },
+          {
+            "key": "18mlim818yk5dq",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "No, thank you.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/18mlim818yk5dq.mp3?take=144",
+            "sha256": "7eea9798aed2ab59ba68eb7f9b3be3577b023fd5ebbc8601ebc25a830b6a6d2d"
+          },
+          {
+            "key": "1aq0gb71epeo5h",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "No, tea, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1aq0gb71epeo5h.mp3?take=243",
+            "sha256": "7e4526ff8f52911e74e7975b2f0b0fcaee22c1a5a218cc81294823478bea5115"
+          },
+          {
+            "key": "05k0elx0xjreij",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "No, tea, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/05k0elx0xjreij.mp3?take=263",
+            "sha256": "a8cb65be501e1cec2ace91e7112572604a75b7035c97ae19fce4ad760652f4b3"
+          },
+          {
+            "key": "0hcvk0c1l0czsq",
+            "speaker": "Ella",
+            "variety": "en-GB",
+            "script": "I’d like a tea, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0hcvk0c1l0czsq.mp3?take=178",
+            "sha256": "a44926f8487a973cf24a06838aef949f9d3e297ea88a11a8ac6dafc51c4fb382"
+          },
+          {
+            "key": "0m44gsf0vs6s11",
+            "speaker": "Ben",
+            "variety": "en-GB",
+            "script": "Coffee?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0m44gsf0vs6s11.mp3?take=80",
+            "sha256": "b8ce71225bdc9beedb7447535f5fd4d8f57f0bfdf408d4203d255174b4da1059"
+          },
+          {
+            "key": "00eb3ex1ttwxlj",
+            "speaker": "Ella",
+            "variety": "en-GB",
+            "script": "No, tea, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/00eb3ex1ttwxlj.mp3?take=200",
+            "sha256": "5dc4d642f3c7ac45e0e6b3d3dcd118e0491b34135142533dde462fa07f64455d"
+          },
+          {
+            "key": "0cdc2j91y4bpzz",
+            "speaker": "Ben",
+            "variety": "en-GB",
+            "script": "Tea?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0cdc2j91y4bpzz.mp3?take=110",
+            "sha256": "b2939162dfefbd171809b79df0f648637b7fc0b5fc6842dd2c71af0f9435e343"
+          },
+          {
+            "key": "0ohmk1l12j2jvf",
+            "speaker": "Ella",
+            "variety": "en-GB",
+            "script": "Yes, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0ohmk1l12j2jvf.mp3?take=151",
+            "sha256": "6c9baf08ea0b18e4b6679755a709f7715225257fe32613a5fc8a590114f95d96"
+          },
+          {
+            "key": "0dvmdiz0970sf5",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "No, coffee, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0dvmdiz0970sf5.mp3?take=245",
+            "sha256": "0ac3b214ad2e970bad253bf0308c89807ed7600eaceb7dd1a94d77d8b8871338"
+          },
+          {
+            "key": "17bqd5d1wj8cub",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "No, coffee, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/17bqd5d1wj8cub.mp3?take=180",
+            "sha256": "5f3a8a57d0378767766cea330dfc354576d917ff3328d28a2dd3af7cf69f43df"
+          },
+          {
+            "key": "0j10bpz0f5cg9p",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "For here, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0j10bpz0f5cg9p.mp3?take=174",
+            "sha256": "e2e39865041d6112e674b1672356d0fdebd318950920c256b14d69788125d0c2"
+          },
+          {
+            "key": "0ro6r7x0r9ztj3",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "For here, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0ro6r7x0r9ztj3.mp3?take=167",
+            "sha256": "6e31d502980ad6da1362d0c6996b4e1f2e71ce287e0590c424d8100769428c96"
+          },
+          {
+            "key": "0vzsbc90y2o0un",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "To go, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0vzsbc90y2o0un.mp3?take=155",
+            "sha256": "f7561e7bebd28d7f919aa6ace4da7020b057c6c83ad0a8d7fa3848feb7653f14"
+          },
+          {
+            "key": "07s20hr1dpvawx",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "To go, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/07s20hr1dpvawx.mp3?take=114",
+            "sha256": "360cc8b00f8dc816133323e3f6e54f3011718491902ec1fa1b2ac47bead9caca"
+          },
+          {
+            "key": "11yxz481tkl6ii",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "To take away, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/11yxz481tkl6ii.mp3?take=177",
+            "sha256": "e85f5ff50f18b305a870671f98b48d6aceea0c2917710cd52e1ef7a37d7c4854"
+          },
+          {
+            "key": "1v7i2p60fzu9b4",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "To take away, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1v7i2p60fzu9b4.mp3?take=179",
+            "sha256": "2099802601e4d4733c069dca44ad3d78249ed9b0c07430c79edcd17b0c85bd51"
+          },
+          {
+            "key": "0sitrvs058b1ea",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "For here or to go?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0sitrvs058b1ea.mp3?take=172",
+            "sha256": "bb616a40b830c8f131e8abd07eebeade07ff7fb4b404dd27cb4609686f9171a0"
+          },
+          {
+            "key": "1m3md4y01bszqo",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "For here or to go?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1m3md4y01bszqo.mp3?take=169",
+            "sha256": "a0a9b18cc7034cd70f18bcda61a1e019554deb2bcab6ff50706bbbcebd6ad10d"
+          },
+          {
+            "key": "02ypwa81g6jakq",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "To have here or take away?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/02ypwa81g6jakq.mp3?take=202",
+            "sha256": "b441d7d70ddcb9e4ebf1f0c7b6c8f3d3af32df75e3c498c22887170ed7cbb51c"
+          },
+          {
+            "key": "16dkvve0xpeep4",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "To have here or take away?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/16dkvve0xpeep4.mp3?take=209",
+            "sha256": "81a28683dbb1bdd0f804b0ae97f13df4308c39979edc94579c9f51f05ebe5c6f"
+          },
+          {
+            "key": "0tafob914jd9ij",
+            "speaker": "Casey",
+            "variety": "en-US",
+            "script": "For here or to go?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0tafob914jd9ij.mp3?take=246",
+            "sha256": "a224e21e34867c7db5a0eb510a919739a3fa81e71f2f04896809d79d5821122a"
+          },
+          {
+            "key": "0sgm6ku0sn9lnk",
+            "speaker": "Alex",
+            "variety": "en-US",
+            "script": "To go, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0sgm6ku0sn9lnk.mp3?take=184",
+            "sha256": "5acdc872b293453dbca59099171cab49013f202a04487c2c60b1bfad363edf8f"
+          },
+          {
+            "key": "1hstyjk14nksym",
+            "speaker": "Ben",
+            "variety": "en-GB",
+            "script": "To have here or take away?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1hstyjk14nksym.mp3?take=296",
+            "sha256": "67a0844f1e1021f56be8eaae76a341a13bd0120f4c66a98716b66014c8690e51"
+          },
+          {
+            "key": "0u68ba91l772a3",
+            "speaker": "Ella",
+            "variety": "en-GB",
+            "script": "For here, please.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0u68ba91l772a3.mp3?take=186",
+            "sha256": "a07c88e87443d48dde3fbd1c10ed49a3b50e1dfbc095d0e43bb9a29a00d99f0a"
+          },
+          {
+            "key": "0hgydf411jic8e",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Coffee to go?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0hgydf411jic8e.mp3?take=135",
+            "sha256": "7e2799bd731793799a51f08a6bebf48939df8f5dd08f90660f264a25f254d95f"
+          },
+          {
+            "key": "03xmroe0hvmoko",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Coffee to go?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/03xmroe0hvmoko.mp3?take=118",
+            "sha256": "ef05bfbbd485aa0217c145b8d78fcfe3d2e3c705f2ee8e97e04a9a0b38da0556"
+          },
+          {
+            "key": "133awvo1xlh8ma",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "To go, please. Thanks.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/133awvo1xlh8ma.mp3?take=181",
+            "sha256": "ef4290ac721de9385506baf20acaacbcf053df90397e745e0d5179ce4983daf7"
+          },
+          {
+            "key": "065d6mq0kicn0s",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "To go, please. Thanks.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/065d6mq0kicn0s.mp3?take=246",
+            "sha256": "184c94197bf1f6dd95683cc90fcb7cef18e62d134bf8e4d96c0fca103ecf3bba"
+          },
+          {
+            "key": "0xpsr3c1eqyvaa",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Hello. I’m Alex. I live in London. What’s your name?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/0xpsr3c1eqyvaa.mp3?take=446",
+            "sha256": "49ce869b8b093fac9e0d76952163cd49f94b184e3a524ece2e3713d889acae3f"
+          },
+          {
+            "key": "1m6vtea1q9t76o",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Hello. I’m Alex. I live in London. What’s your name?",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1m6vtea1q9t76o.mp3?take=403",
+            "sha256": "4c87f75ad45497cbbdc62464aead824c3e81a591a15ff42b23c771727fe0a0b4"
+          },
+          {
+            "key": "19auc7y0dkymxo",
+            "speaker": "Model narrator",
+            "variety": "en-GB",
+            "script": "Nice to meet you. Bye, Ella.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/19auc7y0dkymxo.mp3?take=240",
+            "sha256": "49f9fa432f38015b15b1c87d867452abfc8193a5b38fdb6935a2295da38cef71"
+          },
+          {
+            "key": "1cg36vg1jt6zxi",
+            "speaker": "Model narrator",
+            "variety": "en-US",
+            "script": "Nice to meet you. Bye, Ella.",
+            "url": "https://feemunsltbbkkqyvorjn.supabase.co/storage/v1/object/public/lesson-audio/n1/1cg36vg1jt6zxi.mp3?take=305",
+            "sha256": "9350c230cdbcf63e78a2a0ac93aaac2cfe162ecc9cd21b1285408b09dc88105a"
+          }
+        ],
+        "liveCalls": [
+          {
+            "reference": "en-GB",
+            "callId": "en-a1-u1",
+            "turns": [
+              { "role": "assistant", "text": "Hello. I’m Robin. What’s your name?" },
+              { "role": "user", "text": "Hi, I'm Sam. What's your name?" },
+              { "role": "assistant", "text": "I’m Robin. Please say that again." },
+              { "role": "user", "text": "Please say that again." },
+              {
+                "role": "assistant",
+                "text": "I’m Robin. Nice to meet you, Sam. Ready to say bye?"
+              },
+              { "role": "user", "text": "Sam. Nice to meet you. Bye." },
+              { "role": "assistant", "text": "Bye, Sam. Nice to meet you." }
+            ],
+            "checks": {
+              "selectedModel": true,
+              "unitScope": true,
+              "audioBytesReceived": 112145,
+              "recordingDuration": 19.38,
+              "recordingPeak": 0.5472311973571777,
+              "totalAudioEnergy": 0.6111782475900401,
+              "totalSamplesReceived": 899520,
+              "recordingBytes": 274809,
+              "serverHangup": true,
+              "falseCorrectionCount": 0,
+              "syntheticGuestDeleted": true
+            },
+            "status": "integration passed; human listening pending",
+            "recording": "en-a1-u1-en-GB.webm",
+            "review": {
+              "corrections": [],
+              "tip": "For the /m/ sound in \"Sam\", close your lips and let the air flow through your nose.",
+              "facts": ["Is called Sam"],
+              "callId": "en-a1-u1",
+              "createdAt": "2026-10-27T05:21:54.770Z"
+            },
+            "sourceHash": "f0e4783eb6c5deff2ce5189f203cb58824df2bf1fbc5a96642e009dc75fb2cb9",
+            "url": "../artifacts/english-m3-live/en-a1-u1-en-GB.webm",
+            "recordingHash": "e546c08e25549e8898c3168f0a20fbd0646cdc670009f3812d00e420eb2b9506"
+          },
+          {
+            "reference": "en-GB",
+            "callId": "en-a1-u2",
+            "turns": [
+              { "role": "assistant", "text": "Hello. I’m Robin. What’s your name?" },
+              { "role": "user", "text": "I'm Sam. I'm from London." },
+              { "role": "assistant", "text": "Nice to meet you, Sam. Where do you live now?" },
+              { "role": "user", "text": "I live in Boston." },
+              { "role": "assistant", "text": "You live in London?" },
+              {
+                "role": "user",
+                "text": "No, I live in Boston. I work in a store. Where do you live?"
+              },
+              {
+                "role": "assistant",
+                "text": "Right, Boston, got it.\n\nI live in London. Nice talking with you, Sam. Bye!"
+              }
+            ],
+            "checks": {
+              "selectedModel": true,
+              "unitScope": true,
+              "audioBytesReceived": 123296,
+              "recordingDuration": 20.64,
+              "recordingPeak": 0.6322661638259888,
+              "totalAudioEnergy": 0.7115609185535376,
+              "totalSamplesReceived": 955200,
+              "recordingBytes": 291665,
+              "serverHangup": true,
+              "falseCorrectionCount": 0,
+              "syntheticGuestDeleted": true
+            },
+            "status": "integration passed; human listening pending",
+            "recording": "en-a1-u2-en-GB.webm",
+            "review": {
+              "corrections": [],
+              "tip": "For the \"v\" in \"live\", touch your lower lip to your upper teeth and use your voice.",
+              "facts": ["Is from London", "Lives in Boston", "Works in a store"],
+              "callId": "en-a1-u2",
+              "createdAt": "2026-10-27T05:22:28.995Z"
+            },
+            "sourceHash": "f0e4783eb6c5deff2ce5189f203cb58824df2bf1fbc5a96642e009dc75fb2cb9",
+            "url": "../artifacts/english-m3-live/en-a1-u2-en-GB.webm",
+            "recordingHash": "9f45d6a8a94f2ca9e1e5003aec962a16e4bdc7ba2a5f60fb301aa3e15fb4c4da"
+          },
+          {
+            "reference": "en-GB",
+            "callId": "en-a1-u3",
+            "turns": [
+              { "role": "assistant", "text": "Hello." },
+              { "role": "user", "text": "Could I have a tea, please?" },
+              { "role": "assistant", "text": "Coffee?" },
+              { "role": "user", "text": "No, tea, please." },
+              { "role": "assistant", "text": "Got it, tea. To have here or take away?" },
+              { "role": "user", "text": "To go, please." },
+              { "role": "assistant", "text": "Thanks. Tea to go. Have a nice day." },
+              { "role": "user", "text": "Thanks. Bye." },
+              { "role": "assistant", "text": "Bye. Thanks again, and have a great day." }
+            ],
+            "checks": {
+              "selectedModel": true,
+              "unitScope": true,
+              "audioBytesReceived": 105319,
+              "recordingDuration": 18.36,
+              "recordingPeak": 0.6927058100700378,
+              "totalAudioEnergy": 0.5843852970380665,
+              "totalSamplesReceived": 845760,
+              "recordingBytes": 253893,
+              "serverHangup": true,
+              "falseCorrectionCount": 0,
+              "syntheticGuestDeleted": true
+            },
+            "status": "integration passed; human listening pending",
+            "recording": "en-a1-u3-en-GB.webm",
+            "review": {
+              "corrections": [],
+              "tip": "For the 'th' in 'thanks', put your tongue lightly between your teeth and blow air.",
+              "facts": [],
+              "callId": "en-a1-u3",
+              "createdAt": "2026-10-27T05:23:04.270Z"
+            },
+            "sourceHash": "f0e4783eb6c5deff2ce5189f203cb58824df2bf1fbc5a96642e009dc75fb2cb9",
+            "url": "../artifacts/english-m3-live/en-a1-u3-en-GB.webm",
+            "recordingHash": "f04813bd631918d04c4f70cef5931f1daca289bfd4100c0bfce8eb62b88c1124"
+          },
+          {
+            "reference": "en-US",
+            "callId": "en-a1-u1",
+            "turns": [
+              { "role": "assistant", "text": "Hello. I’m Robin. What’s your name?" },
+              { "role": "user", "text": "Hi, I'm Sam. What's your name?" },
+              {
+                "role": "assistant",
+                "text": "I’m Robin. Nice to meet you. Please say that again."
+              },
+              { "role": "user", "text": "Please say that again." },
+              { "role": "assistant", "text": "I’m Robin. Please say your name again." },
+              { "role": "user", "text": "Sam. Nice to meet you. Bye." },
+              { "role": "assistant", "text": "Nice to meet you, Sam. Bye." }
+            ],
+            "checks": {
+              "selectedModel": true,
+              "unitScope": true,
+              "audioBytesReceived": 112657,
+              "recordingDuration": 20.22,
+              "recordingPeak": 0.7520819902420044,
+              "totalAudioEnergy": 0.8285030935520596,
+              "totalSamplesReceived": 934080,
+              "recordingBytes": 279175,
+              "serverHangup": true,
+              "falseCorrectionCount": 0,
+              "syntheticGuestDeleted": true
+            },
+            "status": "integration passed; human listening pending",
+            "recording": "en-a1-u1-en-US.webm",
+            "review": {
+              "corrections": [],
+              "tip": "For the /m/ sound in \"Sam\", close your lips and let air flow through your nose.",
+              "facts": ["Is called Sam"],
+              "callId": "en-a1-u1",
+              "createdAt": "2026-10-27T05:23:37.475Z"
+            },
+            "sourceHash": "f0e4783eb6c5deff2ce5189f203cb58824df2bf1fbc5a96642e009dc75fb2cb9",
+            "url": "../artifacts/english-m3-live/en-a1-u1-en-US.webm",
+            "recordingHash": "bd15227aa60ea6b3bcecffb1a9b4da5cc2a8943e7ec1d8664981d0c831011453"
+          },
+          {
+            "reference": "en-US",
+            "callId": "en-a1-u2",
+            "turns": [
+              { "role": "assistant", "text": "Hello. I’m Robin. What’s your name?" },
+              { "role": "user", "text": "I'm Sam. I'm from London." },
+              { "role": "assistant", "text": "Nice to meet you, Sam. Where do you live now?" },
+              { "role": "user", "text": "I live in Boston." },
+              { "role": "assistant", "text": "You live in London?" },
+              {
+                "role": "user",
+                "text": "No, I live in Boston. I work in a store. Where do you live?"
+              },
+              {
+                "role": "assistant",
+                "text": "Got it, thanks for correcting me. I live in London, and I’m a student.\n\nNice talking with you, Sam. Bye!"
+              }
+            ],
+            "checks": {
+              "selectedModel": true,
+              "unitScope": true,
+              "audioBytesReceived": 131202,
+              "recordingDuration": 21.42,
+              "recordingPeak": 0.8130015134811401,
+              "totalAudioEnergy": 0.8406586550594818,
+              "totalSamplesReceived": 1000800,
+              "recordingBytes": 307447,
+              "serverHangup": true,
+              "falseCorrectionCount": 0,
+              "syntheticGuestDeleted": true
+            },
+            "status": "integration passed; human listening pending",
+            "recording": "en-a1-u2-en-US.webm",
+            "review": {
+              "corrections": [],
+              "tip": "For the \"v\" in \"live\", touch your lower lip to your upper teeth and use your voice.",
+              "facts": ["Is from London", "Lives in Boston", "Works in a store"],
+              "callId": "en-a1-u2",
+              "createdAt": "2026-10-27T05:24:07.371Z"
+            },
+            "sourceHash": "f0e4783eb6c5deff2ce5189f203cb58824df2bf1fbc5a96642e009dc75fb2cb9",
+            "url": "../artifacts/english-m3-live/en-a1-u2-en-US.webm",
+            "recordingHash": "8835a2b1ee58e60b77167e32ff0da932bc232ef1fe0b0f93947c95f89c4519ee"
+          },
+          {
+            "reference": "en-US",
+            "callId": "en-a1-u3",
+            "turns": [
+              { "role": "assistant", "text": "Hello." },
+              { "role": "user", "text": "Could I have a tea, please?" },
+              { "role": "assistant", "text": "Coffee?" },
+              { "role": "user", "text": "No, tea, please." },
+              { "role": "assistant", "text": "Got it—tea. For here or to go?" },
+              { "role": "user", "text": "To take away, please." },
+              { "role": "assistant", "text": "Tea to take away. Thanks. Have a nice day." },
+              { "role": "user", "text": "Thanks. Bye." },
+              { "role": "assistant", "text": "Bye. Thanks, and have a nice day." }
+            ],
+            "checks": {
+              "selectedModel": true,
+              "unitScope": true,
+              "audioBytesReceived": 102769,
+              "recordingDuration": 17.64,
+              "recordingPeak": 0.49985888600349426,
+              "totalAudioEnergy": 0.5095400039424746,
+              "totalSamplesReceived": 813120,
+              "recordingBytes": 247013,
+              "serverHangup": true,
+              "falseCorrectionCount": 0,
+              "syntheticGuestDeleted": true
+            },
+            "status": "integration passed; human listening pending",
+            "recording": "en-a1-u3-en-US.webm",
+            "review": {
+              "corrections": [],
+              "tip": "For the “th” in “thanks”, put your tongue tip lightly between your teeth and blow air without using your voice.",
+              "facts": [],
+              "callId": "en-a1-u3",
+              "createdAt": "2026-10-27T05:24:39.990Z"
+            },
+            "sourceHash": "f0e4783eb6c5deff2ce5189f203cb58824df2bf1fbc5a96642e009dc75fb2cb9",
+            "url": "../artifacts/english-m3-live/en-a1-u3-en-US.webm",
+            "recordingHash": "3000172f5695ffc66106a3b4b741fe0f93ae2a0d2212c86428e18c82d2c6f4a8"
+          }
+        ],
+        "snapshot": "cfcd7c6b0802ea94aedd2c2bdcbcfdd90842f686a065c3abdcd8e100dd0bd569"
+      }
+    </script>
+    <script>
+      // Embedded into the generated reviewer page. No findings are sent over the network.
+      (() => {
+        const packet = JSON.parse(document.querySelector('#packet').textContent);
+        const status = document.querySelector('#status');
+        const byId = (id) => document.getElementById(id);
+        const records = [];
+        let active;
+        let storageKey;
+        let storageWorks = true;
+        const node = (tag, text, parent) => {
+          const element = document.createElement(tag);
+          if (text) element.textContent = text;
+          if (parent) parent.append(element);
+          return element;
+        };
+        const progress = () => {
+          const current = records.map(({ key }) => active?.items[key]);
+          const reviewed = current.filter((entry) => entry?.decision === 'checked').length;
+          const changes = current.filter((entry) => entry?.decision === 'change').length;
+          byId('progress').textContent =
+            `${reviewed} items checked without an issue; ${changes} need changes; ${records.length - reviewed - changes} pending. Human sign-off is still a separate decision.`;
+        };
+        const persist = () => {
+          if (!active) return;
+          active.updatedAt = new Date().toISOString();
+          try {
+            localStorage.setItem(storageKey, JSON.stringify(active));
+          } catch {
+            storageWorks = false;
+          }
+          status.textContent = storageWorks
+            ? 'Draft saved in this browser. Export to share or back it up.'
+            : 'Browser storage is unavailable. Keep this page open and export your findings now.';
+          progress();
+        };
+        const decision = (parent, key, label, evidence) => {
+          const form = node('div', '', parent);
+          form.className = 'decision';
+          const id = `item-${records.length}`;
+          const addSelect = (name, values, suffix) => {
+            const labelNode = node('label', name, form);
+            labelNode.htmlFor = id + suffix;
+            const select = node('select', '', form);
+            select.id = id + suffix;
+            for (const [value, text] of values) {
+              const option = node('option', text, select);
+              option.value = value;
+            }
+            return select;
+          };
+          const choice = addSelect(
+            `Decision: ${label}`,
+            [
+              ['pending', 'Not checked'],
+              ['checked', 'No issue found'],
+              ['change', 'Change needed'],
+            ],
+            '-decision',
+          );
+          const severity = addSelect(
+            `Severity: ${label}`,
+            [
+              ['', 'Choose if a change is needed'],
+              ['blocker', 'Blocker'],
+              ['major', 'Major'],
+              ['minor', 'Minor'],
+            ],
+            '-severity',
+          );
+          const labelNode = node('label', `Finding and suggested correction: ${label}`, form);
+          const notes = node('textarea', '', labelNode);
+          notes.id = `${id}-notes`;
+          notes.maxLength = 2000;
+          labelNode.htmlFor = notes.id;
+          const record = { key, label, choice, severity, notes };
+          records.push(record);
+          for (const field of [choice, severity, notes]) {
+            field.disabled = true;
+            field.addEventListener('input', () => {
+              active.items[key] = {
+                ...evidence,
+                label,
+                decision: choice.value,
+                severity: severity.value,
+                notes: notes.value,
+                reviewedAt: new Date().toISOString(),
+              };
+              persist();
+            });
+          }
+        };
+        const showStep = (parent, step) => {
+          for (const field of ['title', 'intro', 'prompt', 'context', 'body', 'note', 'tip'])
+            if (step[field]) node('p', step[field], parent);
+          if (step.audio) node('p', `Listen first: ${step.audio}`, parent);
+          if (step.kind === 'scene')
+            for (const line of step.lines)
+              node(
+                'p',
+                `${line.speaker}: ${line.text}\nMeaning: ${line.meaning}`,
+                parent,
+              ).className = 'script';
+          if (step.kind === 'teach')
+            for (const item of step.items)
+              node(
+                'p',
+                `${item.target}\nMeaning: ${item.meaning}\n${item.note ?? ''}`,
+                parent,
+              ).className = 'script';
+          if (step.options)
+            step.options.forEach((text, index) =>
+              node('p', `${index === step.answer ? 'Key' : 'Alternative'}: ${text}`, parent),
+            );
+          if (step.kind === 'build')
+            node(
+              'p',
+              `Tile answer: ${step.answer.join(' ')}. Extra tiles: ${(step.extra ?? []).join(' / ')}`,
+              parent,
+            );
+          if (step.accepted)
+            node('p', `Accepted answers: ${step.accepted.join(' / ')}. Hint: ${step.hint}`, parent);
+          if (step.pairs) for (const pair of step.pairs) node('p', pair.join(' → '), parent);
+          if (step.fields)
+            for (const field of step.fields)
+              node(
+                'p',
+                `${field.label}: ${field.accepted.join(' / ')}. Hint: ${field.hint}`,
+                parent,
+              );
+          if (step.examples)
+            for (const text of step.examples) node('p', `Example: ${text}`, parent);
+          if (step.explanation) node('p', `Feedback: ${step.explanation}`, parent);
+          if (step.kind === 'speak') {
+            node('p', 'Unscored self-practice. These models are optional in the app.', parent);
+            for (const text of step.lines) node('p', text, parent);
+            if (step.mission) {
+              for (const text of step.mission.checks) node('p', `Self-check: ${text}`, parent);
+              node('p', `Changed situation: ${step.mission.twist}`, parent);
+            }
+          }
+        };
+        for (const lesson of packet.lessons) {
+          const details = node('details', '', byId('lessons'));
+          node('summary', `Unit ${lesson.unit}: ${lesson.title}`, details);
+          node(
+            'p',
+            `${lesson.id} · version ${lesson.version}\n${lesson.outcome}`,
+            details,
+          ).className = 'meta';
+          lesson.steps.forEach((step, index) => {
+            const section = node('section', '', details);
+            node('h3', `Step ${index + 1}: ${step.kind}`, section);
+            showStep(section, step);
+            decision(
+              section,
+              `step:${lesson.id}:${lesson.version}:${index + 1}`,
+              `${lesson.id}, step ${index + 1}`,
+              { kind: 'script', lesson: lesson.id, version: lesson.version, step: index + 1 },
+            );
+          });
+        }
+        for (const clip of packet.audio) {
+          const details = node('details', '', byId('audio'));
+          details.dataset.variety = clip.variety;
+          node('summary', `${clip.variety} · ${clip.speaker}: ${clip.script}`, details);
+          const player = node('audio', '', details);
+          player.controls = true;
+          player.preload = 'none';
+          player.src = clip.url;
+          player.addEventListener('play', () => {
+            for (const other of document.querySelectorAll('audio'))
+              if (other !== player) other.pause();
+          });
+          node(
+            'p',
+            clip.sha256
+              ? `File SHA-256: ${clip.sha256}`
+              : 'File bytes are not verified against the current inventory. Re-run the audio audit before audio sign-off.',
+            details,
+          ).className = 'meta';
+          decision(
+            details,
+            `audio:${clip.key}:${clip.sha256 ?? packet.snapshot}`,
+            `${clip.key} (${clip.variety})`,
+            { kind: 'audio', audioKey: clip.key, sha256: clip.sha256, variety: clip.variety },
+          );
+        }
+        if (!packet.liveCalls?.length)
+          node(
+            'p',
+            'No completed call recordings match the current coach instructions yet.',
+            byId('live'),
+          );
+        for (const call of packet.liveCalls ?? []) {
+          const details = node('details', '', byId('live'));
+          node('summary', `${call.callId} · ${call.reference} · synthetic conversation`, details);
+          const player = node('audio', '', details);
+          player.controls = true;
+          player.preload = 'none';
+          player.src = call.url;
+          player.addEventListener('play', () => {
+            for (const other of document.querySelectorAll('audio'))
+              if (other !== player) other.pause();
+          });
+          node('p', `Recording SHA-256: ${call.recordingHash}`, details).className = 'meta';
+          for (const turn of call.turns)
+            node(
+              'p',
+              `${turn.role === 'user' ? 'Synthetic learner' : 'Coach'}: ${turn.text}`,
+              details,
+            ).className = 'script';
+          node('p', `After-call feedback: ${JSON.stringify(call.review)}`, details);
+          decision(
+            details,
+            `live:${call.callId}:${call.reference}:${call.sourceHash}:${call.recordingHash}`,
+            `${call.callId} live ${call.reference}`,
+            {
+              kind: 'live-call',
+              callId: call.callId,
+              reference: call.reference,
+              sourceHash: call.sourceHash,
+              recordingHash: call.recordingHash,
+            },
+          );
+        }
+        byId('variety').addEventListener('change', (event) => {
+          for (const item of byId('audio').children)
+            item.hidden =
+              event.target.value !== 'all' && item.dataset.variety !== event.target.value;
+        });
+        byId('begin').addEventListener('click', () => {
+          const reviewer = byId('reviewer').value.trim();
+          const role = byId('role').value;
+          if (!reviewer || !role) {
+            status.textContent = 'Enter a reviewer code and choose a role first.';
+            return;
+          }
+          for (const { choice, severity, notes } of records)
+            choice.disabled = severity.disabled = notes.disabled = true;
+          byId('export').disabled = true;
+          storageKey = `vokeno-english-m3:${JSON.stringify([reviewer, role])}`;
+          let saved;
+          storageWorks = true;
+          try {
+            saved = localStorage.getItem(storageKey);
+          } catch {
+            storageWorks = false;
+          }
+          try {
+            active = saved ? JSON.parse(saved) : { schema: 1, reviewer, role, items: {} };
+            if (!active.items || active.reviewer !== reviewer || active.role !== role)
+              throw new Error('Invalid saved review');
+          } catch {
+            status.textContent =
+              'The saved review could not be read. Choose a new reviewer code to avoid overwriting it.';
+            active = undefined;
+            return;
+          }
+          active.snapshot = packet.snapshot;
+          for (const { key, choice, severity, notes } of records) {
+            const entry = active.items[key];
+            choice.value = entry?.decision ?? 'pending';
+            severity.value = entry?.severity ?? '';
+            notes.value = entry?.notes ?? '';
+            choice.disabled = severity.disabled = notes.disabled = false;
+          }
+          byId('export').disabled = false;
+          status.textContent = storageWorks
+            ? `Reviewing as ${reviewer} (${role}). Findings for other versions are preserved in the export.`
+            : 'Browser storage is unavailable. You can review in this tab; export before closing it.';
+          progress();
+        });
+        byId('export').addEventListener('click', () => {
+          const currentKeys = records.map(({ key }) => key);
+          const incomplete = currentKeys.some(
+            (key) =>
+              active.items[key]?.decision === 'change' &&
+              (!active.items[key].severity || !active.items[key].notes.trim()),
+          );
+          if (incomplete) {
+            status.textContent = 'Add a severity and explanation for each change before exporting.';
+            return;
+          }
+          const payload = {
+            ...active,
+            exportedAt: new Date().toISOString(),
+            currentKeys,
+            humanSignOff: 'not implied by export',
+          };
+          const url = URL.createObjectURL(
+            new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }),
+          );
+          const link = node('a');
+          link.href = url;
+          link.download = 'english-m3-findings.json';
+          link.click();
+          URL.revokeObjectURL(url);
+          status.textContent = 'Findings exported. Unchecked items remain pending.';
+        });
+      })();
+    </script>
+  </body>
+</html>

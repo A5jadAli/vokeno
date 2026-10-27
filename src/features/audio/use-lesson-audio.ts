@@ -6,6 +6,8 @@ import { AppState } from 'react-native';
 import { languageDetails, type LanguageTrack } from '@/features/language/config';
 import { markVoice } from '@/features/feedback/sounds';
 import { useLessonSpeech } from '@/features/listening/use-lesson-speech';
+import { useCoachingStore } from '@/features/coaching/store';
+import { castingFor } from './voices';
 
 import * as clipCache from './clip-cache';
 import { findClip, type Clip } from './clips';
@@ -23,7 +25,11 @@ const clips = clipCache.clipsSupported ? clipCache : null;
  * device voice otherwise. Same shape as the device-voice hook, plus `prefetch`.
  */
 export function useLessonAudio(track: LanguageTrack) {
-  const device = useLessonSpeech(languageDetails[track].speechLocale);
+  const reference = useCoachingStore((state) => state.preferences.EN.reference);
+  const locale = track === 'EN' ? reference : languageDetails[track].speechLocale;
+  const device = useLessonSpeech(locale);
+  const { stop: stopDevice, playSequence: playDevice } = device;
+  const focusedLocale = useRef<string | null>(null);
   const token = useRef(0);
   const current = useRef<{ player: AudioPlayer; done: () => void } | null>(null);
   const [phase, setPhase] = useState<Phase>('idle');
@@ -43,21 +49,23 @@ export function useLessonAudio(track: LanguageTrack) {
     token.current += 1;
     halt();
     setPhase('idle');
-    device.stop();
-  }, [device, halt]);
+    stopDevice();
+  }, [stopDevice, halt]);
 
   useFocusEffect(
     useCallback(() => {
+      focusedLocale.current = locale;
       const subscription = AppState.addEventListener('change', (state) => {
         if (state !== 'active') stop();
       });
       return () => {
+        focusedLocale.current = null;
         token.current += 1;
         halt();
         setPhase('idle');
         subscription.remove();
       };
-    }, [halt, stop]),
+    }, [halt, stop, locale]),
   );
 
   /** Plays one clip until the voice stops; false when it was stopped or failed. */
@@ -97,12 +105,23 @@ export function useLessonAudio(track: LanguageTrack) {
       onLine?: (index: number) => void,
       speakers?: (string | undefined)[],
     ) => {
-      const found = lines.map((text, index) => findClip(track, text, speakers?.[index]));
+      if (!lines.length || focusedLocale.current !== locale) return;
+      const found = lines.map((text, index) => findClip(track, text, speakers?.[index], reference));
+      const locales = lines.map((_, index) =>
+        track === 'EN'
+          ? speakers?.[index]
+            ? (castingFor(track, speakers[index]).reference ?? 'en-GB')
+            : reference
+          : locale,
+      );
       // Anything not recorded yet, or the web build: the device voice reads the whole sequence.
-      if (!clips || found.some((clip) => !clip)) return device.playSequence(lines, rate, onLine);
-      device.stop();
       halt();
       const generation = ++token.current;
+      stopDevice();
+      if (!clips || found.some((clip) => !clip)) {
+        setPhase('idle');
+        return playDevice(lines, rate, onLine, locales);
+      }
       setActiveRate(rate);
       setActiveText(lines[0]);
       setPhase(clips.isClipOnDevice(found[0]!.key) ? 'playing' : 'loading');
@@ -119,10 +138,10 @@ export function useLessonAudio(track: LanguageTrack) {
         if (generation !== token.current) return;
         setPhase('idle');
         // Offline before the clip was saved: the device voice still reads it.
-        void device.playSequence(lines, rate, onLine);
+        void playDevice(lines, rate, onLine, locales);
       }
     },
-    [device, halt, playClip, track],
+    [stopDevice, playDevice, halt, playClip, track, reference, locale],
   );
 
   const play = useCallback(
@@ -136,11 +155,11 @@ export function useLessonAudio(track: LanguageTrack) {
     (lines: { text: string; speaker?: string }[], ready = 8) => {
       if (!clips) return;
       const found = lines
-        .map((line) => findClip(track, line.text, line.speaker))
+        .map((line) => findClip(track, line.text, line.speaker, reference))
         .filter((clip): clip is Clip => Boolean(clip));
       void clips.warmClips(found, ready);
     },
-    [track],
+    [track, reference],
   );
 
   const recorded = phase !== 'idle';
@@ -171,7 +190,14 @@ export function prefetchClips(track: LanguageTrack, lines: { text: string; speak
   if (!clips) return;
   void clips.warmClips(
     lines
-      .map((line) => findClip(track, line.text, line.speaker))
+      .map((line) =>
+        findClip(
+          track,
+          line.text,
+          line.speaker,
+          useCoachingStore.getState().preferences.EN.reference,
+        ),
+      )
       .filter((clip): clip is Clip => Boolean(clip)),
     0,
   );

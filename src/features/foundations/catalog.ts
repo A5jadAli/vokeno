@@ -1,4 +1,5 @@
 import { englishLessons } from './english-lessons';
+import { englishA1Units } from './english-a1-units';
 import { germanA1Lessons } from './german-a1';
 import { germanA2Lessons } from './german-a2';
 import { germanB1Lessons } from './german-b1';
@@ -30,6 +31,7 @@ export const germanLessons = [
 ];
 export const foundationLessons: FoundationLesson[] = [
   ...germanLessons,
+  ...englishA1Units,
   ...englishLessons,
   ...spanishA1Units,
   ...spanishA1Lessons,

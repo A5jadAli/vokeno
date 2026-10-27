@@ -30,7 +30,7 @@ import { getProfileDisplayName, getProfileInitials } from '@/features/profile/na
 export const languageAudience: Record<LanguageTrack, string> = {
   DE: 'From your first words',
   ES: 'From your first words',
-  EN: 'For learners heading to B1–C1 and IELTS',
+  EN: 'First conversations, everyday life and work',
 };
 
 /** The same header on every main tab: where you are, which language, and your account. */

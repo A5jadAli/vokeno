@@ -172,6 +172,8 @@ export default function ConversationScreen() {
   const completeUnit = useCoachingStore((state) => state.completeUnit);
   const coachTonePreference = useCoachingStore((state) => state.coachTone);
   const goal = useCoachingStore((state) => state.preferences[track].goal);
+  const englishReference = useCoachingStore((state) => state.preferences.EN.reference);
+  const englishGoal = useCoachingStore((state) => state.preferences.EN.studyGoal);
   const practiceDates = useCoachingStore((state) => state.speakingPracticeDates);
   const recordSpeakingPractice = useCoachingStore((state) => state.recordSpeakingPractice);
   const recordActivity = useCoachingStore((state) => state.recordActivity);
@@ -472,6 +474,8 @@ export default function ConversationScreen() {
       const session = await startRealtimeSession({
         coachTone: activeCoachTone,
         goal,
+        englishReference: track === 'EN' ? englishReference : undefined,
+        englishGoal: track === 'EN' ? englishGoal : undefined,
         onEvent: (event) => {
           if (generationRef.current === generation) handleEvent(event);
         },
@@ -498,7 +502,7 @@ export default function ConversationScreen() {
             if (userTurnIdsRef.current.size >= 2) {
               recordUsage('call_completed', track);
               recordSpeakingPractice(track);
-              recordActivity(`speaking:${unit?.id ?? track}`, track);
+              recordActivity(`speaking:${unitCall?.id ?? unit?.id ?? track}`, track);
               if (unit) completeUnit(unit.id);
             }
           }
@@ -509,7 +513,8 @@ export default function ConversationScreen() {
         signal: startAbort.signal,
         // The learner waits with a closed microphone during the greeting, so keep it short.
         starter: unitCall
-          ? `${unitCallOpening(unitCall)} ${BRIEF_OPENING}`
+          ? unitCallOpening(unitCall, englishReference) +
+            (track === 'EN' ? '' : ` ${BRIEF_OPENING}`)
           : examCard
             ? mode.starter
             : `${mode.starter} ${BRIEF_OPENING}`,
@@ -586,7 +591,7 @@ export default function ConversationScreen() {
     if (userTurnIdsRef.current.size >= 2) {
       recordUsage('call_completed', track);
       recordSpeakingPractice(track);
-      recordActivity(`speaking:${unit?.id ?? track}`, track);
+      recordActivity(`speaking:${unitCall?.id ?? unit?.id ?? track}`, track);
     }
     if (diagnostic) await calculateAssessment();
   };
@@ -1334,7 +1339,7 @@ function ExamCardPanel({ card, active }: { card: SpeakingCard; active: boolean }
   );
 }
 
-/** A talk's level as shown: English shows no A1 or A2, since talks below B1 are the warm-up. */
+/** Use the same level labels as the course, including the English A1 pilot calls. */
 function LevelText({ track, level }: { track: LanguageTrack; level: string }) {
   return <>{contentLevel(track, level)}</>;
 }

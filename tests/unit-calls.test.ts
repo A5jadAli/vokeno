@@ -18,9 +18,9 @@ import {
 describe('lesson-linked unit calls', () => {
   it('belong to real units, each with a character, a twist and several phrases', () => {
     const units = new Set(
-      getTrackLessons('ES').flatMap((lesson) =>
-        lesson.format === 'steps' ? [lesson.unit.id] : [],
-      ),
+      (['ES', 'EN', 'DE'] as const)
+        .flatMap(getTrackLessons)
+        .flatMap((lesson) => (lesson.format === 'steps' ? [lesson.unit.id] : [])),
     );
     for (const call of unitCalls) {
       expect(units.has(call.unitId)).toBe(true);
@@ -54,6 +54,27 @@ describe('lesson-linked unit calls', () => {
     // "quien es" must not match inside "quienes son".
     const used = phrasesUsed(call, ['¿Quienes son tus amigos?']);
     expect(used.find((item) => item.say === '¿Quién es?')?.used).toBe(false);
+  });
+
+  it('counts both endings of a Spanish adjective now that fragments match whole words', () => {
+    const call = getUnitCall('es-a1-u5')!;
+    for (const said of ['Mi hermana es muy simpática.', 'Es simpático.'])
+      expect(
+        phrasesUsed(call, [said]).find((item) => item.say === 'Es simpático. / Es simpática.')
+          ?.used,
+      ).toBe(true);
+  });
+
+  it('counts an English drink correction only when it names the drink', () => {
+    const call = getUnitCall('en-a1-u3')!;
+    const correction = (said: string) =>
+      phrasesUsed(call, [said]).find((item) => item.say === 'No, tea, please.')?.used;
+    expect(correction('No, tea, please.')).toBe(true);
+    expect(correction('No idea, I don’t know.')).toBe(false);
+    expect(
+      phrasesUsed(call, ['Can I get a coffee?']).find((item) => item.say.startsWith('I’d like'))
+        ?.used,
+    ).toBe(true);
   });
 
   it('keeps only corrections and facts the learner’s own words support', () => {
@@ -94,6 +115,15 @@ describe('lesson-linked unit calls', () => {
     const opening = unitCallOpening(getUnitCall('es-a1-u1')!);
     expect(opening).toContain('Speak only Mexican Spanish');
     expect(opening).toContain('A1 beginner');
+  });
+
+  it('preserves the selected English variety in the overriding opening instructions', () => {
+    for (const id of ['en-a1-u1', 'en-a1-u2', 'en-a1-u3']) {
+      expect(unitCallOpening(getUnitCall(id)!, 'en-US')).toContain('Speak only American English');
+      expect(unitCallOpening(getUnitCall(id)!, 'en-GB')).toContain('Speak only British English');
+    }
+    expect(unitCallOpening(getUnitCall('en-a1-u3')!)).toContain('wait for the learner to order');
+    expect(unitCallOpening(getUnitCall('es-a1-u1')!, 'en-US')).toContain('Mexican Spanish');
   });
 
   it('bounds and cleans memory, and labels it as data in the brief', () => {

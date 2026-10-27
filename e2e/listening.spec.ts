@@ -79,7 +79,7 @@ test('opens the live coach and recovers safely when live audio is unavailable', 
   page,
 }) => {
   await page.goto('/conversation?track=EN');
-  await expect(page.getByText('Modern interview English')).toBeVisible();
+  await expect(page.getByText('Everyday and professional English')).toBeVisible();
   // Before a call: the line and Start, with the small print behind "About this call".
   await expect(page.getByText('Live captions', { exact: true })).toHaveCount(0);
   await page.getByLabel('About this call').click();
@@ -240,7 +240,7 @@ test('first run asks for a language, then how much you know', async ({ page }) =
   await expect(
     page.getByRole('heading', { name: 'Which language do you want to learn?' }),
   ).toBeVisible();
-  await expect(page.getByText('For learners heading to B1–C1 and IELTS')).toBeVisible();
+  await expect(page.getByText('First conversations, everyday life and work')).toBeVisible();
   await page.getByRole('radio', { name: /^German\./ }).click();
   await page.getByRole('button', { name: 'Continue with German' }).click();
   await expect(page).toHaveURL(/\/learning-plan$/);

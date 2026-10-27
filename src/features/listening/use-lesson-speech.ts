@@ -11,7 +11,7 @@ export function useLessonSpeech(language: string) {
   const token = useRef(0);
   const focused = useRef<string | null>(null);
   const startupTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const voiceRequest = useRef<Promise<Speech.Voice | undefined> | null>(null);
+  const voiceRequest = useRef<Promise<Speech.Voice[]> | null>(null);
   const [phase, setPhase] = useState<Phase>('idle');
   const [activeText, setActiveText] = useState('');
   const [activeRate, setActiveRate] = useState(0.82);
@@ -37,24 +37,16 @@ export function useLessonSpeech(language: string) {
       new Promise<never>((_, reject) => {
         timer = setTimeout(() => reject(new Error('Voice loading timed out')), 4000);
       }),
-    ])
-      .then((voices) => {
-        const normalise = (value: string) => value.toLowerCase().replace(/_/g, '-');
-        return (
-          voices.find((voice) => normalise(voice.language) === normalise(language)) ??
-          voices.find((voice) => normalise(voice.language).split('-')[0] === language.slice(0, 2))
-        );
-      })
-      .finally(() => clearTimeout(timer));
+    ]).finally(() => clearTimeout(timer));
     voiceRequest.current = request;
     const invalidate = () => {
       if (voiceRequest.current === request) voiceRequest.current = null;
     };
     void request.then((voice) => {
-      if (!voice) invalidate();
+      if (!voice.length) invalidate();
     }, invalidate);
     return request;
-  }, [language]);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -74,7 +66,12 @@ export function useLessonSpeech(language: string) {
   );
 
   const playSequence = useCallback(
-    async (lines: string[], rate = 0.82, onLine?: (index: number) => void) => {
+    async (
+      lines: string[],
+      rate = 0.82,
+      onLine?: (index: number) => void,
+      languages?: string[],
+    ) => {
       if (
         !lines.length ||
         focused.current !== language ||
@@ -100,19 +97,31 @@ export function useLessonSpeech(language: string) {
       try {
         await Speech.stop();
         if (!current()) return;
-        const voice = await loadVoice();
+        const available = await loadVoice();
+        const normalise = (value: string) => value.toLowerCase().replace(/_/g, '-');
+        const locales = lines.map((_, index) => languages?.[index] ?? language);
+        const voices = locales.map(
+          (locale) =>
+            available.find((voice) => normalise(voice.language) === normalise(locale)) ??
+            // Do not present another English variety as the selected model.
+            (!locale.startsWith('en-')
+              ? available.find(
+                  (voice) => normalise(voice.language).split('-')[0] === locale.slice(0, 2),
+                )
+              : undefined),
+        );
         if (!current()) return;
-        if (!voice) {
+        if (voices.some((voice) => !voice)) {
           stop();
           setError(
-            'A voice for this language is not available yet. Try audio again, or enable that language in your device speech settings. You can continue with the text.',
+            'A voice for this language or English variety is not available yet. Try audio again, or enable that language in your device speech settings. You can continue with the text.',
           );
           return;
         }
         lines.forEach((text, index) =>
           Speech.speak(text, {
-            language,
-            voice: voice.identifier,
+            language: locales[index],
+            voice: voices[index]!.identifier,
             rate,
             onStart: () => {
               if (current()) {

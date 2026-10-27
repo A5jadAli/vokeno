@@ -5,7 +5,8 @@
 import type { LanguageTrack } from '@/features/language/config';
 
 import manifest from './clips.json';
-import { castingFor, nativeDirection, type Casting } from './voices';
+import { americanDirection, castingFor, nativeDirection, type Casting } from './voices';
+import type { EnglishReference } from '../../../supabase/functions/_shared/english-reference';
 
 function fnv(text: string, seed: number) {
   let hash = seed;
@@ -20,13 +21,22 @@ function fnv(text: string, seed: number) {
 export const spokenForm = (text: string) => text.normalize('NFC').trim().replace(/\s+/g, ' ');
 
 export function clipKey(track: LanguageTrack, text: string, casting: Casting) {
-  const source = [track, casting.voice, casting.direction, spokenForm(text)].join('|');
+  // Legacy British/German/Spanish keys stay valid. New regional casts include the full
+  // instruction, so changing an accent direction cannot silently reuse another recording.
+  const source = [
+    track,
+    casting.voice,
+    casting.reference
+      ? `v2:${casting.reference}:${fullDirection(track, casting)}`
+      : casting.direction,
+    spokenForm(text),
+  ].join('|');
   return `${fnv(source, 0x811c9dc5)}${fnv(source, 0x01000193)}`;
 }
 
 /** Everything the voice is told: the language's native direction, then the character's. */
 export const fullDirection = (track: LanguageTrack, casting: Casting) =>
-  `${nativeDirection[track]} ${casting.direction}`;
+  `${track === 'EN' && casting.reference === 'en-US' ? americanDirection : nativeDirection[track]} ${casting.direction}`;
 
 // Each recorded clip, with the second at which the voice stops (the files end in silence).
 const recorded: Record<string, number> = manifest.clips;
@@ -39,8 +49,13 @@ export const AUDIO_BUCKET = 'lesson-audio';
 export const LOUDNESS_FOLDER = 'n1';
 
 /** The clip for a line, if one has been recorded. */
-export function findClip(track: LanguageTrack, text: string, speaker?: string) {
-  const key = clipKey(track, text, castingFor(track, speaker));
+export function findClip(
+  track: LanguageTrack,
+  text: string,
+  speaker?: string,
+  reference?: EnglishReference,
+) {
+  const key = clipKey(track, text, castingFor(track, speaker, reference));
   if (!(key in recorded)) return undefined;
   const base = process.env.EXPO_PUBLIC_SUPABASE_URL;
   if (!base) return undefined;

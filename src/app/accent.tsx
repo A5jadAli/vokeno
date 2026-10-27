@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { type Href, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, Eyebrow, HeaderBack } from '@/components/voka-ui';
@@ -17,6 +17,12 @@ import { speakingGoalCopy, type SpeakingGoal, useCoachingStore } from '@/feature
 import { useSelectedLanguage } from '@/features/language/selection';
 import { trackColors } from '@/features/language/config';
 import { LanguageSwitch } from '@/components/language-switch';
+import { ActionRow } from '@/components/lesson-ui';
+import {
+  englishGoalLabels,
+  englishReferenceLabel,
+  englishReferences,
+} from '../../supabase/functions/_shared/english-reference';
 
 const goals = Object.keys(speakingGoalCopy) as SpeakingGoal[];
 
@@ -26,6 +32,7 @@ export default function AccentScreen() {
   const preferences = useCoachingStore((state) => state.preferences);
   const hasHydrated = useCoachingStore((state) => state.hasHydrated);
   const setGoal = useCoachingStore((state) => state.setGoal);
+  const setEnglishReference = useCoachingStore((state) => state.setEnglishReference);
 
   if (!hasHydrated) {
     return (
@@ -65,14 +72,14 @@ export default function AccentScreen() {
           <View style={styles.referenceCopy}>
             <Text style={styles.referenceTitle}>
               {track === 'EN'
-                ? 'Contemporary British reference'
+                ? `${englishReferenceLabel[preferences.EN.reference]} model`
                 : track === 'DE'
                   ? 'Standard German reference'
                   : 'Everyday Mexican Spanish reference'}
             </Text>
             <Text style={styles.referenceText}>
               {track === 'EN'
-                ? 'Widely understood modern British speech, including connected speech and current phrases, never a named person’s voice.'
+                ? 'Your coach and model phrases use this choice. Scene characters keep their own accents. Browser and offline audio depend on the voices installed on your device.'
                 : track === 'DE'
                   ? 'Widely understood German from Germany, while recognising natural reductions and regional variation.'
                   : 'Clear everyday speech from Mexico, with notes about other common Spanish varieties. Your own accent is welcome.'}
@@ -80,9 +87,30 @@ export default function AccentScreen() {
           </View>
         </View>
 
+        {track === 'EN' ? (
+          <View style={styles.goalList}>
+            {englishReferences.map((reference) => (
+              <ActionRow
+                key={reference}
+                title={englishReferenceLabel[reference]}
+                choice
+                selected={preferences.EN.reference === reference}
+                onPress={() => setEnglishReference(reference)}
+              />
+            ))}
+          </View>
+        ) : null}
+
         <Eyebrow>What are you preparing for?</Eyebrow>
+        {track === 'EN' ? (
+          <ActionRow
+            title={englishGoalLabels[preferences.EN.studyGoal ?? preferences.EN.goal]}
+            subtitle="Change your learning goal"
+            onPress={() => router.push('/learning-plan?track=EN' as Href)}
+          />
+        ) : null}
         <View style={styles.goalList}>
-          {goals.map((goal) => {
+          {(track === 'EN' ? [] : goals).map((goal) => {
             const selected = preferences[track].goal === goal;
             return (
               <Pressable

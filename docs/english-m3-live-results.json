@@ -1,0 +1,360 @@
+{
+  "startedAt": "2026-10-27T05:21:22.505Z",
+  "method": "Live WebRTC output with synthetic text input. No human microphone, accent or learning-outcome validation.",
+  "unitCallSourceSha256": "f0e4783eb6c5deff2ce5189f203cb58824df2bf1fbc5a96642e009dc75fb2cb9",
+  "cases": [
+    {
+      "reference": "en-GB",
+      "callId": "en-a1-u1",
+      "turns": [
+        {
+          "role": "assistant",
+          "text": "Hello. I’m Robin. What’s your name?"
+        },
+        {
+          "role": "user",
+          "text": "Hi, I'm Sam. What's your name?"
+        },
+        {
+          "role": "assistant",
+          "text": "I’m Robin. Please say that again."
+        },
+        {
+          "role": "user",
+          "text": "Please say that again."
+        },
+        {
+          "role": "assistant",
+          "text": "I’m Robin. Nice to meet you, Sam. Ready to say bye?"
+        },
+        {
+          "role": "user",
+          "text": "Sam. Nice to meet you. Bye."
+        },
+        {
+          "role": "assistant",
+          "text": "Bye, Sam. Nice to meet you."
+        }
+      ],
+      "checks": {
+        "selectedModel": true,
+        "unitScope": true,
+        "audioBytesReceived": 112145,
+        "recordingDuration": 19.38,
+        "recordingPeak": 0.5472311973571777,
+        "totalAudioEnergy": 0.6111782475900401,
+        "totalSamplesReceived": 899520,
+        "recordingBytes": 274809,
+        "serverHangup": true,
+        "falseCorrectionCount": 0,
+        "syntheticGuestDeleted": true
+      },
+      "status": "integration passed; human listening pending",
+      "recording": "en-a1-u1-en-GB.webm",
+      "review": {
+        "corrections": [],
+        "tip": "For the /m/ sound in \"Sam\", close your lips and let the air flow through your nose.",
+        "facts": ["Is called Sam"],
+        "callId": "en-a1-u1",
+        "createdAt": "2026-10-27T05:21:54.770Z"
+      }
+    },
+    {
+      "reference": "en-GB",
+      "callId": "en-a1-u2",
+      "turns": [
+        {
+          "role": "assistant",
+          "text": "Hello. I’m Robin. What’s your name?"
+        },
+        {
+          "role": "user",
+          "text": "I'm Sam. I'm from London."
+        },
+        {
+          "role": "assistant",
+          "text": "Nice to meet you, Sam. Where do you live now?"
+        },
+        {
+          "role": "user",
+          "text": "I live in Boston."
+        },
+        {
+          "role": "assistant",
+          "text": "You live in London?"
+        },
+        {
+          "role": "user",
+          "text": "No, I live in Boston. I work in a store. Where do you live?"
+        },
+        {
+          "role": "assistant",
+          "text": "Right, Boston, got it.\n\nI live in London. Nice talking with you, Sam. Bye!"
+        }
+      ],
+      "checks": {
+        "selectedModel": true,
+        "unitScope": true,
+        "audioBytesReceived": 123296,
+        "recordingDuration": 20.64,
+        "recordingPeak": 0.6322661638259888,
+        "totalAudioEnergy": 0.7115609185535376,
+        "totalSamplesReceived": 955200,
+        "recordingBytes": 291665,
+        "serverHangup": true,
+        "falseCorrectionCount": 0,
+        "syntheticGuestDeleted": true
+      },
+      "status": "integration passed; human listening pending",
+      "recording": "en-a1-u2-en-GB.webm",
+      "review": {
+        "corrections": [],
+        "tip": "For the \"v\" in \"live\", touch your lower lip to your upper teeth and use your voice.",
+        "facts": ["Is from London", "Lives in Boston", "Works in a store"],
+        "callId": "en-a1-u2",
+        "createdAt": "2026-10-27T05:22:28.995Z"
+      }
+    },
+    {
+      "reference": "en-GB",
+      "callId": "en-a1-u3",
+      "turns": [
+        {
+          "role": "assistant",
+          "text": "Hello."
+        },
+        {
+          "role": "user",
+          "text": "Could I have a tea, please?"
+        },
+        {
+          "role": "assistant",
+          "text": "Coffee?"
+        },
+        {
+          "role": "user",
+          "text": "No, tea, please."
+        },
+        {
+          "role": "assistant",
+          "text": "Got it, tea. To have here or take away?"
+        },
+        {
+          "role": "user",
+          "text": "To go, please."
+        },
+        {
+          "role": "assistant",
+          "text": "Thanks. Tea to go. Have a nice day."
+        },
+        {
+          "role": "user",
+          "text": "Thanks. Bye."
+        },
+        {
+          "role": "assistant",
+          "text": "Bye. Thanks again, and have a great day."
+        }
+      ],
+      "checks": {
+        "selectedModel": true,
+        "unitScope": true,
+        "audioBytesReceived": 105319,
+        "recordingDuration": 18.36,
+        "recordingPeak": 0.6927058100700378,
+        "totalAudioEnergy": 0.5843852970380665,
+        "totalSamplesReceived": 845760,
+        "recordingBytes": 253893,
+        "serverHangup": true,
+        "falseCorrectionCount": 0,
+        "syntheticGuestDeleted": true
+      },
+      "status": "integration passed; human listening pending",
+      "recording": "en-a1-u3-en-GB.webm",
+      "review": {
+        "corrections": [],
+        "tip": "For the 'th' in 'thanks', put your tongue lightly between your teeth and blow air.",
+        "facts": [],
+        "callId": "en-a1-u3",
+        "createdAt": "2026-10-27T05:23:04.270Z"
+      }
+    },
+    {
+      "reference": "en-US",
+      "callId": "en-a1-u1",
+      "turns": [
+        {
+          "role": "assistant",
+          "text": "Hello. I’m Robin. What’s your name?"
+        },
+        {
+          "role": "user",
+          "text": "Hi, I'm Sam. What's your name?"
+        },
+        {
+          "role": "assistant",
+          "text": "I’m Robin. Nice to meet you. Please say that again."
+        },
+        {
+          "role": "user",
+          "text": "Please say that again."
+        },
+        {
+          "role": "assistant",
+          "text": "I’m Robin. Please say your name again."
+        },
+        {
+          "role": "user",
+          "text": "Sam. Nice to meet you. Bye."
+        },
+        {
+          "role": "assistant",
+          "text": "Nice to meet you, Sam. Bye."
+        }
+      ],
+      "checks": {
+        "selectedModel": true,
+        "unitScope": true,
+        "audioBytesReceived": 112657,
+        "recordingDuration": 20.22,
+        "recordingPeak": 0.7520819902420044,
+        "totalAudioEnergy": 0.8285030935520596,
+        "totalSamplesReceived": 934080,
+        "recordingBytes": 279175,
+        "serverHangup": true,
+        "falseCorrectionCount": 0,
+        "syntheticGuestDeleted": true
+      },
+      "status": "integration passed; human listening pending",
+      "recording": "en-a1-u1-en-US.webm",
+      "review": {
+        "corrections": [],
+        "tip": "For the /m/ sound in \"Sam\", close your lips and let air flow through your nose.",
+        "facts": ["Is called Sam"],
+        "callId": "en-a1-u1",
+        "createdAt": "2026-10-27T05:23:37.475Z"
+      }
+    },
+    {
+      "reference": "en-US",
+      "callId": "en-a1-u2",
+      "turns": [
+        {
+          "role": "assistant",
+          "text": "Hello. I’m Robin. What’s your name?"
+        },
+        {
+          "role": "user",
+          "text": "I'm Sam. I'm from London."
+        },
+        {
+          "role": "assistant",
+          "text": "Nice to meet you, Sam. Where do you live now?"
+        },
+        {
+          "role": "user",
+          "text": "I live in Boston."
+        },
+        {
+          "role": "assistant",
+          "text": "You live in London?"
+        },
+        {
+          "role": "user",
+          "text": "No, I live in Boston. I work in a store. Where do you live?"
+        },
+        {
+          "role": "assistant",
+          "text": "Got it, thanks for correcting me. I live in London, and I’m a student.\n\nNice talking with you, Sam. Bye!"
+        }
+      ],
+      "checks": {
+        "selectedModel": true,
+        "unitScope": true,
+        "audioBytesReceived": 131202,
+        "recordingDuration": 21.42,
+        "recordingPeak": 0.8130015134811401,
+        "totalAudioEnergy": 0.8406586550594818,
+        "totalSamplesReceived": 1000800,
+        "recordingBytes": 307447,
+        "serverHangup": true,
+        "falseCorrectionCount": 0,
+        "syntheticGuestDeleted": true
+      },
+      "status": "integration passed; human listening pending",
+      "recording": "en-a1-u2-en-US.webm",
+      "review": {
+        "corrections": [],
+        "tip": "For the \"v\" in \"live\", touch your lower lip to your upper teeth and use your voice.",
+        "facts": ["Is from London", "Lives in Boston", "Works in a store"],
+        "callId": "en-a1-u2",
+        "createdAt": "2026-10-27T05:24:07.371Z"
+      }
+    },
+    {
+      "reference": "en-US",
+      "callId": "en-a1-u3",
+      "turns": [
+        {
+          "role": "assistant",
+          "text": "Hello."
+        },
+        {
+          "role": "user",
+          "text": "Could I have a tea, please?"
+        },
+        {
+          "role": "assistant",
+          "text": "Coffee?"
+        },
+        {
+          "role": "user",
+          "text": "No, tea, please."
+        },
+        {
+          "role": "assistant",
+          "text": "Got it—tea. For here or to go?"
+        },
+        {
+          "role": "user",
+          "text": "To take away, please."
+        },
+        {
+          "role": "assistant",
+          "text": "Tea to take away. Thanks. Have a nice day."
+        },
+        {
+          "role": "user",
+          "text": "Thanks. Bye."
+        },
+        {
+          "role": "assistant",
+          "text": "Bye. Thanks, and have a nice day."
+        }
+      ],
+      "checks": {
+        "selectedModel": true,
+        "unitScope": true,
+        "audioBytesReceived": 102769,
+        "recordingDuration": 17.64,
+        "recordingPeak": 0.49985888600349426,
+        "totalAudioEnergy": 0.5095400039424746,
+        "totalSamplesReceived": 813120,
+        "recordingBytes": 247013,
+        "serverHangup": true,
+        "falseCorrectionCount": 0,
+        "syntheticGuestDeleted": true
+      },
+      "status": "integration passed; human listening pending",
+      "recording": "en-a1-u3-en-US.webm",
+      "review": {
+        "corrections": [],
+        "tip": "For the “th” in “thanks”, put your tongue tip lightly between your teeth and blow air without using your voice.",
+        "facts": [],
+        "callId": "en-a1-u3",
+        "createdAt": "2026-10-27T05:24:39.990Z"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-27T05:24:41.490Z"
+}

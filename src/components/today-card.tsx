@@ -102,7 +102,7 @@ export function TodayCard({
 
   return (
     <PrimaryAccent colors={colors}>
-      {milestone ? (
+      {milestone && !plan.position.waitingForContent ? (
         <Animated.View
           entering={FadeInDown.duration(260)}
           style={[styles.milestone, { backgroundColor: colors.tint }]}
@@ -137,9 +137,9 @@ export function TodayCard({
       {/* The goal sets the pace when there is one; otherwise a word on the habit. */}
       {goal ? (
         <GoalCard goal={goal} track={track} />
-      ) : (
+      ) : !allDone || !plan.position.waitingForContent ? (
         <Text style={styles.intro}>{plan.footnote}</Text>
-      )}
+      ) : null}
 
       {current ? (
         <Focus step={current} track={track} progress={progress} onOpen={() => open(current)} />
@@ -155,9 +155,11 @@ export function TodayCard({
             Today’s session is done
           </Text>
           <Text style={styles.lead}>
-            {plan.courseFinished
-              ? `You have finished every ${languageDetails[track].name} lesson available so far. Keep it fresh with review and practice.`
-              : 'That’s all for today. See you tomorrow.'}
+            {plan.position.waitingForContent
+              ? 'Three A1 units finished. More are coming. Keep practising with review and unit calls.'
+              : plan.courseFinished
+                ? `You have finished every ${languageDetails[track].name} lesson available so far. Keep it fresh with review and practice.`
+                : 'That’s all for today. See you tomorrow.'}
           </Text>
           {plan.bonus ? (
             <Pressable
@@ -176,7 +178,9 @@ export function TodayCard({
               <MaterialCommunityIcons color={Palette.muted} name="chevron-right" size={22} />
             </Pressable>
           ) : null}
-          {!goal && plan.position.finishedLessons >= 2 ? <GoalPrompt /> : null}
+          {!goal && !plan.position.waitingForContent && plan.position.finishedLessons >= 2 ? (
+            <GoalPrompt />
+          ) : null}
           {!reminderAsked && remindersSupported ? (
             <View style={styles.intention}>
               <Text style={styles.intentionTitle}>When will you practise tomorrow?</Text>

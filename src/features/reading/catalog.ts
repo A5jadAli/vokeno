@@ -108,10 +108,11 @@ export const readingLessons = [
         explanation: '“In most of these districts, students slept longer” matches the statement.',
       },
       {
-        prompt: 'Statement: Exam results improved in every school that changed its start time.',
+        prompt: 'Statement: The effects on exam results were the same in every school.',
         options: ['True', 'False', 'Not Given'],
         answer: 1,
-        explanation: 'The effects “varied between schools”, which contradicts “every school”.',
+        explanation:
+          '“Varied between schools” directly contradicts “the same in every school”. It does not tell us which schools improved or by how much.',
       },
       {
         prompt: 'Statement: Most parents supported the later start time.',

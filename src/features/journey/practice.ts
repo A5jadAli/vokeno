@@ -11,17 +11,20 @@ const levels = ['A1', 'A2', 'B1', 'B2', 'C1'] as const;
 const rank = (level: string) => levels.indexOf(level as (typeof levels)[number]);
 
 /**
- * Items at the learner's level: from the course's first level (B1 for English) up to theirs.
- * Below the range is a warm-up, so it only fills in when nothing in range exists; then
- * anything at or below their level, then everything.
+ * Items at the learner's level: from the course's first level up to theirs. Below the range is
+ * a warm-up, so it only fills in when nothing in range exists; then anything at or below their
+ * level, then everything. English prefers the current level and never fills a beginner's empty
+ * pool with harder material: its A1 pilot sits under an older A2 to C1 library.
  */
 function atLevel<T extends { level: string }>(all: T[], track: LanguageTrack, level: LessonLevel) {
   const top = Math.max(0, rank(level));
   const floor = rank(levelRange[track][0]);
+  const same = all.filter((item) => rank(item.level) === top);
+  if (track === 'EN' && same.length) return same;
   const inRange = all.filter((item) => rank(item.level) >= floor && rank(item.level) <= top);
   if (inRange.length) return inRange;
   const below = all.filter((item) => rank(item.level) <= top);
-  return below.length ? below : all;
+  return below.length || track === 'EN' ? below : all;
 }
 
 /** Dialogues at the learner's level. */

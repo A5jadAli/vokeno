@@ -126,6 +126,11 @@ test('starting ability and exam goal change the recommended practice', async ({ 
     page.getByRole('radio', { name: 'IELTS General Training', exact: true }),
   ).toBeChecked();
   await page.getByRole('button', { name: /^Start: / }).click();
+  // An exam goal must not skip the foundation a beginner still needs.
+  await expect(page).toHaveURL(/\/foundation\/en-a1-u1-meet$/);
+  await page.goto('/learning-plan?track=EN');
+  await page.getByRole('radio', { name: 'I can already have a simple conversation' }).click();
+  await page.getByRole('button', { name: /^Start: / }).click();
   await expect(page).toHaveURL(/\/foundation\/en-ielts-listening$/);
 });
 test('reading gives correction, records completion and offers the next text', async ({ page }) => {

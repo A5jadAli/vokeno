@@ -36,6 +36,86 @@ const phrase = (say: string, ...match: string[]): UnitCallPhrase => ({ say, matc
 
 export const unitCalls: UnitCall[] = [
   {
+    id: 'en-a1-u1',
+    track: 'EN',
+    unitId: 'en-a1-u1',
+    unitNumber: 1,
+    level: 'A1',
+    title: 'Meet a classmate',
+    character: 'Robin',
+    persona:
+      'Robin, a friendly classmate speaking the learner’s selected American or British English model.',
+    scene:
+      'Meet the learner at a class. Only greetings, names, repetition and a goodbye are needed.',
+    learnerGoal: 'Greet Robin, give any real or fictional name, ask Robin’s name and close.',
+    twist:
+      'Ask the learner to say their name again once, using Sorry, can you say that again? Repeat your own name clearly if asked. Do not introduce spelling, home or work questions.',
+    phrases: [
+      phrase('Hello. / Hi.', 'hello', 'hi'),
+      phrase('I’m… / I am…', 'im', 'i am', 'my name is'),
+      phrase('What’s your name?', 'whats your name', 'what is your name'),
+      phrase('Nice to meet you.', 'nice to meet you', 'you too'),
+      phrase('Sorry, can you say that again?', 'say that again', 'repeat', 'pardon', 'sorry'),
+      phrase('Bye.', 'bye', 'goodbye'),
+    ],
+  },
+  {
+    id: 'en-a1-u2',
+    track: 'EN',
+    unitId: 'en-a1-u2',
+    unitNumber: 2,
+    level: 'A1',
+    title: 'A little about you',
+    character: 'Robin',
+    persona:
+      'Robin, a friendly classmate speaking the learner’s selected American or British English model.',
+    scene:
+      'Chat during a break at class. Ask name, origin and home one at a time. Offer a fictional profile if needed: Alex, from Boston, living in London, a student.',
+    learnerGoal:
+      'Exchange simple information about origin, home and work or study, and ask one question back.',
+    twist:
+      'After hearing a home city, check a different city using You live in London? or You live in Boston? Wait for a correction. Do not request an address, nationality vocabulary or a long job description.',
+    phrases: [
+      phrase('I’m from…', 'im from', 'i am from'),
+      phrase('I live in…', 'i live in'),
+      phrase('Where are you from?', 'where are you from'),
+      phrase('Where do you live?', 'where do you live'),
+      phrase('I’m a student. / I work in…', 'im a student', 'i am a student', 'i work'),
+      phrase('Sorry, can you say that again?', 'say that again', 'repeat', 'pardon', 'sorry'),
+    ],
+  },
+  {
+    id: 'en-a1-u3',
+    track: 'EN',
+    unitId: 'en-a1-u3',
+    unitNumber: 3,
+    level: 'A1',
+    title: 'Order and check a drink',
+    character: 'Robin',
+    addressedAs: 'the server',
+    persona:
+      'Robin, a friendly cafe server speaking the learner’s selected American or British English model.',
+    scene:
+      'A cafe offers coffee, tea and water. Greet the learner, then wait for their order. Keep the drink and here/takeaway choice as separate turns. Prices and payment are outside this unit.',
+    learnerGoal: 'Order a drink, choose here or takeaway and correct a misheard drink.',
+    twist:
+      'Once, check the wrong drink with Coffee? or Tea? Wait for the learner’s correction, then confirm the corrected order. For the service choice use For here or to go? with the American model, or To have here or take away? with the British model. Accept either reply and other clear requests, including Could I have…?',
+    phrases: [
+      phrase(
+        'I’d like… / Could I have…?',
+        'id like',
+        'i would like',
+        'could i have',
+        'can i have',
+        'can i get',
+      ),
+      phrase('Coffee / tea / water', 'coffee', 'tea', 'water'),
+      phrase('Please. / Thanks.', 'please', 'thanks', 'thank you'),
+      phrase('For here. / To go. / To take away.', 'for here', 'to go', 'take away', 'takeaway'),
+      phrase('No, tea, please.', 'no tea', 'no coffee', 'no water', 'sorry tea', 'sorry coffee'),
+    ],
+  },
+  {
     id: 'es-a1-u1',
     track: 'ES',
     unitId: 'es-a1-u1',
@@ -141,7 +221,7 @@ export const unitCalls: UnitCall[] = [
     phrases: [
       phrase('Es mi…', 'es mi', 'son mis'),
       phrase('Se llama…', 'se llama'),
-      phrase('Es simpático. / Es simpática.', 'simpatic', 'alto', 'alta', 'amable'),
+      phrase('Es simpático. / Es simpática.', 'simpatico', 'simpatica', 'alto', 'alta', 'amable'),
       phrase('¿Quién es?', 'quien es'),
       phrase('¿Cuántos hermanos tienes?', 'cuantos hermanos', 'tienes hermanos'),
     ],
@@ -180,7 +260,8 @@ export function normaliseSpeech(text: string) {
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
     .toLowerCase()
-    .replace(/[¿?¡!.;:"“”()]/g, ' ')
+    .replace(/['’]/g, '')
+    .replace(/[¿?¡!.,;:"“”()]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()} `;
 }
@@ -219,7 +300,15 @@ export function groundReview(review: RawReview, learnerTurns: string[]) {
 }
 
 /** The first thing the character says. It must name the language: it replaces the call brief. */
-export function unitCallOpening(call: UnitCall) {
+export function unitCallOpening(call: UnitCall, reference: 'en-GB' | 'en-US' = 'en-GB') {
+  if (call.track === 'EN') {
+    const language = reference === 'en-US' ? 'American English' : 'British English';
+    const firstTurn =
+      call.id === 'en-a1-u3'
+        ? 'Your entire first turn is exactly: Hello. Then stop and wait for the learner to order. No question, welcome, name or extra words.'
+        : 'Your entire first turn is exactly: Hello. I’m Robin. What’s your name? Then stop and wait.';
+    return `Speak only ${language}, slowly and simply for an A1 beginner. Play ${call.persona} Scene: ${call.scene} ${firstTurn}`;
+  }
   const language =
     call.track === 'ES' ? 'Mexican Spanish' : call.track === 'DE' ? 'German' : 'English';
   return `Speak only ${language}, slowly and simply for an ${call.level} beginner. Start the scene now as ${call.character}: ${call.scene} Greet the learner in character in one short sentence and ask your first question.`;
@@ -230,8 +319,9 @@ export function phrasesUsed(call: UnitCall, learnerTurns: string[]) {
   const said = normaliseSpeech(learnerTurns.join(' . '));
   return call.phrases.map((item) => ({
     ...item,
-    // Fragments start at a word boundary: " sin " must not match inside "casi no".
-    used: item.match.some((fragment) => said.includes(` ${fragment}`)),
+    // Whole words only: "hi" must not match "history"; punctuation and apostrophe style
+    // come from the transcriber, not the learner.
+    used: item.match.some((fragment) => said.includes(normaliseSpeech(fragment))),
   }));
 }
 
@@ -270,10 +360,18 @@ export function unitCallBrief(call: UnitCall, memory: CoachMemory) {
     `This is a three-minute practice call right after the learner finished Unit ${call.unitNumber} of their A1 course. Play ${call.persona} Scene: ${call.scene} The learner’s goal: ${call.learnerGoal}`,
     `Steer the conversation so the learner gets a natural reason to say each of these, in any order: ${call.phrases.map((p) => p.say).join(' | ')}. Never ask them to repeat a list or read phrases aloud; create situations instead. Stay within the language of the course so far; a little extra is fine if you make the meaning clear.`,
     `Twist: ${call.twist}`,
-    'Corrections are on, because the learner is a beginner. After the learner speaks, reply naturally first. If they made an error that matters, add one short, friendly correction in Spanish with the right form (for example “Casi: se dice ‘sin azúcar’”), then carry on. At most one correction per turn; never correct accent alone, and never interrupt to correct.',
+    call.track === 'EN'
+      ? 'This is supported practice, not an assessment. Reply to the meaning first. If an error blocks meaning, give one brief model in simple English and invite a retry. Accept clear short replies, contractions and valid American/British alternatives. Do not correct accent alone or demand every target phrase. Teach no new essential language during the twist. Once the goal and one changed detail have been handled, close naturally; do not fill three minutes with new questions. Do not introduce questions about likes, hobbies, reasons or routines in these first three units unless the learner introduces them. Use only the stated scene and supplied language for questions the learner must answer.'
+      : 'Corrections are on, because the learner is a beginner. After the learner speaks, reply naturally first. If they made an error that matters, add one short, friendly correction in the target language with the right form, then carry on. At most one correction per turn; never correct accent alone, and never interrupt to correct.',
     remembered,
     slips,
     'Speak slowly and clearly in short sentences. Wait for the learner; if they are stuck for a few seconds, offer two choices they can pick from. After about two and a half minutes, start wrapping up with a friendly goodbye that fits the scene.',
+    call.track === 'EN'
+      ? 'Final turn rules for this English pilot: ask at most ONE question per turn, then STOP. Do not answer your own question or give the model answer before the learner tries. Offer a model only when the learner asks for help or has failed to convey the same detail twice. The deliberate wrong confirmation must be a single question, followed by silence for the learner to correct it. After their correction, acknowledge it; do not immediately add another task. Answer a question the learner asks before requesting anything else. Keep each turn short, usually under 15 words. Once the task is handled, say a simple goodbye using taught language. Do not add a new topic, a long explanation, a recap, or idioms to fill time.'
+      : '',
+    call.id === 'en-a1-u2'
+      ? 'Unit 2 sequence: ask a name, origin and current home only if not already given, one question per turn. Check the home once with the wrong city. Wait for the correction without providing it. Answer a question asked back, then close. Accept work or study information if volunteered; do not add another question about work, reasons or preferences.'
+      : '',
   ]
     .filter(Boolean)
     .join('\n\n');

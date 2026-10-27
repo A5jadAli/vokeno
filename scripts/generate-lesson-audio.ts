@@ -50,7 +50,7 @@ const save = () => {
 
 const todo = new Map<string, { key: string; text: string; voice: string; instructions: string }>();
 for (const line of spokenLines()) {
-  const casting = castingFor(line.track, line.speaker);
+  const casting = castingFor(line.track, line.speaker, line.reference);
   const key = clipKey(line.track, line.text, casting);
   if (done.has(key) || todo.has(key)) continue;
   todo.set(key, {

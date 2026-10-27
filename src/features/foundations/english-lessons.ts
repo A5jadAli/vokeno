@@ -22,12 +22,12 @@ export const englishLessons = defineLessons('EN', [
       [
         'think, sink',
         '/θ/ vs /s/',
-        'Tongue lightly between the teeth, then blow. Getting this slightly wrong is less of a problem than vowel length or stress.',
+        'Put your tongue lightly between your teeth and let air pass for think. For sink, keep your tongue behind your teeth. Practise the contrast when it changes the word your listener hears.',
       ],
       [
         'PHOtograph, phoTOgraphy, photoGRAPHic',
         'word stress moves',
-        'Wrong stress confuses listeners more than an accent does.',
+        'Stress helps listeners recognise words. Keep the stressed syllable clear; you do not need to lose your accent.',
       ],
       [
         'walked (1), played (1), wanted (2)',
@@ -41,9 +41,9 @@ export const englishLessons = defineLessons('EN', [
       ],
     ],
     notice:
-      'Research on English as a global language shows that people understand each other mostly through vowel length, consonant clusters and stress, not through a British or American accent. Aim to be easy to understand, not to sound like someone else.',
+      'Aim to be easy to understand. Vowel quality and length, consonants, stress and context all help listeners recognise words. Which contrast needs practice depends on you and your listener. British and American models are both useful; neither is the only correct accent.',
     pronunciation:
-      'Unstressed syllables shrink to a quick “uh” (schwa): baNAna sounds like buh-NAH-nuh. Mastering schwa makes your rhythm sound natural quickly.',
+      'Many unstressed vowels become a short, relaxed “uh” sound called schwa. Listen to the first and last vowels in banana. The stressed middle vowel differs between British and American models. Practise one short phrase at a time.',
     checks: [
       {
         prompt: 'Listen. Which word did you hear?',
@@ -91,7 +91,7 @@ export const englishLessons = defineLessons('EN', [
       [
         'How’s your week been?',
         'How has your week been?',
-        'More natural than “How are you?” with people you know a little.',
+        'A way to invite more detail from someone you know. “How are you?” is also natural.',
       ],
       [
         'Not bad, actually. Pretty busy.',
@@ -155,8 +155,10 @@ export const englishLessons = defineLessons('EN', [
       },
     ],
     writing: {
-      prompt: 'Ask a colleague about their weekend plans in one short, natural question.',
+      prompt:
+        'Practise the question “Are you doing anything this weekend?” Type the complete question. You can try your own questions in speaking practice.',
       accepted: [
+        'Are you doing anything this weekend',
         'Got anything nice planned for the weekend',
         'Have you got anything nice planned for the weekend',
         'Do you have anything nice planned for the weekend',
@@ -169,8 +171,9 @@ export const englishLessons = defineLessons('EN', [
         'What are you doing this weekend',
         'What are you up to at the weekend',
       ],
-      hint: 'Try: Got anything nice … for the weekend? or Any plans for the weekend?',
-      explanation: 'Short questions with “planned” or “up to” sound friendly and natural.',
+      hint: 'Are you doing anything this … ?',
+      explanation:
+        'This asks about future plans. “Any plans for the weekend?” is another natural option.',
     },
     speaking:
       'Have a two-minute Monday-morning chat with the live coach. Answer briefly, add one detail and ask a follow-up question each time.',
@@ -178,7 +181,7 @@ export const englishLessons = defineLessons('EN', [
   {
     id: 'en-reactions',
     level: 'A2',
-    title: 'React like a native speaker',
+    title: 'Show interest and respond naturally',
     outcome: 'Show interest, sympathy and agreement with short natural reactions.',
     phrases: [
       ['No way!', 'That’s surprising!', 'Positive or negative surprise. It is not a refusal here.'],
@@ -301,7 +304,7 @@ export const englishLessons = defineLessons('EN', [
   {
     id: 'en-real-meaning',
     level: 'B1',
-    title: 'What British English really means',
+    title: 'Read British expressions in context',
     outcome: 'Understand understatement, polite criticism and everyday British expressions.',
     phrases: [
       ['Not bad at all.', 'Very good.', 'Understatement: “not bad” is often real praise.'],
@@ -310,11 +313,15 @@ export const englishLessons = defineLessons('EN', [
         'Often: it’s OK, but not great.',
         'In British English, quite can weaken praise; tone matters.',
       ],
-      ['I’ll bear it in mind.', 'Often: I probably won’t do it.', 'Polite non-commitment.'],
+      [
+        'I’ll bear it in mind.',
+        'I’ll remember or consider it.',
+        'It does not promise action, but it does not necessarily mean no. Check what happens next.',
+      ],
       [
         'With all due respect, …',
         'I strongly disagree.',
-        'Very polite words, very strong disagreement.',
+        'Often introduces disagreement and can sound confrontational. “I see your point, but …” is usually a gentler choice.',
       ],
       [
         'That’s an interesting idea.',
@@ -327,31 +334,35 @@ export const englishLessons = defineLessons('EN', [
     notice:
       'British speakers often soften criticism and understate praise. To understand what someone means, listen to the intonation and to what comes next (“That’s an interesting idea … but have we thought about the cost?”). You don’t have to copy this style, but understanding it prevents misunderstandings at work.',
     pronunciation:
-      'QUITE good (stress on quite, falling) sounds lukewarm; quite GOOD (stress on good) sounds more positive.',
+      'Stress and tone can affect how warm “quite good” sounds, but they do not give a fixed hidden meaning. Listen to the whole response and ask a follow-up if you need a clear decision.',
     checks: [
       {
         prompt:
-          'Your manager says your idea is “quite interesting, I’ll bear it in mind.” What is most likely?',
+          'Your manager says, “I’ll bear it in mind, but I haven’t decided yet.” What is clear from this response?',
         options: [
-          'They are not very convinced',
+          'They have not made a decision yet',
           'They will implement it tomorrow',
           'They want a longer presentation',
         ],
         answer: 0,
-        explanation: 'Both phrases are polite ways of not committing.',
+        explanation:
+          '“I haven’t decided yet” is explicit. “I’ll bear it in mind” alone does not tell you whether the idea will be accepted.',
       },
       {
-        prompt: 'A British friend tastes your cooking and says: Not bad at all!',
+        prompt:
+          'A British friend tastes your cooking and says: Not bad at all! What is its usual meaning?',
         options: ['They like it', 'They dislike it', 'They are unsure'],
         answer: 0,
-        explanation: 'This understatement is genuine praise.',
+        explanation:
+          'This is usually positive praise in this situation. Tone and context can change the meaning; it is not a fixed rule.',
       },
       {
         prompt: 'Listen. What is the speaker doing?',
         audio: 'With all due respect, I don’t think the numbers support that.',
-        options: ['Disagreeing strongly but politely', 'Agreeing completely', 'Apologising'],
+        options: ['Disagreeing with the claim', 'Agreeing completely', 'Apologising'],
         answer: 0,
-        explanation: '“With all due respect” introduces strong disagreement.',
+        explanation:
+          '“I don’t think the numbers support that” states disagreement. “With all due respect” can sound confrontational despite its polite words.',
       },
     ],
     writing: {
@@ -458,7 +469,7 @@ export const englishLessons = defineLessons('EN', [
     notice:
       'Native speakers are not speaking “badly”; they reduce unstressed words while keeping key words clear. Train your ear on the stressed words first and the small words become predictable. You may also hear “innit” (isn’t it) in London; understand it, but use it only if it feels natural to you.',
     pronunciation:
-      'Weak forms: to → tuh, for → fuh, and → n, can → kn. “I can go” uses a weak “kn”; “I CAN’T go” keeps the full vowel. That is how you tell can from can’t.',
+      'Unstressed words often have weak forms: to, for, and and can may become shorter. The affirmative can also be stressed, as in “Yes, I CAN.” To distinguish can from can’t, listen to the whole phrase, its sounds and its meaning. Vowels and final t vary across accents.',
     checks: [
       {
         prompt: 'Listen. What does the speaker offer?',
@@ -472,7 +483,8 @@ export const englishLessons = defineLessons('EN', [
         audio: 'I can come on Friday, but I can’t do Saturday.',
         options: ['Friday only', 'Saturday only', 'Both days'],
         answer: 0,
-        explanation: 'The weak “kn” is can; the full, stressed vowel is can’t.',
+        explanation:
+          'The speaker says Friday is possible and Saturday is not. A stressed vowel alone does not prove a negative: the affirmative can also be stressed.',
       },
       {
         prompt: 'What is the full form of “I’d’ve”?',
@@ -505,7 +517,7 @@ export const englishLessons = defineLessons('EN', [
       ['turn down', 'refuse (an offer)', 'He turned down the job.'],
     ],
     notice:
-      'In conversation, phrasal verbs are more natural than formal verbs: “sort out” rather than “resolve”, “put off” rather than “postpone”. In IELTS Speaking they show natural vocabulary; in formal essays, prefer the single-word verb.',
+      'Choose the verb that fits your meaning and context. “Sort out” and “put off” are common in conversation; “resolve” and “postpone” are also natural. With turn down, a pronoun goes in the middle: “She turned it down.” With a noun, both “turned down the offer” and “turned the offer down” work.',
     pronunciation: 'The particle is usually stressed: sort OUT, put OFF, catch UP.',
     checks: [
       {
@@ -515,10 +527,11 @@ export const englishLessons = defineLessons('EN', [
         explanation: 'Run out of means have none left.',
       },
       {
-        prompt: 'She refused the job offer. She ___ it.',
+        prompt: 'She refused the job offer. She ___ the offer.',
         options: ['turned down', 'came up with', 'caught up'],
         answer: 0,
-        explanation: 'Turn down means refuse.',
+        explanation:
+          '“Turn down” means refuse: “She turned down the offer.” With it, say “She turned it down.”',
       },
       {
         prompt: 'Listen. What does the speaker keep doing?',
@@ -745,15 +758,16 @@ export const englishLessons = defineLessons('EN', [
     ],
     writing: {
       prompt:
-        'Write a polite, low-pressure request to review a document, ending with “when you get a chance”.',
+        'Practise this request: “Could you review the document when you get a chance?” Type the complete sentence. Try your own wording in speaking practice.',
       accepted: [
         'Could you take a look when you get a chance',
         'Could you have a look when you get a chance',
         'Could you take a look at it when you get a chance',
         'Could you have a look at it when you get a chance',
         'Could you review it when you get a chance',
+        'Could you review the document when you get a chance',
       ],
-      hint: 'Could you take a look … ?',
+      hint: 'Could you review the document when you get a … ?',
       explanation: '“When you get a chance” signals that it is not urgent.',
     },
     speaking:
@@ -788,7 +802,7 @@ export const englishLessons = defineLessons('EN', [
       ],
     ],
     notice:
-      'IELTS General Training Task 1 letters can be formal, semi-formal or informal; the task tells you who the reader is, and tone is part of the task score. Avoid contractions and slang in formal letters; use them freely with friends.',
+      'IELTS General Training Task 1 letters can be formal, semi-formal or informal. Choose a consistent tone for the reader and purpose. Full forms are a useful choice in a formal exam letter; contractions are common in many professional emails. Avoid slang when it would be too familiar. The closings here follow British letter conventions.',
     checks: [
       {
         prompt: 'Which closing matches “Dear Sir or Madam”?',
@@ -847,7 +861,11 @@ export const englishLessons = defineLessons('EN', [
     title: 'IELTS Listening: numbers, spelling and traps',
     outcome: 'Catch numbers, spellings and corrected details, as in Listening Part 1.',
     phrases: [
-      ['fifTEEN, FIFty', '15 vs 50', 'Teen numbers stress the end; tens stress the start.'],
+      [
+        'fifTEEN, FIFty',
+        '15 vs 50',
+        'In isolation, teen numbers often stress the end and tens the start. Stress can shift in phrases; listen for the ending too.',
+      ],
       ['double L, double O', 'spelling', 'Repeated letters are spelled with “double”.'],
       ['oh / zero', 'saying 0', 'British phone numbers usually use “oh”.'],
       [
@@ -871,7 +889,8 @@ export const englishLessons = defineLessons('EN', [
         audio: 'The course costs fifteen pounds per session.',
         options: ['£15', '£50', '£5'],
         answer: 0,
-        explanation: 'You heard fifTEEN, with stress at the end.',
+        explanation:
+          'You heard fifteen pounds, so the cost is £15. Listen for the teen ending as well as stress, which can shift before another word.',
       },
       {
         prompt: 'Listen. How is the surname spelled?',
@@ -896,7 +915,7 @@ export const englishLessons = defineLessons('EN', [
       explanation: 'British speakers usually say “oh”; “zero” is also understood.',
     },
     speaking:
-      'Spell your full name, then say your phone number and date of birth aloud, as in Listening Part 1. Then do it faster and ask the coach to dictate one back to you.',
+      'Use these fictional practice details: Alex Reed, 07700 900123, 14 March 1998. Spell the name, say the number and date clearly, then ask the coach to dictate different fictional details. Focus on accuracy before speed.',
   },
   {
     id: 'en-ielts-reading',
@@ -937,12 +956,12 @@ export const englishLessons = defineLessons('EN', [
         explanation: '“Roughly doubled” is paraphrased as “approximately doubled”.',
       },
       {
-        prompt: 'All researchers support urban beekeeping.',
+        prompt: 'The number of registered hives in London roughly halved between 2008 and 2013.',
         useReading: true,
         options: ['True', 'False', 'Not Given'],
         answer: 1,
         explanation:
-          'Some researchers warn against too many hives, which contradicts “all support it”.',
+          'The text says the number roughly doubled. That directly contradicts halved. A warning about too many hives would not, by itself, prove opposition to all urban beekeeping.',
       },
       {
         prompt: 'Urban honey is more expensive than rural honey.',

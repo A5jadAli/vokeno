@@ -13,6 +13,7 @@ import {
   levelLabel,
   levelNote,
   levelRange,
+  levelStatus,
 } from '@/features/foundations/level-status';
 import { finalStep, unitName, type LessonLevel } from '@/features/foundations/types';
 import type { LanguageTrack } from '@/features/language/config';
@@ -58,12 +59,39 @@ export function pathStart(track: LanguageTrack, startAt?: string) {
   return id;
 }
 
+/** A partial A1 pilot must not silently advance a beginner into the older A2/B1 library. */
+export function isEnglishBeginnerRoute(progress: FoundationProgress, startAt?: string) {
+  if (levelStatus.EN.A1 === 'complete') return false;
+  const lessons = getTrackLessons('EN');
+  const chosen = lessons.find((lesson) => lesson.id === startAt);
+  if (chosen) return chosen.level === 'A1';
+  return !lessons.some(
+    (lesson) =>
+      lesson.level !== 'A1' &&
+      (isFinished(progress[lesson.id]) || (progress[lesson.id]?.step ?? 0) > 0),
+  );
+}
+
+function routeLessons(progress: FoundationProgress, track: LanguageTrack, startAt?: string) {
+  const lessons = getTrackLessons(track);
+  return track === 'EN' && isEnglishBeginnerRoute(progress, startAt)
+    ? lessons.filter((lesson) => lesson.level === 'A1')
+    : lessons;
+}
+
+function routeStart(progress: FoundationProgress, track: LanguageTrack, startAt?: string) {
+  return (
+    pathStart(track, startAt) ??
+    (track === 'EN' && !isEnglishBeginnerRoute(progress) ? 'en-sounds' : undefined)
+  );
+}
+
 export function findNextLesson(
   progress: FoundationProgress,
   track: LanguageTrack,
   startAt?: string,
 ): NextLesson | null {
-  const lessons = getTrackLessons(track);
+  const lessons = routeLessons(progress, track, startAt);
   // Only first runs count: replaying a finished lesson must not take over "what next".
   const resume = [...lessons, ...savedEarlierLessons(track, progress)]
     .filter(
@@ -76,7 +104,7 @@ export function findNextLesson(
   if (resume) return { lesson: resume, reason: 'resume' };
   const start = Math.max(
     0,
-    lessons.findIndex((lesson) => lesson.id === pathStart(track, startAt)),
+    lessons.findIndex((lesson) => lesson.id === routeStart(progress, track, startAt)),
   );
   // Lessons a passed checkpoint tested the learner out of are not offered as next.
   const covered = coveredLessons(lessons, progress);
@@ -88,10 +116,10 @@ export function findNextLesson(
 
 /** Unfinished lessons from the learner's starting point on, in course order. */
 export function lessonsAhead(progress: FoundationProgress, track: LanguageTrack, startAt?: string) {
-  const lessons = getTrackLessons(track);
+  const lessons = routeLessons(progress, track, startAt);
   const start = Math.max(
     0,
-    lessons.findIndex((lesson) => lesson.id === pathStart(track, startAt)),
+    lessons.findIndex((lesson) => lesson.id === routeStart(progress, track, startAt)),
   );
   const covered = coveredLessons(lessons, progress);
   return lessons
@@ -187,6 +215,8 @@ export function courseUnits(track: LanguageTrack, progress: FoundationProgress):
 
 export type CoursePosition = {
   next: NextLesson | null;
+  /** The available beginner block is done; later library lessons are not its continuation. */
+  waitingForContent: boolean;
   /** The unit (or lesson group) the next lesson belongs to. */
   unit?: UnitSummary;
   /** 1-based position of the next lesson inside its unit. */
@@ -210,6 +240,7 @@ export function coursePosition(
   const unit = next ? units.find((item) => item.lessons.includes(next.lesson)) : undefined;
   return {
     next,
+    waitingForContent: next === null && track === 'EN' && isEnglishBeginnerRoute(progress, startAt),
     unit,
     lessonNumber: next && unit ? unit.lessons.indexOf(next.lesson) + 1 : undefined,
     finishedLessons: units.reduce((sum, item) => sum + (item.kind === 'saved' ? 0 : item.done), 0),

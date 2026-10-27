@@ -13,7 +13,7 @@ export const levelStatus: Record<
   Partial<Record<LessonLevel, 'starter' | 'units' | 'complete'>>
 > = {
   DE: { A1: 'units', A2: 'starter', B1: 'starter' },
-  EN: { A2: 'starter', B1: 'starter', B2: 'starter' },
+  EN: { A1: 'starter', A2: 'starter', B1: 'starter', B2: 'starter' },
   ES: { A1: 'starter', A2: 'starter' },
 };
 
@@ -24,13 +24,13 @@ export const exams: Partial<Record<LanguageTrack, Partial<Record<LessonLevel, st
 };
 
 /**
- * The levels each course is built to, in order (decided 7 October 2026): German and Spanish
- * from A1 to at least B2; English for B1 to C1 fluency and IELTS, with no A1 or A2 labels.
+ * Planned levels, in order. English now has an A1 pilot; every unfinished level stays a
+ * starter set. The older A2 lessons keep their actual level and existing progress.
  */
 export const levelRange: Record<LanguageTrack, LessonLevel[]> = {
   DE: ['A1', 'A2', 'B1', 'B2'],
   ES: ['A1', 'A2', 'B1', 'B2'],
-  EN: ['B1', 'B2', 'C1'],
+  EN: ['A1', 'A2', 'B1', 'B2', 'C1'],
 };
 
 const order: LessonLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1'];
@@ -41,7 +41,7 @@ export const isWarmUp = (track: LanguageTrack, level: LessonLevel) =>
 
 /**
  * How a dialogue, talk or lesson's level is shown: its level, or "Warm-up" below the course's
- * range, so English never shows A1 or A2.
+ * range.
  */
 export const contentLevel = (track: LanguageTrack, level: string) =>
   order.includes(level as LessonLevel) && isWarmUp(track, level as LessonLevel) ? 'Warm-up' : level;

@@ -6,10 +6,11 @@ import { courseLevelOf, levelRange } from '@/features/foundations/level-status';
 import type { FoundationProgress } from '@/features/foundations/progress';
 import type { LessonLevel } from '@/features/foundations/types';
 import { dayNumberOf, localDay } from '@/features/habits/practice-log';
-import { lessonsAhead } from '@/features/journey/course';
+import { coursePosition, isEnglishBeginnerRoute, lessonsAhead } from '@/features/journey/course';
 import type { LanguageTrack } from '@/features/language/config';
 
-export type GoalStatus = 'on-track' | 'behind' | 'tight' | 'ready' | 'today' | 'passed';
+export type GoalStatus =
+  'on-track' | 'behind' | 'tight' | 'ready' | 'today' | 'passed' | 'content-pending';
 
 export type GoalPlan = {
   level: LessonLevel;
@@ -28,6 +29,7 @@ export type GoalPlan = {
   status: GoalStatus;
   /** How many new lessons today's session should hold: one, or more when the date needs it. */
   lessonsToday: number;
+  scopeNote?: string;
 };
 
 export type GoalInput = {
@@ -54,6 +56,7 @@ export function defaultGoalLevel(
   track: LanguageTrack,
   startAt?: string,
 ): LessonLevel {
+  if (track === 'EN' && isEnglishBeginnerRoute(progress, startAt)) return 'A1';
   // A warm-up is not a level to aim at: its goal is the course's first level.
   return courseLevelOf(
     track,
@@ -75,7 +78,7 @@ export function buildGoalPlan(input: GoalInput): GoalPlan | null {
   const today = dayNumberOf(localDay(now));
   const target = dayNumberOf(date);
   const daysLeft = target - today;
-  // A goal saved before English started at B1 ("A2") now aims at the course's first level.
+  // Preserve the saved goal level; below-range goals use the first course level.
   const level = courseLevelOf(
     track,
     input.level ?? defaultGoalLevel(progress, track, input.startAt),
@@ -114,15 +117,17 @@ export function buildGoalPlan(input: GoalInput): GoalPlan | null {
       ? 'passed'
       : daysLeft === 0
         ? 'today'
-        : lessonsLeft === 0
-          ? 'ready'
-          : perWeek > 2 * STUDY_DAYS
-            ? 'tight'
-            : recentPerWeek >= perWeek ||
-                // A goal set this week has no pace yet: following Today keeps it on track.
-                (since !== null && today - since < 7)
-              ? 'on-track'
-              : 'behind';
+        : coursePosition(progress, track, input.startAt).waitingForContent
+          ? 'content-pending'
+          : lessonsLeft === 0
+            ? 'ready'
+            : perWeek > 2 * STUDY_DAYS
+              ? 'tight'
+              : recentPerWeek >= perWeek ||
+                  // A goal set this week has no pace yet: following Today keeps it on track.
+                  (since !== null && today - since < 7)
+                ? 'on-track'
+                : 'behind';
 
   return {
     level,
@@ -136,6 +141,10 @@ export function buildGoalPlan(input: GoalInput): GoalPlan | null {
     perWeek,
     doneThisWeek,
     status,
+    scopeNote:
+      track === 'EN' && isEnglishBeginnerRoute(progress, input.startAt)
+        ? 'This pace covers the first three A1 units. The full course and exam preparation are still being built.'
+        : undefined,
     lessonsToday:
       status === 'ready' || status === 'today' || status === 'passed'
         ? 1

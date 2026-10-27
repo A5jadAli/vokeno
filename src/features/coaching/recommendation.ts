@@ -61,34 +61,34 @@ export function learningRecommendation(
           href: '/foundation/weekend-smalltalk',
         };
   }
-  // English starts at A2. Every choice opens a lesson, so Today continues from the same place.
+  // Work goals do not skip the foundations a beginner still needs.
+  if (ability !== 'conversational')
+    return {
+      title: 'Unit 1: Hello, I’m Alex',
+      why: 'Start with a name, a question and asking someone to repeat. Three A1 units are ready for practice; more are being built.',
+      href: '/foundation/en-a1-u1-meet',
+    };
   if (goal === 'ielts-academic' || goal === 'ielts-general')
-    return ability === 'new'
-      ? {
-          title: 'English sounds that change meaning',
-          why: 'Start with the sounds, then move on to the IELTS lessons at B1.',
-          href: '/foundation/en-sounds',
-        }
-      : {
-          title: 'IELTS Listening: numbers, spelling and traps',
-          why: 'The first IELTS lesson. Reading, Writing and Speaking follow in order.',
-          href: '/foundation/en-ielts-listening',
-        };
-  if (ability === 'conversational')
-    return goal === 'work-study'
-      ? {
-          title: 'Messages at work: email, Slack and Teams',
-          why: 'Start at B1 with the English you write at work every day.',
-          href: '/foundation/en-workplace',
-        }
-      : {
-          title: 'Ask and suggest politely',
-          why: 'Start at B1: sound natural and polite, not just correct.',
-          href: '/foundation/en-softening',
-        };
-  return {
-    title: 'English sounds that change meaning',
-    why: 'The first guided lesson: hear and practise the contrasts that make you easy to understand.',
-    href: '/foundation/en-sounds',
-  };
+    return {
+      title: 'IELTS Listening: numbers, spelling and traps',
+      why: 'The first IELTS lesson. Reading, Writing and Speaking follow in order.',
+      href: '/foundation/en-ielts-listening',
+    };
+  if (goal === 'interviews')
+    return {
+      title: 'Buy time and fix misunderstandings',
+      why: 'Practise clarifying a question before building longer interview answers. The full interview pathway is still being built.',
+      href: '/foundation/en-repair',
+    };
+  return goal === 'work-study' || goal === 'meetings' || goal === 'presentations'
+    ? {
+        title: 'Messages at work: email, Slack and Teams',
+        why: 'Start with clear workplace requests and updates. Dedicated meeting and presentation missions are still being built.',
+        href: '/foundation/en-workplace',
+      }
+    : {
+        title: 'Ask and suggest politely',
+        why: 'Start at B1: sound natural and polite, not just correct.',
+        href: '/foundation/en-softening',
+      };
 }

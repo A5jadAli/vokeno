@@ -68,6 +68,6 @@ describe('placement check', () => {
     for (const item of placementStages('EN')[0]) answers[item.id] = (item.answer + 1) % 3;
     const result = evaluatePlacement('EN', answers);
     expect(result.secure).toBeNull();
-    expect(result.recommendation.href).toBe('/foundation/en-sounds');
+    expect(result.recommendation.href).toBe('/foundation/en-a1-u1-meet');
   });
 });

@@ -11,8 +11,14 @@ import { listeningScenarios, type ListeningScenario } from '@/features/listening
 import { placementItems } from '@/features/placement/items';
 
 import { levelCheckSentences, listeningWarmUpSample, vocabularyDeck } from './spoken-texts';
+import type { EnglishReference } from '../../../supabase/functions/_shared/english-reference';
 
-export type SpokenLine = { track: LanguageTrack; text: string; speaker?: string };
+export type SpokenLine = {
+  track: LanguageTrack;
+  text: string;
+  speaker?: string;
+  reference?: EnglishReference;
+};
 
 function collector() {
   const lines: SpokenLine[] = [];
@@ -73,5 +79,7 @@ export function spokenLines(): SpokenLine[] {
   }
   vocabularyDeck.forEach((card) => add('DE', card.word));
   add('EN', listeningWarmUpSample);
-  return lines;
+  return lines.flatMap((line): SpokenLine[] =>
+    line.track === 'EN' && !line.speaker ? [line, { ...line, reference: 'en-US' }] : [line],
+  );
 }

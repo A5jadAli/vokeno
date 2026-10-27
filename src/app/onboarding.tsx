@@ -33,7 +33,7 @@ export default function OnboardingScreen() {
   const router = useRouter();
   const track = useLanguageSelection((state) => state.track);
   const choose = useLanguageSelection((state) => state.choose);
-  // Nothing is pre-selected: English here starts at A2, so a beginner must not land in it by default.
+  // Let the learner choose a language before asking about their starting ability.
   const [chosen, setChosen] = useState(false);
 
   const finish = async (destination: string) => {

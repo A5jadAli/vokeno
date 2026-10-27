@@ -14,6 +14,7 @@ import { parseFoundationProgress } from '@/features/foundations/progress';
 import type { LessonLevel } from '@/features/foundations/types';
 import { parseWritingProgress } from '@/features/writing/progress';
 import { parsePracticeLog, serializePracticeLog } from '@/features/habits/practice-log';
+import { englishReferenceOrDefault } from '../../../supabase/functions/_shared/english-reference';
 
 /** The completion log and today's session stay on the device; streak and progress sync. */
 export type LearningCloudState = Omit<
@@ -48,7 +49,7 @@ function stringArray(value: unknown, maximum = 200) {
     : [];
 }
 
-function parsePreferences(value: unknown): SpeakingPreferences | null {
+export function parsePreferences(value: unknown): SpeakingPreferences | null {
   if (!value || typeof value !== 'object') return null;
   const candidate = value as Record<string, unknown>;
   const en = candidate.EN as Record<string, unknown> | undefined;
@@ -64,7 +65,11 @@ function parsePreferences(value: unknown): SpeakingPreferences | null {
   }
   return {
     DE: { goal: de.goal as SpeakingGoal, reference: 'de-DE', ...parseLearningChoices(de) },
-    EN: { goal: en.goal as SpeakingGoal, reference: 'en-GB', ...parseLearningChoices(en) },
+    EN: {
+      goal: en.goal as SpeakingGoal,
+      reference: englishReferenceOrDefault(en.reference),
+      ...parseLearningChoices(en),
+    },
     ES: {
       goal: es && goals.includes(es.goal as SpeakingGoal) ? (es.goal as SpeakingGoal) : 'everyday',
       reference: 'es-MX',
@@ -78,9 +83,15 @@ function parseLearningChoices(value: Record<string, unknown>) {
     ability: (['new', 'basics', 'conversational'].includes(String(value.ability))
       ? value.ability
       : 'new') as StartingAbility,
-    studyGoal: (['everyday', 'work-study', 'ielts-academic', 'ielts-general'].includes(
-      String(value.studyGoal),
-    )
+    studyGoal: ([
+      'everyday',
+      'work-study',
+      'interviews',
+      'meetings',
+      'presentations',
+      'ielts-academic',
+      'ielts-general',
+    ].includes(String(value.studyGoal))
       ? value.studyGoal
       : 'everyday') as StudyGoal,
     ...(typeof value.testDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value.testDate)
@@ -165,7 +176,7 @@ export async function loadLearningCloudState(userId: string) {
       preferences ??
       ({
         DE: { goal: 'everyday', reference: 'de-DE' },
-        EN: { goal: 'interviews', reference: 'en-GB' },
+        EN: { goal: 'everyday', reference: 'en-GB' },
         ES: { goal: 'everyday', reference: 'es-MX' },
       } satisfies SpeakingPreferences),
     signals: parseSignals(row.signals),

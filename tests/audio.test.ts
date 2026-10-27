@@ -18,7 +18,9 @@ describe('AI voices', () => {
     const missing = spokenLines()
       .filter(
         (line) =>
-          !recorded.has(clipKey(line.track, line.text, castingFor(line.track, line.speaker))),
+          !recorded.has(
+            clipKey(line.track, line.text, castingFor(line.track, line.speaker, line.reference)),
+          ),
       )
       .map((line) => `${line.track} ${line.speaker ?? 'narrator'}: ${line.text}`);
     // Record new lines with: npx tsx --tsconfig tsconfig.json scripts/generate-lesson-audio.ts

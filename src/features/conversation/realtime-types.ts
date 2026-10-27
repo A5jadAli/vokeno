@@ -1,5 +1,9 @@
 import type { LanguageTrack } from '@/features/listening/scenarios';
 import type { SpeakingGoal } from '@/features/coaching/store';
+import type {
+  EnglishGoal,
+  EnglishReference,
+} from '../../../supabase/functions/_shared/english-reference';
 
 import type { AudioLevels } from './audio-levels';
 import type { RealtimeEvent } from './events';
@@ -10,6 +14,8 @@ export type RealtimeSessionStatus =
 export type StartRealtimeSessionOptions = {
   coachTone: 'supportive' | 'tough';
   goal: SpeakingGoal;
+  englishReference?: EnglishReference;
+  englishGoal?: EnglishGoal;
   onEvent: (event: RealtimeEvent) => void;
   /** Real microphone and coach levels, about ten times a second while the call is live. */
   onLevels?: (levels: AudioLevels) => void;

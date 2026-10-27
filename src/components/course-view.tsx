@@ -83,7 +83,9 @@ export function CourseView({ track }: { track: LanguageTrack }) {
         <View style={[styles.banner, { backgroundColor: colors.tint }]}>
           <MaterialCommunityIcons color={Palette.ink} name="flag-checkered" size={22} />
           <Text style={styles.bannerText}>
-            You have finished every lesson so far. New units appear here when ready.
+            {position.waitingForContent
+              ? 'Your first three A1 units are done. Practise them again while more beginner units are being built. A2 and later lessons are optional challenges, not the next beginner step.'
+              : 'You have finished every lesson so far. New units appear here when ready.'}
           </Text>
         </View>
       ) : null}

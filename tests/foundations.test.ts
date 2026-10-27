@@ -62,10 +62,10 @@ describe('guided lesson content', () => {
     expect(english.filter((lesson) => lesson.id.includes('ielts')).length).toBeGreaterThanOrEqual(
       7,
     );
-    // English groups B1/B2 lessons by topic; it must still start at A2 and never drop below it.
-    expect(english[0].level).toBe('A2');
-    expect(english.slice(3).every((lesson) => lesson.level !== 'A1' && lesson.level !== 'A2')).toBe(
-      true,
+    expect(english[0].id).toBe('en-a1-u1-meet');
+    expect(english.filter((lesson) => lesson.level === 'A1')).toHaveLength(12);
+    expect(english.map((lesson) => lesson.level)).toEqual(
+      [...english.map((lesson) => lesson.level)].sort((a, b) => levelRank[a] - levelRank[b]),
     );
     expect(german[0].id).toBe('de-a1-u1-hallo');
     expect(german.some((lesson) => lesson.retired)).toBe(false);
