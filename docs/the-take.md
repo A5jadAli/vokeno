@@ -15,7 +15,7 @@ Every unit ends with a short film of its own scene in which **your recorded voic
 - **It is cheap and private.** Recordings stay on the phone. The check is one short transcription per line. `expo-audio`, already installed, records and plays.
 - **It stays honest.** It reports what was understood, never a pronunciation score, as `docs/product-research.md` requires.
 
-What is not claimed: that each part is new. Speech checks and record-and-compare exist in other apps. The combination (your voice inside the course's own story, kept as before and after, then the same character calling you) is what I have not seen; check that before using it in marketing.
+What is not claimed: that the idea is new. Dubbing-practice apps such as 2DUB and SceneLine already let learners voice film and TV scenes, and shadowing apps record a line and compare it with the model (web search, 15 November 2026; app listings only, not tried). The difference here is that the scene belongs to a course: the lines are the ones just taught, the first take is kept as evidence, and the same character then calls without the script. Try those two apps before describing this as unique in marketing.
 
 ## What the learner does
 
