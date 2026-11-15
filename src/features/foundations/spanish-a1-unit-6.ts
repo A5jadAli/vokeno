@@ -3,6 +3,28 @@ import { defineUnit } from './types';
 // A café in Mexico City: order, change one thing, check the total and pay. Exact phrases from
 // the retired starter café lesson (Para llevar, Sin azúcar, La cuenta, por favor, ¿Puedo pagar
 // con tarjeta?) keep their earned review intervals.
+
+/** Every way the unit teaches to order something, so a typed order accepts each of them. */
+const orders = (...items: string[]) =>
+  items.flatMap((item) => {
+    const first = item[0].toLocaleUpperCase() + item.slice(1);
+    return [
+      `${first}, por favor.`,
+      `${first}.`,
+      `${first}, gracias.`,
+      `${first}, por favor, gracias.`,
+      `Por favor, ${item}.`,
+      `Quiero ${item}.`,
+      `Quiero ${item}, por favor.`,
+      `Quiero ${item}, gracias.`,
+      `Quiero ${item}, por favor, gracias.`,
+      `¿Me das ${item}?`,
+      `¿Me das ${item}, por favor?`,
+      `¿Me da ${item}?`,
+      `¿Me da ${item}, por favor?`,
+    ];
+  });
+
 export const spanishA1Unit6 = defineUnit(
   'ES',
   'A1',
@@ -140,6 +162,13 @@ export const spanishA1Unit6 = defineUnit(
           prompt: 'Order a coffee and a concha, politely.',
           answer: ['Un', 'café', 'y', 'una', 'concha,', 'por', 'favor.'],
           extra: ['un'],
+          also: [
+            'Una concha y un café, por favor.',
+            'Por favor, un café y una concha.',
+            'Por favor, una concha y un café.',
+            'Un café, por favor, y una concha.',
+            'Una concha, por favor, y un café.',
+          ],
           explanation: 'Un café, una concha: each noun keeps its own un or una.',
         },
         {
@@ -227,7 +256,7 @@ export const spanishA1Unit6 = defineUnit(
         {
           kind: 'rule',
           title: 'Two or more',
-          body: 'For more than one, add -s to a word ending in a vowel and -es to one ending in a consonant. Numbers from Unit 3 go first: dos cafés, tres conchas. Un and una are only for one item.',
+          body: 'For more than one, most words add -s after a vowel and -es after a consonant. Numbers from Unit 3 go first: dos cafés, tres conchas. Un and una are only for one item.',
           table: [
             ['un café', 'dos cafés'],
             ['una concha', 'tres conchas'],
@@ -235,11 +264,12 @@ export const spanishA1Unit6 = defineUnit(
           ],
         },
         {
-          kind: 'choose',
+          kind: 'type',
           prompt: 'Order two coffees.',
-          options: ['Dos cafés, por favor.', 'Dos café, por favor.', 'Un cafés, por favor.'],
-          answer: 0,
-          explanation: 'Dos needs the plural: cafés.',
+          accepted: orders('dos cafés', 'dos cafés americanos'),
+          hint: 'Dos + café with -s + por favor.',
+          explanation:
+            'Dos cafés, por favor. After dos the noun takes the plural: café becomes cafés.',
         },
         {
           kind: 'build',
@@ -251,14 +281,18 @@ export const spanishA1Unit6 = defineUnit(
         {
           kind: 'type',
           prompt: 'Ask if they have orange juice.',
-          accepted: [
-            '¿Tienen jugo de naranja?',
-            '¿Tienen zumo de naranja?',
-            '¿Tiene jugo de naranja?',
-            '¿Tiene zumo de naranja?',
-          ],
+          accepted: ['', 'un '].flatMap((article) =>
+            ['jugo', 'zumo'].flatMap((juice) =>
+              ['tienen', 'tiene', 'tienes'].flatMap((verb) => {
+                const drink = `${verb} ${article}${juice} de naranja`;
+                const asked = drink[0].toLocaleUpperCase() + drink.slice(1);
+                return [`¿${asked}?`, `¿${asked}, por favor?`, `Por favor, ¿${drink}?`];
+              }),
+            ),
+          ),
           hint: 'Start with Tienen, then the drink, inside ¿ and ?.',
-          explanation: '¿Tienen jugo de naranja? No un is needed when you ask if they have it.',
+          explanation:
+            '¿Tienen jugo de naranja? You do not need un when you ask if they have it, but ¿Tienen un jugo de naranja? is also fine.',
         },
         {
           kind: 'choose',
@@ -341,7 +375,7 @@ export const spanishA1Unit6 = defineUnit(
         {
           kind: 'choose',
           prompt: 'The barista asks “¿Algo más?” You don’t want anything else. What do you say?',
-          options: ['No, es todo.', 'Para llevar.', 'Sí, por favor.'],
+          options: ['No, es todo.', 'No, para llevar.', 'No, solo uno.'],
           answer: 0,
           explanation: 'No, es todo: no, that’s all. Then you can ask ¿Cuánto es?',
         },
@@ -350,7 +384,7 @@ export const spanishA1Unit6 = defineUnit(
           prompt: 'Listen to the price. Type the number of pesos.',
           audio: 'Son sesenta y ocho pesos.',
           answerKind: 'digits',
-          accepted: ['68'],
+          accepted: ['68', '68 pesos'],
           hint: 'Sesenta is 60. Listen for the last number.',
           explanation: 'Sesenta y ocho is 68. Remember sesenta is 60 and setenta is 70.',
         },
@@ -361,11 +395,34 @@ export const spanishA1Unit6 = defineUnit(
           examples: ['No, solo uno, por favor.', 'No, sin azúcar, por favor.'],
         },
         {
-          kind: 'choose',
-          prompt: 'You ordered one tea. The barista says “¿Dos tés?” Fix it.',
-          options: ['No, solo uno, por favor.', 'Sí, dos.', 'No, es todo.'],
-          answer: 0,
-          explanation: 'Solo uno: just one. Es todo would mean you want nothing else.',
+          kind: 'type',
+          prompt: 'You ordered one tea. The barista says “¿Dos tés?” Fix it in a few words.',
+          accepted: [
+            'No, solo uno',
+            'No, es solo uno',
+            'No, es uno',
+            'Solo uno',
+            'No, uno',
+            'No, solo un té',
+            'Solo un té',
+            'No, un té',
+            'Uno, no dos',
+            'No, uno, no dos',
+            'No, solo uno, no dos',
+            'Un té, no dos',
+            'Uno',
+            'Un té',
+            'No, es un té',
+            'Quiero uno',
+            'Quiero un té',
+            'Quiero solo uno',
+            'No, quiero uno',
+            'Uno solo',
+            'No, uno solo',
+          ].flatMap((fix) => [`${fix}, por favor.`, `${fix}.`, `${fix}, gracias.`]),
+          hint: 'No, + solo + the number + por favor.',
+          explanation:
+            'No, solo uno, por favor. On its own the number is uno; before a masculine noun it is un: solo un té.',
         },
         {
           kind: 'teach',
@@ -438,13 +495,21 @@ export const spanishA1Unit6 = defineUnit(
           explanation: 'Jugo de naranja · 45 pesos.',
         },
         {
-          kind: 'choose',
+          kind: 'type',
           context:
             'MENÚ\nCafé americano · 35 pesos\nCafé con leche · 40 pesos\nTé · 30 pesos\nJugo de naranja · 45 pesos\nConcha · 25 pesos',
-          prompt: 'You order a té and a concha. What is the total?',
-          options: ['55 pesos', '65 pesos', '45 pesos'],
-          answer: 0,
-          explanation: 'Té 30 + concha 25 = 55 pesos, cincuenta y cinco.',
+          prompt: 'You want the most expensive drink on the menu. Order it.',
+          accepted: orders(
+            'un jugo de naranja',
+            'un zumo de naranja',
+            'el jugo de naranja',
+            'el zumo de naranja',
+            'jugo de naranja',
+            'zumo de naranja',
+          ),
+          hint: 'The drink at 45 pesos, with un and por favor.',
+          explanation:
+            'Un jugo de naranja, por favor. At 45 pesos it costs more than any coffee or the tea.',
         },
         {
           kind: 'choose',
@@ -463,20 +528,14 @@ export const spanishA1Unit6 = defineUnit(
           prompt: 'Listen to the total. Type the number of pesos.',
           audio: 'Son noventa pesos.',
           answerKind: 'digits',
-          accepted: ['90'],
+          accepted: ['90', '90 pesos'],
           hint: 'Noventa is one of the tens from Unit 3.',
           explanation: 'Noventa is 90.',
         },
         {
           kind: 'type',
           prompt: 'Write an order: a tea with milk, please.',
-          accepted: [
-            'Un té con leche, por favor.',
-            'Por favor, un té con leche.',
-            '¿Me das un té con leche, por favor?',
-            '¿Me da un té con leche, por favor?',
-            'Quiero un té con leche, por favor.',
-          ],
+          accepted: orders('un té con leche', 'té con leche'),
           hint: 'Un té + con leche + por favor.',
           explanation: 'Un té con leche, por favor. Keep the accent on té.',
         },

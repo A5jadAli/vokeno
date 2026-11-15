@@ -1,8 +1,79 @@
 # Review record: es-a1-u6 · At a café
 
-The first unit put through `docs/content-pipeline.md`, as the trial of the panel. The unit was already live, so this record starts at the panel stage; its coverage sheet is the Unit 6 brief in `docs/spanish-a1-units-plan.md`.
+The first unit put through `docs/content-pipeline.md`, as the trial of the panel. The unit was already live when the pipeline began: the first panel (15 November) reviewed it as it was, and the repair of the same day (below) brought it inside the content standard.
 
-## Panel, 15 November 2026
+## Coverage sheet
+
+Written for the repair from the Unit 6 brief in `docs/spanish-a1-units-plan.md` and the unit as it stands; the repair taught nothing new and kept every lesson id, step position and taught phrase, so progress and review cards are untouched.
+
+- **Can do:** order a drink and something to eat, change the order and pay. Exam descriptor: DELE A1 listening, short everyday exchanges with a choice of order or picture (Prueba 2), and menu reading (Prueba 1); the written order prepares the short-text writing task.
+- **New items for active use** (19 in all, 8 at most a session):
+  - Words (7): `un café`, `un té`, `un jugo de naranja`, `una concha`, `una galleta` (what a Mexico City café sells; nouns with their article, the brief's point), `Para aquí.`, `Para llevar.` (the first question a barista asks).
+  - Grammar (5): `¿Me das un café, por favor?` (the everyday Mexican order), `Quiero un té.` (the simplest order, also the DELE writing pattern), `¿Tienen jugo de naranja?` (asking what there is), `Con leche, por favor.`, `Sin azúcar, por favor.` (the one change people make).
+  - Real talk (5): `¿Algo más?`, `No, es todo.`, `¿Cuánto es?` (the close of every purchase), `La cuenta, por favor.`, `¿Puedo pagar con tarjeta?` (paying, kept from the retired starter café lesson).
+  - Exam task: none; it retrieves.
+- **Recognition only:** `¿Qué te sirvo?`, `café americano`, `zumo` (Spain), `con hielo`, `pagar en efectivo`, `¿Dos americanos?`, `Perfecto.`, `Son … pesos`, `¿Me da …?` (usted).
+- **Grammar point:** `un`/`una` with every noun, and the plural with a number (`dos cafés`, `tres conchas`); `con`/`sin` with a bare noun.
+- **Sound and spelling:** words linked with clear vowels (`un café`); the accent that tells `té` from `te`; stress in `azúcar`.
+- **Brought back** (measured by `content:check`): Words, the Unit 1 greetings and courtesy (`Buenas tardes.`, `Hasta luego.`, `Por favor.`, `Gracias.`); Grammar, Unit 3 numbers (`dos`, `tres`) and this unit's Words items; Real talk, Unit 3 numbers (`uno`, `dos`, `cinco`, `ocho`) and `Para aquí.`, `Para llevar.`; Exam task, numbers, the Words and Grammar items and `¿Cuánto es?`.
+- **Scene:** a small café in Mexico City before the language exchange. Cast: Ana, Omar, the barista. The learner's own lines: order two things with `un`/`una` and say whether they stay (1.11); order with a change and ask what they have (2.11); fix a wrong order, ask the price and ask to pay by card (3.10); order for themselves and a friend from the menu, with a twist when conchas run out (4.7).
+- **Exam-format task:** read a menu for a price and for the dearest drink, pick the order heard from three, write down a total heard, write an order (DELE A1 Prueba 2, Tarea 1 format with a menu from Prueba 1). Practice towards the task, not a score.
+
+## Repair, 15 November 2026
+
+`npm run content:check -- es-a1-u6` found four misses: Grammar, Real talk and Exam task were more than half multiple choice (67%, 60%, 60%), and only 7 of 22 marked steps (32%) were typed or built. One multiple-choice step in each of those three sessions became a typed answer, in the same position, testing the same thing:
+
+| Step | Was                                                  | Now                                                                                                                           |
+| ---- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| 2.7  | Choose “Dos cafés, por favor.” from three            | Type an order for two coffees. Accepts the bare order, with or without `por favor`, and `¿Me das …?`, `¿Me da …?`, `Quiero …` |
+| 3.6  | Choose “No, solo uno, por favor.” from three         | Type the fix. Accepts `(No,) (solo) uno` and `(No,) (solo) un té`, with or without `por favor`                                |
+| 4.3  | Choose the total of a tea and a concha from the menu | Read the menu and order the dearest drink. Accepts `jugo` and `zumo` in each order form the unit teaches                      |
+
+The change to 4.3 also answers the panel's minor finding that its total could be worked out without Spanish. Now: every session at 50% multiple choice or less, 10 of 22 marked steps (45%) produced. No step was added or removed, so a learner part way through a session resumes at the same step, and the converted steps need no new clips (a typed step without `audio` says nothing). `es-a1-u6` left the legacy list in `tests/content-standard.test.ts`. The keys of the three new steps grew in the panel rounds below; the typed orders (2.7, 4.3, 4.6) now share one list of the unit's order forms (`orders` in the unit file).
+
+## Panel on the repair, 15 November 2026: three rounds
+
+Reviewers in every round: native `gemini-pro-latest`, teacher `gpt-6.1-sol`, answer keys `grok-4.7`; no reviewer skipped. Content standard met in every round.
+
+| Round | Content versions                 | Native | Teacher | Answer keys | Blocker or major |
+| ----- | -------------------------------- | ------ | ------- | ----------- | ---------------- |
+| 1     | `e7yap4 548v8n tesnv9 pw875e`    | 1      | 1       | 5           | 7                |
+| 2     | `jktout 1rivijv 1urnprg 1nciivz` | 0      | 0       | 8           | 7                |
+| 3     | `dufzb7 htsgw0 13eeb7p 1iocxl8`  | 0      | 0       | 7           | 7                |
+
+After round 1 the native and teacher reviewers found nothing. Every later finding was the answer-key reviewer asking for one more correct variant. Each was checked against the source and against the grader (`normaliseFoundationAnswer` drops capitals and all punctuation, `¿?` included; Spanish accents alone are accepted with the accented form shown; digit answers use `formFieldCorrect`, exact apart from spaces, brackets and hyphens). A probe test against the real grader confirmed the claims marked below.
+
+| Round | Step          | Severity | Finding                                                                                             | Checked                                                                                                                                                                        | Done                                                                                                      |
+| ----- | ------------- | -------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| 1     | 3.6           | blocker  | Explanation says `un` comes before any noun; before a feminine one it is `una`                      | True                                                                                                                                                                           | “before a masculine noun it is un”                                                                        |
+| 1     | 2.7, 3.6, 4.3 | blocker  | Orders ending in `gracias` rejected; `Uno, no dos.`, `Uno solo.` rejected                           | True: `gracias` is Unit 1, `no` is taught                                                                                                                                      | Accepted. Not accepted: `¿Me das dos cafés, gracias?`, `Gracias, dos cafés.` (not how anyone orders)      |
+| 1     | 4.3           | blocker  | `El jugo de naranja, por favor.` rejected                                                           | True: `el` taught in Units 3 and 4; natural when pointing at a menu line                                                                                                       | Accepted, with `zumo`                                                                                     |
+| 1     | 2.9           | blocker  | `¿Tienen un jugo …?` and forms with `por favor` rejected                                            | True: correct Spanish, though the bare noun is the usual way to ask                                                                                                            | Accepted                                                                                                  |
+| 1     | 1.10          | major    | The tiles also build `Una concha y un café, por favor.`                                             | True                                                                                                                                                                           | Added to `also`                                                                                           |
+| 1     | 2.6           | major    | The plural rule is stated as if it had no exceptions                                                | Partly: -s after a vowel, -es after a consonant is the standard first rule, but not universal                                                                                  | “most words add -s …”                                                                                     |
+| 2     | 1.10          | blocker  | `Por favor, …` first, and `por favor` in the middle, also buildable                                 | True                                                                                                                                                                           | Four more orders in `also`                                                                                |
+| 2     | 1.9           | blocker  | `Un jugo de naranja.` with a capital and full stop rejected                                         | False: capitals and punctuation are ignored (the first panel made the same claim)                                                                                              | Nothing                                                                                                   |
+| 2     | 2.7, 4.3, 4.6 | blocker  | `…, por favor, gracias.` rejected                                                                   | True, if wordy                                                                                                                                                                 | Accepted on the bare and `Quiero` orders                                                                  |
+| 2     | 2.9           | blocker  | `un` with `por favor`, and `Por favor, ¿tienen …?` rejected                                         | True                                                                                                                                                                           | Accepted: every mix of `tienen`/`tiene`, with or without `un`, `jugo`/`zumo`, `por favor` before or after |
+| 2     | 3.6           | blocker  | `No, es solo uno.`, `No, es uno.` rejected                                                          | True: `es` from `No, es todo.`                                                                                                                                                 | Accepted                                                                                                  |
+| 2     | 2.9           | major    | “No un is needed” reads two ways                                                                    | True                                                                                                                                                                           | “You do not need un …, but ¿Tienen un jugo de naranja? is also fine.”                                     |
+| 2     | 4.3           | major    | Delete every `zumo` order: no one says it in a Mexican café                                         | Rejected: the runbook has a typed answer accept every regional form the unit teaches, and 1.2 teaches `zumo`. A Spaniard ordering in Mexico City says `zumo` and is understood | Kept; a question for the teacher                                                                          |
+| 2     | 3.3           | minor    | The key is the only option starting with `No`                                                       | True                                                                                                                                                                           | Options now `No, es todo.`, `No, para llevar.`, `No, solo uno.`                                           |
+| 3     | 2.7, 4.3, 4.6 | blocker  | `Me da dos cafés, por favor.` as a statement rejected                                               | False: with `¿?` dropped it is the accepted `¿Me da …?` (probe test passed)                                                                                                    | Nothing                                                                                                   |
+| 3     | 2.7           | blocker  | `Dos cafés americanos, por favor.` rejected                                                         | True: `americano` is in the scene of 1.1                                                                                                                                       | Accepted                                                                                                  |
+| 3     | 2.9           | blocker  | `¿Tienes …?` (tú) rejected, though the café uses tú                                                 | True: `tienes` is Unit 3 (`¿Cuántos años tienes?`)                                                                                                                             | Added to the mix                                                                                          |
+| 3     | 3.6           | blocker  | `Uno, por favor.`, `Un té, por favor.`, `Quiero uno …`, `No, es un té …`, `Un té, no dos.` rejected | True                                                                                                                                                                           | All accepted                                                                                              |
+| 3     | 4.3, 4.6      | blocker  | Bare-noun orders `Jugo de naranja, por favor.`, `Té con leche, por favor.` rejected                 | True: the menu line itself, and the usual counter order                                                                                                                        | Accepted                                                                                                  |
+| 3     | 3.4, 4.5      | major    | `68 pesos`, `90 pesos` rejected in a digits answer                                                  | True: digit answers are exact and the keyboard is a full one                                                                                                                   | Accepted. The same gap is in Units 3 and 4 and Checkpoint 1; app work (below)                             |
+
+The runbook stops at three rounds. The round-3 changes were checked by the content standard, `npm run test:ci` and the probe test, not by a fourth panel. No blocker or major stands unanswered: each is fixed or shown wrong above. The answer-key reviewer will very likely find more variants in a fourth round; the pattern says the open-ended order steps need a different kind of grading, not a longer list.
+
+### For the app (not this unit)
+
+- **Digit answers:** let `formFieldCorrect` accept a trailing unit word (`68 pesos`, `90 euros`) for a digits answer, so every unit gets it, not only this one.
+- **Open orders:** a typed order with many correct forms (2.7, 4.3, 4.6) fits The Take or a model-graded answer better than a list.
+
+## First panel, 15 November 2026 (the unit before the repair)
 
 Content versions reviewed: `z1frs4 e0lhdn c6m1xr 13g1ogr`. Reviewers: native `gemini-pro-latest` (0 findings), teacher `gpt-6.1-sol` (2), answer keys `grok-4.7` (6). The run took 11 minutes.
 
@@ -13,18 +84,15 @@ Content versions reviewed: `z1frs4 e0lhdn c6m1xr 13g1ogr`. Reviewers: native `ge
 | 4.6  | blocker  | "Write an order: a tea with milk, please" accepts only the bare noun phrase                    | True: "¿Me das …?", "¿Me da …?" and "Quiero …" are this unit's own ways to order                             | Those three and "Por favor, un té con leche." accepted                          |
 | 4.4  | major    | The right option says "white coffee", British English the course never used for "con leche"    | True: the unit glosses "con leche" as "with milk"                                                            | Option now reads "A coffee with milk, no sugar, and two biscuits, to take away" |
 | 2.6  | minor    | "Un and una only mean one" contradicts their earlier gloss as "a"                              | True                                                                                                         | Now "Un and una are only for one item."                                         |
-| 4.3  | minor    | The menu total can be worked out without Spanish                                               | True, and intended: it is a reading-a-menu task. Better wrong options would help                             | Left for the repair in the backlog                                              |
+| 4.3  | minor    | The menu total can be worked out without Spanish                                               | True, and intended: it is a reading-a-menu task. Better wrong options would help                             | Step replaced in the repair                                                     |
 | 1.9  | (part)   | "Un jugo de naranja" with a capital is rejected                                                | False: answers are compared without capitals or punctuation (`normaliseFoundationAnswer`)                    | Nothing                                                                         |
 | 4.5  | major    | "noventa" was never taught (first run only)                                                    | False: taught in Unit 3's rule table. The reviewers were not shown rule tables; they are now (`knownBefore`) | Nothing in the unit                                                             |
-
-The panel has not been run again on the changed keys: the repair in the backlog reruns it.
-
-## Content standard
-
-Four misses remain (`npm run content:check -- es-a1-u6`): three sessions are more than half multiple choice, and 32% of the unit's marked steps are typed or built against 40%. This is row 1 of `docs/content-backlog.md`.
 
 ## For the native teacher
 
 - Is "¿Tiene jugo de naranja?" (usted, to one person behind the counter) as natural in a Mexico City café as "¿Tienen …?"?
 - "Quiero un té con leche, por favor": acceptable to a stranger, or too blunt beside "¿Me da …?"?
-- The clips for this unit have not been heard by a native speaker.
+- The repair added `¿Tienes jugo de naranja?` (tú, to the barista) to the accepted answers: natural in a Mexico City café, or would a customer use `¿Tienen …?`?
+- `Zumo` is accepted when a learner orders from a Mexican menu (4.3). Keep it, as a correct Spain form, or mark it wrong in that setting?
+- `Dos cafés, por favor, gracias.` and `No, es solo uno.` are accepted: natural, or only correct?
+- The clips for this unit have not been heard by a native speaker. The repair added no clips.

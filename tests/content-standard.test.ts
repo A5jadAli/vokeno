@@ -17,7 +17,7 @@ import {
  */
 const LEGACY = new Set([
   ...Array.from({ length: 20 }, (_, index) => `de-a1-u${index + 1}`),
-  ...Array.from({ length: 6 }, (_, index) => `es-a1-u${index + 1}`),
+  ...Array.from({ length: 5 }, (_, index) => `es-a1-u${index + 1}`),
   ...Array.from({ length: 3 }, (_, index) => `en-a1-u${index + 1}`),
 ]);
 
@@ -39,7 +39,7 @@ describe('the content standard', () => {
     expect(words).toMatchObject({ id: 'es-a1-u6-words', newItems: 7, marked: 6, produced: 2 });
     expect(words.chooseShare).toBe(0.5);
     expect(words.recycled).toBeGreaterThanOrEqual(STANDARD.minRecycled);
-    expect(grammar.chooseShare).toBeGreaterThan(STANDARD.maxChooseShare);
+    expect(grammar).toMatchObject({ chooseShare: 0.5, produced: 3 });
   });
 
   it('names each miss with its session and the limit', () => {
