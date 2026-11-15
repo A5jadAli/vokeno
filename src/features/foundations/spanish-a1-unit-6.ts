@@ -131,7 +131,7 @@ export const spanishA1Unit6 = defineUnit(
         {
           kind: 'type',
           prompt: 'Write “an orange juice” in Spanish.',
-          accepted: ['un jugo de naranja'],
+          accepted: ['un jugo de naranja', 'un zumo de naranja'],
           hint: 'un + jugo + de naranja.',
           explanation: 'Un jugo de naranja. In Spain you would read un zumo de naranja.',
         },
@@ -227,7 +227,7 @@ export const spanishA1Unit6 = defineUnit(
         {
           kind: 'rule',
           title: 'Two or more',
-          body: 'For more than one, add -s to a word ending in a vowel and -es to one ending in a consonant. Numbers from Unit 3 go first: dos cafés, tres conchas. Un and una only mean one.',
+          body: 'For more than one, add -s to a word ending in a vowel and -es to one ending in a consonant. Numbers from Unit 3 go first: dos cafés, tres conchas. Un and una are only for one item.',
           table: [
             ['un café', 'dos cafés'],
             ['una concha', 'tres conchas'],
@@ -251,7 +251,12 @@ export const spanishA1Unit6 = defineUnit(
         {
           kind: 'type',
           prompt: 'Ask if they have orange juice.',
-          accepted: ['¿Tienen jugo de naranja?'],
+          accepted: [
+            '¿Tienen jugo de naranja?',
+            '¿Tienen zumo de naranja?',
+            '¿Tiene jugo de naranja?',
+            '¿Tiene zumo de naranja?',
+          ],
           hint: 'Start with Tienen, then the drink, inside ¿ and ?.',
           explanation: '¿Tienen jugo de naranja? No un is needed when you ask if they have it.',
         },
@@ -446,7 +451,7 @@ export const spanishA1Unit6 = defineUnit(
           prompt: 'Listen. Which order is it?',
           audio: 'Un café con leche sin azúcar y dos galletas, para llevar.',
           options: [
-            'A white coffee without sugar and two biscuits, to take away',
+            'A coffee with milk, no sugar, and two biscuits, to take away',
             'A black coffee with sugar and one biscuit, for here',
             'Two coffees with milk, to take away',
           ],
@@ -465,7 +470,13 @@ export const spanishA1Unit6 = defineUnit(
         {
           kind: 'type',
           prompt: 'Write an order: a tea with milk, please.',
-          accepted: ['Un té con leche, por favor.', 'Un té con leche por favor.'],
+          accepted: [
+            'Un té con leche, por favor.',
+            'Por favor, un té con leche.',
+            '¿Me das un té con leche, por favor?',
+            '¿Me da un té con leche, por favor?',
+            'Quiero un té con leche, por favor.',
+          ],
           hint: 'Un té + con leche + por favor.',
           explanation: 'Un té con leche, por favor. Keep the accent on té.',
         },

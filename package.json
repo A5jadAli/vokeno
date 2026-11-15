@@ -92,6 +92,8 @@
     "review:english": "node --import tsx scripts/export-english-pilot-review.ts && prettier --write docs/english-a1-pilot-scripts.md docs/english-m3-review.html",
     "review:english:audio": "python3 scripts/audit-english-pilot-audio.py",
     "review:english:live": "node --env-file=.env.local --import tsx scripts/english-pilot-live.mjs",
+    "content:check": "tsx --tsconfig tsconfig.json scripts/content/check.ts",
+    "content:panel": "tsx --tsconfig tsconfig.json scripts/content/panel.ts",
     "typecheck": "tsc --noEmit",
     "validate": "run-s doctor format:check typecheck lint test:ci",
     "validate:release": "npm run validate && npm run test:e2e",

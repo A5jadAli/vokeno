@@ -2,13 +2,24 @@
 
 Version 1, 27 October 2026. Planning baseline: `84ff698`.
 
+## Decision, 15 November 2026: English starts at A2
+
+The owner decided that the English course is for people who already know basic English. Lessons are explained in English, so a learner with no English cannot use them, and no support language is planned. This settles the question left open on 1 November and replaces the "start from zero" baseline below wherever the two differ.
+
+- **Range:** A2 to C1. The core map is 68 units: A2 20, B1 20, B2 16 and C1 12. The 21 unwritten A1 units (A1.04 to A1.24) are dropped.
+- **The three A1 pilot units stay as a warm-up.** They check that a learner's basics are solid and are never counted as a level. Their M3 review continues only as far as it is cheap; it no longer gates anything.
+- **First run:** English is offered "for people who know basic English". "I am new to English" opens the warm-up with a plain note that the course needs basic English.
+- **The real gap is A2 and above.** Today that is 20 short lessons. New work goes there first, as units in the same form as German and Spanish, through `docs/content-pipeline.md`.
+- **Goals are unchanged:** everyday communication, meetings, interviews and presentations, with IELTS as an optional branch. So is the American and British policy.
+- **In the app:** the wording changed on 15 November. Moving `levelRange` to A2 and showing the pilot as a warm-up group is listed in `docs/content-backlog.md`; until then the course screen still shows the three units under A1.
+
 **Status: M0 to M2 are implemented; M3 technical checks and reviewer preparation are under way.** This is the implementation specification for an American and British English course. It supersedes the British-only reference recommendation and provisional pilot order in the [independent review](english-curriculum-review-2026-10.md). The review's existing-content findings remain valid. The status table below separates implemented code from the human validation still needed.
 
 The [unit map](english-curriculum-units.md) defines the core sequence, professional missions and the first three pilot units. Later unit rows are authoring briefs, not finished lessons. Every release still needs scripts, exercises, recordings, assessment review and learner testing. The first three units are ready for review; this is not evidence that the complete course already exists or produces a guaranteed proficiency level.
 
 ## 1. Product decisions
 
-Build one English course with American and British production models, receptive practice in both, and progressively wider international input. Start with people who cannot yet hold a basic exchange. Let learners with existing ability enter at an appropriate point.
+Build one English course with American and British production models, receptive practice in both, and progressively wider international input. Start with people who know basic English (A2); the three A1 pilot units are a warm-up for anyone unsure of their basics. Let learners with more ability enter at an appropriate point.
 
 The course develops four skills together. Its visible milestones describe things learners can do: introduce themselves, arrange something, resolve a problem, contribute to a meeting, answer an interview follow-up, explain a proposal and handle questions. CEFR bands support planning and coverage checks, rather than replacing these concrete outcomes.
 
@@ -78,7 +89,7 @@ Native American and British reviewers must listen to actual recordings. A voice 
 
 ## 4. How a learner progresses
 
-The course has five broad stages, plus optional first-use support. The core map contains 92 proposed units: A1 24, A2 20, B1 20, B2 16 and C1 12. Counts are production planning, not proof of CEFR coverage. Advanced units require substantially more sustained input, practice and projects than introductory units. Do not calculate time to C1 by multiplying the count by a five-minute session.
+The course has four broad stages after a short warm-up. The core map contains 68 proposed units: A2 20, B1 20, B2 16 and C1 12 (the A1 row below now describes the warm-up only). Counts are production planning, not proof of CEFR coverage. Advanced units require substantially more sustained input, practice and projects than introductory units. Do not calculate time to C1 by multiplying the count by a five-minute session.
 
 | Stage                          | Visible outcome                                                  | Expected support and evidence                                                                                         |
 | ------------------------------ | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -126,7 +137,7 @@ Use short sessions with save/resume for sustained work. Start with one achievabl
 
 ### Placement and accessibility
 
-"I am new" goes directly to A1 Unit 1, with optional first-use help. Existing learners can take a short receptive check and optional speaking/writing samples. Store skill-specific observations and uncertainty; do not assume a correct grammar choice proves spontaneous speech.
+"I am new" goes to the three warm-up units, with a plain note that the course needs basic English. Existing learners can take a short receptive check and optional speaking/writing samples. Store skill-specific observations and uncertainty; do not assume a correct grammar choice proves spontaneous speech.
 
 Use demonstrated instructions before relying on written English. The support-language mechanism must allow reviewed translations without changing lesson IDs. The first localisation pack should be selected from actual pilot participants' languages; no first-language audience has been established by the project brief. If no reviewed translation exists, offer visual/audio scaffolding and describe support honestly. Do not advertise accessibility to all zero-English learners before testing it with them.
 
@@ -233,7 +244,7 @@ Keep the existing ink actions, English orange identity, cream surfaces, voice gl
 | M1: Support both varieties and explicit goals | Preferences, request/response validation, audio identity, route metadata and migration; show American/British choices with honest availability  | Both models work through actual playback and coaching; assets do not collide; old progress and DE/ES behaviour remain intact                   |
 | M2: Build the first three units               | Twelve short pilot sessions with reviewed model variants, varied tasks, simple repair, linked practice and a review packet                      | Scripts, questions and recordings agree; no untaught essential checks; both varieties reviewed; novice navigation observed                     |
 | M3: Validate the pilot                        | Native American/British review, English-teacher review, beginner observation, delayed changed-task checks                                       | Fix blocking errors and re-review affected versions; record comprehension, false corrections, support use, retention and confidence separately |
-| M4: Expand the foundation                     | Remaining A1 units, cumulative checkpoints and a first A2 block                                                                                 | Descriptor coverage, retrieval and four-skills evidence reviewed; no "complete A1" claim based only on authored unit count                     |
+| M4: Expand the foundation                     | The first A2 blocks with cumulative checkpoints (no further A1)                                                                                 | Descriptor coverage, retrieval and four-skills evidence reviewed; no "complete A1" claim based only on authored unit count                     |
 | M5: Build professional communication          | Corrected existing B1/B2 material integrated into the new sequence; meeting, interview and presentation missions                                | Unfamiliar questions and constraints tested; accurate written follow-through; goal changes preserve progress                                   |
 | M6: Deepen advanced ability                   | Sustained B2/C1 input, projects, multi-person situations and portfolio assessment                                                               | Calibrated human review of performance and transfer; published claims supported by evidence                                                    |
 

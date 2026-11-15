@@ -240,7 +240,7 @@ test('first run asks for a language, then how much you know', async ({ page }) =
   await expect(
     page.getByRole('heading', { name: 'Which language do you want to learn?' }),
   ).toBeVisible();
-  await expect(page.getByText('First conversations, everyday life and work')).toBeVisible();
+  await expect(page.getByText('For people who know basic English')).toBeVisible();
   await page.getByRole('radio', { name: /^German\./ }).click();
   await page.getByRole('button', { name: 'Continue with German' }).click();
   await expect(page).toHaveURL(/\/learning-plan$/);

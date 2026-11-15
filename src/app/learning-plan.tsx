@@ -105,9 +105,9 @@ export default function LearningPlanScreen() {
         />
 
         {track === 'EN' && ability === 'new' ? (
-          <InfoCard icon="information-outline" title="Start with three small A1 units">
-            Meet someone, share a little about yourself and order a drink. More beginner units are
-            being built. Examples and instructions currently use English.
+          <InfoCard icon="information-outline" title="This course needs basic English">
+            Lessons are explained in English. These three short units check your basics: meet
+            someone, share a little about yourself and order a drink.
           </InfoCard>
         ) : null}
 

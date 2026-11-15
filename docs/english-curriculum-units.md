@@ -4,6 +4,8 @@ Version 1, 27 October 2026. Read with the [curriculum plan](english-curriculum-p
 
 ## How to use this map
 
+**15 November 2026:** the course now starts at A2 ([decision](english-curriculum-plan.md#decision-15-november-2026-english-starts-at-a2)). A1.01 to A1.03 remain as the warm-up; A1.04 to A1.24 below are dropped and kept only as a record. The core map is the 68 units from A2.01.
+
 There are 92 proposed core units: A1 24, A2 20, B1 20, B2 16 and C1 12. There are also 18 professional missions that apply core skills to meetings, interviews and presentations. Missions do not count as additional CEFR levels or require a separate duplicate language course.
 
 `A1.01` is the planning shorthand for unit ID `en-a1-u1`; its pilot session IDs are `en-a1-u1-meet`, `en-a1-u1-build`, `en-a1-u1-listen` and `en-a1-u1-use`. Apply the same convention to Units 2 and 3. Preserve existing legacy `en-*` IDs separately. Level labels and grammar placement below are proposed curriculum decisions that require teacher validation, not official CEFR prescriptions.
