@@ -13,7 +13,6 @@ import {
   levelLabel,
   levelNote,
   levelRange,
-  levelStatus,
 } from '@/features/foundations/level-status';
 import { finalStep, unitName, type LessonLevel } from '@/features/foundations/types';
 import type { LanguageTrack } from '@/features/language/config';
@@ -59,31 +58,31 @@ export function pathStart(track: LanguageTrack, startAt?: string) {
   return id;
 }
 
-/** A partial A1 pilot must not silently advance a beginner into the older A2/B1 library. */
-export function isEnglishBeginnerRoute(progress: FoundationProgress, startAt?: string) {
-  if (levelStatus.EN.A1 === 'complete') return false;
+/**
+ * Whether an English learner is in the warm-up: the units below the course's first level, for
+ * anyone unsure of their basics. They are in it when they chose to start there, or have only
+ * ever worked there, and they leave it for the course when its last lesson is finished.
+ */
+export function isEnglishWarmUpRoute(progress: FoundationProgress, startAt?: string) {
   const lessons = getTrackLessons('EN');
+  const warmUp = lessons.filter((lesson) => isWarmUp('EN', lesson.level));
+  if (warmUp.every((lesson) => isFinished(progress[lesson.id]))) return false;
   const chosen = lessons.find((lesson) => lesson.id === startAt);
-  if (chosen) return chosen.level === 'A1';
-  return !lessons.some(
-    (lesson) =>
-      lesson.level !== 'A1' &&
-      (isFinished(progress[lesson.id]) || (progress[lesson.id]?.step ?? 0) > 0),
+  if (chosen) return isWarmUp('EN', chosen.level);
+  const touched = (lesson: FoundationLesson) =>
+    isFinished(progress[lesson.id]) || (progress[lesson.id]?.step ?? 0) > 0;
+  return (
+    warmUp.some(touched) &&
+    !lessons.some((lesson) => !isWarmUp('EN', lesson.level) && touched(lesson))
   );
 }
 
+/** The lessons "what next" chooses from: the warm-up or the course, never a mix of the two. */
 function routeLessons(progress: FoundationProgress, track: LanguageTrack, startAt?: string) {
   const lessons = getTrackLessons(track);
-  return track === 'EN' && isEnglishBeginnerRoute(progress, startAt)
-    ? lessons.filter((lesson) => lesson.level === 'A1')
-    : lessons;
-}
-
-function routeStart(progress: FoundationProgress, track: LanguageTrack, startAt?: string) {
-  return (
-    pathStart(track, startAt) ??
-    (track === 'EN' && !isEnglishBeginnerRoute(progress) ? 'en-sounds' : undefined)
-  );
+  if (track !== 'EN') return lessons;
+  const warmUp = isEnglishWarmUpRoute(progress, startAt);
+  return lessons.filter((lesson) => isWarmUp('EN', lesson.level) === warmUp);
 }
 
 export function findNextLesson(
@@ -104,7 +103,7 @@ export function findNextLesson(
   if (resume) return { lesson: resume, reason: 'resume' };
   const start = Math.max(
     0,
-    lessons.findIndex((lesson) => lesson.id === routeStart(progress, track, startAt)),
+    lessons.findIndex((lesson) => lesson.id === pathStart(track, startAt)),
   );
   // Lessons a passed checkpoint tested the learner out of are not offered as next.
   const covered = coveredLessons(lessons, progress);
@@ -119,7 +118,7 @@ export function lessonsAhead(progress: FoundationProgress, track: LanguageTrack,
   const lessons = routeLessons(progress, track, startAt);
   const start = Math.max(
     0,
-    lessons.findIndex((lesson) => lesson.id === routeStart(progress, track, startAt)),
+    lessons.findIndex((lesson) => lesson.id === pathStart(track, startAt)),
   );
   const covered = coveredLessons(lessons, progress);
   return lessons
@@ -164,11 +163,14 @@ export function courseUnits(track: LanguageTrack, progress: FoundationProgress):
       covered: 0,
     });
   for (const lesson of getTrackLessons(track)) {
-    const id = lesson.format === 'steps' ? lesson.unit.id : `${track}-${lesson.level}-lessons`;
+    // Lessons below the course's first level are one warm-up group, whatever their format.
+    const warmUp = isWarmUp(track, lesson.level);
+    const id =
+      lesson.format === 'steps' && !warmUp ? lesson.unit.id : `${track}-${lesson.level}-lessons`;
     let group = groups.find((item) => item.id === id);
     if (!group) {
       group =
-        lesson.format === 'steps'
+        lesson.format === 'steps' && !warmUp
           ? {
               id,
               kind: lesson.unit.checkpoint ? 'checkpoint' : 'unit',
@@ -180,13 +182,13 @@ export function courseUnits(track: LanguageTrack, progress: FoundationProgress):
               done: 0,
               covered: 0,
             }
-          : isWarmUp(track, lesson.level)
+          : warmUp
             ? {
                 id,
                 kind: 'warm-up',
                 title: 'Warm-up',
                 label: `Warm-up before ${levelRange[track][0]}`,
-                canDo: `Short lessons that tune your ear before ${levelRange[track][0]}.`,
+                canDo: `Short lessons that check your basics before ${levelRange[track][0]}.`,
                 lessons: [],
                 done: 0,
                 covered: 0,
@@ -215,13 +217,14 @@ export function courseUnits(track: LanguageTrack, progress: FoundationProgress):
 
 export type CoursePosition = {
   next: NextLesson | null;
-  /** The available beginner block is done; later library lessons are not its continuation. */
-  waitingForContent: boolean;
   /** The unit (or lesson group) the next lesson belongs to. */
   unit?: UnitSummary;
   /** 1-based position of the next lesson inside its unit. */
   lessonNumber?: number;
-  /** Lessons finished or covered by a passed checkpoint: the one count used everywhere. */
+  /**
+   * Lessons finished or covered by a passed checkpoint: the one count used everywhere. A warm-up
+   * is not part of the course, so its lessons are in neither this count nor the total.
+   */
   finishedLessons: number;
   /** Of those, lessons covered by a checkpoint rather than taken. */
   coveredLessons: number;
@@ -234,16 +237,18 @@ export function coursePosition(
   track: LanguageTrack,
   startAt?: string,
 ): CoursePosition {
-  const lessons = getTrackLessons(track);
+  const lessons = getTrackLessons(track).filter((lesson) => !isWarmUp(track, lesson.level));
   const next = findNextLesson(progress, track, startAt);
   const units = courseUnits(track, progress);
   const unit = next ? units.find((item) => item.lessons.includes(next.lesson)) : undefined;
   return {
     next,
-    waitingForContent: next === null && track === 'EN' && isEnglishBeginnerRoute(progress, startAt),
     unit,
     lessonNumber: next && unit ? unit.lessons.indexOf(next.lesson) + 1 : undefined,
-    finishedLessons: units.reduce((sum, item) => sum + (item.kind === 'saved' ? 0 : item.done), 0),
+    finishedLessons: units.reduce(
+      (sum, item) => sum + (item.kind === 'saved' || item.kind === 'warm-up' ? 0 : item.done),
+      0,
+    ),
     coveredLessons: units.reduce((sum, item) => sum + item.covered, 0),
     totalLessons: lessons.length,
     started: allTrackLessons(track).some(

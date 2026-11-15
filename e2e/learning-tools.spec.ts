@@ -119,15 +119,15 @@ test('AI writing feedback shows criteria, corrections and an improved version', 
 test('starting ability and exam goal change the recommended practice', async ({ page }) => {
   await page.goto('/learning-plan');
   await page.getByRole('radio', { name: 'English', exact: true }).click();
-  await page.getByRole('radio', { name: 'I know some words and short phrases' }).click();
+  await page.getByRole('radio', { name: 'I know basic English' }).click();
   await page.getByRole('radio', { name: 'IELTS General Training', exact: true }).click();
   await page.reload();
   await expect(
     page.getByRole('radio', { name: 'IELTS General Training', exact: true }),
   ).toBeChecked();
   await page.getByRole('button', { name: /^Start: / }).click();
-  // An exam goal must not skip the foundation a beginner still needs.
-  await expect(page).toHaveURL(/\/foundation\/en-a1-u1-meet$/);
+  // An exam goal must not skip the A2 lessons someone with the basics still needs.
+  await expect(page).toHaveURL(/\/foundation\/en-sounds$/);
   await page.goto('/learning-plan?track=EN');
   await page.getByRole('radio', { name: 'I can already have a simple conversation' }).click();
   await page.getByRole('button', { name: /^Start: / }).click();

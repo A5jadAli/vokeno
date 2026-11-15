@@ -46,17 +46,23 @@ describe('English beginner pilot', () => {
     for (const answer of ['no thanks', 'coffee', 'from'])
       expect(checkFoundationWriting({ track: 'EN', writing: task }, answer)).toBe(false);
   });
-  it('does not call a future level finished when the available A1 pilot ends', () => {
-    expect(defaultGoalLevel(completePilot, 'EN')).toBe('A1');
-    const goal = buildGoalPlan({
-      track: 'EN',
-      progress: completePilot,
-      level: 'B1',
-      date: '2026-12-01',
-      now: Date.parse('2026-10-27T09:00:00Z'),
-    });
-    expect(goal?.status).toBe('content-pending');
-    expect(goal?.scopeNote).toContain('first three A1 units');
+  it('never treats the warm-up as a level: a goal aims at A2 or above', () => {
+    expect(defaultGoalLevel({}, 'EN', 'en-a1-u1-meet')).toBe('A2');
+    expect(defaultGoalLevel(completePilot, 'EN')).toBe('A2');
+    const goal = (progress: FoundationProgress, startAt?: string) =>
+      buildGoalPlan({
+        track: 'EN',
+        progress,
+        startAt,
+        level: 'B1',
+        date: '2026-12-01',
+        now: Date.parse('2026-10-27T09:00:00Z'),
+      });
+    // In the warm-up the pace covers only its three units, and says so.
+    expect(goal({}, 'en-a1-u1-meet')?.scopeNote).toContain('three warm-up units');
+    // Once it is finished the goal counts the course's own lessons.
+    expect(goal(completePilot, 'en-a1-u1-meet')?.scopeNote).toBeUndefined();
+    expect(goal(completePilot, 'en-a1-u1-meet')?.lessonsLeft).toBeGreaterThan(0);
   });
   it('recognises English contractions without counting fragments inside other words', () => {
     const call = getUnitCall('en-a1-u1')!;
@@ -88,26 +94,52 @@ describe('English beginner pilot', () => {
     }
   });
 
-  it('takes beginners to introductions whatever their eventual professional goal', () => {
-    for (const goal of englishGoals)
-      for (const ability of ['new', 'basics'] as const)
-        expect(learningRecommendation('EN', ability, goal).href).toBe('/foundation/en-a1-u1-meet');
+  it('starts people with basic English at A2 and offers the warm-up only to someone new, whatever their goal', () => {
+    for (const goal of englishGoals) {
+      expect(learningRecommendation('EN', 'basics', goal).href).toBe('/foundation/en-sounds');
+      const warmUp = learningRecommendation('EN', 'new', goal);
+      expect(warmUp.href).toBe('/foundation/en-a1-u1-meet');
+      expect(warmUp.title).toMatch(/^Warm-up: /);
+    }
   });
 
-  it('continues between sessions and units without replacing an unfinished session', () => {
+  it('starts a new learner at A2, never in the warm-up', () => {
+    expect(findNextLesson({}, 'EN')?.lesson.id).toBe('en-sounds');
+    expect(coursePosition({}, 'EN')).toMatchObject({ totalLessons: 20, finishedLessons: 0 });
+    // The warm-up is never offered as "next" to someone on the course, even at its end.
+    const course = Object.fromEntries(
+      getTrackLessons('EN')
+        .filter((lesson) => lesson.level !== 'A1')
+        .map((lesson) => [lesson.id, done()]),
+    );
+    expect(findNextLesson(course, 'EN')).toBeNull();
+    expect(coursePosition(course, 'EN')).toMatchObject({ totalLessons: 20, finishedLessons: 20 });
+  });
+
+  it('walks the chosen warm-up session by session, then moves on to A2', () => {
+    const start = 'en-a1-u1-meet';
     const progress: FoundationProgress = {};
     for (const lesson of englishA1Units) {
-      expect(findNextLesson(progress, 'EN')?.lesson.id).toBe(lesson.id);
+      expect(findNextLesson(progress, 'EN', start)?.lesson.id).toBe(lesson.id);
       progress[lesson.id] = { ...freshFoundationEntry(), step: 2 };
-      expect(findNextLesson(progress, 'EN')).toMatchObject({
+      expect(findNextLesson(progress, 'EN', start)).toMatchObject({
         lesson: { id: lesson.id },
         reason: 'resume',
       });
+      // Someone who began the pilot before the course started at A2 stays in it without a choice.
+      expect(findNextLesson(progress, 'EN')?.lesson.id).toBe(lesson.id);
       progress[lesson.id] = done();
     }
-    expect(findNextLesson(progress, 'EN')).toBeNull();
-    expect(lessonsAhead(progress, 'EN')).toEqual([]);
-    expect(coursePosition(progress, 'EN').waitingForContent).toBe(true);
+    expect(findNextLesson(progress, 'EN', start)).toMatchObject({
+      lesson: { id: 'en-sounds' },
+      reason: 'start',
+    });
+    expect(lessonsAhead(progress, 'EN', start)[0].id).toBe('en-sounds');
+    // The warm-up's twelve sessions are in neither the count nor the total.
+    expect(coursePosition(progress, 'EN', start)).toMatchObject({
+      totalLessons: 20,
+      finishedLessons: 0,
+    });
   });
 
   it('keeps an existing learner on their older path and honours a chosen starting point', () => {
@@ -120,21 +152,17 @@ describe('English beginner pilot', () => {
     expect(getTrackLessons('ES')[0].id).toBe('es-a1-u1-words');
   });
 
-  it('offers taught unit practice after the pilot instead of harder lessons or a completion claim', () => {
-    for (let day = 27; day <= 29; day++) {
-      const plan = buildTodayPlan({
-        track: 'EN',
-        progress: completePilot,
-        completedScenarioIds: [],
-        completedUnitIds: [],
-        log: {},
-        now: Date.parse(`2026-10-${day}T09:00:00Z`),
-      });
-      expect(plan.courseFinished).toBe(false);
-      expect(plan.position.waitingForContent).toBe(true);
-      expect(plan.steps).toHaveLength(1);
-      expect(plan.steps[0].href).toMatch(/^\/conversation\?track=EN&call=en-a1-u[123]$/);
-    }
+  it('offers the first A2 lesson after the warm-up, with no completion claim', () => {
+    const plan = buildTodayPlan({
+      track: 'EN',
+      progress: completePilot,
+      completedScenarioIds: [],
+      completedUnitIds: [],
+      log: {},
+      now: Date.parse('2026-10-27T09:00:00Z'),
+    });
+    expect(plan.courseFinished).toBe(false);
+    expect(plan.steps.map((step) => step.href)).toEqual(['/foundation/en-sounds']);
   });
 
   it('accepts either taught takeaway reply and rejects the opposite choice', () => {

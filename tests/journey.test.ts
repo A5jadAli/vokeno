@@ -203,18 +203,20 @@ describe('course levels', () => {
     expect(courseLevels('ES', {}).map((level) => level.level)).toEqual(['A1', 'A2', 'B1', 'B2']);
     expect(courseLevels('DE', {}).map((level) => level.level)).toEqual(['A1', 'A2', 'B1', 'B2']);
     const english = courseLevels('EN', {});
-    expect(english.map((level) => level.level)).toEqual(['A1', 'A2', 'B1', 'B2', 'C1']);
+    expect(english.map((level) => level.level)).toEqual(['A2', 'B1', 'B2', 'C1']);
+    // The three A1 units sit in A2 as one warm-up group and never move its count.
     expect(english[0]).toMatchObject({
-      label: 'A1 starter',
-      units: 3,
-      lessons: 12,
+      level: 'A2',
+      label: 'A2 starter',
+      units: 0,
+      lessons: 3,
       reached: false,
     });
-    expect(english[1]).toMatchObject({ level: 'A2', label: 'A2 starter', lessons: 3 });
-    expect(english[4]).toMatchObject({ level: 'C1', lessons: 0, label: 'C1' });
-    expect(english.flatMap((level) => level.groups).some((group) => group.kind === 'warm-up')).toBe(
-      false,
-    );
+    expect(english[0].groups.map((group) => [group.kind, group.lessons.length])).toEqual([
+      ['warm-up', 12],
+      ['lessons', 3],
+    ]);
+    expect(english[3]).toMatchObject({ level: 'C1', lessons: 0, label: 'C1' });
     const spanish = courseLevels('ES', {});
     // Levels not built yet are listed, empty, so the way to B2 is visible but nothing is claimed.
     expect(spanish.find((level) => level.level === 'B2')?.lessons).toBe(0);
@@ -259,8 +261,8 @@ describe('course levels', () => {
 });
 
 describe('levels shown for practice content', () => {
-  it('shows the actual English levels now that A1 exists, keeping other languages unchanged', () => {
-    expect(contentLevel('EN', 'A1')).toBe('A1');
+  it('shows English content below A2 as a warm-up, keeping other languages unchanged', () => {
+    expect(contentLevel('EN', 'A1')).toBe('Warm-up');
     expect(contentLevel('EN', 'A2')).toBe('A2');
     expect(contentLevel('EN', 'B1')).toBe('B1');
     expect(contentLevel('ES', 'A1')).toBe('A1');

@@ -61,12 +61,20 @@ export function learningRecommendation(
           href: '/foundation/weekend-smalltalk',
         };
   }
-  // Work goals do not skip the foundations a beginner still needs.
-  if (ability !== 'conversational')
+  // The course needs basic English. Someone new to it gets the three warm-up units; the setup
+  // screen says why.
+  if (ability === 'new')
     return {
-      title: 'Unit 1: Hello, I’m Alex',
-      why: 'Start with a name, a question and asking someone to repeat. Three A1 units are ready for practice; more are being built.',
+      title: 'Warm-up: Hello, I’m Alex',
+      why: 'Three short warm-up units check your basics, starting with a name, a question and asking someone to repeat.',
       href: '/foundation/en-a1-u1-meet',
+    };
+  // Work and exam goals do not skip the A2 lessons that someone with the basics still needs.
+  if (ability === 'basics')
+    return {
+      title: 'English sounds that change meaning',
+      why: 'Start at A2: the sounds and stress that decide whether people understand you.',
+      href: '/foundation/en-sounds',
     };
   if (goal === 'ielts-academic' || goal === 'ielts-general')
     return {

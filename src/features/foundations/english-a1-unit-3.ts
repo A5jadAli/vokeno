@@ -352,7 +352,7 @@ export const englishA1Unit3 = defineUnit(
         {
           kind: 'rule',
           title: 'Your next small step',
-          body: 'You have practised three everyday situations. Come back for phrase review and try the unit calls with different details. More A1 units are being built. These first three units do not complete A1.',
+          body: 'You have practised three everyday situations. Come back for phrase review and try the unit calls with different details. These three units are a warm-up: the course itself starts at A2 and needs basic English.',
         },
       ],
     },

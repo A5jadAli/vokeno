@@ -31,17 +31,25 @@ export default function LearningPlanScreen() {
   const setChoices = useCoachingStore((state) => state.setLearningChoices);
   const englishReference = useCoachingStore((state) => state.preferences.EN.reference);
   const setEnglishReference = useCoachingStore((state) => state.setEnglishReference);
-  const ability = preferences.ability ?? 'new';
+  // English is for people who know the basics, so that is where its choices start.
+  const ability = preferences.ability ?? (track === 'EN' ? 'basics' : 'new');
   const goal = preferences.studyGoal ?? 'everyday';
   const language = languageDetails[track].name;
   const next = learningRecommendation(track, ability, goal);
   const lessonId = lessonIdFromHref(next.href);
   const isLesson = foundationLessons.some((item) => item.id === lessonId);
-  const abilities: [StartingAbility, string][] = [
-    ['new', `I am new to ${language}`],
-    ['basics', 'I know some words and short phrases'],
-    ['conversational', 'I can already have a simple conversation'],
-  ];
+  const abilities: [StartingAbility, string][] =
+    track === 'EN'
+      ? [
+          ['basics', 'I know basic English'],
+          ['conversational', 'I can already have a simple conversation'],
+          ['new', 'I am new to English'],
+        ]
+      : [
+          ['new', `I am new to ${language}`],
+          ['basics', 'I know some words and short phrases'],
+          ['conversational', 'I can already have a simple conversation'],
+        ];
   const goals: [StudyGoal, string][] = [
     ['everyday', 'Everyday life'],
     ['work-study', 'Work and study'],
@@ -106,8 +114,9 @@ export default function LearningPlanScreen() {
 
         {track === 'EN' && ability === 'new' ? (
           <InfoCard icon="information-outline" title="This course needs basic English">
-            Lessons are explained in English. These three short units check your basics: meet
-            someone, share a little about yourself and order a drink.
+            Lessons are explained in English. Three short warm-up units check your basics: meet
+            someone, share a little about yourself and order a drink. The course itself starts at
+            A2.
           </InfoCard>
         ) : null}
 

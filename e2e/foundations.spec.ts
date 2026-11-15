@@ -59,15 +59,21 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
-test('English pilot has a clear twelve-session route and a supported stopping point', async ({
+test('English warm-up has a clear twelve-session route and hands over to the first A2 lesson', async ({
   page,
 }, testInfo) => {
   test.setTimeout(180_000);
   page.setDefaultTimeout(15_000);
   await page.goto('/learning-plan?track=EN');
+  // The course starts at A2; the warm-up is for someone who says they are new.
+  await expect(
+    page.getByRole('radio', { name: 'I know basic English', exact: true }),
+  ).toBeChecked();
+  await page.getByRole('radio', { name: 'I am new to English', exact: true }).click();
+  await expect(page.getByText('This course needs basic English', { exact: true })).toBeVisible();
   await page.getByRole('radio', { name: 'American English', exact: true }).click();
   await page.getByRole('radio', { name: 'Meetings and teamwork', exact: true }).click();
-  await page.getByRole('button', { name: 'Start: Unit 1: Hello, I’m Alex', exact: true }).click();
+  await page.getByRole('button', { name: 'Start: Warm-up: Hello, I’m Alex', exact: true }).click();
   for (const [index, lesson] of englishA1Units.entries()) {
     await expect(page).toHaveURL(new RegExp(`/foundation/${lesson.id}$`));
     await expect(page.getByRole('heading', { name: lesson.title })).toBeVisible();
@@ -90,14 +96,13 @@ test('English pilot has a clear twelve-session route and a supported stopping po
         .getByRole('button', { name: `One more: ${englishA1Units[index + 1].title}`, exact: true })
         .click();
   }
+  // After the warm-up the course itself is next: its first A2 lesson.
   await expect(
     page.getByRole('button', { name: 'One more: English sounds that change meaning' }),
-  ).toHaveCount(0);
-  await expect(page.getByRole('button', { name: /^One more: Speak:/ })).toBeVisible();
-  await page.goto('/?track=EN');
-  await expect(page.getByRole('button', { name: /Start lesson:/ })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: /^Optional: Speak:/ })).toBeInViewport();
-  await page.screenshot({ path: testInfo.outputPath('english-after-pilot.png'), fullPage: true });
+  ).toBeVisible();
+  await page.goto('/sprint?track=EN');
+  await expect(page.getByText('Warm-up before A2')).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath('english-after-warm-up.png'), fullPage: true });
   await page.goto('/accent?track=EN');
   await expect(page.getByRole('radio', { name: 'American English', exact: true })).toHaveAttribute(
     'aria-checked',

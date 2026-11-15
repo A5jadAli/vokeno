@@ -4,7 +4,7 @@ What to write next, in order. Follow `docs/content-pipeline.md`. Take the first 
 
 Statuses: `next` · `in progress (date)` · `written, needs audio` · `ready for native review (branch)` · `blocked (why)` · `done` · `owner` · `engine` · `later`.
 
-The order puts the course closest to a true level first. German A1 has every unit and needs repair, calls and mocks. Spanish A1 has 6 of 25 units. English is rebuilt from A2 after the decision of 15 November 2026 (`docs/english-curriculum-plan.md`).
+The order puts the course closest to a true level first. German A1 has every unit and needs repair, calls and mocks. Spanish A1 has 6 of 25 units. English is rebuilt from A2 after the decision of 15 November 2026 (`docs/english-curriculum-plan.md`); the app already starts it there, and its story is set in London.
 
 ## Queue
 
@@ -20,23 +20,21 @@ The order puts the course closest to a true level first. German A1 has every uni
 | 8   | `de-a1-u3`, `de-a1-u4` repair; then German calls for `de-a1-u5` to `de-a1-u8`                                                                                       | as rows 3 and 4                                                                       |        |
 | 9   | Continue the same alternation: one new Spanish unit (10 to 25, a checkpoint where the plan puts one), then one German repair (5 to 20) with calls in blocks of four | Spanish units plan; `content:check -- --all` for the German order (most misses first) |        |
 | 10  | Two Goethe A1 mock exams (Hören, Lesen, Schreiben, Sprechen), timed, marked at the official 60%                                                                     | `docs/german-curriculum-blueprint.md`, Readiness                                      | engine |
-| 11  | English A2 block 1: `A2.01` to `A2.04` as units, then its checkpoint                                                                                                | `docs/english-curriculum-units.md`, A2                                                | engine |
+| 11  | English A2 block 1: `A2.01` to `A2.04` as units, then its checkpoint                                                                                                | `docs/english-curriculum-units.md`, A2                                                |        |
 | 12  | English A2 blocks 2 to 5, then B1                                                                                                                                   | English unit map                                                                      | later  |
 | 13  | Spanish A1 mocks (DELE A1), after Unit 25                                                                                                                           | `docs/spanish-a1-assessment-review.md`                                                | later  |
 
 ## Why some rows wait
 
 - **Row 10** needs a decision on how a full mock runs in the app (one long timed session, or four papers). That is app work first.
-- **Row 11** waits on the app change below, so the new units land in the right place on the course.
 
 ## App work the content depends on (for the development session)
 
-| Work                                                                                                                                                                                                                                                                                                                                           | Why                                                                                                   | Status |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------ |
-| **English starts at A2.** `levelRange.EN` becomes A2 to C1; the three A1 units show as one "Warm-up" group that does not count towards A2 (`courseLevels` counts them today: 3 units, 15 lessons); a new learner's default start is the first A2 lesson; "I am new to English" opens the warm-up with the note already in `learning-plan.tsx`. | The decision of 15 November. Tried on 15 Nov: changing `levelRange` alone leaves the units inside A2. | engine |
-| **The Take**, parts 1 and 2 (`docs/the-take.md`)                                                                                                                                                                                                                                                                                               | Speaking steps are an honour-system button today.                                                     | engine |
-| **Review allowance.** Let the daily review grow with what is due (8 today; German adds about 7.5 cards a day) and offer a second round                                                                                                                                                                                                         | By estimate only a quarter of scheduled reviews happen at one unit session a day.                     | engine |
-| **Grammar in review.** A rule step's examples become cards (a gap to fill), not only taught phrases                                                                                                                                                                                                                                            | Grammar is taught once and never returns.                                                             | engine |
+| Work                                                                                                                                   | Why                                                                               | Status |
+| -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ------ |
+| **The Take**, parts 1 and 2 (`docs/the-take.md`)                                                                                       | Speaking steps are an honour-system button today.                                 | engine |
+| **Review allowance.** Let the daily review grow with what is due (8 today; German adds about 7.5 cards a day) and offer a second round | By estimate only a quarter of scheduled reviews happen at one unit session a day. | engine |
+| **Grammar in review.** A rule step's examples become cards (a gap to fill), not only taught phrases                                    | Grammar is taught once and never returns.                                         | engine |
 
 ## Owner
 

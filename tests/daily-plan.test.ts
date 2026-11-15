@@ -66,7 +66,10 @@ describe('a brand-new learner', () => {
     for (const track of ['EN', 'DE'] as const) {
       const today = plan({ track });
       expect(today.steps).toHaveLength(1);
-      expect(today.steps[0].href).toBe(`/foundation/${getTrackLessons(track)[0].id}`);
+      // English starts at A2; its three A1 units are an optional warm-up before the course.
+      expect(today.steps[0].href).toBe(
+        `/foundation/${track === 'EN' ? 'en-sounds' : getTrackLessons(track)[0].id}`,
+      );
     }
   });
 

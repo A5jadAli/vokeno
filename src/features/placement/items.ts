@@ -611,11 +611,11 @@ function recommend(track: PlacementTrack, failedLevel: PlacementLevel | null) {
   const lessons = getTrackLessons(track);
   const language = { DE: 'German', EN: 'English', ES: 'Spanish' }[track];
   const start = failedLevel ? lessons.find((lesson) => lesson.level === failedLevel) : undefined;
-  // The existing English check begins at A2 and cannot distinguish beginner abilities.
+  // The English check begins at A2, the course's first level: below it there is the warm-up.
   if (track === 'EN' && failedLevel === 'A2')
     return {
-      title: 'Start with a short introduction',
-      why: 'This check starts at A2, so it cannot tell how much A1 you know. Try the first A1 unit, or choose a different starting point from Course.',
+      title: 'Start with the warm-up',
+      why: 'You were not yet secure at A2, where the course starts. Three short warm-up units check your basics first.',
       href: '/foundation/en-a1-u1-meet',
     };
   if (start && isWarmUp(track, start.level))

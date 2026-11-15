@@ -24,13 +24,14 @@ export const exams: Partial<Record<LanguageTrack, Partial<Record<LessonLevel, st
 };
 
 /**
- * Planned levels, in order. English now has an A1 pilot; every unfinished level stays a
- * starter set. The older A2 lessons keep their actual level and existing progress.
+ * Planned levels, in order. English starts at A2: the course is for people who already know
+ * basic English, because lessons are explained in English (docs/english-curriculum-plan.md,
+ * decision of 15 November 2026). Its three A1 units are a warm-up, never a level.
  */
 export const levelRange: Record<LanguageTrack, LessonLevel[]> = {
   DE: ['A1', 'A2', 'B1', 'B2'],
   ES: ['A1', 'A2', 'B1', 'B2'],
-  EN: ['A1', 'A2', 'B1', 'B2', 'C1'],
+  EN: ['A2', 'B1', 'B2', 'C1'],
 };
 
 const order: LessonLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1'];

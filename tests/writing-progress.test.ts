@@ -17,9 +17,9 @@ describe('learning plans, writing drafts and reading content', () => {
           true,
         );
       }
-    // Knowing only words and short phrases still starts with the beginner pilot, even for an exam goal.
+    // Basic English starts at A2, the course's first level, even for an exam goal.
     expect(learningRecommendation('EN', 'basics', 'ielts-academic').href).toBe(
-      '/foundation/en-a1-u1-meet',
+      '/foundation/en-sounds',
     );
     expect(learningRecommendation('EN', 'conversational', 'ielts-general').href).toBe(
       '/foundation/en-ielts-listening',

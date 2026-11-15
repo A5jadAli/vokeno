@@ -90,10 +90,7 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
   const day = dayNumberOf(today);
   const { stage, returning } = practiceStage(languageLog(input.log, track), today);
   const position = coursePosition(progress, track, input.startAt);
-  const level =
-    position.next?.lesson.level ??
-    (position.waitingForContent ? 'A1' : getTrackLessons(track).at(-1)?.level) ??
-    'A1';
+  const level = position.next?.lesson.level ?? getTrackLessons(track).at(-1)?.level ?? 'A1';
   const done = (key: ActivityKey) =>
     finishedOn(activities, today, key) ||
     // A lesson finished today on another device arrives through its attempt history.
@@ -299,17 +296,15 @@ export function buildTodayPlan(input: TodayPlanInput): TodayPlan {
     doneCount,
     minutes: steps.reduce((total, step) => total + step.minutes, 0),
     bonus: bonus ?? undefined,
-    footnote: position.waitingForContent
-      ? 'Your first three A1 units are done. Keep practising while more beginner units are being built.'
-      : returning
-        ? 'Welcome back. One small step is enough today.'
-        : stage === 'warm-up'
-          ? 'Start small: one step a day builds the habit.'
-          : stage === 'building'
-            ? 'Missed a day? Your progress waits for you.'
-            : 'You have a real routine now. Keep it light and steady.',
+    footnote: returning
+      ? 'Welcome back. One small step is enough today.'
+      : stage === 'warm-up'
+        ? 'Start small: one step a day builds the habit.'
+        : stage === 'building'
+          ? 'Missed a day? Your progress waits for you.'
+          : 'You have a real routine now. Keep it light and steady.',
     position,
-    courseFinished: position.next === null && !position.waitingForContent,
+    courseFinished: position.next === null,
     snapshot: { day: today, keys },
   };
 }

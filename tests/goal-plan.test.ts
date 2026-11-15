@@ -95,7 +95,8 @@ describe('the goal plan', () => {
 
   it('offers only levels the language has', () => {
     expect(goalLevels('DE')[0]).toBe('A1');
-    expect(goalLevels('EN')).toContain('A1');
+    // English starts at A2: its warm-up is not a level to aim at.
+    expect(goalLevels('EN')).toEqual(['A2', 'B1', 'B2']);
   });
 });
 

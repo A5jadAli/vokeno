@@ -21,7 +21,6 @@ const statusStyle: Record<GoalStatus, { label: string; bg: string; ink: string }
   behind: { label: 'Behind', bg: Feedback.behindBg, ink: Feedback.closeInk },
   tight: { label: 'Very tight', bg: Feedback.wrongBg, ink: Feedback.wrongText },
   ready: { label: 'Lessons done', bg: Feedback.correctBg, ink: Feedback.correctText },
-  'content-pending': { label: 'More lessons coming', bg: Palette.neutralChip, ink: Palette.ink },
   today: { label: 'Exam day', bg: Feedback.correctBg, ink: Feedback.correctText },
   passed: { label: 'Date passed', bg: Palette.neutralChip, ink: Palette.ink },
 };
@@ -63,8 +62,6 @@ function advice(goal: GoalPlan, level: string) {
       return 'More than 2 lessons a day. A later date is kinder.';
     case 'ready':
       return `Available ${level} lessons done. Keep practising; this is not an exam-readiness result.`;
-    case 'content-pending':
-      return 'Review your phrases and try a unit call while more beginner lessons are being built.';
     case 'today':
       return 'Good luck. A short warm-up is enough today.';
     case 'passed':
