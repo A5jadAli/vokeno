@@ -27,7 +27,12 @@ It cannot make a level true. Models reviewing models is not a native teacher, an
 
 The three reviewers run together with `npm run content:panel`. Each sees the unit and the list of what was taught before it. None sees another's findings. Model names are defaults: set `CONTENT_MODEL_GEMINI`, `CONTENT_MODEL_OPENAI` or `CONTENT_MODEL_XAI` to change one, and use the provider's strongest general model.
 
-Keys come from the environment (`OPENAI_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY`), from an ignored `.env.content.local`, or from the file named by `CONTENT_KEYS_FILE`. Never print a key, commit one, or copy one into the repository.
+## Set up once (owner)
+
+- **Review keys.** The panel needs an OpenAI, a Gemini and an xAI key. It looks, in order, in the environment (`OPENAI_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY`), in an ignored `.env.content.local` in the directory it runs from, and in the file named by `CONTENT_KEYS_FILE`. For Claude Code, put the pointer in `.claude/settings.local.json`, which git ignores: `{ "env": { "CONTENT_KEYS_FILE": "/full/path/to/keys/file" } }`. For Codex or a terminal, `export CONTENT_KEYS_FILE=/full/path/to/keys/file` before starting.
+- **Voice token.** `LESSON_AUDIO_TOKEN` in the ignored `.env.audio.local` of the main tree (`docs/lesson-audio.md`).
+
+An agent never prints a key, commits one, or copies one into a tracked file. If the panel says a key is missing, stop and tell the owner; do not go looking for keys.
 
 ## The content standard
 
@@ -48,11 +53,21 @@ The existing rules still apply and are tested elsewhere: every exercise solvable
 
 ## The stages
 
-Work on one unit at a time, on its own branch (`content/<unit-id>`) in its own worktree. Other sessions share the main working tree.
+Work on one unit at a time, on its own branch in its own worktree. Other sessions share the main working tree, so never write lessons there.
+
+```sh
+MAIN=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")   # the main tree
+git worktree add -b content/<unit-id> "$MAIN/../voka-content-<unit-id>" main
+cd "$MAIN/../voka-content-<unit-id>"
+ln -s "$MAIN/node_modules" node_modules                    # use the main tree's packages
+cp "$MAIN/.env.local" "$MAIN/.env.audio.local" . 2>/dev/null   # ignored files a worktree lacks
+```
+
+Run every later command from the worktree. When the owner has merged the branch, remove it with `git worktree remove`.
 
 ### 1. Pick
 
-Take the first row in `docs/content-backlog.md` whose status is `next`. Set it to `in progress` with the date. If a row says it waits on the owner, skip it and say so.
+Take the first row in `docs/content-backlog.md` whose status is `next`. Make the unit's worktree (above), and as the first change there set the row to `in progress` with the date. The backlog is only ever edited in a unit's worktree, so its changes arrive with the unit. If a row says it waits on the owner, skip it and say so.
 
 ### 2. Brief
 
@@ -111,7 +126,7 @@ Give each new speaker a voice in `src/features/audio/voices.ts`, then record (`d
 
 Finish `docs/content-review/<unit-id>.md`: the panel date, models and content versions; each blocker and major finding with what was done; and a short list of questions for the native teacher (lines you were unsure of, regional choices, anything a reviewer disputed).
 
-Then, as `AGENTS.md` requires: `git status` and `git diff` on every file, commit only your own changes, and check the commit in a clean worktree with `npm run validate` and `npm run test:e2e`. Set the backlog row to `ready for native review` with the branch name. Do not merge, push to the preview channel or deploy.
+Then, as `AGENTS.md` requires: `git status` and `git diff` on every file, commit only your own changes, and check the commit with `npm run validate` and `npm run test:e2e` (the unit's worktree is a clean checkout of it once everything is committed). The browser tests take about 25 minutes and use port 4173: if another session is using it they fail at once with "port in use"; wait and run them again, and never stop another session's server. Before the final commit, set the backlog row to `ready for native review` with the branch name and the row after it to `next`. Do not merge, push to the preview channel or deploy.
 
 ## When a level's units are all written
 
