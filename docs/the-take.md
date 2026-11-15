@@ -15,7 +15,17 @@ Every unit ends with a short film of its own scene in which **your recorded voic
 - **It is cheap and private.** Recordings stay on the phone. The check is one short transcription per line. `expo-audio`, already installed, records and plays.
 - **It stays honest.** It reports what was understood, never a pronunciation score, as `docs/product-research.md` requires.
 
-What is not claimed: that the idea is new. Dubbing-practice apps such as 2DUB and SceneLine already let learners voice film and TV scenes, and shadowing apps record a line and compare it with the model (web search, 15 November 2026; app listings only, not tried). The difference here is that the scene belongs to a course: the lines are the ones just taught, the first take is kept as evidence, and the same character then calls without the script. Try those two apps before describing this as unique in marketing.
+## Keep it, and lead with what only a course can do (owner's question, 15 November)
+
+The mechanism is not new: dubbing-practice apps such as 2DUB and SceneLine let learners voice film and TV scenes, and shadowing apps record a line and compare it with the model (web search, 15 November 2026; app listings only, not tried). That is no reason to drop it. Without a recorded, checked line, "a film you speak in" is a slogan, and those apps solve a different problem: performing someone else's film. They have no course, no cast that returns, and no record of the learner over time.
+
+So keep the mechanism and put the three things they cannot copy at the front, in this order:
+
+1. **Day one beside today.** The first take of every scene is kept. Hearing your own first attempt next to your latest is proof of progress that no streak, score or level label gives, and it needs nothing but local storage. This is the headline, and it ships in part 1, not later.
+2. **The same character calls you without the script.** A dubbing app ends when the scene ends. Here the scene is the rehearsal and the call is the performance.
+3. **An honest listener.** "Ana heard …", never a pronunciation score.
+
+Try 2DUB and SceneLine before writing any marketing line that says "only".
 
 ## What the learner does
 
@@ -25,7 +35,7 @@ What is not claimed: that the idea is new. Dubbing-practice apps such as 2DUB an
 4. **Play your take** (new, at the end of a unit's last session). The scene runs again. The characters' lines are their recorded clips; your lines are your own recordings, with subtitles.
 5. **Credits.** "and you", as designed, plus one row: "Your take · 0:24".
 6. **The call.** The invite says what changes: "Now without the script."
-7. **Then and now.** At each checkpoint and at the end of a level: Scene 1 as you said it on day one, then as you say it now.
+7. **Then and now.** Whenever a scene is said again (a retake, a review, a checkpoint, the end of a level): the same line as you said it the first time, then as you say it now.
 
 ## How it is built
 
@@ -35,6 +45,7 @@ What is not claimed: that the idea is new. Dubbing-practice apps such as 2DUB an
 - Clips are files in the app's own storage: the first and the latest take of each line, nothing else. A three-second line is tens of kilobytes; a whole A1 course stays in the low tens of megabytes. Settings gets "Delete my recordings".
 - Nothing is uploaded or synced. Finishing the step with a recording counts as spoken; "Skip speaking for now" stays.
 - The take is a playlist: scene clips and the learner's clips in script order through the existing player. No audio mixing and no new native module.
+- Then and now is the same playlist with two clips of the learner's line, first take then latest. It belongs to part 1 because it is the part no other app has and it costs nothing more to build.
 
 **Part 2: the check (needs a function deploy).**
 
@@ -45,7 +56,7 @@ What is not claimed: that the idea is new. Dubbing-practice apps such as 2DUB an
 - The words stay honest: "Ana heard …", never "wrong" and never a score. A recogniser fails on some accents, cheap microphones and noisy rooms, so a miss must never block progress or lower a mark.
 - The clip leaves the phone for the check only, with the same consent wording as calls. Without consent or a connection, part 1 still works.
 
-**Part 3: then and now.** Checkpoints and level ends play the first take beside the latest. Sharing a take as a video needs encoding on the phone, so it waits for a store build.
+**Part 3: the level's film.** At the end of a level, every scene's take in story order, opening with day one. Sharing it as a video needs encoding on the phone, so it waits for a store build.
 
 ## What content must provide
 
