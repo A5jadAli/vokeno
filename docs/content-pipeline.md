@@ -126,7 +126,14 @@ Give each new speaker a voice in `src/features/audio/voices.ts`, then record (`d
 
 Finish `docs/content-review/<unit-id>.md`: the panel date, models and content versions; each blocker and major finding with what was done; and a short list of questions for the native teacher (lines you were unsure of, regional choices, anything a reviewer disputed).
 
-Then, as `AGENTS.md` requires: `git status` and `git diff` on every file, commit only your own changes, and check the commit with `npm run validate` and `npm run test:e2e` (the unit's worktree is a clean checkout of it once everything is committed). The browser tests take about 25 minutes and use port 4173: if another session is using it they fail at once with "port in use"; wait and run them again, and never stop another session's server. Before the final commit, set the backlog row to `ready for native review` with the branch name and the row after it to `next`. Do not merge, push to the preview channel or deploy.
+Then, as `AGENTS.md` requires: `git status` and `git diff` on every file, commit only your own changes, and check the commit (the unit's worktree is a clean checkout of it once everything is committed):
+
+```sh
+npm run format:check && npm run typecheck && npm run lint && npm run test:ci
+npm run test:e2e
+```
+
+These are `npm run validate` without its first step, `expo-doctor`. That step fails on every branch while the Expo patch upgrades wait for the 1.12.0 store build, and a content unit changes no packages, so it is not this pipeline's gate. Do not change `package.json` or the lockfile to make it pass. The browser tests take about 25 minutes and use port 4173: if another session is using it they fail at once with "port in use"; wait and run them again, and never stop another session's server. Before the final commit, set the backlog row to `ready for native review` with the branch name and the row after it to `next`. Do not merge, push to the preview channel or deploy.
 
 ## When a level's units are all written
 

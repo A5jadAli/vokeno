@@ -14,7 +14,7 @@ Read `docs/content-pipeline.md` in full before anything else, then `AGENTS.md`. 
 5. **Gates.** `npm run content:check -- <unit-id>`, then `npm run test:ci`. Fix every miss. Never add to the legacy list in `tests/content-standard.test.ts`; remove a repaired unit from it.
 6. **Panel.** `npm run content:panel -- <unit-id>` (about ten minutes; keys as the runbook says). Check every finding against the source before acting. Fix it, or write in the record why it is wrong. Rerun; three rounds at most.
 7. **Call and voices.** Add the unit call; record the voices if `.env.audio.local` has the token, otherwise mark the row `written, needs audio`.
-8. **Hand over.** Finish the record (panel date, models, versions, what was done about each blocker and major, questions for the native teacher). Set the row to `ready for native review (<branch>)` and the next row to `next`. Commit on the branch, then check the commit with `npm run validate` and `npm run test:e2e` (about 25 minutes; port 4173 may be in use by another session, so retry rather than stop its server). If a check fails, fix it and commit again.
+8. **Hand over.** Finish the record (panel date, models, versions, what was done about each blocker and major, questions for the native teacher). Set the row to `ready for native review (<branch>)` and the next row to `next`. Commit on the branch, then check the commit with `npm run format:check && npm run typecheck && npm run lint && npm run test:ci` and `npm run test:e2e` (about 25 minutes; port 4173 may be in use by another session, so retry rather than stop its server). If a check fails, fix it and commit again.
 
 Stop there. Do not merge to main, publish an update, deploy a function or change `levelStatus`: those are the owner's.
 
