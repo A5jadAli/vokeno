@@ -5,7 +5,15 @@ const eslintPluginPrettierRecommended = require('eslint-plugin-prettier/recommen
 
 module.exports = defineConfig([
   {
-    ignores: ['.expo/*', 'expo-env.d.ts', 'coverage/*', 'dist/*', 'supabase/functions/**'],
+    ignores: [
+      '.expo/*',
+      'expo-env.d.ts',
+      'coverage/*',
+      'dist/*',
+      'supabase/functions/**',
+      // Local output of the launch-video skill, kept out of git by .git/info/exclude.
+      'brag-output*/**',
+    ],
   },
   expoConfig,
   eslintPluginPrettierRecommended,
