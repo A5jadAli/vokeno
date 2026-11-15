@@ -65,15 +65,19 @@ git show "${BASE:-main}:docs/content-backlog.md"            # the backlog as it 
 
 ### 1. Pick
 
-In that backlog, take the first row whose status is `next`. If a row says it waits on the owner, skip it and say so. Name the branch `content/<unit-id>`, or after the row when it is not one unit (`content/de-a1-calls-1-4`). If that branch already exists, another session has the unit: stop and say so.
+If that backlog has a row `in progress`, a session stopped part way, usually at the plan's usage limit. Resume that unit, do not start another: open its worktree (`git worktree add "$MAIN/../voka-content-<unit-id>" content/<unit-id>` if the folder is gone, then the `cp` lines below), read its review record and `git log`, run the machine gates, and carry on from the first stage that has no evidence yet.
+
+Otherwise, take the first row whose status is `next`. If a row says it waits on the owner, skip it and say so. Name the branch `content/<unit-id>`, or after the row when it is not one unit (`content/de-a1-calls-1-4`). If that branch already exists, another session has the unit: stop and say so.
 
 ```sh
 git worktree add -b content/<unit-id> "$MAIN/../voka-content-<unit-id>" "${BASE:-main}"
 cd "$MAIN/../voka-content-<unit-id>"
 git merge --no-edit main                                    # pipeline fixes made on main since
-ln -s "$MAIN/node_modules" node_modules                     # use the main tree's packages
+cp -al "$MAIN/node_modules" node_modules                    # its own packages, as hard links
 cp "$MAIN/.env.local" "$MAIN/.env.audio.local" . 2>/dev/null    # ignored files a worktree lacks
 ```
+
+The packages must be a real folder in the worktree, never a link to the main tree's. With a link, every worktree shares one cached build of the app's route folder, so a build can silently contain another worktree's screens, or almost none (15 November: a 1.1 MB bundle where 5.6 MB was right, and every browser test timed out). `cp -al` takes seconds and no extra disk.
 
 Run every later command from the worktree. As the first change there, set the row to `in progress` with the date. The backlog is only ever edited in a unit's worktree, so its changes travel with the unit. Change only the status cell: the file is left out of Prettier so that a status change is one line.
 
@@ -110,6 +114,13 @@ npm run test:ci                      # structure, solvability, missing audio
 ```
 
 Fix every miss. Do not add a unit to the legacy list.
+
+A brand-new unit also has to be wired in. The tests name each gap:
+
+- import the unit's file in the language's units file, in path order (`spanish-a1-units.ts`);
+- add its lesson ids to `tests/published-ids.json` (ids are only ever added);
+- bring the language's own tests up to the new truth where they count sessions or name what follows the last unit (`tests/spanish-units.test.ts`); change the numbers, never delete the check;
+- the browser walk goes through every unit by itself, but a new kind of step or wording may need its helper in `e2e/foundations.spec.ts`.
 
 ### 5. Panel
 
@@ -148,7 +159,7 @@ When the checks have passed, tidy up: copy the panel reports to the main tree, w
 
 ```sh
 mkdir -p "$MAIN/artifacts/content" && cp -r artifacts/content/<unit-id> "$MAIN/artifacts/content/"
-rm node_modules && cd "$MAIN" && git worktree remove --force "$MAIN/../voka-content-<unit-id>"
+cd "$MAIN" && git worktree remove --force "$MAIN/../voka-content-<unit-id>"
 ```
 
 ## When a level's units are all written
