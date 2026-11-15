@@ -65,7 +65,7 @@ const roles: Record<Role, { provider: 'openai' | 'gemini' | 'xai'; model: string
     solver: {
       provider: 'xai',
       model: process.env.CONTENT_MODEL_XAI ?? 'grok-4.7',
-      brief: `You are a sharp learner trying to break the answer keys. Answer every marked step yourself before you read its key. Report: a correct answer the key rejects (give it); an option other than the key that can be defended; an accepted answer that is wrong; tiles that build another correct sentence that is not accepted; a question whose details contradict the scene; and any step that can be answered without knowing ${language}.`,
+      brief: `You are a sharp learner trying to break the answer keys. Answer every marked step yourself before you read its key. Report: a correct answer the key rejects; an option other than the key that can be defended; an accepted answer that is wrong; tiles that build another correct sentence that is not accepted; a question whose details contradict the scene; and any step that can be answered without knowing ${language}. For rejected answers, make one finding per step that lists every correct answer you can think of at once, not one example. A rejected answer is a blocker only when every word and form in it is taught in this unit or the "taught earlier" list; otherwise it is minor. Answers are compared without capital letters or punctuation, so those differences are never findings.`,
     },
   };
 

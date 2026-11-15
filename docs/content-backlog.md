@@ -1,6 +1,6 @@
 # Content backlog
 
-What to write next, in order. Follow `docs/content-pipeline.md`. Take the first row whose status is `next`; when it is handed over, set the row after it to `next`. Rows marked `owner` or `engine` are not content work: skip them and leave them as they are.
+What to write next, in order. Follow `docs/content-pipeline.md`. Take the first row whose status is `next`; when it is handed over, set the row after it to `next`. Finished units wait on their own branches, so the queue as it really stands is on the newest `content/*` branch, not here: the runbook's first command shows it. Rows marked `owner` or `engine` are not content work: skip them and leave them as they are.
 
 Statuses: `next` · `in progress (date)` · `written, needs audio` · `ready for native review (branch)` · `blocked (why)` · `done` · `owner` · `engine` · `later`.
 
@@ -35,6 +35,8 @@ The order puts the course closest to a true level first. German A1 has every uni
 | **The Take**, parts 1 and 2 (`docs/the-take.md`)                                                                                       | Speaking steps are an honour-system button today.                                 | engine |
 | **Review allowance.** Let the daily review grow with what is due (8 today; German adds about 7.5 cards a day) and offer a second round | By estimate only a quarter of scheduled reviews happen at one unit session a day. | engine |
 | **Grammar in review.** A rule step's examples become cards (a gap to fill), not only taught phrases                                    | Grammar is taught once and never returns.                                         | engine |
+| **Digit answers with a unit word.** `formFieldCorrect` accepts `68 pesos` or `90 euros` for a digits answer | Found by the Unit 6 repair: today each unit has to list them. | engine |
+| **Open spoken or written orders.** A typed order with many right forms fits The Take or a model-marked answer better than a list | Found by the Unit 6 repair: three panel rounds each asked for more variants. | engine |
 
 ## Owner
 

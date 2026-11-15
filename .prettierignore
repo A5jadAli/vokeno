@@ -11,3 +11,7 @@ store/web/
 
 # Local output of the launch-video skill (kept out of git by .git/info/exclude)
 brag-output*/
+
+# Status cells change one line at a time; realigning the table would rewrite every row and make
+# unit branches conflict.
+docs/content-backlog.md

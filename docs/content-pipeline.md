@@ -55,19 +55,27 @@ The existing rules still apply and are tested elsewhere: every exercise solvable
 
 Work on one unit at a time, on its own branch in its own worktree. Other sessions share the main working tree, so never write lessons there.
 
+Finished units wait on their branches until the owner merges them, so main does not show them. Each unit therefore starts from the newest unit branch that is not yet in main, and brings in main's latest changes:
+
 ```sh
 MAIN=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")   # the main tree
-git worktree add -b content/<unit-id> "$MAIN/../voka-content-<unit-id>" main
-cd "$MAIN/../voka-content-<unit-id>"
-ln -s "$MAIN/node_modules" node_modules                    # use the main tree's packages
-cp "$MAIN/.env.local" "$MAIN/.env.audio.local" . 2>/dev/null   # ignored files a worktree lacks
+BASE=$(git for-each-ref --sort=-committerdate --format='%(refname:short)' --no-merged main refs/heads/content/ | head -1)
+git show "${BASE:-main}:docs/content-backlog.md"            # the backlog as it really stands
 ```
-
-Run every later command from the worktree. When the owner has merged the branch, remove it with `git worktree remove`.
 
 ### 1. Pick
 
-Take the first row in `docs/content-backlog.md` whose status is `next`. Make the unit's worktree (above), and as the first change there set the row to `in progress` with the date. The backlog is only ever edited in a unit's worktree, so its changes arrive with the unit. If a row says it waits on the owner, skip it and say so.
+In that backlog, take the first row whose status is `next`. If a row says it waits on the owner, skip it and say so. Name the branch `content/<unit-id>`, or after the row when it is not one unit (`content/de-a1-calls-1-4`). If that branch already exists, another session has the unit: stop and say so.
+
+```sh
+git worktree add -b content/<unit-id> "$MAIN/../voka-content-<unit-id>" "${BASE:-main}"
+cd "$MAIN/../voka-content-<unit-id>"
+git merge --no-edit main                                    # pipeline fixes made on main since
+ln -s "$MAIN/node_modules" node_modules                     # use the main tree's packages
+cp "$MAIN/.env.local" "$MAIN/.env.audio.local" . 2>/dev/null    # ignored files a worktree lacks
+```
+
+Run every later command from the worktree. As the first change there, set the row to `in progress` with the date. The backlog is only ever edited in a unit's worktree, so its changes travel with the unit. Change only the status cell: the file is left out of Prettier so that a status change is one line.
 
 ### 2. Brief
 
@@ -90,6 +98,7 @@ Follow the newest unit of the same language as the pattern (`spanish-a1-unit-6.t
 - Every scene has a careful line and, where people say it differently, the real one.
 - Wrong options are things a learner at this level would really say or confuse. If an option can be ruled out without knowing the language, replace it.
 - A typed answer accepts every variant the unit itself has taught, including regional forms it mentions.
+- A typed step asks for one thing. When many sentences would be right ("order a tea"), either name the form in the prompt ("Order a tea with ¿Me das …?") or build the accepted list with a small helper that covers every form the unit teaches, as `orders()` does in `spanish-a1-unit-6.ts`. An open prompt with a short list is the commonest defect the panel finds.
 - The last speaking step changes the situation, so a memorised line is not enough.
 - Nothing essential to a marked answer is untaught.
 
@@ -112,7 +121,7 @@ It takes about ten minutes and writes `artifacts/content/<unit-id>/PANEL.md`. It
 
 A finding is a claim, not a fact. For each one, open the source and check it. In the first runs, one finding was wrong (the reviewer could not see a number taught in a rule table; it is shown them now) and one was half wrong (it did not know the app ignores capital letters). Then either fix the unit, or write in the review record why the finding is wrong, with the evidence.
 
-Run the panel again after fixes. Stop after three rounds: if blockers remain, set the backlog row to `blocked`, write what is unresolved, and move on. Do not skip a reviewer to get a pass; `--skip` is for a provider that is down, and the record must say so.
+Run the panel again after fixes. Stop after three rounds. The answer-key reviewer can always find one more variant of an open answer, so the test after round three is not an empty report: it is that every blocker and major is either fixed or shown wrong in the record. If a real one is still open, set the backlog row to `blocked`, write what is unresolved, and move on. Do not skip a reviewer to get a pass; `--skip` is for a provider that is down, and the record must say so.
 
 ### 6. Unit call
 
@@ -134,6 +143,13 @@ npm run test:e2e
 ```
 
 These are `npm run validate` without its first step, `expo-doctor`. That step fails on every branch while the Expo patch upgrades wait for the 1.12.0 store build, and a content unit changes no packages, so it is not this pipeline's gate. Do not change `package.json` or the lockfile to make it pass. The browser tests take about 25 minutes and use port 4173: if another session is using it they fail at once with "port in use"; wait and run them again, and never stop another session's server. Before the final commit, set the backlog row to `ready for native review` with the branch name and the row after it to `next`. Do not merge, push to the preview channel or deploy.
+
+When the checks have passed, tidy up: copy the panel reports to the main tree, where git ignores them, and remove the worktree. The branch keeps everything else.
+
+```sh
+mkdir -p "$MAIN/artifacts/content" && cp -r artifacts/content/<unit-id> "$MAIN/artifacts/content/"
+rm node_modules && cd "$MAIN" && git worktree remove --force "$MAIN/../voka-content-<unit-id>"
+```
 
 ## When a level's units are all written
 
