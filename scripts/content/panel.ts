@@ -4,14 +4,12 @@
 // pipeline.md). None of them wrote it and none sees another's findings. The result goes to
 // artifacts/content/<unit-id>/ and the command fails while a blocker or major finding stands.
 //
-// Keys: OPENAI_API_KEY (or OPENAI_SECRET_KEY, tried first), GEMINI_API_KEY and XAI_API_KEY from
-// the environment, or from .env.content.local, or from the file named by CONTENT_KEYS_FILE.
-// Keys are never printed.
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { parseEnv } from 'node:util';
+// Keys and models: scripts/content/providers.ts.
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { contentVersion } from '../../src/features/foundations/progress';
 import { exams } from '../../src/features/foundations/level-status';
 import { knownBefore, renderUnit, unitProblems, unitSessions } from './lib';
+import { askJson, MODELS, type Provider } from './providers';
 
 type Role = 'native' | 'teacher' | 'solver';
 type Finding = {
@@ -32,15 +30,6 @@ if (!unitId || !sessions.length) {
   process.exit(2);
 }
 
-const fileKeys = [process.env.CONTENT_KEYS_FILE, '.env.content.local']
-  .filter((path): path is string => Boolean(path && existsSync(path)))
-  .map((path) => parseEnv(readFileSync(path, 'utf8')));
-/** The first name that has a value, the environment before the key files. */
-const key = (...names: string[]) =>
-  names
-    .map((name) => process.env[name] ?? fileKeys.find((file) => file[name])?.[name])
-    .find(Boolean);
-
 const { track, level } = sessions[0];
 const language = { DE: 'German', ES: 'Spanish', EN: 'English' }[track];
 const variety = {
@@ -50,24 +39,23 @@ const variety = {
 }[track];
 const exam = exams[track]?.[level] ?? `CEFR ${level}`;
 
-const roles: Record<Role, { provider: 'openai' | 'gemini' | 'xai'; model: string; brief: string }> =
-  {
-    native: {
-      provider: 'gemini',
-      model: process.env.CONTENT_MODEL_GEMINI ?? 'gemini-pro-latest',
-      brief: `You are a native speaker of ${variety}, in your thirties, who also teaches it. Say every ${language} line in your head: would a person in this situation really say it this way today? Check the careful lines and the "as people say it" lines, the register and regional claims, the cultural notes, spelling, punctuation and accents, and that each English meaning is what the line means.`,
-    },
-    teacher: {
-      provider: 'openai',
-      model: process.env.CONTENT_MODEL_OPENAI ?? 'gpt-6.1-sol',
-      brief: `You are an experienced ${language} teacher and ${exam} examiner. Judge whether the unit delivers its can-do statement at CEFR ${level}; whether each rule is accurate and not over-general; whether a marked step needs a word or structure that neither this unit nor the "taught earlier" list has taught; whether any exam-style task matches the real ${exam} format; and whether a session asks a beginner to hold too much at once.`,
-    },
-    solver: {
-      provider: 'xai',
-      model: process.env.CONTENT_MODEL_XAI ?? 'grok-4.7',
-      brief: `You are a sharp learner trying to break the answer keys. Answer every marked step yourself before you read its key. Report: a correct answer the key rejects; an option other than the key that can be defended; an accepted answer that is wrong; tiles that build another correct sentence that is not accepted; a question whose details contradict the scene; and any step that can be answered without knowing ${language}. For rejected answers, make one finding per step that lists every correct answer you can think of at once, not one example. A rejected answer is a blocker only when every word and form in it is taught in this unit or the "taught earlier" list; otherwise it is minor. Answers are compared without capital letters or punctuation, so those differences are never findings.`,
-    },
-  };
+const roles: Record<Role, { provider: Provider; model: string; brief: string }> = {
+  native: {
+    provider: 'gemini',
+    model: MODELS.gemini,
+    brief: `You are a native speaker of ${variety}, in your thirties, who also teaches it. Say every ${language} line in your head: would a person in this situation really say it this way today? Check the careful lines and the "as people say it" lines, the register and regional claims, the cultural notes, spelling, punctuation and accents, and that each English meaning is what the line means.`,
+  },
+  teacher: {
+    provider: 'openai',
+    model: MODELS.openai,
+    brief: `You are an experienced ${language} teacher and ${exam} examiner. Judge whether the unit delivers its can-do statement at CEFR ${level}; whether each rule is accurate and not over-general; whether a marked step needs a word or structure that neither this unit nor the "taught earlier" list has taught; whether any exam-style task matches the real ${exam} format; and whether a session asks a beginner to hold too much at once.`,
+  },
+  solver: {
+    provider: 'xai',
+    model: MODELS.xai,
+    brief: `You are a sharp learner trying to break the answer keys. Answer every marked step yourself before you read its key. Report: a correct answer the key rejects; an option other than the key that can be defended; an accepted answer that is wrong; tiles that build another correct sentence that is not accepted; a question whose details contradict the scene; and any step that can be answered without knowing ${language}. For rejected answers, make one finding per step that lists every correct answer you can think of at once, not one example. A rejected answer is a blocker only when every word and form in it is taught in this unit or the "taught earlier" list; otherwise it is minor. Answers are compared without capital letters or punctuation, so those differences are never findings.`,
+  },
+};
 
 const shared = `You are one of three independent reviewers of one unit of a mobile ${language} course for adults, explained in English. The unit is shown as plain text; each step has a reference in square brackets such as [2.7].
 
@@ -89,79 +77,15 @@ const material = [
   earlier.join(' · ') || 'Nothing: this is the first unit.',
 ].join('\n');
 
-/** Sends one request and returns the streamed reply's text. A stream keeps a slow connection
- *  alive while a model thinks for minutes; a plain request is dropped after five. */
-async function stream(
-  url: string,
-  headers: Record<string, string>,
-  body: unknown,
-  pick: (event: any) => string | undefined,
-) {
-  for (let attempt = 0; ; attempt++) {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...headers },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(1_200_000),
-    });
-    // One retry for a busy or failing provider; anything else is a real error.
-    if (attempt === 0 && (response.status === 429 || response.status >= 500)) continue;
-    if (!response.ok || !response.body)
-      throw new Error(`${response.status} ${(await response.text()).slice(0, 300)}`);
-    let text = '';
-    let pending = '';
-    for await (const chunk of response.body.pipeThrough(new TextDecoderStream())) {
-      const lines = (pending + chunk).split('\n');
-      pending = lines.pop() ?? '';
-      for (const line of lines) {
-        const data = line.startsWith('data:') ? line.slice(5).trim() : '';
-        if (data && data !== '[DONE]') text += pick(JSON.parse(data)) ?? '';
-      }
-    }
-    return text;
-  }
-}
-
 async function ask(role: Role): Promise<Finding[]> {
-  const { provider, model, brief } = roles[role];
-  const system = `${shared}\n\nYour role: ${brief}`;
-  let text: string;
-  if (provider === 'gemini') {
-    const apiKey = key('GEMINI_API_KEY', 'GOOGLE_API_KEY', 'NANO_BANANA_API_KEY');
-    if (!apiKey) throw new Error('No Gemini key (GEMINI_API_KEY).');
-    text = await stream(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`,
-      { 'x-goog-api-key': apiKey },
-      {
-        systemInstruction: { parts: [{ text: system }] },
-        contents: [{ role: 'user', parts: [{ text: material }] }],
-        generationConfig: { responseMimeType: 'application/json' },
-      },
-      (event) =>
-        event.candidates?.[0]?.content?.parts?.map((part: { text?: string }) => part.text).join(''),
-    );
-  } else {
-    const apiKey =
-      provider === 'openai' ? key('OPENAI_SECRET_KEY', 'OPENAI_API_KEY') : key('XAI_API_KEY');
-    if (!apiKey) throw new Error(`No ${provider} key.`);
-    text = await stream(
-      `${provider === 'openai' ? 'https://api.openai.com/v1' : 'https://api.x.ai/v1'}/chat/completions`,
-      { Authorization: `Bearer ${apiKey}` },
-      {
-        model,
-        stream: true,
-        messages: [
-          { role: 'system', content: system },
-          { role: 'user', content: material },
-        ],
-        response_format: { type: 'json_object' },
-      },
-      (event) => event.choices?.[0]?.delta?.content,
-    );
-  }
-  const findings = (JSON.parse(text) as { findings?: Finding[] }).findings;
-  if (!Array.isArray(findings)) throw new Error('The reply had no findings list.');
-  return findings;
+  const { provider, brief } = roles[role];
+  const reply = await askJson<{ findings?: Finding[] }>(
+    provider,
+    `${shared}\n\nYour role: ${brief}`,
+    material,
+  );
+  if (!Array.isArray(reply.findings)) throw new Error('The reply had no findings list.');
+  return reply.findings;
 }
 
 const version = sessions.map(contentVersion).join(' ');

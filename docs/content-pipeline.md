@@ -1,42 +1,67 @@
-# Content pipeline: how a unit gets written, checked and handed over
+# Content pipeline: one command that writes, checks and merges lessons
 
-15 November 2026. This is the runbook for adding lessons. Any coding agent can follow it from start to finish without the person who wrote it: Claude Code, Codex, or a person at a terminal. Start a session with:
+15 November 2026.
 
-> Follow `docs/content-pipeline.md` for the next unit in `docs/content-backlog.md`.
+```sh
+npm run content:auto
+```
 
-In Claude Code, `/author-unit` does the same.
+Run it from the main project folder. It takes the first job in `docs/content-backlog.md` that is not done, sees it through every stage below, merges it into main, and goes on to the next, until the queue is empty or it is stopped. Stop it at any time with Ctrl+C and run it again: it picks up the same job at the stage it had reached.
 
-## What the pipeline can and cannot do
+```sh
+npm run content:auto -- --status         # where every job stands; changes nothing
+npm run content:auto -- --max 1          # one job, then stop
+npm run content:auto -- --job es-a1-u8   # this job only
+```
 
-It produces units that are accurate, natural, at the right level and inside the content standard, with the evidence written down. It lowers the number of errors a human reviewer has to find.
+## How it stays right with a weaker author
 
-It cannot make a level true. Models reviewing models is not a native teacher, and no model has listened to the audio on a phone. A level stays a starter set until the gates in `docs/curriculum-standards-audit.md` pass, and only the owner changes `levelStatus`. Releases (`eas update`, `supabase db push`, function deploys) stay the owner's call.
+The harness (`scripts/content/run.ts`) is ordinary code. It decides what happens next; a model never does.
+
+- **One small task at a time.** The author model is started fresh for each stage with one instruction: write the coverage sheet; write the unit; answer these findings. It never plans the job or judges when it is finished.
+- **Code checks every stage.** After each stage the harness runs commands and reads their exit codes. A stage that fails goes back to the author with the failing output, a fixed number of times. The author's own report is not read.
+- **Other companies' models review the language.** Three models that did not write the unit review it without seeing each other's findings. After the author has answered, the same three vote on whether each finding is still a real defect; two votes uphold it. The author cannot overrule them.
+- **Nothing reaches main unless every gate passed.** A job that cannot pass is marked blocked with the reason and left on its branch; the harness moves on to a job that does not depend on it.
+
+## What it can and cannot do
+
+It produces units that meet the content standard, pass every test, have been reviewed by three models with two rounds of checking, and whose recorded voices say the words they should. On 15 November it found three real answer-key defects in a live unit that had already been reviewed by hand.
+
+It does not make a level true. The owner decided on 15 November that units are not held back for a native teacher: machine review is the gate. That is a trade, and it should be made knowingly. The models are strong at wrong answer keys, untaught words, false rules and mistranslation. They are weaker at what only an ear catches: a line that is correct but that nobody says, a voice with the wrong melody, a cultural note that is ten years old. Three ways to cover that without slowing the queue:
+
+- the app's "report content" button, read regularly;
+- a native speaker reading a sample (one unit in five costs little) from `docs/content-review/`;
+- the level gates in `docs/curriculum-standards-audit.md`, which still stand: mock exams and learner results before a level stops being a starter set. Only the owner changes `levelStatus`.
+
+Releases (`eas update`, `supabase db push`, function deploys) stay the owner's call. The harness merges into the local main branch and never pushes, publishes or deploys.
 
 ## Who does what
 
-| Job                 | Who                                            | Why                                                                                           |
-| ------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Author              | One agent per unit: Claude Code or Codex       | One voice per unit. Never two authors on the same unit.                                       |
-| Native-speaker read | Gemini (`gemini-pro-latest`)                   | A model from another company, so it does not share the author's blind spots.                  |
-| Teacher and exam    | OpenAI (`gpt-6.1-sol`)                         | Level, rules, exam format, untaught language.                                                 |
-| Answer-key attack   | xAI (`grok-4.7`)                               | Tries to break every key. In the first run it found the most defects; it is also the slowest. |
-| Voices              | OpenAI speech, through `generate-lesson-audio` | As today (`docs/lesson-audio.md`).                                                            |
-| Listening check     | Whisper on the owner's machine, when available | Catches a voice that read a line wrongly. Optional; a person still listens.                   |
-| Final language gate | A native teacher (owner arranges)              | The only review that counts for a level claim.                                                |
-| Merge and release   | The owner                                      | An update on the preview channel reaches real users.                                          |
+| Job                       | Who                                                           |
+| ------------------------- | ------------------------------------------------------------- |
+| Order of work, every gate | The harness, in code                                          |
+| Author                    | Claude Code, headless (`CONTENT_AGENT_MODEL`, default `opus`) |
+| Native-speaker read       | Gemini (`gemini-pro-latest`)                                  |
+| Teacher and exam          | OpenAI (`gpt-6.1-sol`)                                        |
+| Answer-key attack         | xAI (`grok-4.7`)                                              |
+| Arbiter                   | The same three, voting; two uphold a finding                  |
+| Voices                    | OpenAI speech, through `generate-lesson-audio`                |
+| Voice check               | OpenAI transcription, blind (`content:listen`)                |
+| Release                   | The owner                                                     |
 
-The three reviewers run together with `npm run content:panel`. Each sees the unit and the list of what was taught before it. None sees another's findings. Model names are defaults: set `CONTENT_MODEL_GEMINI`, `CONTENT_MODEL_OPENAI` or `CONTENT_MODEL_XAI` to change one, and use the provider's strongest general model.
+Reviewer models are the defaults in `scripts/content/providers.ts`: set `CONTENT_MODEL_GEMINI`, `CONTENT_MODEL_OPENAI` or `CONTENT_MODEL_XAI` to change one, and use each provider's strongest general model.
 
 ## Set up once (owner)
 
-- **Review keys.** The panel needs an OpenAI, a Gemini and an xAI key. It looks, in order, in the environment (`OPENAI_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY`), in an ignored `.env.content.local` in the directory it runs from, and in the file named by `CONTENT_KEYS_FILE`. For Claude Code, put the pointer in `.claude/settings.local.json`, which git ignores: `{ "env": { "CONTENT_KEYS_FILE": "/full/path/to/keys/file" } }`. For Codex or a terminal, `export CONTENT_KEYS_FILE=/full/path/to/keys/file` before starting.
-- **Voice token.** `LESSON_AUDIO_TOKEN` in the ignored `.env.audio.local` of the main tree (`docs/lesson-audio.md`).
+- **Claude Code** signed in on this machine (`claude auth login`). The harness waits and retries when the plan's usage limit is reached.
+- **Review keys.** An OpenAI, a Gemini and an xAI key, found in this order: the environment (`OPENAI_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY`), an ignored `.env.content.local`, the file named by `CONTENT_KEYS_FILE`. `.claude/settings.local.json` (ignored by git) can hold `{ "env": { "CONTENT_KEYS_FILE": "/full/path" } }`; the harness reads that file too, so a plain terminal needs nothing more.
+- **Voice token.** `LESSON_AUDIO_TOKEN` in the ignored `.env.audio.local`, and the app's `.env.local`, both in the main folder.
 
-An agent never prints a key, commits one, or copies one into a tracked file. If the panel says a key is missing, stop and tell the owner; do not go looking for keys.
+No agent prints a key, commits one, or copies one into a tracked file.
 
 ## The content standard
 
-`npm run content:check -- <unit-id>` measures a unit against these limits (`STANDARD` in `scripts/content/lib.ts`). `tests/content-standard.test.ts` fails the build if a unit outside its legacy list misses one.
+`npm run content:check -- <unit-id>` measures a unit against these limits (`STANDARD` in `scripts/content/lib.ts`).
 
 | Limit                                              | Value        | Reason                                                         |
 | -------------------------------------------------- | ------------ | -------------------------------------------------------------- |
@@ -47,57 +72,48 @@ An agent never prints a key, commits one, or copies one into a tracked file. If 
 | Lines said aloud in a session                      | 2 at least   | You speak in every scene.                                      |
 | Earlier-taught items met again in a session        | 4 at least   | Words must come back in new sentences, not only as flashcards. |
 
-These are editorial limits from the November 2026 course review, not trial results. Change one only here, with a date and a reason, and in `STANDARD` in the same commit. `npm run content:check -- --all` shows every unit; the 29 units written before the standard are on the legacy list and leave it as they are repaired.
+These are editorial limits from the November 2026 course review, not trial results. Change one only here, with a date and a reason, and in `STANDARD` in the same commit. Units written before the standard are listed in `scripts/content/legacy.json`; the harness removes one when its repair passes, and nothing is ever added to it.
 
-The existing rules still apply and are tested elsewhere: every exercise solvable, each word taught once, no sentence reused across sessions, no digits in audio text, a voice for every speaker (`tests/units.test.ts`, `tests/spanish-units.test.ts`, `tests/audio.test.ts`).
+## What the harness does for one job
 
-## The stages
+Each job gets its own branch (`content/<unit-id>`) and its own worktree beside the main folder, with its own copy of the packages. Its state and every report are kept in `artifacts/content/<unit-id>/` in the main folder, which git ignores.
 
-Work on one unit at a time, on its own branch in its own worktree. Other sessions share the main working tree, so never write lessons there.
+| Stage      | Who acts                | The gate, checked by code                                                                                   | Tries    |
+| ---------- | ----------------------- | ----------------------------------------------------------------------------------------------------------- | -------- |
+| 1. Brief   | Author                  | The coverage sheet exists in `docs/content-review/<unit-id>.md` with all eight parts                        | 3        |
+| 2. Write   | Author                  | `content:check`, type-check, lint, then voices recorded for new lines, then every unit test                 | 5        |
+| 3. Panel   | Three reviewers, author | Each round: the panel reports; the author fixes or rejects each finding; the stage 2 gates pass again       | 3 rounds |
+| 4. Arbiter | Three judges, author    | No finding from the last round is upheld by two judges; if one is, the author fixes it and they judge again | 2        |
+| 5. Listen  | Transcription model     | No recorded clip of the unit is mostly unheard (`content:listen`)                                           | 1        |
+| 6. Browser | Harness, author         | The complete browser suite passes on the committed unit                                                     | 2        |
+| 7. Merge   | Harness                 | Main fast-forwards to the unit; the queue row becomes `done`; the ledger gets a line; the worktree goes     | 1        |
 
-Finished units wait on their branches until the owner merges them, so main does not show them. Each unit therefore starts from the newest unit branch that is not yet in main, and brings in main's latest changes:
+A stage that runs out of tries blocks the job. The reason is in `--status` and in the job's folder under `artifacts/content/`. Its branch and worktree are kept for a person or a later run to look at; delete `artifacts/content/<unit-id>/state.json` to make the harness take the job up again from its branch.
 
-```sh
-MAIN=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")   # the main tree
-BASE=$(git for-each-ref --sort=-committerdate --format='%(refname:short)' --no-merged main refs/heads/content/ | head -1)
-git show "${BASE:-main}:docs/content-backlog.md"            # the backlog as it really stands
-```
+The browser suite uses port 4173. If another session is using it, the harness waits; it never stops another session's server.
 
-### 1. Pick
+## For the author: how to write a unit
 
-If that backlog has a row `in progress`, a session stopped part way, usually at the plan's usage limit. Resume that unit, do not start another: open its worktree (`git worktree add "$MAIN/../voka-content-<unit-id>" content/<unit-id>` if the folder is gone, then the `cp` lines below), read its review record and `git log`, run the machine gates, and carry on from the first stage that has no evidence yet.
+The harness's instructions point here. Read `AGENTS.md` first: levels must be true, language is native-first with register labels, answer keys accept every reasonable answer.
 
-Otherwise, take the first row whose status is `next`. If a row says it waits on the owner, skip it and say so. Name the branch `content/<unit-id>`, or after the row when it is not one unit (`content/de-a1-calls-1-4`). If that branch already exists, another session has the unit: stop and say so.
+### The coverage sheet (stage 1)
 
-```sh
-git worktree add -b content/<unit-id> "$MAIN/../voka-content-<unit-id>" "${BASE:-main}"
-cd "$MAIN/../voka-content-<unit-id>"
-git merge --no-edit main                                    # pipeline fixes made on main since
-cp -al "$MAIN/node_modules" node_modules                    # its own packages, as hard links
-cp "$MAIN/.env.local" "$MAIN/.env.audio.local" . 2>/dev/null    # ignored files a worktree lacks
-```
+`docs/content-review/<unit-id>.md` starts with a heading `## Coverage sheet` and these eight bullets, each beginning with the bold label shown:
 
-The packages must be a real folder in the worktree, never a link to the main tree's. With a link, every worktree shares one cached build of the app's route folder, so a build can silently contain another worktree's screens, or almost none (15 November: a 1.1 MB bundle where 5.6 MB was right, and every browser test timed out). `cp -al` takes seconds and no extra disk.
+- **Can do:** the can-do statement and the exam descriptor it serves.
+- **New items for active use:** per session, 8 at most, each with the reason it is there: how common it is in speech, or which exam task needs it.
+- **Recognition only:** items the learner should understand but is not asked to produce.
+- **Grammar point:** one.
+- **Sound and spelling:** one focus.
+- **Brought back:** the earlier items each session uses again (4 at least), by the unit that taught them.
+- **Scene:** place, cast, and the learner's own lines in it (three at least).
+- **Exam-format task:** which paper and part it copies.
 
-Run every later command from the worktree. As the first change there, set the row to `in progress` with the date. The backlog is only ever edited in a unit's worktree, so its changes travel with the unit. Change only the status cell: the file is left out of Prettier so that a status change is one line.
+Read first: the job's brief (the backlog row names it), the coverage register for the level, and the newest unit of the same language. A unit with a weak sheet cannot be reviewed into a good one.
 
-### 2. Brief
+### Writing (stage 2)
 
-Read, in this order: the unit's row in the language's units plan (linked from the backlog), the coverage register for the level, and the previous unit's source file. Then start the unit's review record, `docs/content-review/<unit-id>.md`, with its coverage sheet:
-
-- the can-do statement and the exam descriptor it serves;
-- new items for active use, per session (8 at most), each with the reason it is there: how common it is in speech, or which exam task needs it;
-- items for recognition only;
-- one grammar point and one sound or spelling focus;
-- the earlier items each session brings back (4 at least), by the unit that taught them;
-- the scene: place, cast, and the learner's own lines in it (three at least);
-- the exam-format task and which paper and part it copies.
-
-Do not write lessons before this sheet exists. A unit with a weak sheet cannot be reviewed into a good one.
-
-### 3. Write
-
-Follow the newest unit of the same language as the pattern (`spanish-a1-unit-6.ts`, the last units in `german-a1-units.ts`). Hold to `AGENTS.md`: levels must be true, native-first language with register labels, answer keys that accept every reasonable answer. In particular:
+Follow the newest unit of the same language as the pattern (`spanish-a1-unit-6.ts`, the last units in `german-a1-units.ts`, `spanish-a1-checkpoint-1.ts` for a checkpoint).
 
 - Every scene has a careful line and, where people say it differently, the real one.
 - Wrong options are things a learner at this level would really say or confuse. If an option can be ruled out without knowing the language, replace it.
@@ -105,72 +121,36 @@ Follow the newest unit of the same language as the pattern (`spanish-a1-unit-6.t
 - A typed step asks for one thing. When many sentences would be right ("order a tea"), either name the form in the prompt ("Order a tea with ¿Me das …?") or build the accepted list with a small helper that covers every form the unit teaches, as `orders()` does in `spanish-a1-unit-6.ts`. An open prompt with a short list is the commonest defect the panel finds.
 - The last speaking step changes the situation, so a memorised line is not enough.
 - Nothing essential to a marked answer is untaught.
+- No digits or symbols in text a voice will read.
 
-### 4. Machine gates
+A new unit or checkpoint also has to be wired in. The tests name each gap:
 
-```sh
-npm run content:check -- <unit-id>   # the standard
-npm run test:ci                      # structure, solvability, missing audio
-```
+- its own file, imported in the language's units file in path order (`spanish-a1-units.ts`);
+- its lesson ids added to `tests/published-ids.json` (ids are only ever added);
+- the language's own tests brought up to the new truth where they count sessions or name what follows the last unit (`tests/spanish-units.test.ts`): change the numbers, never delete the check;
+- a voice for each new speaker in `src/features/audio/voices.ts`;
+- its unit call in `supabase/functions/_shared/unit-calls.ts` (`docs/unit-calls.md`). The app offers the call only after the owner deploys `realtime-session`.
 
-Fix every miss. Do not add a unit to the legacy list.
+A repair changes only what the standard requires. It keeps every lesson id, step position and taught phrase, so progress and review cards survive, and it adds the unit call if the unit has none.
 
-A brand-new unit also has to be wired in. The tests name each gap:
+The author does not record voices, commit, run the panel or run the browser tests. The harness does.
 
-- import the unit's file in the language's units file, in path order (`spanish-a1-units.ts`);
-- add its lesson ids to `tests/published-ids.json` (ids are only ever added);
-- bring the language's own tests up to the new truth where they count sessions or name what follows the last unit (`tests/spanish-units.test.ts`); change the numbers, never delete the check;
-- the browser walk goes through every unit by itself, but a new kind of step or wording may need its helper in `e2e/foundations.spec.ts`.
+### Answering review findings (stages 3 and 4)
 
-### 5. Panel
+A finding is a claim, not a fact. For each blocker and major finding, open the source and check it. Then either fix the unit, or leave the unit alone because the finding is wrong. Write one row per finding in the record, under `## Panel round N`, with what was checked and what was done. The judges will read the unit, not the row, so a rejection has to be true.
 
-```sh
-npm run content:panel -- <unit-id>
-```
-
-It takes about ten minutes and writes `artifacts/content/<unit-id>/PANEL.md`. It fails while a blocker or major finding stands.
-
-A finding is a claim, not a fact. For each one, open the source and check it. In the first runs, one finding was wrong (the reviewer could not see a number taught in a rule table; it is shown them now) and one was half wrong (it did not know the app ignores capital letters). Then either fix the unit, or write in the review record why the finding is wrong, with the evidence.
-
-Run the panel again after fixes. Stop after three rounds. The answer-key reviewer can always find one more variant of an open answer, so the test after round three is not an empty report: it is that every blocker and major is either fixed or shown wrong in the record. If a real one is still open, set the backlog row to `blocked`, write what is unresolved, and move on. Do not skip a reviewer to get a pass; `--skip` is for a provider that is down, and the record must say so.
-
-### 6. Unit call
-
-Add the unit's call to `supabase/functions/_shared/unit-calls.ts` (`docs/unit-calls.md`). The app offers it only after the owner deploys `realtime-session`: note that in the record.
-
-### 7. Voices
-
-Give each new speaker a voice in `src/features/audio/voices.ts`, then record (`docs/lesson-audio.md`). This needs `LESSON_AUDIO_TOKEN` in `.env.audio.local`. If the token is missing, stop here, set the row to `written, needs audio`, and say so: do not ship a unit that falls back to the device voice.
-
-### 8. Record and hand over
-
-Finish `docs/content-review/<unit-id>.md`: the panel date, models and content versions; each blocker and major finding with what was done; and a short list of questions for the native teacher (lines you were unsure of, regional choices, anything a reviewer disputed).
-
-Then, as `AGENTS.md` requires: `git status` and `git diff` on every file, commit only your own changes, and check the commit (the unit's worktree is a clean checkout of it once everything is committed):
-
-```sh
-npm run format:check && npm run typecheck && npm run lint && npm run test:ci
-npm run test:e2e
-```
-
-These are `npm run validate` without its first step, `expo-doctor`. That step fails on every branch while the Expo patch upgrades wait for the 1.12.0 store build, and a content unit changes no packages, so it is not this pipeline's gate. Do not change `package.json` or the lockfile to make it pass. The browser tests take about 25 minutes and use port 4173: if another session is using it they fail at once with "port in use"; wait and run them again, and never stop another session's server. Before the final commit, set the backlog row to `ready for native review` with the branch name and the row after it to `next`. Do not merge, push to the preview channel or deploy.
-
-When the checks have passed, tidy up: copy the panel reports to the main tree, where git ignores them, and remove the worktree. The branch keeps everything else.
-
-```sh
-mkdir -p "$MAIN/artifacts/content" && cp -r artifacts/content/<unit-id> "$MAIN/artifacts/content/"
-cd "$MAIN" && git worktree remove --force "$MAIN/../voka-content-<unit-id>"
-```
-
-## When a level's units are all written
-
-1. Two full mock exams in the real format, timed and marked against the official pass mark.
-2. The native teacher's review of every unit's record.
-3. Pilot learners sit an official sample paper; compare with their mock results.
-4. Only then does the owner change the level's status.
+- Typed answers are compared without capital letters or punctuation; Spanish answers that differ only in accents are accepted with a note. A finding that depends on those is wrong.
+- A rejected answer is a real defect only when every word and form in it is taught in this unit or earlier.
+- The answer-key reviewer can always find one more variant of an open answer. Prefer closing the prompt (name the form) to growing the list.
 
 ## Keeping the pipeline honest
 
-- If a reviewer is often wrong about the same thing, fix what it is shown (`renderUnit`, `knownBefore`), not the prompt alone.
-- If the native teacher finds a class of error the panel missed, add it to the role briefs in `scripts/content/panel.ts` and note it here.
-- Count, per unit, the findings the panel raised, how many were real, and what the teacher found afterwards. If the panel stops finding real defects, it is no longer earning its ten minutes.
+- `docs/content-review/ledger.md` gets one line per finished job: panel rounds, findings per round, findings upheld, clips checked, minutes. If the panel stops finding real defects, or the arbiter upholds many, look at why.
+- If a reviewer is often wrong about the same thing, fix what it is shown (`renderUnit`, `knownBefore` in `scripts/content/lib.ts`) or its brief (`scripts/content/panel.ts`), not the author.
+- If a learner or a native reader finds a class of error the panel missed, add it to the role briefs and note it here.
+- Every worktree has its own packages (`cp -al`), never a link to the main folder's. With a link, builds share one cached copy of the app's route folder and can silently contain another worktree's screens (15 November: a 1.1 MB bundle where 5.6 MB was right).
+- The harness runs `format:check`, `typecheck`, `lint` and `test:ci`, not `npm run validate`: validate's first step, `expo-doctor`, fails on every branch while the Expo patch upgrades wait for the 1.12.0 store build, and a content unit changes no packages.
+
+## By hand
+
+Each piece also runs alone, from a unit's worktree: `npm run content:check -- <unit-id>`, `content:panel`, `content:arbiter`, `content:listen`. `/author-unit` in Claude Code starts the harness for one job.

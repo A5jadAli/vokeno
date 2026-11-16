@@ -71,27 +71,35 @@ const taughtIn = (session: StepLesson) =>
     step.kind === 'teach' ? step.items.map((item) => item.target) : [],
   );
 
+/** The sessions before this one on its language's path; none when it is not on the path. */
+function earlierOnPath(session: StepLesson) {
+  const path = unitsOf(session.track);
+  return path.slice(
+    0,
+    Math.max(
+      0,
+      path.findIndex((lesson) => lesson.id === session.id),
+    ),
+  );
+}
+
 /** Targets taught before this session on its language's path. */
 export function taughtBefore(session: StepLesson): string[] {
-  const path = unitsOf(session.track);
-  return path.slice(0, path.indexOf(session)).flatMap(taughtIn);
+  return earlierOnPath(session).flatMap(taughtIn);
 }
 
 /** What a reviewer may assume is known: earlier taught targets plus earlier rule tables and
  *  examples (numbers and verb forms are often taught only there). */
 export function knownBefore(session: StepLesson): string[] {
-  const path = unitsOf(session.track);
-  return path
-    .slice(0, path.indexOf(session))
-    .flatMap((earlier) =>
-      earlier.steps.flatMap((step) =>
-        step.kind === 'teach'
-          ? step.items.map((item) => item.target)
-          : step.kind === 'rule'
-            ? [...(step.table ?? []).flat(), ...(step.examples ?? [])]
-            : [],
-      ),
-    );
+  return earlierOnPath(session).flatMap((earlier) =>
+    earlier.steps.flatMap((step) =>
+      step.kind === 'teach'
+        ? step.items.map((item) => item.target)
+        : step.kind === 'rule'
+          ? [...(step.table ?? []).flat(), ...(step.examples ?? [])]
+          : [],
+    ),
+  );
 }
 
 export type SessionMetrics = {
@@ -168,6 +176,20 @@ export function unitProblems(sessions: StepLesson[]): string[] {
       `${sessions[0].unit.id}: ${Math.round((produced / marked) * 100)}% of marked steps are typed, built or a form (at least ${STANDARD.minProducedShare * 100}%)`,
     );
   return problems;
+}
+
+export type Vote = { n: number; verdict: 'uphold' | 'dismiss'; reason: string };
+
+/**
+ * The findings (numbered from 1) that two or more judges uphold. A judge who gives no verdict on
+ * a finding has not upheld it.
+ */
+export function upheldBy(count: number, ballots: readonly Vote[][]): number[] {
+  return Array.from({ length: count }, (_, index) => index + 1).filter(
+    (n) =>
+      ballots.filter((ballot) => ballot.some((vote) => vote.n === n && vote.verdict === 'uphold'))
+        .length >= 2,
+  );
 }
 
 const list = (values: readonly string[]) => values.map((value) => `"${value}"`).join(', ');
