@@ -96,6 +96,7 @@
     "content:panel": "tsx --tsconfig tsconfig.json scripts/content/panel.ts",
     "content:arbiter": "tsx --tsconfig tsconfig.json scripts/content/arbiter.ts",
     "content:listen": "tsx --tsconfig tsconfig.json scripts/content/listen.ts",
+    "content:lessons": "tsx --tsconfig tsconfig.json scripts/content/lessons.ts",
     "content:auto": "tsx --tsconfig tsconfig.json scripts/content/run.ts",
     "typecheck": "tsc --noEmit",
     "validate": "run-s doctor format:check typecheck lint test:ci",

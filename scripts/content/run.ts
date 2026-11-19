@@ -2,9 +2,9 @@
 //
 // The content harness (docs/content-pipeline.md). It takes the next job from the queue in
 // docs/content-backlog.md and drives it through every stage: brief, write, panel, arbiter, voice
-// check, browser tests, merge. An author model does one small task per stage; this code checks
-// each stage with commands and decides what happens next. Stop it and start it again at any
-// time: a job's stage is saved in artifacts/content/<unit-id>/state.json in the main folder.
+// check, lessons, browser tests, merge. An author model does one small task per stage; this code
+// checks each stage with commands and decides what happens next. Stop it and start it again at
+// any time: a job's stage is saved in artifacts/content/<unit-id>/state.json in the main folder.
 import { spawnSync } from 'node:child_process';
 import {
   appendFileSync,
@@ -12,6 +12,7 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
+  rmSync,
   symlinkSync,
   unlinkSync,
   writeFileSync,
@@ -45,7 +46,12 @@ type State = {
   upheld: number;
   judged: number;
   clips: string;
+  /** Every author that did a task for this job, e.g. "claude opus". */
+  authors?: string[];
   startedAt: string;
+};
+type PanelReport = {
+  results: { role: string; error: string; findings: { severity: string }[] }[];
 };
 
 const sh = (command: string, args: string[], cwd: string, minutes = 20) => {
@@ -61,30 +67,51 @@ const sh = (command: string, args: string[], cwd: string, minutes = 20) => {
   };
 };
 const git = (args: string[], cwd: string) => sh('git', args, cwd);
+const wait = (minutes: number, cwd: string) =>
+  sh('sleep', [String(minutes * 60)], cwd, minutes + 1);
 
 const MAIN = dirname(
   git(['rev-parse', '--path-format=absolute', '--git-common-dir'], process.cwd()).out.trim(),
 );
+
+// Settings for unattended runs can live in the ignored .claude/settings.local.json of the main
+// folder (the review keys file, a long-lived Claude token, the author choice), so a plain
+// terminal needs nothing else. A variable already set in the environment wins.
+const settings = join(MAIN, '.claude/settings.local.json');
+if (existsSync(settings))
+  for (const [name, value] of Object.entries(
+    (JSON.parse(readFileSync(settings, 'utf8')) as { env?: Record<string, string> }).env ?? {},
+  ))
+    process.env[name] ??= value;
+
 const BACKLOG = 'docs/content-backlog.md';
 const AGENT = process.env.CONTENT_AGENT ?? 'claude';
-const MODEL = process.env.CONTENT_AGENT_MODEL ?? (AGENT === 'claude' ? 'opus' : '');
-const today = () => new Date().toISOString().slice(0, 10);
+const MODEL = process.env.CONTENT_AGENT_MODEL ?? (AGENT === 'claude' ? 'opus' : 'gpt-6.1-sol');
+/** The author for a task the main author cannot take because its plan is over its limit. */
+const FALLBACK = process.env.CONTENT_AGENT_FALLBACK ?? '';
+const FALLBACK_MODEL =
+  process.env.CONTENT_FALLBACK_MODEL ?? (FALLBACK === 'claude' ? 'opus' : 'gpt-6.1-sol');
+const CODEX_EFFORT = process.env.CONTENT_CODEX_EFFORT ?? 'high';
+const AUTHORS = [
+  { agent: AGENT, model: MODEL },
+  ...(FALLBACK && FALLBACK !== AGENT ? [{ agent: FALLBACK, model: FALLBACK_MODEL }] : []),
+];
+
+const pad = (value: number) => String(value).padStart(2, '0');
+/** Local time, as the owner reads it: 2026-11-19 22:41:05. */
+const stamp = () => {
+  const now = new Date();
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+};
+const today = () => stamp().slice(0, 10);
 const tail = (text: string, characters = 6000) => text.slice(-characters);
 
 const log = (message: string) => {
-  const line = `${new Date().toISOString().slice(0, 19).replace('T', ' ')}  ${message}\n`;
+  const line = `${stamp()}  ${message}\n`;
   process.stdout.write(line);
   mkdirSync(join(MAIN, 'artifacts/content'), { recursive: true });
   appendFileSync(join(MAIN, 'artifacts/content/auto.log'), line);
 };
-
-// The review keys: a pointer in the ignored local settings is enough, in any terminal.
-const settings = join(MAIN, '.claude/settings.local.json');
-if (!process.env.CONTENT_KEYS_FILE && existsSync(settings)) {
-  const pointer = (JSON.parse(readFileSync(settings, 'utf8')) as { env?: Record<string, string> })
-    .env?.CONTENT_KEYS_FILE;
-  if (pointer) process.env.CONTENT_KEYS_FILE = pointer;
-}
 
 const folder = (id: string) => join(MAIN, 'artifacts/content', id);
 const worktree = (id: string) => join(MAIN, '..', `voka-content-${id}`);
@@ -100,55 +127,99 @@ const save = (id: string, state: State) => {
 /** Raised when a job cannot go on. The job is marked blocked and the harness takes the next. */
 class Blocked extends Error {}
 
-/** One task for the author model, in the job's worktree. Waits out the plan's usage limit. */
-function author(job: Job, label: string, prompt: string) {
-  const cwd = worktree(job.id);
-  for (let wait = 0; ; wait++) {
-    log(`${job.id}  author: ${label}`);
-    const result =
-      AGENT === 'codex'
-        ? sh(
-            'codex',
-            ['exec', '--sandbox', 'workspace-write', ...(MODEL ? ['-m', MODEL] : []), prompt],
-            cwd,
-            90,
-          )
-        : sh(
-            'claude',
-            [
-              '-p',
-              prompt,
-              '--model',
-              MODEL,
-              '--permission-mode',
-              'auto',
-              '--output-format',
-              'json',
-            ],
-            cwd,
-            90,
-          );
-    writeFileSync(
-      join(folder(job.id), `author-${label.replace(/\W+/g, '-')}-${Date.now()}.log`),
-      result.out,
-    );
-    const limited = /hit your [^.]{0,40}limit|usage limit|rate limit reached/i.test(
-      tail(result.out, 2000),
-    );
-    // Anything else that stops the author's own program (a sign-in that ended, no credit) would
-    // fail every job the same way, so it stops the harness instead of blocking jobs one by one.
-    if (!limited && result.code !== 0 && result.code !== 124)
-      throw new Error(
-        `The author program failed (exit ${result.code}):\n${tail(result.out, 1500)}`,
-      );
-    if (limited) {
-      if (wait >= 40)
-        throw new Blocked('the author model stayed over its usage limit for ten hours');
-      log(`${job.id}  the author model is over its usage limit; trying again in 15 minutes`);
-      sh('sleep', ['900'], cwd, 16);
-      continue;
+/** One copy of the harness at a time: two would fight over the queue, main and port 4173. */
+function lock() {
+  const file = join(MAIN, 'artifacts/content/auto.lock');
+  if (existsSync(file)) {
+    const pid = Number(readFileSync(file, 'utf8'));
+    try {
+      process.kill(pid, 0);
+      throw new Error(`The harness is already running (process ${pid}).`);
+    } catch (error) {
+      // No such process: the lock was left by a copy that was killed.
+      if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
     }
-    return;
+  }
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, String(process.pid));
+  const release = () => {
+    if (existsSync(file) && Number(readFileSync(file, 'utf8')) === process.pid) unlinkSync(file);
+  };
+  process.on('exit', release);
+  for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP'] as const)
+    process.on(signal, () => process.exit(130));
+}
+
+function call(agent: string, model: string, prompt: string, cwd: string) {
+  return agent === 'codex'
+    ? sh(
+        'codex',
+        [
+          'exec',
+          '--sandbox',
+          'workspace-write',
+          '-m',
+          model,
+          '-c',
+          `model_reasoning_effort=${CODEX_EFFORT}`,
+          prompt,
+        ],
+        cwd,
+        90,
+      )
+    : sh(
+        'claude',
+        ['-p', prompt, '--model', model, '--permission-mode', 'auto', '--output-format', 'json'],
+        cwd,
+        90,
+      );
+}
+
+const LIMIT = /hit your [^.]{0,40}limit|usage limit|rate limit|quota/i;
+
+/**
+ * One task for an author, in the job's worktree. The stage's checks decide whether it worked; the
+ * author's report is only kept in a log. An author over its plan's limit hands the task to the
+ * fallback author, or waits for the limit to reset.
+ */
+function author(job: Job, state: State, label: string, prompt: string) {
+  const cwd = worktree(job.id);
+  let broken = 0;
+  let waited = 0;
+  for (;;) {
+    let limited = 0;
+    for (const { agent, model } of AUTHORS) {
+      const who = model ? `${agent} ${model}` : agent;
+      log(`${job.id}  ${who}: ${label}`);
+      const result = call(agent, model, prompt, cwd);
+      writeFileSync(
+        join(folder(job.id), `author-${label.replace(/\W+/g, '-')}-${Date.now()}.log`),
+        result.out,
+      );
+      if (result.code === 0 || result.code === 124) {
+        state.authors = [...new Set([...(state.authors ?? []), who])];
+        save(job.id, state);
+        return;
+      }
+      if (LIMIT.test(tail(result.out, 2000))) {
+        log(`${job.id}  ${who} is over its usage limit`);
+        limited++;
+        continue;
+      }
+      // The program itself failed: a network error, a sign-in that ended, no credit. Two more
+      // tries after a pause, then the harness stops, because every job would fail the same way.
+      if (++broken >= 3)
+        throw new Error(
+          `${who} failed three times (exit ${result.code}):\n${tail(result.out, 1500)}`,
+        );
+      log(`${job.id}  ${who} failed (exit ${result.code}); trying again in 5 minutes`);
+      wait(5, cwd);
+      break;
+    }
+    if (limited < AUTHORS.length) continue;
+    if (++waited > 40) throw new Blocked('every author stayed over its usage limit for ten hours');
+    log(`${job.id}  waiting 15 minutes for a usage limit to reset`);
+    wait(15, cwd);
   }
 }
 
@@ -156,7 +227,7 @@ type Failure = { check: string; out: string; authors: boolean };
 
 /** Prettier is run for the author, not checked against them. */
 function format(cwd: string) {
-  const changed = git(['status', '--porcelain'], cwd)
+  const changed = git(['status', '--porcelain', '--untracked-files=all'], cwd)
     .out.split('\n')
     .map((line) => line.slice(3).trim())
     .filter(
@@ -214,14 +285,14 @@ function gates(job: Job): Failure | undefined {
 }
 
 /** Runs the gates; a failure the author can fix goes back to them, a set number of times. */
-function passGates(job: Job) {
+function passGates(job: Job, state: State) {
   for (let attempt = 0; ; attempt++) {
     const failed = gates(job);
     if (!failed) return;
     log(`${job.id}  failed: ${failed.check}`);
     if (!failed.authors || attempt >= TRIES.fix)
       throw new Blocked(`${failed.check} still fails:\n${tail(failed.out, 1500)}`);
-    author(job, `fix ${failed.check}`, prompts.fix(job, failed.check, failed.out));
+    author(job, state, `fix ${failed.check}`, prompts.fix(job, failed.check, failed.out));
   }
 }
 
@@ -239,9 +310,11 @@ function prepare(job: Job) {
   // Its own packages, as hard links: a link to the main folder's would share one build cache.
   if (!existsSync(join(cwd, 'node_modules')))
     sh('cp', ['-al', join(MAIN, 'node_modules'), join(cwd, 'node_modules')], MAIN);
-  for (const file of ['.env.local', '.env.audio.local'])
-    if (existsSync(join(MAIN, file)) && !existsSync(join(cwd, file)))
-      cpSync(join(MAIN, file), join(cwd, file));
+  // Files git ignores that the job needs: the app's settings, the voice token, and the Supabase
+  // link the voice recorder's loudness step uploads through.
+  for (const path of ['.env.local', '.env.audio.local', 'supabase/.temp'])
+    if (existsSync(join(MAIN, path)) && !existsSync(join(cwd, path)))
+      cpSync(join(MAIN, path), join(cwd, path), { recursive: true });
   // Reports written in the worktree land in the main folder, so they outlive the worktree.
   mkdirSync(folder(job.id), { recursive: true });
   mkdirSync(join(cwd, 'artifacts/content'), { recursive: true });
@@ -253,10 +326,10 @@ function prepare(job: Job) {
   }
 }
 
-function brief(job: Job) {
+function brief(job: Job, state: State) {
   const record = join(worktree(job.id), 'docs/content-review', `${job.id}.md`);
   for (let attempt = 1; ; attempt++) {
-    author(job, 'coverage sheet', prompts.brief(job));
+    author(job, state, 'coverage sheet', prompts.brief(job));
     const text = existsSync(record) ? readFileSync(record, 'utf8') : '';
     const missing = SHEET.filter((label) => !text.includes(label));
     if (!missing.length) return;
@@ -268,53 +341,58 @@ function brief(job: Job) {
 
 function panel(job: Job, state: State) {
   const cwd = worktree(job.id);
+  const file = join(folder(job.id), 'panel.json');
   for (; state.round <= TRIES.rounds; state.round++) {
     log(`${job.id}  panel round ${state.round}`);
-    let run = sh('npm', ['run', '-s', 'content:panel', '--', job.id], cwd, 45);
-    const read = () => {
-      const file = join(folder(job.id), 'panel.json');
-      if (!existsSync(file)) throw new Blocked(`the panel did not run:\n${tail(run.out, 1200)}`);
-      return JSON.parse(readFileSync(file, 'utf8')) as {
-        results: {
-          role: string;
-          error: string;
-          findings: { severity: keyof State['rounds'][0] }[];
-        }[];
-      };
-    };
-    // A reviewer that did not answer is asked once more; a panel of two is not a panel.
-    if (run.code && read().results.some((result) => result.error))
+    let run = { code: 0, out: '' };
+    let report: PanelReport = { results: [] };
+    for (let attempt = 1; ; attempt++) {
+      // A report from an earlier round must never stand in for this one.
+      rmSync(file, { force: true });
       run = sh('npm', ['run', '-s', 'content:panel', '--', job.id], cwd, 45);
-    const report = read();
-    const silent = report.results.filter((result) => result.error);
-    if (silent.length)
-      throw new Blocked(
-        `a reviewer did not answer: ${silent.map((result) => `${result.role} (${result.error})`).join('; ')}`,
-      );
+      if (!existsSync(file)) throw new Blocked(`the panel did not run:\n${tail(run.out, 1200)}`);
+      report = JSON.parse(readFileSync(file, 'utf8')) as PanelReport;
+      const silent = report.results.filter((result) => result.error);
+      if (!silent.length) break;
+      // A reviewer that did not answer is waited for: a panel of two is not a panel.
+      const names = silent.map((result) => `${result.role} (${result.error.slice(0, 120)})`);
+      if (attempt >= 6)
+        throw new Blocked(`a reviewer did not answer for an hour: ${names.join('; ')}`);
+      log(`${job.id}  no answer from ${names.join('; ')}; asking again in 10 minutes`);
+      wait(10, cwd);
+    }
     cpSync(join(folder(job.id), 'PANEL.md'), join(folder(job.id), `PANEL-round-${state.round}.md`));
     const count = { blocker: 0, major: 0, minor: 0 };
     for (const finding of report.results.flatMap((result) => result.findings))
-      if (finding.severity in count) count[finding.severity]++;
+      if (finding.severity in count) count[finding.severity as keyof typeof count]++;
     state.rounds[state.round - 1] = count;
     save(job.id, state);
     log(
       `${job.id}  round ${state.round}: ${count.blocker} blocker, ${count.major} major, ${count.minor} minor`,
     );
     if (run.code === 0) return true;
-    author(job, `answer round ${state.round}`, prompts.resolve(job, state.round));
-    passGates(job);
+    author(job, state, `answer round ${state.round}`, prompts.resolve(job, state.round));
+    passGates(job, state);
   }
   return false;
 }
 
 function arbiter(job: Job, state: State) {
   const cwd = worktree(job.id);
+  const file = join(folder(job.id), 'arbiter.json');
   for (let attempt = 0; ; attempt++) {
     log(`${job.id}  arbiter`);
-    let run = sh('npm', ['run', '-s', 'content:arbiter', '--', job.id], cwd, 45);
-    if (run.code === 2) run = sh('npm', ['run', '-s', 'content:arbiter', '--', job.id], cwd, 45);
-    if (run.code === 2) throw new Blocked('fewer than two judges answered the arbiter');
-    const verdict = JSON.parse(readFileSync(join(folder(job.id), 'arbiter.json'), 'utf8')) as {
+    let run = { code: 2, out: '' };
+    for (let tries = 1; ; tries++) {
+      rmSync(file, { force: true });
+      run = sh('npm', ['run', '-s', 'content:arbiter', '--', job.id], cwd, 45);
+      if (run.code !== 2) break;
+      if (tries >= 6) throw new Blocked('fewer than two judges answered the arbiter for an hour');
+      log(`${job.id}  fewer than two judges answered; asking again in 10 minutes`);
+      wait(10, cwd);
+    }
+    if (!existsSync(file)) throw new Blocked(`the arbiter did not run:\n${tail(run.out, 1200)}`);
+    const verdict = JSON.parse(readFileSync(file, 'utf8')) as {
       findings: unknown[];
       upheld: number[];
     };
@@ -325,17 +403,34 @@ function arbiter(job: Job, state: State) {
     if (run.code === 0) return;
     if (attempt >= TRIES.arbiter)
       throw new Blocked(`${state.upheld} finding(s) are still upheld by the judges (ARBITER.md)`);
-    author(job, 'fix upheld findings', prompts.upheld(job));
-    passGates(job);
+    author(job, state, 'fix upheld findings', prompts.upheld(job));
+    passGates(job, state);
   }
 }
 
 function listen(job: Job, state: State) {
-  log(`${job.id}  voice check`);
-  const run = sh('npm', ['run', '-s', 'content:listen', '--', job.id], worktree(job.id), 30);
-  state.clips = run.out.trim().split('\n').at(-1) ?? '';
-  save(job.id, state);
-  if (run.code) throw new Blocked(`the voice check failed (LISTEN.md):\n${tail(run.out, 1200)}`);
+  for (let attempt = 1; ; attempt++) {
+    log(`${job.id}  voice check`);
+    const run = sh('npm', ['run', '-s', 'content:listen', '--', job.id], worktree(job.id), 30);
+    state.clips = run.out.trim().split('\n').at(-1) ?? '';
+    save(job.id, state);
+    if (run.code === 0) return;
+    // A clip that could not be fetched or transcribed is the provider's problem, not the unit's.
+    const onlyUnchecked =
+      /\b[1-9]\d* unchecked/.test(state.clips) && !/\b[1-9]\d* not heard/.test(state.clips);
+    if (!onlyUnchecked || attempt >= 4)
+      throw new Blocked(`the voice check failed (LISTEN.md):\n${tail(run.out, 1200)}`);
+    log(`${job.id}  some clips could not be checked; trying again in 10 minutes`);
+    wait(10, worktree(job.id));
+  }
+}
+
+/** The pipeline learns from this unit's real defects. An improvement, never a gate. */
+function learn(job: Job) {
+  log(`${job.id}  lessons for later units`);
+  const run = sh('npm', ['run', '-s', 'content:lessons', '--', job.id], worktree(job.id), 20);
+  writeFileSync(join(folder(job.id), 'lessons.log'), run.out);
+  log(`${job.id}  ${run.out.trim().split('\n').at(-1) ?? ''}`);
 }
 
 /** The harness's own section of the review record, the queue row and the ledger. */
@@ -347,7 +442,7 @@ function record(job: Job, state: State) {
   const rounds = state.rounds.map(
     (round, index) => `| ${index + 1} | ${round.blocker} | ${round.major} | ${round.minor} |`,
   );
-  const clean = state.judged === 0;
+  const authors = state.authors?.join(', ') || `${AGENT} ${MODEL}`;
   writeFileSync(
     file,
     [
@@ -355,13 +450,13 @@ function record(job: Job, state: State) {
       '',
       heading,
       '',
-      `${today()}, by the content harness. Author: ${AGENT}${MODEL ? ` (${MODEL})` : ''}. The panel and the arbiter are three models from three other companies (\`scripts/content/providers.ts\`). No person has reviewed this unit.`,
+      `${today()}, by the content harness. Author: ${authors}. The panel and the arbiter are three models from three other companies (\`scripts/content/providers.ts\`). No person has reviewed this unit.`,
       '',
       '| Panel round | Blocker | Major | Minor |',
       '| --- | --- | --- | --- |',
       ...rounds,
       '',
-      clean
+      state.judged === 0
         ? '- **Arbiter:** not needed; the last panel round left no blocker or major finding.'
         : `- **Arbiter:** ${state.judged} finding(s) from the last round judged against the finished unit, ${state.upheld} upheld by two or more judges.`,
       `- **Voice check:** ${state.clips || 'no recorded clips in this unit.'}`,
@@ -380,11 +475,11 @@ function record(job: Job, state: State) {
   const minutes = Math.round((Date.now() - Date.parse(state.startedAt)) / 60_000);
   appendFileSync(
     ledger,
-    `| ${today()} | \`${job.id}\` | ${job.kind} | ${AGENT}${MODEL ? ` ${MODEL}` : ''} | ${state.rounds.map((r) => `${r.blocker}/${r.major}/${r.minor}`).join(', ')} | ${state.judged} | ${state.upheld} | ${state.clips.split(':')[0] || 'none'} | ${minutes} |\n`,
+    `| ${today()} | \`${job.id}\` | ${job.kind} | ${authors} | ${state.rounds.map((r) => `${r.blocker}/${r.major}/${r.minor}`).join(', ')} | ${state.judged} | ${state.upheld} | ${state.clips.split(':')[0] || 'none'} | ${minutes} |\n`,
   );
 }
 
-function commit(job: Job, message: string) {
+function commit(job: Job, state: State, message: string) {
   const cwd = worktree(job.id);
   format(cwd);
   git(['add', '-A'], cwd);
@@ -393,14 +488,14 @@ function commit(job: Job, message: string) {
     [
       'commit',
       '-m',
-      `${message}\n\nWritten by the content harness (docs/content-pipeline.md); author model: ${AGENT}${MODEL ? ` ${MODEL}` : ''}.`,
+      `${message}\n\nWritten by the content harness (docs/content-pipeline.md). Author: ${state.authors?.join(', ') || `${AGENT} ${MODEL}`}.`,
     ],
     cwd,
   );
   if (done.code) throw new Blocked(`the commit was refused:\n${tail(done.out, 1200)}`);
 }
 
-function browser(job: Job) {
+function browser(job: Job, state: State) {
   const cwd = worktree(job.id);
   for (let attempt = 0; ; attempt++) {
     // Another session may be running the suite: wait for the port, never take it.
@@ -409,9 +504,9 @@ function browser(job: Job) {
       sh('bash', ['-c', '(echo > /dev/tcp/127.0.0.1/4173) 2>/dev/null'], cwd).code === 0;
       waited++
     ) {
-      if (waited >= 90) throw new Blocked('port 4173 stayed in use for 90 minutes');
+      if (waited >= 360) throw new Blocked('port 4173 stayed in use for six hours');
       if (waited === 0) log(`${job.id}  waiting for port 4173`);
-      sh('sleep', ['60'], cwd);
+      wait(1, cwd);
     }
     log(`${job.id}  browser suite`);
     const run = sh('npx', ['playwright', 'test'], cwd, 90);
@@ -426,26 +521,30 @@ function browser(job: Job) {
       throw new Blocked(`the browser suite still fails:\n${failures.join('\n')}`);
     author(
       job,
+      state,
       'fix browser tests',
       prompts.browser(job, `${failures.join('\n')}\n\n${tail(run.out, 4000)}`),
     );
-    passGates(job);
-    commit(job, `Content: ${job.id} browser fixes`);
+    passGates(job, state);
+    commit(job, state, `Content: ${job.id} browser fixes`);
   }
 }
 
-function merge(job: Job) {
+function merge(job: Job, state: State) {
   const cwd = worktree(job.id);
   const branch = `content/${job.id}`;
+  // Checked again here: someone may have switched the main folder while the job ran.
+  const onMain = () => git(['branch', '--show-current'], MAIN).out.trim() === 'main';
+  if (!onMain()) throw new Blocked('the main folder is not on the main branch');
   if (git(['merge', '--ff-only', branch], MAIN).code) {
     // Main moved while the job ran: bring it in, check again, and try once more.
     if (git(['merge', '--no-edit', 'main'], cwd).code) {
       git(['merge', '--abort'], cwd);
       throw new Blocked('main changed and no longer merges with this unit');
     }
-    passGates(job);
-    commit(job, `Content: ${job.id} after merging main`);
-    const again = git(['merge', '--ff-only', branch], MAIN);
+    passGates(job, state);
+    commit(job, state, `Content: ${job.id} after merging main`);
+    const again = onMain() ? git(['merge', '--ff-only', branch], MAIN) : { code: 1, out: '' };
     if (again.code)
       throw new Blocked(
         `main could not take the unit; is the main folder on main, with no conflicting edits?\n${tail(again.out, 600)}`,
@@ -467,6 +566,10 @@ function runJob(job: Job) {
     clips: '',
     startedAt: new Date().toISOString(),
   };
+  if (state.stage === 'blocked') {
+    state.stage = state.at ?? 'brief';
+    delete state.reason;
+  }
   const to = (stage: Stage) => {
     state.stage = stage;
     save(job.id, state);
@@ -475,12 +578,12 @@ function runJob(job: Job) {
   try {
     prepare(job);
     if (state.stage === 'brief') {
-      brief(job);
+      brief(job, state);
       to('write');
     }
     if (state.stage === 'write') {
-      author(job, 'write', prompts.write(job));
-      passGates(job);
+      author(job, state, 'write', prompts.write(job));
+      passGates(job, state);
       to('panel');
     }
     if (state.stage === 'panel') {
@@ -493,23 +596,24 @@ function runJob(job: Job) {
     }
     if (state.stage === 'listen') {
       listen(job, state);
+      learn(job);
       record(job, state);
-      commit(job, `Content: ${job.id} (${job.kind})`);
+      commit(job, state, `Content: ${job.id} (${job.kind})`);
       to('browser');
     }
     if (state.stage === 'browser') {
-      browser(job);
+      browser(job, state);
       to('merge');
     }
     if (state.stage === 'merge') {
-      merge(job);
+      merge(job, state);
       to('done');
     }
     log(`${job.id}  done and merged into main`);
     return true;
   } catch (error) {
     if (!(error instanceof Blocked)) throw error;
-    state.at = state.stage === 'blocked' ? state.at : (state.stage as Stage);
+    state.at = state.stage as Stage;
     state.stage = 'blocked';
     state.reason = error.message;
     save(job.id, state);
@@ -519,6 +623,11 @@ function runJob(job: Job) {
 }
 
 function main() {
+  // "--status | head" closes the pipe early; that is not an error.
+  process.stdout.on('error', (error: NodeJS.ErrnoException) => {
+    if (error.code === 'EPIPE') process.exit(0);
+    throw error;
+  });
   const args = process.argv.slice(2);
   const value = (flag: string) => (args.includes(flag) ? args[args.indexOf(flag) + 1] : undefined);
   const queue = () => parseQueue(readFileSync(join(MAIN, BACKLOG), 'utf8'));
@@ -548,11 +657,16 @@ function main() {
     throw new Error('Run the harness from the main project folder.');
   if (git(['branch', '--show-current'], MAIN).out.trim() !== 'main')
     throw new Error('The main folder must be on the main branch.');
+  lock();
 
   const only = value('--job');
   const max = Number(value('--max') ?? Infinity);
+  log(
+    `Harness started. Author: ${AUTHORS.map(({ agent, model }) => `${agent} ${model}`).join(', then ')}.`,
+  );
   let finished = 0;
   for (let ran = 0; ran < max; ran++) {
+    // --job also takes up a blocked job again, at the stage where it stopped.
     const job = only ? queue().find((item) => item.id === only) : nextJob(queue(), blocked());
     if (!job) {
       log(
@@ -562,12 +676,6 @@ function main() {
     }
     if (job.status !== 'todo') {
       log(`${job.id} is already ${job.status}.`);
-      break;
-    }
-    if (only && load(job.id)?.stage === 'blocked') {
-      log(
-        `${job.id} is blocked. Delete ${join(folder(job.id), 'state.json')} to take it up again.`,
-      );
       break;
     }
     if (runJob(job)) finished++;

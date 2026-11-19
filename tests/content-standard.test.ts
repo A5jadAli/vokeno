@@ -3,7 +3,9 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from '@jest/globals';
 
 import {
+  MAX_LESSONS,
   STANDARD,
+  addLessons,
   knownBefore,
   renderUnit,
   sessionMetrics,
@@ -185,5 +187,52 @@ describe('the content queue', () => {
     expect(nextJob(jobs, new Set(['es-a1-u7']))?.id).toBe('de-a1-u1');
     expect(nextJob(jobs, new Set(['es-a1-u7', 'de-a1-u1']))?.id).toBe('de-a1-u2');
     expect(nextJob(jobs, new Set(['es-a1-u7', 'de-a1-u1', 'de-a1-u2']))).toBeUndefined();
+  });
+});
+
+describe('lessons for later units', () => {
+  const file = readFileSync('docs/content-lessons.md', 'utf8');
+  const rules = (text: string) => text.split('\n').filter((line) => line.startsWith('- '));
+
+  it('adds at most two rules, each naming the unit it came from, and nothing else in the file', () => {
+    const result = addLessons(
+      file,
+      [
+        { rule: 'Name the form in a typed prompt.', because: 'open order prompts' },
+        { rule: 'Accept a number with its unit word.' },
+        { rule: 'A third rule.' },
+      ],
+      'es-a1-u7',
+      '2026-11-20',
+    );
+    expect(result.added).toBe(2);
+    expect(rules(result.text).slice(-2)).toEqual([
+      '- Name the form in a typed prompt. (from `es-a1-u7`, 2026-11-20: open order prompts)',
+      '- Accept a number with its unit word. (from `es-a1-u7`, 2026-11-20)',
+    ]);
+    expect(result.text.startsWith(file.trimEnd())).toBe(true);
+    // The result is formatted as the repository requires: a blank line before the first rule.
+    expect(addLessons('## Rules\n', [{ rule: 'One.' }], 'x', 'd').text).toBe(
+      '## Rules\n\n- One. (from `x`, d)\n',
+    );
+  });
+
+  it('never adds a rule that is already there, whatever its case and punctuation', () => {
+    const once = addLessons(file, [{ rule: 'Name the form in a typed prompt.' }], 'es-a1-u7', 'd');
+    const twice = addLessons(once.text, [{ rule: 'name the form in a typed prompt' }], 'x', 'd');
+    expect(twice.added).toBe(0);
+    expect(twice.text).toBe(once.text);
+  });
+
+  it('stops adding when the file is full', () => {
+    const full = `${file.trimEnd()}\n${Array.from({ length: MAX_LESSONS }, (_, n) => `- Rule ${n}.`).join('\n')}\n`;
+    expect(addLessons(full, [{ rule: 'One more.' }], 'x', 'd')).toMatchObject({
+      added: 0,
+      full: true,
+    });
+  });
+
+  it('keeps the real file within its limit', () => {
+    expect(rules(file).length).toBeLessThanOrEqual(MAX_LESSONS);
   });
 });

@@ -48,7 +48,7 @@ const roles: Record<Role, { provider: Provider; model: string; brief: string }> 
   teacher: {
     provider: 'openai',
     model: MODELS.openai,
-    brief: `You are an experienced ${language} teacher and ${exam} examiner. Judge whether the unit delivers its can-do statement at CEFR ${level}; whether each rule is accurate and not over-general; whether a marked step needs a word or structure that neither this unit nor the "taught earlier" list has taught; whether any exam-style task matches the real ${exam} format; and whether a session asks a beginner to hold too much at once.`,
+    brief: `You are an experienced ${language} teacher and ${exam} examiner. Judge whether the unit delivers its can-do statement at CEFR ${level}; whether each rule is accurate and not over-general; whether a teach entry merges two words or chunks into one so that a session looks lighter than it is (a major finding); whether a marked step needs a word or structure that neither this unit nor the "taught earlier" list has taught; whether any exam-style task matches the real ${exam} format; and whether a session asks a beginner to hold too much at once.`,
   },
   solver: {
     provider: 'xai',

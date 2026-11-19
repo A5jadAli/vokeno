@@ -5,7 +5,7 @@ description: Run the content harness for one lesson job (a new unit, a checkpoin
 
 # Author a unit
 
-Lessons are written by the content harness, not by hand. Read `docs/content-pipeline.md` once, then:
+Lessons are written by the content harness, not by hand. If your instructions say you are already inside a harness stage, do not use this skill: do the stage's task. Otherwise read `docs/content-pipeline.md` once, then:
 
 1. From the main project folder, start the harness in the background for one job: `npm run content:auto -- --max 1`, or `npm run content:auto -- --job <unit-id>` when a unit id was given. It takes one to three hours, most of it waiting on reviewers and the browser tests.
 2. Follow it with `npm run content:auto -- --status` and `artifacts/content/auto.log`. Do not edit the job's worktree while it runs.

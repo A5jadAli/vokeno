@@ -192,6 +192,38 @@ export function upheldBy(count: number, ballots: readonly Vote[][]): number[] {
   );
 }
 
+export type Lesson = { rule: string; because?: string };
+/** The most rules docs/content-lessons.md holds: past this, a person prunes it first. */
+export const MAX_LESSONS = 40;
+
+/**
+ * The lessons file with new rules added at the end of its list, each naming the unit it came
+ * from. Nothing is added once the file holds MAX_LESSONS rules, and a rule already there in the
+ * same words is not added twice.
+ */
+export function addLessons(text: string, rules: readonly Lesson[], unit: string, date: string) {
+  const existing = text.split('\n').filter((line) => line.startsWith('- '));
+  const known = new Set(existing.map((line) => plain(line.slice(2).split(' (from ')[0])));
+  if (existing.length >= MAX_LESSONS) return { text, added: 0, full: true, count: existing.length };
+  const fresh = rules
+    .map((item) => ({ rule: item.rule.trim().replace(/\s+/g, ' '), because: item.because?.trim() }))
+    .filter((item) => !known.has(plain(item.rule)))
+    .slice(0, Math.min(2, MAX_LESSONS - existing.length));
+  const lines = fresh.map(
+    (item) =>
+      `- ${item.rule} (from \`${unit}\`, ${date}${item.because ? `: ${item.because.replace(/\s+/g, ' ')}` : ''})`,
+  );
+  return {
+    // The first rule under the heading needs a blank line before it, as Markdown lists do.
+    text: lines.length
+      ? `${text.trimEnd()}${existing.length ? '\n' : '\n\n'}${lines.join('\n')}\n`
+      : text,
+    added: lines.length,
+    full: false,
+    count: existing.length + lines.length,
+  };
+}
+
 const list = (values: readonly string[]) => values.map((value) => `"${value}"`).join(', ');
 
 /** One step as a reviewer reads it, answer key included. */

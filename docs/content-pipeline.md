@@ -11,7 +11,7 @@ Run it from the main project folder. It takes the first job in `docs/content-bac
 ```sh
 npm run content:auto -- --status         # where every job stands; changes nothing
 npm run content:auto -- --max 1          # one job, then stop
-npm run content:auto -- --job es-a1-u8   # this job only
+npm run content:auto -- --job es-a1-u8   # this job only; a blocked job is taken up again where it stopped
 ```
 
 ## How it stays right with a weaker author
@@ -22,6 +22,7 @@ The harness (`scripts/content/run.ts`) is ordinary code. It decides what happens
 - **Code checks every stage.** After each stage the harness runs commands and reads their exit codes. A stage that fails goes back to the author with the failing output, a fixed number of times. The author's own report is not read.
 - **Other companies' models review the language.** Three models that did not write the unit review it without seeing each other's findings. After the author has answered, the same three vote on whether each finding is still a real defect; two votes uphold it. The author cannot overrule them.
 - **Nothing reaches main unless every gate passed.** A job that cannot pass is marked blocked with the reason and left on its branch; the harness moves on to a job that does not depend on it.
+- **It learns from its own defects.** When a unit has passed review, one model turns the defects that were real into at most two general rules in `docs/content-lessons.md`, which every later author reads. The rules arrive in git with the unit, so a person can see and remove any of them. The ledger shows whether later units need fewer review rounds.
 
 ## What it can and cannot do
 
@@ -37,23 +38,24 @@ Releases (`eas update`, `supabase db push`, function deploys) stay the owner's c
 
 ## Who does what
 
-| Job                       | Who                                                           |
-| ------------------------- | ------------------------------------------------------------- |
-| Order of work, every gate | The harness, in code                                          |
-| Author                    | Claude Code, headless (`CONTENT_AGENT_MODEL`, default `opus`) |
-| Native-speaker read       | Gemini (`gemini-pro-latest`)                                  |
-| Teacher and exam          | OpenAI (`gpt-6.1-sol`)                                        |
-| Answer-key attack         | xAI (`grok-4.7`)                                              |
-| Arbiter                   | The same three, voting; two uphold a finding                  |
-| Voices                    | OpenAI speech, through `generate-lesson-audio`                |
-| Voice check               | OpenAI transcription, blind (`content:listen`)                |
-| Release                   | The owner                                                     |
+| Job                       | Who                                                                                                                                                                                                      |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Order of work, every gate | The harness, in code                                                                                                                                                                                     |
+| Author                    | Claude Code, headless (`CONTENT_AGENT_MODEL`, default `opus`); when its plan is over its limit, Codex if `CONTENT_AGENT_FALLBACK=codex` (`CONTENT_FALLBACK_MODEL`, default `gpt-6.1-sol` at high effort) |
+| Native-speaker read       | Gemini (`gemini-pro-latest`)                                                                                                                                                                             |
+| Teacher and exam          | OpenAI (`gpt-6.1-sol`)                                                                                                                                                                                   |
+| Answer-key attack         | xAI (`grok-4.7`)                                                                                                                                                                                         |
+| Arbiter                   | The same three, voting; two uphold a finding                                                                                                                                                             |
+| Lessons                   | OpenAI (`gpt-6.1-sol`), after review                                                                                                                                                                     |
+| Voices                    | OpenAI speech, through `generate-lesson-audio`                                                                                                                                                           |
+| Voice check               | OpenAI transcription, blind (`content:listen`)                                                                                                                                                           |
+| Release                   | The owner                                                                                                                                                                                                |
 
 Reviewer models are the defaults in `scripts/content/providers.ts`: set `CONTENT_MODEL_GEMINI`, `CONTENT_MODEL_OPENAI` or `CONTENT_MODEL_XAI` to change one, and use each provider's strongest general model.
 
 ## Set up once (owner)
 
-- **Claude Code** signed in on this machine (`claude auth login`). The harness waits and retries when the plan's usage limit is reached.
+- **Claude Code** signed in on this machine (`claude auth login`). A normal sign-in ends after some weeks; for runs that must not stop, make a long-lived token with `claude setup-token` and put it in `.claude/settings.local.json` as `CLAUDE_CODE_OAUTH_TOKEN`. The harness waits when the plan's usage limit is reached, or hands the stage to Codex when `CONTENT_AGENT_FALLBACK` is `codex` (Codex signed in with `codex login`; it is paid per use).
 - **Review keys.** An OpenAI, a Gemini and an xAI key, found in this order: the environment (`OPENAI_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY`), an ignored `.env.content.local`, the file named by `CONTENT_KEYS_FILE`. `.claude/settings.local.json` (ignored by git) can hold `{ "env": { "CONTENT_KEYS_FILE": "/full/path" } }`; the harness reads that file too, so a plain terminal needs nothing more.
 - **Voice token.** `LESSON_AUDIO_TOKEN` in the ignored `.env.audio.local`, and the app's `.env.local`, both in the main folder.
 
@@ -85,12 +87,19 @@ Each job gets its own branch (`content/<unit-id>`) and its own worktree beside t
 | 3. Panel   | Three reviewers, author | Each round: the panel reports; the author fixes or rejects each finding; the stage 2 gates pass again       | 3 rounds |
 | 4. Arbiter | Three judges, author    | No finding from the last round is upheld by two judges; if one is, the author fixes it and they judge again | 2        |
 | 5. Listen  | Transcription model     | No recorded clip of the unit is mostly unheard (`content:listen`)                                           | 1        |
-| 6. Browser | Harness, author         | The complete browser suite passes on the committed unit                                                     | 2        |
-| 7. Merge   | Harness                 | Main fast-forwards to the unit; the queue row becomes `done`; the ledger gets a line; the worktree goes     | 1        |
+| 6. Learn   | One model               | None: it adds at most two rules to `docs/content-lessons.md`, and a failure never holds a unit back         | 1        |
+| 7. Browser | Harness, author         | The complete browser suite passes on the committed unit                                                     | 2        |
+| 8. Merge   | Harness                 | Main fast-forwards to the unit; the queue row becomes `done`; the ledger gets a line; the worktree goes     | 1        |
 
-A stage that runs out of tries blocks the job. The reason is in `--status` and in the job's folder under `artifacts/content/`. Its branch and worktree are kept for a person or a later run to look at; delete `artifacts/content/<unit-id>/state.json` to make the harness take the job up again from its branch.
+A stage that runs out of tries blocks the job. The reason is in `--status` and in the job's folder under `artifacts/content/`. Its branch and worktree are kept. Once the cause is fixed, `npm run content:auto -- --job <unit-id>` takes the job up again at the stage where it stopped. To start a job again from nothing, remove its worktree, its branch `content/<unit-id>` and its folder under `artifacts/content/`.
+
+What goes wrong outside the job is waited for, not counted against it: a reviewer or judge that does not answer (up to an hour), a clip that cannot be fetched for the voice check (up to half an hour), port 4173 in use (up to six hours), every author over its usage limit (up to ten hours). If the author's program itself fails three times, the harness stops, because every job would fail the same way.
 
 The browser suite uses port 4173. If another session is using it, the harness waits; it never stops another session's server.
+
+## Running it unattended
+
+The harness runs in the foreground and stops when its terminal closes. To leave it running, start it with `nohup npm run content:auto > artifacts/content/auto.out 2>&1 &` from the main folder, and follow `artifacts/content/auto.log`. Only one copy runs at a time (`artifacts/content/auto.lock`). Stopping it, a restart of the machine, or a lost connection loses at most the task in hand: run it again and it carries on.
 
 ## For the author: how to write a unit
 
@@ -145,7 +154,7 @@ A finding is a claim, not a fact. For each blocker and major finding, open the s
 
 ## Keeping the pipeline honest
 
-- `docs/content-review/ledger.md` gets one line per finished job: panel rounds, findings per round, findings upheld, clips checked, minutes. If the panel stops finding real defects, or the arbiter upholds many, look at why.
+- `docs/content-review/ledger.md` gets one line per finished job: the authors, findings per panel round, findings judged and upheld, clips checked, minutes. If the panel stops finding real defects, or the arbiter upholds many, look at why. If review rounds do not fall as `docs/content-lessons.md` grows, the rules are not helping: prune them.
 - If a reviewer is often wrong about the same thing, fix what it is shown (`renderUnit`, `knownBefore` in `scripts/content/lib.ts`) or its brief (`scripts/content/panel.ts`), not the author.
 - If a learner or a native reader finds a class of error the panel missed, add it to the role briefs and note it here.
 - Every worktree has its own packages (`cp -al`), never a link to the main folder's. With a link, builds share one cached copy of the app's route folder and can silently contain another worktree's screens (15 November: a 1.1 MB bundle where 5.6 MB was right).

@@ -17,11 +17,11 @@ The job's brief: ${job.brief}
 An automated harness runs you one stage at a time and then checks your work with commands. It reads their exit codes, not your report, so the only way to finish a stage is to make its checks pass.
 
 Rules for every stage:
-- Work only inside this directory.
+- Work only inside this directory. You are already inside the content harness: do not use the author-unit skill and do not run npm run content:auto.
 - Do not commit, merge, push, deploy or publish. Do not record audio, run the review panel, run the arbiter or run the browser tests. Do not start background jobs. The harness does all of these.
 - Do not change package.json, a lockfile, scripts/content/, the test tooling, or anything the job does not need.
 - Never weaken, skip or delete a test to make it pass, and never add a unit to scripts/content/legacy.json. If a test counts sessions or names what follows the last unit, bring its numbers up to the new truth.
-- Read AGENTS.md, then the sections of docs/content-pipeline.md named below, before you write.
+- Read AGENTS.md, then the sections of docs/content-pipeline.md named below, then docs/content-lessons.md (rules learned from defects in earlier units), before you write.
 - When you have finished, reply with one line that starts with DONE.`;
 
 export const prompts = {
@@ -43,7 +43,7 @@ Read "The content standard" and "Writing (stage 2)" in docs/content-pipeline.md,
 
 ${
   job.kind === 'repair'
-    ? `Change only what the standard requires (\`npm run content:check -- ${job.id}\` lists each miss). Keep every lesson id, step position and taught phrase. If the unit has no unit call in supabase/functions/_shared/unit-calls.ts, add one (docs/unit-calls.md).`
+    ? `Change only what the standard requires (\`npm run content:check -- ${job.id}\` lists each miss). Keep every lesson id. When a session teaches more than the limit, move items the unit needs to a later session of the same unit, and make items that only help understanding (regional greetings, rarer words) recognition-only: shown in a scene line or a note, not taught as a card. Never merge two words or chunks into one teach entry to get under a count, and never drop language a marked step needs. Say in the record which items moved or became recognition-only. If the unit has no unit call in supabase/functions/_shared/unit-calls.ts, add one (docs/unit-calls.md).`
     : `Write the ${job.kind} after the pattern of the newest one in the same language, and wire it in as "Writing (stage 2)" lists: its own file, the import in the language's units file, tests/published-ids.json, the language's own tests, voices for new speakers${job.kind === 'unit' ? ', and its unit call' : ''}.`
 }
 
