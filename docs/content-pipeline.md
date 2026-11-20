@@ -99,7 +99,7 @@ The browser suite uses port 4173. If another session is using it, the harness wa
 
 ## Running it unattended
 
-The harness runs in the foreground and stops when its terminal closes. To leave it running, start it with `nohup npm run content:auto > artifacts/content/auto.out 2>&1 &` from the main folder, and follow `artifacts/content/auto.log`. Only one copy runs at a time (`artifacts/content/auto.lock`). Stopping it, a restart of the machine, or a lost connection loses at most the task in hand: run it again and it carries on.
+The harness runs in the foreground and stops when its terminal closes. To leave it running, start it with `nohup npm run content:auto > artifacts/content/auto.out 2>&1 &` from the main folder, and follow `artifacts/content/auto.log`. Only one copy runs at a time (`artifacts/content/auto.lock`). Stopping it, a restart of the machine, or a lost connection loses at most the task in hand: run it again and it carries on. It does not start itself when the machine starts, so after a restart run the command again.
 
 ## For the author: how to write a unit
 

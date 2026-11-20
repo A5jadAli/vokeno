@@ -127,23 +127,33 @@ const save = (id: string, state: State) => {
 /** Raised when a job cannot go on. The job is marked blocked and the harness takes the next. */
 class Blocked extends Error {}
 
+/** This boot of the machine, so a lock left before a restart is never mistaken for a live one. */
+const boot = () =>
+  existsSync('/proc/sys/kernel/random/boot_id')
+    ? readFileSync('/proc/sys/kernel/random/boot_id', 'utf8').trim()
+    : '';
+
 /** One copy of the harness at a time: two would fight over the queue, main and port 4173. */
 function lock() {
   const file = join(MAIN, 'artifacts/content/auto.lock');
+  const mine = `${process.pid} ${boot()}`;
   if (existsSync(file)) {
-    const pid = Number(readFileSync(file, 'utf8'));
+    const [pid, since = ''] = readFileSync(file, 'utf8').trim().split(' ');
+    // A lock from before a restart, or from a process that has gone, was left by a copy that
+    // was killed. After a restart its number may belong to an unrelated process.
+    let alive = since === boot();
     try {
-      process.kill(pid, 0);
-      throw new Error(`The harness is already running (process ${pid}).`);
+      if (alive) process.kill(Number(pid), 0);
     } catch (error) {
-      // No such process: the lock was left by a copy that was killed.
       if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
+      alive = false;
     }
+    if (alive) throw new Error(`The harness is already running (process ${pid}).`);
   }
   mkdirSync(dirname(file), { recursive: true });
-  writeFileSync(file, String(process.pid));
+  writeFileSync(file, mine);
   const release = () => {
-    if (existsSync(file) && Number(readFileSync(file, 'utf8')) === process.pid) unlinkSync(file);
+    if (existsSync(file) && readFileSync(file, 'utf8') === mine) unlinkSync(file);
   };
   process.on('exit', release);
   for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP'] as const)
