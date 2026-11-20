@@ -69,4 +69,49 @@ describe('what a listener heard of a spoken line', () => {
     const result = markHeard('I’m twenty-one.', "I'm twenty", 'EN');
     expect(missed(result)).toEqual(['twenty-one.']);
   });
+
+  it('reads numbers above a hundred, with separators and currency signs, as the words said', () => {
+    // Real transcripts of Spanish Unit 7 clips, 20 November 2026.
+    const heard = (line: string, said: string, track: 'ES' | 'DE' | 'EN') =>
+      markHeard(line, said, track).verdict;
+    expect(
+      heard(
+        'El kilo de queso cuesta ciento sesenta pesos.',
+        'El kilo de queso cuesta 160 pesos.',
+        'ES',
+      ),
+    ).toBe('understood');
+    expect(heard('mil quinientos pesos', '$1,500 pesos.', 'ES')).toBe('understood');
+    expect(heard('mil quinientos pesos', '1500 pesos', 'ES')).toBe('understood');
+    expect(
+      heard(
+        'Está en la calle Olivo, número mil doscientos.',
+        'Está en la calle Olivo, número 1200.',
+        'ES',
+      ),
+    ).toBe('understood');
+    expect(heard('¿Tiene cambio de quinientos?', '¿Tiene cambio de 500?', 'ES')).toBe('understood');
+    expect(heard('Son cien pesos.', 'Son 100 pesos.', 'ES')).toBe('understood');
+    expect(heard('Vinieron quinientas personas.', 'Vinieron 500 personas.', 'ES')).toBe(
+      'understood',
+    );
+    expect(heard('Son dos mil trescientos cuarenta y cinco pesos.', 'Son 2.345 pesos.', 'ES')).toBe(
+      'understood',
+    );
+    expect(heard('Das kostet hundertvierzig Euro.', 'Das kostet 140 Euro.', 'DE')).toBe(
+      'understood',
+    );
+    expect(heard('Das kostet einhundertvierzig Euro.', 'Das kostet 140 €.', 'DE')).toBe(
+      'understood',
+    );
+    expect(
+      heard('Wir wohnen hier seit zweitausendzwanzig.', 'Wir wohnen hier seit 2020.', 'DE'),
+    ).toBe('understood');
+    expect(heard('It costs one hundred and forty pounds.', 'It costs £140.', 'EN')).toBe(
+      'understood',
+    );
+    expect(heard('It costs one hundred forty dollars.', 'It costs $140.', 'EN')).toBe('understood');
+    // A different number is still a different number.
+    expect(heard('Son ciento sesenta pesos.', 'Son 170 pesos.', 'ES')).toBe('almost');
+  });
 });

@@ -33,18 +33,51 @@ const TENS: Record<LanguageTrack, string[]> = {
   ES: 'veinte treinta cuarenta cincuenta sesenta setenta ochenta noventa'.split(' '),
   DE: 'zwanzig dreissig vierzig funfzig sechzig siebzig achtzig neunzig'.split(' '),
 };
-const HUNDRED: Record<LanguageTrack, string> = { EN: 'one hundred', ES: 'cien', DE: 'hundert' };
+const HUNDREDS_ES = [
+  '',
+  'ciento',
+  'doscientos',
+  'trescientos',
+  'cuatrocientos',
+  'quinientos',
+  'seiscientos',
+  'setecientos',
+  'ochocientos',
+  'novecientos',
+];
 
-/** 0 to 100 as the words a speaker says, already without accents. Other numbers stay digits. */
-function numberWords(value: number, track: LanguageTrack) {
+/**
+ * A whole number as the words a speaker says, already without accents, up to 999 999; larger
+ * numbers stay digits. Transcribers write prices, years and house numbers as digits.
+ */
+function numberWords(value: number, track: LanguageTrack): string {
   if (value < ONES[track].length) return ONES[track][value];
-  if (value === 100) return HUNDRED[track];
-  if (value > 100) return String(value);
-  const tens = TENS[track][Math.floor(value / 10) - 2];
-  const one = value % 10;
-  if (!one) return tens;
-  if (track === 'DE') return `${one === 1 ? 'ein' : ONES.DE[one]}und${tens}`;
-  return track === 'ES' ? `${tens} y ${ONES.ES[one]}` : `${tens} ${ONES.EN[one]}`;
+  if (value < 100) {
+    const tens = TENS[track][Math.floor(value / 10) - 2];
+    const one = value % 10;
+    if (!one) return tens;
+    if (track === 'DE') return `${one === 1 ? 'ein' : ONES.DE[one]}und${tens}`;
+    return track === 'ES' ? `${tens} y ${ONES.ES[one]}` : `${tens} ${ONES.EN[one]}`;
+  }
+  if (value < 1000) {
+    const hundreds = Math.floor(value / 100);
+    const rest = value % 100 ? numberWords(value % 100, track) : '';
+    if (track === 'ES') return value === 100 ? 'cien' : `${HUNDREDS_ES[hundreds]} ${rest}`.trim();
+    if (track === 'DE') return `${hundreds === 1 ? '' : ONES.DE[hundreds]}hundert${rest}`;
+    // "and" as in British English; an American line without it still matches.
+    return `${ONES.EN[hundreds]} hundred${rest ? ` and ${rest}` : ''}`;
+  }
+  if (value < 1_000_000) {
+    const thousands = Math.floor(value / 1000);
+    const left = value % 1000;
+    const rest = left ? numberWords(left, track) : '';
+    if (track === 'ES')
+      return `${thousands === 1 ? '' : `${numberWords(thousands, track)} `}mil ${rest}`.trim();
+    if (track === 'DE')
+      return `${thousands === 1 ? '' : numberWords(thousands, track)}tausend${rest}`;
+    return `${numberWords(thousands, track)} thousand${rest ? `${left < 100 ? ' and' : ''} ${rest}` : ''}`;
+  }
+  return String(value);
 }
 
 /** Forms that are one spoken word to a listener: "veintiún" and "veintiuno", "un" and "uno". */
@@ -55,28 +88,56 @@ const SAME: Record<string, string> = {
   veintiuna: 'veintiuno',
   eins: 'ein',
   einhundert: 'hundert',
+  doscientas: 'doscientos',
+  trescientas: 'trescientos',
+  cuatrocientas: 'cuatrocientos',
+  quinientas: 'quinientos',
+  seiscientas: 'seiscientos',
+  setecientas: 'setecientos',
+  ochocientas: 'ochocientos',
+  novecientas: 'novecientos',
 };
 
 function tokens(text: string, track: LanguageTrack) {
-  return normaliseSpeech(text.replace(/ß/g, 'ss').replace(/[-–—…]/g, ' '))
-    .replace(/\d+/g, (digits) => numberWords(Number(digits), track))
-    .split(' ')
-    .filter(Boolean)
-    .map((token) => SAME[token] ?? token);
+  return (
+    normaliseSpeech(
+      text
+        .replace(/ß/g, 'ss')
+        .replace(/[-–—…]/g, ' ')
+        // "1,500" and "1.500" are one number.
+        .replace(/(\d)[,.](?=\d{3}(?!\d))/g, '$1')
+        // "$140" is said "140 dollars": the sign stands for whichever currency word the line has.
+        .replace(/([$€£])\s?(\d+)/g, '$2 $1')
+        .replace(/[$€£]/g, ` ${SIGN} `),
+    )
+      .replace(/\d+/g, (digits) => numberWords(Number(digits), track))
+      // German writes "einhundert" or "hundert", "eintausend" or "tausend": the same number.
+      .replace(/\bein(?=hundert|tausend)/g, '')
+      .split(' ')
+      .filter(Boolean)
+      .map((token) => SAME[token] ?? token)
+  );
 }
+
+/** A currency sign in what was heard, which matches any currency word in the line. */
+const SIGN = '¤';
+const CURRENCY = new Set(
+  'euro euros peso pesos dolar dolares dollar dollars pound pounds libra libras'.split(' '),
+);
+const same = (word: string, heard: string) =>
+  word === heard || (heard === SIGN && CURRENCY.has(word));
 
 /** Which of `line`'s tokens appear, in order, in `said`: a longest common subsequence. */
 function matched(line: string[], said: string[]) {
   const length = Array.from({ length: line.length + 1 }, () => new Array(said.length + 1).fill(0));
   for (let i = line.length - 1; i >= 0; i--)
     for (let j = said.length - 1; j >= 0; j--)
-      length[i][j] =
-        line[i] === said[j]
-          ? length[i + 1][j + 1] + 1
-          : Math.max(length[i + 1][j], length[i][j + 1]);
+      length[i][j] = same(line[i], said[j])
+        ? length[i + 1][j + 1] + 1
+        : Math.max(length[i + 1][j], length[i][j + 1]);
   const hit = line.map(() => false);
   for (let i = 0, j = 0; i < line.length && j < said.length;)
-    if (line[i] === said[j]) {
+    if (same(line[i], said[j])) {
       hit[i] = true;
       i++;
       j++;
