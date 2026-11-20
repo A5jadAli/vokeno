@@ -341,7 +341,13 @@ function prepare(job: Job) {
   mkdirSync(join(cwd, 'artifacts/content'), { recursive: true });
   if (!existsSync(join(cwd, 'artifacts/content', job.id)))
     symlinkSync(folder(job.id), join(cwd, 'artifacts/content', job.id));
-  if (git(['merge', '--no-edit', 'main'], cwd).code) {
+  // Main's latest pipeline fixes reach a job that is already under way. Git refuses, without
+  // changing anything, when the job's unsaved work is in a file main changed: then main comes
+  // in at the merge stage instead, where every gate runs again.
+  const merged = git(['merge', '--no-edit', 'main'], cwd);
+  if (merged.code && /would be overwritten|commit your changes or stash them/i.test(merged.out))
+    log(`${job.id}  main comes in at the merge stage: unsaved work here is in files main changed`);
+  else if (merged.code) {
     git(['merge', '--abort'], cwd);
     throw new Blocked('main no longer merges into this job’s branch without conflicts');
   }
@@ -430,19 +436,44 @@ function arbiter(job: Job, state: State) {
 }
 
 function listen(job: Job, state: State) {
+  const cwd = worktree(job.id);
   for (let attempt = 1; ; attempt++) {
     log(`${job.id}  voice check`);
-    const run = sh('npm', ['run', '-s', 'content:listen', '--', job.id], worktree(job.id), 30);
+    const run = sh('npm', ['run', '-s', 'content:listen', '--', job.id], cwd, 30);
     state.clips = run.out.trim().split('\n').at(-1) ?? '';
     save(job.id, state);
     if (run.code === 0) return;
-    // A clip that could not be fetched or transcribed is the provider's problem, not the unit's.
-    const onlyUnchecked =
-      /\b[1-9]\d* unchecked/.test(state.clips) && !/\b[1-9]\d* not heard/.test(state.clips);
-    if (!onlyUnchecked || attempt >= 4)
-      throw new Blocked(`the voice check failed (LISTEN.md):\n${tail(run.out, 1200)}`);
-    log(`${job.id}  some clips could not be checked; trying again in 10 minutes`);
-    wait(10, worktree(job.id));
+    const file = join(folder(job.id), 'listen.json');
+    if (!existsSync(file))
+      throw new Blocked(`the voice check did not run:\n${tail(run.out, 1200)}`);
+    const report = JSON.parse(readFileSync(file, 'utf8')) as {
+      failed: { key: string }[];
+      unchecked: unknown[];
+    };
+    if (report.failed.length && attempt <= 2) {
+      // A new clip that most listeners mishear is recorded again: the voice is not the same twice.
+      log(`${job.id}  recording ${report.failed.length} clip(s) again`);
+      const manifest = join(cwd, 'src/features/audio/clips.json');
+      const saved = JSON.parse(readFileSync(manifest, 'utf8')) as { clips: Record<string, number> };
+      for (const { key } of report.failed) delete saved.clips[key];
+      writeFileSync(manifest, `${JSON.stringify(saved, null, 2)}\n`);
+      const again = sh(
+        'npx',
+        ['tsx', '--tsconfig', 'tsconfig.json', 'scripts/generate-lesson-audio.ts'],
+        cwd,
+        45,
+        { VOKA_SKIP_LOUDNESS: '1' },
+      );
+      appendFileSync(join(folder(job.id), 'voices.log'), again.out);
+      continue;
+    }
+    // A transcriber that did not answer is the provider's problem, not the unit's.
+    if (!report.failed.length && report.unchecked.length && attempt < 4) {
+      log(`${job.id}  some clips could not be checked; trying again in 10 minutes`);
+      wait(10, cwd);
+      continue;
+    }
+    throw new Blocked(`the voice check failed (LISTEN.md):\n${tail(run.out, 1200)}`);
   }
 }
 

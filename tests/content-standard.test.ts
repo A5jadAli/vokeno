@@ -6,6 +6,7 @@ import {
   MAX_LESSONS,
   STANDARD,
   addLessons,
+  heardByMost,
   knownBefore,
   renderUnit,
   sessionMetrics,
@@ -234,5 +235,38 @@ describe('lessons for later units', () => {
 
   it('keeps the real file within its limit', () => {
     expect(rules(file).length).toBeLessThanOrEqual(MAX_LESSONS);
+  });
+});
+
+describe('the voice check', () => {
+  // Real transcripts of four Spanish Unit 7 clips, 20 November 2026: gpt-4o-transcribe,
+  // whisper-1 and Gemini, none told the line.
+  it('passes a good clip that one transcriber misheard', () => {
+    const result = heardByMost(
+      '¿Es por kilo?',
+      ['Es porquillo.', 'Es por kilo.', 'es por kilo'],
+      'ES',
+    );
+    expect(result.heard).toBe(true);
+  });
+
+  it('fails a clip whose key word most listeners missed, and names the word', () => {
+    const result = heardByMost(
+      '¿Es por kilo?',
+      ['Es por ti, no?', '¿Es portino?', 'Es por ti, ¿no?'],
+      'ES',
+    );
+    expect(result.heard).toBe(false);
+    expect(result.words.filter((word) => !word.heard).map((word) => word.text)).toEqual(['kilo?']);
+  });
+
+  it('counts only the listeners that answered, and needs most of them', () => {
+    expect(heardByMost('Sí, el kilo.', ['Sí, el tilo.', '', 'Sí, el kilo.'], 'ES').heard).toBe(
+      false,
+    );
+    expect(heardByMost('Sí, el kilo.', ['', '', 'Sí, el kilo.'], 'ES')).toMatchObject({
+      heard: true,
+      listeners: 1,
+    });
   });
 });

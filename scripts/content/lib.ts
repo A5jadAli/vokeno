@@ -1,6 +1,8 @@
 // The content standard and the review script for one unit (docs/content-pipeline.md).
 // Everything here is pure, so tests/content-standard.test.ts can hold new units to it.
 import { getTrackLessons } from '../../src/features/foundations/catalog';
+import { markHeard } from '../../src/features/take/heard';
+import type { LanguageTrack } from '../../src/features/language/config';
 import {
   isGradedStep,
   unitName,
@@ -190,6 +192,25 @@ export function upheldBy(count: number, ballots: readonly Vote[][]): number[] {
       ballots.filter((ballot) => ballot.some((vote) => vote.n === n && vote.verdict === 'uphold'))
         .length >= 2,
   );
+}
+
+/**
+ * Which words of a recorded line most listeners heard. Each transcript is made by a different
+ * transcriber that was not told the line; a word counts as heard when most of them heard it, so
+ * one transcriber's slip neither fails a good clip nor passes a bad one. Empty transcripts are
+ * listeners that did not answer.
+ */
+export function heardByMost(line: string, transcripts: readonly string[], track: LanguageTrack) {
+  const answered = transcripts.filter((text) => text !== '');
+  const marks = answered.map((text) => markHeard(line, text, track).words);
+  const words = line
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((text, index) => ({
+      text,
+      heard: marks.filter((words) => words[index]?.heard).length * 2 > answered.length,
+    }));
+  return { words, listeners: answered.length, heard: words.every((word) => word.heard) };
 }
 
 export type Lesson = { rule: string; because?: string };
