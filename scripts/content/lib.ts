@@ -203,13 +203,14 @@ export function upheldBy(count: number, ballots: readonly Vote[][]): number[] {
 export function heardByMost(line: string, transcripts: readonly string[], track: LanguageTrack) {
   const answered = transcripts.filter((text) => text !== '');
   const marks = answered.map((text) => markHeard(line, text, track).words);
-  const words = line
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((text, index) => ({
-      text,
-      heard: marks.filter((words) => words[index]?.heard).length * 2 > answered.length,
-    }));
+  const parts = line.split(/\s+/).filter(Boolean);
+  // A single word on its own ("Herr", "Nee") is too short to judge blind: one listener who hears
+  // it is enough. A longer line needs most of them.
+  const needed = parts.length === 1 ? 1 : Math.floor(answered.length / 2) + 1;
+  const words = parts.map((text, index) => ({
+    text,
+    heard: marks.filter((words) => words[index]?.heard).length >= needed,
+  }));
   return { words, listeners: answered.length, heard: words.every((word) => word.heard) };
 }
 

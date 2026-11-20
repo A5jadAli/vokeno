@@ -114,4 +114,29 @@ describe('what a listener heard of a spoken line', () => {
     // A different number is still a different number.
     expect(heard('Son ciento sesenta pesos.', 'Son 170 pesos.', 'ES')).toBe('almost');
   });
+
+  it('hears the colloquial German the course teaches, though transcribers write it out', () => {
+    // Real transcripts of German Unit 1 clips, 20 November 2026.
+    const heard = (line: string, said: string) => markHeard(line, said, 'DE').verdict;
+    expect(
+      heard(
+        'Na, alles klar? Willste heute Abend mit in die Kneipe?',
+        'Na, alles klar? Willst du heute Abend mit in die Kneipe?',
+      ),
+    ).toBe('understood');
+    expect(
+      heard(
+        'Ach so, sorry! Heute Abend. Kneipe. Kommste mit?',
+        'Ach so, sorry. Heute Abend. Kneipe. Kommst du mit?',
+      ),
+    ).toBe('understood');
+    expect(heard('Morgen! Ich heiß Alex.', 'Morgen. Ich heiße Alex.')).toBe('understood');
+    expect(heard('Noch mal, bitte. Langsamer, bitte.', 'Nochmal, bitte. Langsamer, bitte.')).toBe(
+      'understood',
+    );
+    // Missing words are still missing, and a full form is not heard as a clipped one.
+    expect(heard('Danke, gleichfalls!', 'Danke.')).not.toBe('understood');
+    expect(heard('Ich gehe jetzt.', 'Ich geh jetzt.')).not.toBe('understood');
+    expect(heard('Kommste mit?', 'Kommst mit?')).not.toBe('understood');
+  });
 });

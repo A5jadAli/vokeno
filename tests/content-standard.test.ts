@@ -262,6 +262,14 @@ describe('the voice check', () => {
     expect(result.words.filter((word) => !word.heard).map((word) => word.text)).toEqual(['kilo?']);
   });
 
+  it('judges a single word by any listener who heard it, and still fails a missing word', () => {
+    // German Unit 1, 20 November 2026: "Herr" alone was heard as "Hel." and "HÄL!" by two.
+    expect(heardByMost('Herr', ['Hel.', 'HÄL!', 'Herr'], 'DE').heard).toBe(true);
+    expect(heardByMost('Danke, gleichfalls!', ['Danke.', 'Danke.', 'Danke'], 'DE').heard).toBe(
+      false,
+    );
+  });
+
   it('counts only the listeners that answered, and needs most of them', () => {
     expect(heardByMost('Sí, el kilo.', ['Sí, el tilo.', '', 'Sí, el kilo.'], 'ES').heard).toBe(
       false,

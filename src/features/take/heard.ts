@@ -146,10 +146,44 @@ function matched(line: string[], said: string[]) {
   return hit;
 }
 
+/**
+ * What was heard, rewritten where it is the same speech as the line in other spelling. A
+ * transcriber writes "nochmal" for "noch mal", and turns the colloquial German the course teaches
+ * into the standard form: "kommst du" for "kommste", "heiße" for "heiß". Nothing else changes, so
+ * a word that was not said is still missing.
+ */
+function alignSaid(line: string[], said: string[], track: LanguageTrack) {
+  const out: string[] = [];
+  for (let j = 0; j < said.length; j++) {
+    const word = said[j];
+    const pair = line.findIndex((token, i) => i < line.length - 1 && token + line[i + 1] === word);
+    if (pair >= 0) {
+      out.push(line[pair], line[pair + 1]);
+      continue;
+    }
+    if (track === 'DE') {
+      const reduced =
+        said[j + 1] === 'du' && line.find((token) => token === `${word}e` && /ste$/.test(token));
+      if (reduced) {
+        out.push(reduced);
+        j++;
+        continue;
+      }
+      const clipped = line.find((token) => `${token}e` === word && !token.endsWith('e'));
+      if (clipped) {
+        out.push(clipped);
+        continue;
+      }
+    }
+    out.push(word);
+  }
+  return out;
+}
+
 function mark(line: string, said: string[], track: LanguageTrack) {
   const parts = line.split(/\s+/).filter(Boolean);
   const perWord = parts.map((part) => tokens(part, track));
-  const hit = matched(perWord.flat(), said);
+  const hit = matched(perWord.flat(), alignSaid(perWord.flat(), said, track));
   let at = 0;
   const words = parts.map((text, index) => {
     const mine = hit.slice(at, (at += perWord[index].length));
