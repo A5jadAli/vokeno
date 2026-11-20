@@ -1,6 +1,6 @@
-# Expo HAS CHANGED
+# Expo SDK 57
 
-Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before writing any code.
+This app is on Expo SDK 57. Expo's APIs change between SDK versions, so check an Expo API against https://docs.expo.dev/versions/v57.0.0/ before relying on it from memory.
 
 # How to work in this repo
 
