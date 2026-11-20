@@ -142,12 +142,13 @@ function lock() {
     // A lock from before a restart, or from a process that has gone, was left by a copy that
     // was killed. After a restart its number may belong to an unrelated process.
     let alive = since === boot();
-    try {
-      if (alive) process.kill(Number(pid), 0);
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
-      alive = false;
-    }
+    if (alive)
+      try {
+        process.kill(Number(pid), 0);
+      } catch (error) {
+        // Not allowed to signal it means it exists, under another user.
+        alive = (error as NodeJS.ErrnoException).code === 'EPERM';
+      }
     if (alive) throw new Error(`The harness is already running (process ${pid}).`);
   }
   mkdirSync(dirname(file), { recursive: true });
