@@ -49,6 +49,8 @@ type State = {
   /** Every author that did a task for this job, e.g. "claude opus". */
   authors?: string[];
   startedAt: string;
+  /** Time spent working on the job, not waiting between runs or for a machine to start. */
+  workedMs?: number;
 };
 type PanelReport = {
   results: { role: string; error: string; findings: { severity: string }[] }[];
@@ -511,9 +513,9 @@ function record(job: Job, state: State) {
       state.judged === 0
         ? '- **Arbiter:** not needed; the last panel round left no blocker or major finding.'
         : `- **Arbiter:** ${state.judged} finding(s) from the last round judged against the finished unit, ${state.upheld} upheld by two or more judges.`,
-      `- **Voice check:** ${state.clips || 'no recorded clips in this unit.'}`,
+      `- **Voice check:** ${state.clips.split(' See ')[0] || 'no recorded clips in this unit.'} Each clip was transcribed by three listeners that were not told the line.`,
       '- **Loudness copies:** not made by the harness; the owner makes them (`docs/content-pipeline.md`, "Set up once"). Until then the app plays the original recordings.',
-      '- **Checks:** the content standard, type-check, lint, every unit test and the complete browser suite pass on the merged commit.',
+      '- **Checks:** the content standard, type-check, lint and every unit test pass; the harness merges only after the complete browser suite passes on this unit, and runs every unit test again if main has moved since.',
       '',
     ].join('\n'),
   );
@@ -523,9 +525,9 @@ function record(job: Job, state: State) {
   if (!existsSync(ledger))
     writeFileSync(
       ledger,
-      '# Content ledger\n\nOne line per job the harness finished (`docs/content-pipeline.md`). Findings are blocker/major/minor per panel round.\n\n| Date | Job | Kind | Author | Findings by round | Judged | Upheld | Voices | Minutes |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n',
+      '# Content ledger\n\nOne line per job the harness finished (`docs/content-pipeline.md`). Findings are blocker/major/minor per panel round.\n\n| Date | Job | Kind | Author | Findings by round | Judged | Upheld | Voices | Minutes worked |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n',
     );
-  const minutes = Math.round((Date.now() - Date.parse(state.startedAt)) / 60_000);
+  const minutes = Math.round((state.workedMs ?? 0) / 60_000);
   appendFileSync(
     ledger,
     `| ${today()} | \`${job.id}\` | ${job.kind} | ${authors} | ${state.rounds.map((r) => `${r.blocker}/${r.major}/${r.minor}`).join(', ')} | ${state.judged} | ${state.upheld} | ${state.clips.split(':')[0] || 'none'} | ${minutes} |\n`,
@@ -623,7 +625,13 @@ function runJob(job: Job) {
     state.stage = state.at ?? 'brief';
     delete state.reason;
   }
+  let mark = Date.now();
+  const clock = () => {
+    state.workedMs = (state.workedMs ?? 0) + Date.now() - mark;
+    mark = Date.now();
+  };
   const to = (stage: Stage) => {
+    clock();
     state.stage = stage;
     save(job.id, state);
   };
@@ -650,6 +658,7 @@ function runJob(job: Job) {
     if (state.stage === 'listen') {
       listen(job, state);
       learn(job);
+      clock();
       record(job, state);
       commit(job, state, `Content: ${job.id} (${job.kind})`);
       to('browser');
