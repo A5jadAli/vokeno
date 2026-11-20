@@ -695,4 +695,10 @@ function main() {
   log(`Finished ${finished} job(s) this run. "npm run content:auto -- --status" shows the queue.`);
 }
 
-main();
+try {
+  main();
+} catch (error) {
+  // A reason to stop, said once, without a stack trace.
+  console.error(`content:auto stopped: ${(error as Error).message}`);
+  process.exit(1);
+}
