@@ -27,7 +27,7 @@ test('Today has the same layout in every language and no horizontal overflow', a
 
   await chooseLanguage(page, 'German');
   await expect(page.getByText('Unit 1 · Hallo!')).toBeVisible();
-  await expect(page.getByLabel('Lesson 1 of 4. 0 done.')).toBeVisible();
+  await expect(page.getByLabel('Lesson 1 of 5. 0 done.')).toBeVisible();
   await expect(page.getByRole('button', { name: /^Start lesson: Hallo, Tschüss/ })).toBeVisible();
   await chooseLanguage(page, 'Spanish');
   await expect(page.getByRole('button', { name: /^Start lesson: / })).toBeVisible();
