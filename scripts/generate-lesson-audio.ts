@@ -128,7 +128,16 @@ async function main() {
     failed ? `Done with ${failed} failures; run again to retry.\n` : 'All clips recorded.\n',
   );
   if (failed) process.exitCode = 1;
-  // New clips get a loudness-normalised copy too, so every voice plays at the same level.
+  // New clips get a loudness-normalised copy too, so every voice plays at the same level. Its
+  // upload goes through the Supabase CLI, which asks a person before it writes to production; an
+  // unattended run (the content harness) leaves it for the owner, and the app plays the original
+  // recording until the copy exists.
+  if (process.env.VOKA_SKIP_LOUDNESS === '1') {
+    process.stdout.write(
+      'Loudness copies skipped: run npx tsx --tsconfig tsconfig.json scripts/normalize-lesson-audio.ts from your own terminal.\n',
+    );
+    return;
+  }
   execFileSync('npx', ['tsx', '--tsconfig', 'tsconfig.json', 'scripts/normalize-lesson-audio.ts'], {
     stdio: 'inherit',
   });

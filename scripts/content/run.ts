@@ -54,9 +54,16 @@ type PanelReport = {
   results: { role: string; error: string; findings: { severity: string }[] }[];
 };
 
-const sh = (command: string, args: string[], cwd: string, minutes = 20) => {
+const sh = (
+  command: string,
+  args: string[],
+  cwd: string,
+  minutes = 20,
+  env?: Record<string, string>,
+) => {
   const result = spawnSync(command, args, {
     cwd,
+    env: env ? { ...process.env, ...env } : process.env,
     encoding: 'utf8',
     maxBuffer: 256 * 1024 * 1024,
     timeout: minutes * 60_000,
@@ -281,11 +288,14 @@ function gates(job: Job): Failure | undefined {
   const missing = sh('npx', ['jest', 'tests/audio.test.ts', '-t', 'has a recorded clip'], cwd, 10);
   if (missing.code) {
     log(`${job.id}  recording voices for new lines`);
+    // The loudness copies upload to production through a CLI that asks a person first: left
+    // for the owner (docs/content-pipeline.md). Until then the app plays the original clip.
     const recorded = sh(
       'npx',
       ['tsx', '--tsconfig', 'tsconfig.json', 'scripts/generate-lesson-audio.ts'],
       cwd,
       45,
+      { VOKA_SKIP_LOUDNESS: '1' },
     );
     writeFileSync(join(folder(job.id), 'voices.log'), recorded.out);
     const again = sh('npx', ['jest', 'tests/audio.test.ts', '-t', 'has a recorded clip'], cwd, 10);
@@ -471,6 +481,7 @@ function record(job: Job, state: State) {
         ? '- **Arbiter:** not needed; the last panel round left no blocker or major finding.'
         : `- **Arbiter:** ${state.judged} finding(s) from the last round judged against the finished unit, ${state.upheld} upheld by two or more judges.`,
       `- **Voice check:** ${state.clips || 'no recorded clips in this unit.'}`,
+      '- **Loudness copies:** not made by the harness; the owner makes them (`docs/content-pipeline.md`, "Set up once"). Until then the app plays the original recordings.',
       '- **Checks:** the content standard, type-check, lint, every unit test and the complete browser suite pass on the merged commit.',
       '',
     ].join('\n'),
