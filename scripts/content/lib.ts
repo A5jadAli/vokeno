@@ -213,6 +213,30 @@ export function heardByMost(line: string, transcripts: readonly string[], track:
   return { words, listeners: answered.length, heard: words.every((word) => word.heard) };
 }
 
+/**
+ * The files a content job may change. Everything else is app code, which the review panel never
+ * reads, so a unit must not depend on changing it: progress, step types, level labels and the
+ * harness itself stay as they are.
+ */
+const CONTENT_FILES = [
+  /^src\/features\/foundations\/(?!progress\.ts$|types\.ts$|level-status\.ts$)[^/]+\.ts$/,
+  /^src\/features\/audio\/(voices\.ts|clips\.json)$/,
+  /^supabase\/functions\/_shared\/unit-calls\.ts$/,
+  /^docs\/content-review\/[^/]+\.md$/,
+  /^docs\/(unit-calls|content-backlog|content-lessons)\.md$/,
+  /^scripts\/content\/legacy\.json$/,
+  /^tests\/[^/]+\.(test\.tsx?|json)$/,
+  /^e2e\/[^/]+\.spec\.ts$/,
+];
+
+/** The changed files that a content job may not change. */
+export const outsideContent = (changed: readonly string[]) =>
+  changed.filter((path) => !CONTENT_FILES.some((pattern) => pattern.test(path)));
+
+/** How many tests a file declares: it(), test() and their .each forms. */
+export const countTests = (source: string) =>
+  (source.match(/^\s*(it|test)(\.each\([\s\S]*?\))?\(/gm) ?? []).length;
+
 export type Lesson = { rule: string; because?: string };
 /** The most rules docs/content-lessons.md holds: past this, a person prunes it first. */
 export const MAX_LESSONS = 40;

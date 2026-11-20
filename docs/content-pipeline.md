@@ -81,16 +81,16 @@ These are editorial limits from the November 2026 course review, not trial resul
 
 Each job gets its own branch (`content/<unit-id>`) and its own worktree beside the main folder, with its own copy of the packages. Its state and every report are kept in `artifacts/content/<unit-id>/` in the main folder, which git ignores.
 
-| Stage      | Who acts                | The gate, checked by code                                                                                   | Tries    |
-| ---------- | ----------------------- | ----------------------------------------------------------------------------------------------------------- | -------- |
-| 1. Brief   | Author                  | The coverage sheet exists in `docs/content-review/<unit-id>.md` with all eight parts                        | 3        |
-| 2. Write   | Author                  | `content:check`, type-check, lint, then voices recorded for new lines, then every unit test                 | 5        |
-| 3. Panel   | Three reviewers, author | Each round: the panel reports; the author fixes or rejects each finding; the stage 2 gates pass again       | 3 rounds |
-| 4. Arbiter | Three judges, author    | No finding from the last round is upheld by two judges; if one is, the author fixes it and they judge again | 2        |
-| 5. Listen  | Transcription model     | No recorded clip of the unit is mostly unheard (`content:listen`)                                           | 1        |
-| 6. Learn   | One model               | None: it adds at most two rules to `docs/content-lessons.md`, and a failure never holds a unit back         | 1        |
-| 7. Browser | Harness, author         | The complete browser suite passes on the committed unit                                                     | 2        |
-| 8. Merge   | Harness                 | Main fast-forwards to the unit; the queue row becomes `done`; the ledger gets a line; the worktree goes     | 1        |
+| Stage      | Who acts                | The gate, checked by code                                                                                                                                         | Tries    |
+| ---------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| 1. Brief   | Author                  | The coverage sheet exists in `docs/content-review/<unit-id>.md` with all eight parts                                                                              | 3        |
+| 2. Write   | Author                  | `content:check`, type-check, lint, then voices recorded for new lines, then every unit test                                                                       | 5        |
+| 3. Panel   | Three reviewers, author | Each round: the panel reports; the author fixes or rejects each finding; the stage 2 gates pass again                                                             | 3 rounds |
+| 4. Arbiter | Three judges, author    | No finding from the last round is upheld by two judges; if one is, the author fixes it and they judge again                                                       | 2        |
+| 5. Listen  | Transcription model     | No recorded clip of the unit is mostly unheard (`content:listen`)                                                                                                 | 1        |
+| 6. Learn   | One model               | None: it adds at most two rules to `docs/content-lessons.md`, and a failure never holds a unit back                                                               | 1        |
+| 7. Browser | Harness, author         | The complete browser suite passes on the committed unit                                                                                                           | 2        |
+| 8. Merge   | Harness                 | Main fast-forwards to the unit. If main has moved, it is merged in and every gate runs again; a unit that then fails goes back to stage 2, never fixed unreviewed | 1        |
 
 A stage that runs out of tries blocks the job. The reason is in `--status` and in the job's folder under `artifacts/content/`. Its branch and worktree are kept. Once the cause is fixed, `npm run content:auto -- --job <unit-id>` takes the job up again at the stage where it stopped. To start a job again from nothing, remove its worktree, its branch `content/<unit-id>` and its folder under `artifacts/content/`.
 
@@ -142,6 +142,8 @@ A new unit or checkpoint also has to be wired in. The tests name each gap:
 - its unit call in `supabase/functions/_shared/unit-calls.ts` (`docs/unit-calls.md`). The app offers the call only after the owner deploys `realtime-session`.
 
 A repair changes only what the standard requires. It keeps every lesson id, step position and taught phrase, so progress and review cards survive, and it adds the unit call if the unit has none.
+
+A job changes only content files: the unit's files and its course's units file, `voices.ts`, `unit-calls.ts`, the review record, `docs/unit-calls.md` and tests. App code (`progress.ts`, `types.ts`, `level-status.ts`, components), packages and `scripts/` are not content: the review panel never reads them, so `content:check` fails a job that changes them, or that ends with fewer tests than it started with. A unit that seems to need app code is app work: block the job and say so. (German Unit 1, 20 November: the author changed `progress.ts` to carry review cards between sessions.)
 
 The author does not record voices, commit, run the panel or run the browser tests. The harness does.
 

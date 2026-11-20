@@ -6,7 +6,9 @@ import {
   MAX_LESSONS,
   STANDARD,
   addLessons,
+  countTests,
   heardByMost,
+  outsideContent,
   knownBefore,
   renderUnit,
   sessionMetrics,
@@ -268,5 +270,51 @@ describe('the voice check', () => {
       heard: true,
       listeners: 1,
     });
+  });
+});
+
+describe('what a content job may change', () => {
+  it('allows the unit, its voices, call, record and tests', () => {
+    expect(
+      outsideContent([
+        'src/features/foundations/spanish-a1-unit-7.ts',
+        'src/features/foundations/spanish-a1-units.ts',
+        'src/features/foundations/catalog.ts',
+        'src/features/audio/voices.ts',
+        'src/features/audio/clips.json',
+        'supabase/functions/_shared/unit-calls.ts',
+        'docs/content-review/es-a1-u7.md',
+        'docs/unit-calls.md',
+        'tests/spanish-units.test.ts',
+        'tests/published-ids.json',
+        'e2e/foundations.spec.ts',
+      ]),
+    ).toEqual([]);
+  });
+
+  it('refuses app code, level labels and the pipeline itself', () => {
+    // German Unit 1, 20 November 2026: the author changed progress.ts to carry review cards.
+    expect(
+      outsideContent([
+        'src/features/foundations/progress.ts',
+        'src/features/foundations/types.ts',
+        'src/features/foundations/level-status.ts',
+        'src/components/step-lesson.tsx',
+        'scripts/content/panel.ts',
+        'docs/content-pipeline.md',
+        'package.json',
+        'AGENTS.md',
+      ]),
+    ).toHaveLength(8);
+  });
+
+  it('counts the tests a file declares, so removing one is noticed', () => {
+    const source = `describe('x', () => {
+  it('one', () => {});
+  it.each([1, 2])('two %s', () => {});
+  test('three', () => {});
+  // it('not a test, a comment line that starts with it later')
+});`;
+    expect(countTests(source)).toBe(3);
   });
 });

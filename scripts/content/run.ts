@@ -133,8 +133,18 @@ const save = (id: string, state: State) => {
   writeFileSync(join(folder(id), 'state.json'), `${JSON.stringify(state, null, 2)}\n`);
 };
 
-/** Raised when a job cannot go on. The job is marked blocked and the harness takes the next. */
-class Blocked extends Error {}
+/**
+ * Raised when a job cannot go on. The job is marked blocked and the harness takes the next.
+ * `resume` is the stage it starts from when taken up again, if not the one it stopped in.
+ */
+class Blocked extends Error {
+  constructor(
+    message: string,
+    readonly resume?: Stage,
+  ) {
+    super(message);
+  }
+}
 
 /** This boot of the machine, so a lock left before a restart is never mistaken for a live one. */
 const boot = () =>
@@ -597,7 +607,13 @@ function merge(job: Job, state: State) {
       git(['merge', '--abort'], cwd);
       throw new Blocked('main changed and no longer merges with this unit');
     }
-    passGates(job, state);
+    // The unit has been reviewed: nothing may change it now without being reviewed again.
+    const failed = gates(job);
+    if (failed)
+      throw new Blocked(
+        `main moved and the unit no longer passes ${failed.check}; taken up again, it is written and reviewed again\n${tail(failed.out, 1200)}`,
+        'write',
+      );
     commit(job, state, `Content: ${job.id} after merging main`);
     const again = onMain() ? git(['merge', '--ff-only', branch], MAIN) : { code: 1, out: '' };
     if (again.code)
@@ -675,7 +691,9 @@ function runJob(job: Job) {
     return true;
   } catch (error) {
     if (!(error instanceof Blocked)) throw error;
-    state.at = state.stage as Stage;
+    state.at = error.resume ?? (state.stage as Stage);
+    if (error.resume === 'write')
+      Object.assign(state, { round: 1, rounds: [], judged: 0, upheld: 0 });
     state.stage = 'blocked';
     state.reason = error.message;
     save(job.id, state);
