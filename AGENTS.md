@@ -32,6 +32,7 @@ Behavioural rules adapted from Andrej Karpathy's guidelines (forrestchang/andrej
 
 ## Project rules
 
+- **Start from `docs/handover.md`.** It says where every stream of work stands and what comes next. Update it when you finish something that changes either.
 - **Levels must be true.** A level label (A1 to C1) is claimed only when the content would get a learner there and through the matching exam; until then it is a starter set. Each language's plan sets its range: `docs/english-curriculum-plan.md` (one American and British course from A2 to C1 for people who know basic English, the three A1 units as its warm-up, IELTS an optional branch), `docs/spanish-a1-curriculum-plan.md` (and its checkpoint pass mark), `docs/curriculum-standards-audit.md`.
 - **New lessons come from the content harness.** `npm run content:auto` takes the next job in `docs/content-backlog.md` through every gate and merges it (`docs/content-pipeline.md`). Do not write or repair units by hand around it, and never weaken a gate to get a unit through: fix the unit, or fix the pipeline and say why in the runbook.
 - **Content is native-first.** Modern, natural language with register labels; official word lists only as a coverage benchmark. Answer keys accept every reasonable answer.
