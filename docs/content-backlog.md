@@ -11,7 +11,7 @@ The order puts the course closest to a true level first and keeps every course m
 | # | Job | Kind | Brief | Status |
 | --- | --- | --- | --- | --- |
 | 1 | `es-a1-u6` | repair | `npm run content:check -- es-a1-u6` | done (2026-11-15) |
-| 2 | `es-a1-u7` | unit | `docs/spanish-a1-units-plan.md`, Unit 7: At the market; with its unit call | todo |
+| 2 | `es-a1-u7` | unit | `docs/spanish-a1-units-plan.md`, Unit 7: At the market; with its unit call | done (2026-11-20) |
 | 3 | `de-a1-u1` | repair | `npm run content:check -- de-a1-u1`; add its unit call (`docs/unit-calls.md`) | todo |
 | 4 | `es-a1-u8` | unit | `docs/spanish-a1-units-plan.md`, Unit 8: Clothes and personal things; with its unit call | todo |
 | 5 | `de-a1-u2` | repair | `npm run content:check -- de-a1-u2`; add its unit call (`docs/unit-calls.md`) | todo |

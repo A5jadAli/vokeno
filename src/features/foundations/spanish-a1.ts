@@ -534,6 +534,8 @@ export const spanishA1Lessons = defineLessons('ES', [
   },
   {
     id: 'es-market',
+    retired: true,
+    replacedBy: 'es-a1-u7-words',
     level: 'A1',
     title: 'Shop at the market',
     outcome: 'Ask for quantities, answer “anything else?” and pay.',

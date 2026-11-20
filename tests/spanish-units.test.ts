@@ -165,10 +165,10 @@ describe('Spanish Unit 1 practice and review', () => {
   });
 });
 
-describe('Spanish Units 1 to 6 as one beginner path', () => {
-  it('advances through six units and checkpoint 1, preserves unit boundaries and then offers existing practice', () => {
-    expect(spanishA1Units).toHaveLength(25);
-    expect(getTrackLessons('ES').slice(0, 25)).toEqual(spanishA1Units);
+describe('Spanish Units 1 to 7 as one beginner path', () => {
+  it('advances through seven units and checkpoint 1, preserves unit boundaries and then offers existing practice', () => {
+    expect(spanishA1Units).toHaveLength(29);
+    expect(getTrackLessons('ES').slice(0, 29)).toEqual(spanishA1Units);
     const units = spanishA1Units.filter((lesson) => !lesson.unit.checkpoint);
     for (const [index, lesson] of units.entries()) {
       expect(lesson.unit.number).toBe(Math.floor(index / 4) + 1);
@@ -178,6 +178,8 @@ describe('Spanish Units 1 to 6 as one beginner path', () => {
     const order = spanishA1Units.map((lesson) => lesson.id);
     expect(order.indexOf('es-a1-cp1')).toBe(order.indexOf('es-a1-u5-task') + 1);
     expect(order.indexOf('es-a1-u6-words')).toBe(order.indexOf('es-a1-cp1') + 1);
+    // The starter market lesson retires to Unit 7, so a start saved there moves to it.
+    expect(findNextLesson({}, 'ES', 'es-market')?.lesson.id).toBe('es-a1-u7-words');
     const progress: FoundationProgress = {};
     for (const lesson of spanishA1Units) {
       expect(findNextLesson(progress, 'ES')?.lesson.id).toBe(lesson.id);
@@ -186,7 +188,7 @@ describe('Spanish Units 1 to 6 as one beginner path', () => {
     expect(findNextLesson(progress, 'ES')?.lesson.id).toBe('es-sounds');
     expect(
       courseUnits('ES', progress)
-        .slice(0, 7)
+        .slice(0, 8)
         .map((unit) => [unit.label.split(' · ')[0], unit.done]),
     ).toEqual([
       ['Unit 1', 4],
@@ -196,6 +198,7 @@ describe('Spanish Units 1 to 6 as one beginner path', () => {
       ['Unit 5', 4],
       ['Checkpoint 1', 1],
       ['Unit 6', 4],
+      ['Unit 7', 4],
     ]);
   });
 

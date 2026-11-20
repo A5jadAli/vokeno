@@ -209,7 +209,11 @@
     "es-a1-u6-words",
     "es-a1-u6-grammar",
     "es-a1-u6-talk",
-    "es-a1-u6-task"
+    "es-a1-u6-task",
+    "es-a1-u7-words",
+    "es-a1-u7-grammar",
+    "es-a1-u7-talk",
+    "es-a1-u7-task"
   ],
   "listening": [
     "coffee-run",

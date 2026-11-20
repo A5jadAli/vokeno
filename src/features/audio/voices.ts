@@ -129,6 +129,10 @@ export const characters: Record<LanguageTrack, Record<string, Casting>> = {
     Huésped: cast('ash', 'A hotel guest in the evening. Tired but polite.'),
     Recepcionista: cast('nova', 'A hotel receptionist. Warm and efficient.'),
     Vendedor: cast('ballad', 'A cheerful market seller in his fifties. Loud and friendly.'),
+    Vendedora: cast(
+      'sage',
+      'A market seller in her forties at a cheese and dairy stall. Warm, brisk and friendly.',
+    ),
     Diego: cast('ash', 'Diego, a young man answering his phone. Very casual.'),
     Lucía: cast('coral', 'Lucía, a young woman calling a friend. Bright and casual.'),
     Mariana: cast('shimmer', 'Mariana, a colleague in her thirties. Chatty and friendly.'),

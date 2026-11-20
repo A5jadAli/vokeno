@@ -249,6 +249,34 @@ export const unitCalls: UnitCall[] = [
       phrase('¿Puedo pagar con tarjeta?', 'con tarjeta', 'en efectivo'),
     ],
   },
+  {
+    id: 'es-a1-u7',
+    track: 'ES',
+    unitId: 'es-a1-u7',
+    unitNumber: 7,
+    level: 'A1',
+    title: 'Shop at the market',
+    character: 'Vendedor',
+    addressedAs: 'the seller',
+    persona:
+      'A cheerful fruit and vegetable seller in his fifties at a Mexico City market. Loud, friendly and quick; uses usted with customers.',
+    scene:
+      'A Saturday morning at the stall. The learner has a short list (tomatoes, avocados, bananas) and two hundred pesos to spend. Give prices in pesos only when asked: tomatoes and bananas by the kilo, avocados by the piece.',
+    learnerGoal:
+      'Ask for amounts and prices, check whether a price is per kilo or per piece, keep to the budget and pay.',
+    twist:
+      'Give the avocado price without saying it is per piece, so the learner has to check the unit, and once add up the total wrong so they have to check the amount.',
+    phrases: [
+      phrase('¿Me da…?', 'me da', 'me das', 'quiero'),
+      phrase('un kilo / medio kilo', 'un kilo', 'medio kilo', 'kilos'),
+      phrase('¿Cuánto cuesta…? / ¿Cuánto cuestan…?', 'cuanto cuesta', 'cuanto cuestan', 'a como'),
+      phrase('¿Es por kilo?', 'por kilo', 'por pieza', 'la pieza'),
+      phrase('¿Cuánto, perdón?', 'cuanto perdon', 'puede repetir'),
+      phrase('Nada más, gracias.', 'nada mas', 'es todo'),
+      phrase('Ahorita no, gracias.', 'ahorita no', 'no gracias'),
+      phrase('¿Tiene cambio?', 'tiene cambio'),
+    ],
+  },
 ];
 
 export const getUnitCall = (id: unknown) =>

@@ -5,6 +5,7 @@ import { spanishA1Unit4 } from './spanish-a1-unit-4';
 import { spanishA1Unit5 } from './spanish-a1-unit-5';
 import { spanishA1Checkpoint1 } from './spanish-a1-checkpoint-1';
 import { spanishA1Unit6 } from './spanish-a1-unit-6';
+import { spanishA1Unit7 } from './spanish-a1-unit-7';
 
 // The first six units are available for the native-review pilot.
 // Familiar recorded phrases are deliberately retrieved in new situations. The final task
@@ -510,4 +511,5 @@ export const spanishA1Units = [
   ...spanishA1Unit5,
   ...spanishA1Checkpoint1,
   ...spanishA1Unit6,
+  ...spanishA1Unit7,
 ];
