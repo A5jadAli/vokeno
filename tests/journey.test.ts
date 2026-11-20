@@ -165,7 +165,7 @@ describe('course structure', () => {
   it('groups German into units first, then the older lessons of each level', () => {
     const units = courseUnits('DE', {});
     expect(units[0]).toMatchObject({ id: 'de-a1-u1', label: 'Unit 1 · Hallo!' });
-    expect(units.slice(0, 6).every((unit) => unit.lessons.length === 4)).toBe(true);
+    expect(units.slice(0, 6).map((unit) => unit.lessons.length)).toEqual([5, 4, 4, 4, 4, 4]);
     expect(units.some((unit) => unit.id === 'DE-A2-lessons')).toBe(true);
     const total = units.reduce((sum, unit) => sum + unit.lessons.length, 0);
     expect(total).toBe(getTrackLessons('DE').length);

@@ -30,8 +30,29 @@ describe('lesson-linked unit calls', () => {
         for (const fragment of phrase.match) expect(fragment).toBe(fragment.toLowerCase());
     }
     expect(getUnitCall('es-a1-u6')?.character).toBe('Barista');
+    expect(getUnitCall('de-a1-u1')?.character).toBe('Lena');
     expect(getUnitCall('not-a-call')).toBeUndefined();
     expect(getUnitCall(42)).toBeUndefined();
+  });
+
+  it('recognises the German unit’s greetings, name questions and repair requests', () => {
+    const call = getUnitCall('de-a1-u1')!;
+    const used = phrasesUsed(call, [
+      'Hallo! Mein Name ist Alex. Wie heißt du? Wie heißen Sie? Wie bitte? Langsamer, bitte. Tschüss!',
+    ]);
+    for (const say of [
+      'Hallo!',
+      'Mein Name ist …',
+      'Wie heißt du?',
+      'Wie heißen Sie?',
+      'Wie bitte?',
+      'Langsamer, bitte.',
+      'Tschüss!',
+    ])
+      expect(used.find((item) => item.say === say)?.used).toBe(true);
+    expect(used.find((item) => item.say === 'Freut mich!')?.used).toBe(false);
+    expect(used.find((item) => item.say === 'Guten Tag!')?.used).toBe(false);
+    expect(used.find((item) => item.say === 'Auf Wiedersehen!')?.used).toBe(false);
   });
 
   it('spots which phrases came up, ignoring accents, case and punctuation', () => {

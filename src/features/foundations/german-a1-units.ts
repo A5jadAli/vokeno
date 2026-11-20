@@ -11,6 +11,47 @@ import { defineUnit } from './types';
  * point with graded practice, and a task in a Goethe-Zertifikat A1 format.
  */
 
+const unit1PublishedReview: Record<string, [target: string, meaning: string, use: string][]> = {
+  'de-a1-u1-hallo': [
+    ['Hallo!', 'Hello! / Hi!', 'Works almost everywhere: friends, colleagues and most shops.'],
+    ['Guten Morgen!', 'Good morning!', 'Until about eleven. Often just Morgen!'],
+    ['Guten Tag!', 'Hello! (polite, in the daytime)', 'At offices and receptions.'],
+    ['Guten Abend!', 'Good evening!', 'An evening hello.'],
+    ['Tschüss!', 'Bye!', 'The everyday goodbye.'],
+    ['Auf Wiedersehen!', 'Goodbye!', 'A polite goodbye in person.'],
+    ['Bis später!', 'See you later!', 'When you will see someone again later.'],
+    ['Gute Nacht!', 'Good night!', 'Only when someone goes to bed.'],
+    ['Schönen Tag noch!', 'Have a nice day!', 'A daytime wish when leaving.'],
+    ['Wie geht’s?', 'How are you?', 'An everyday question between friends.'],
+    ['Gut, danke. Und dir?', 'Good, thanks. And you?', 'To a friend or flatmate.'],
+    ['Es geht.', 'So-so.', 'An honest answer when you are not feeling great.'],
+    ['Moin!', 'Hi! (north)', 'Northern Germany, at any time of day.'],
+    ['Servus!', 'Hi! / Bye! (south)', 'Bavaria and Austria, casual.'],
+    ['Grüß Gott!', 'Hello! (south, polite)', 'Bavaria and Austria.'],
+  ],
+  'de-a1-u1-du-sie': [
+    ['Wie bitte?', 'Sorry? / Pardon?', 'The polite way to ask someone to repeat.'],
+    ['Noch mal, bitte.', 'Once more, please.', ''],
+    ['Langsamer, bitte.', 'Slower, please.', ''],
+    ['Ich verstehe das nicht.', 'I don’t understand.', 'In everyday speech: Versteh ich nicht.'],
+    ['Entschuldigung!', 'Excuse me! / Sorry!', 'To get attention or to apologise.'],
+    ['Hä?', 'Huh? / What?', 'Very casual, between friends. Not with strangers.'],
+    ['Ach so!', 'Oh, I see!', 'When something becomes clear.'],
+    ['Genau.', 'Exactly. / Right.', 'A common confirmation.'],
+    ['Nee.', 'Nope.', 'The everyday spoken form of nein.'],
+  ],
+  'de-a1-u1-exam': [
+    ['der Vorname', 'first name', ''],
+    ['der Familienname', 'family name', 'Also: der Nachname. Both are common on forms.'],
+    ['Herr / Frau', 'Mr / Ms', 'Frau is used for every adult woman, married or not.'],
+    ['das Formular', 'form', ''],
+  ],
+};
+
+const unit1PublishedTargets = new Set(
+  Object.values(unit1PublishedReview).flatMap((phrases) => phrases.map(([target]) => target)),
+);
+
 const unit1 = defineUnit(
   'DE',
   'A1',
@@ -79,16 +120,6 @@ const unit1 = defineUnit(
               meaning: 'Good morning!',
               note: 'Until about 11. Often just Morgen!',
             },
-            {
-              target: 'Guten Tag!',
-              meaning: 'Hello! (polite, in the daytime)',
-              note: 'At offices, receptions and with older people you do not know. Often just Tag!',
-            },
-            {
-              target: 'Guten Abend!',
-              meaning: 'Good evening!',
-              note: 'From about 6 in the evening.',
-            },
           ],
         },
         {
@@ -109,24 +140,9 @@ const unit1 = defineUnit(
               note: 'The everyday goodbye: friends, colleagues and most shops.',
             },
             {
-              target: 'Auf Wiedersehen!',
-              meaning: 'Goodbye!',
-              note: 'More formal: offices, doctors, older people. On the phone: Auf Wiederhören!',
-            },
-            {
               target: 'Bis später!',
               meaning: 'See you later!',
               note: 'Bis means until: Bis morgen! See you tomorrow!',
-            },
-            {
-              target: 'Gute Nacht!',
-              meaning: 'Good night!',
-              note: 'Only when someone goes to bed.',
-            },
-            {
-              target: 'Schönen Tag noch!',
-              meaning: 'Have a nice day!',
-              note: 'What people say when you leave a shop or café. Answer: Danke, gleichfalls! (Thanks, you too!)',
             },
           ],
         },
@@ -135,19 +151,17 @@ const unit1 = defineUnit(
           prompt: 'When do you say it?',
           pairs: [
             ['Guten Morgen!', 'In the morning'],
-            ['Guten Abend!', 'In the evening'],
-            ['Gute Nacht!', 'At bedtime'],
-            ['Auf Wiedersehen!', 'Leaving, formally'],
+            ['Hallo!', 'An everyday hello'],
+            ['Bis später!', 'See you again later today'],
             ['Tschüss!', 'Leaving, casually'],
           ],
         },
         {
-          kind: 'choose',
-          prompt: 'Listen. Is the person arriving or leaving?',
-          audio: 'Tschüss, bis morgen!',
-          options: ['Leaving', 'Arriving'],
-          answer: 0,
-          explanation: 'Tschüss, bis morgen! means bye, see you tomorrow.',
+          kind: 'type',
+          prompt: 'Write the short everyday goodbye from the cards: “Bye!”',
+          accepted: ['Tschüss!', 'Tschüs!', 'Ciao!'],
+          hint: 'The scene also used Ciao! as an everyday goodbye.',
+          explanation: 'Tschüss! is an everyday goodbye. Tschüs! and Ciao! work too.',
         },
         {
           kind: 'teach',
@@ -156,17 +170,21 @@ const unit1 = defineUnit(
             {
               target: 'Wie geht’s?',
               meaning: 'How are you?',
-              note: 'Short for Wie geht es dir? To someone you call Sie: Wie geht es Ihnen?',
+              note: 'An everyday question, as between the flatmates in the scene.',
             },
             {
-              target: 'Gut, danke. Und dir?',
-              meaning: 'Good, thanks. And you?',
-              note: 'To someone you call Sie: Und Ihnen?',
+              target: 'Gut, danke.',
+              meaning: 'Good, thanks.',
+            },
+            {
+              target: 'Und dir?',
+              meaning: 'And you?',
+              note: 'To a friend or flatmate. Add it after your answer to return the question.',
             },
             {
               target: 'Es geht.',
               meaning: 'So-so.',
-              note: 'Also: Geht so. Germans often answer honestly, so gut is not automatic.',
+              note: 'Germans often answer honestly, so gut is not automatic.',
             },
           ],
         },
@@ -175,48 +193,32 @@ const unit1 = defineUnit(
           prompt: 'Lena asks “Wie geht’s?” You are tired and not great. What can you say?',
           options: ['Es geht.', 'Gute Nacht!', 'Guten Tag!'],
           answer: 0,
-          explanation: 'Es geht or Geht so means so-so. It is fine to be honest.',
+          explanation: 'Es geht means so-so. It is fine to be honest.',
         },
         {
-          kind: 'teach',
-          title: 'Hello around the German-speaking world',
-          items: [
-            {
-              target: 'Moin!',
-              meaning: 'Hi! (north)',
-              note: 'Northern Germany, at any time of day.',
-            },
-            {
-              target: 'Servus!',
-              meaning: 'Hi! / Bye! (south)',
-              note: 'Bavaria and Austria, casual. It works for hello and goodbye.',
-            },
-            {
-              target: 'Grüß Gott!',
-              meaning: 'Hello! (south, polite)',
-              note: 'Bavaria and Austria. Answer with Grüß Gott! or simply Hallo!',
-            },
-          ],
+          kind: 'rule',
+          title: 'Greetings you may hear',
+          body: 'Recognise these; you do not need to use them. Moin! is a northern hello at any time of day. Servus! is a casual hello or goodbye in Bavaria and Austria. Grüß Gott! is a polite hello there. You can answer a regional hello with Hallo! instead.',
         },
         {
           kind: 'choose',
-          prompt:
-            'You are in a shop in Munich. The woman at the till says “Grüß Gott!” What is she doing?',
-          options: ['Saying hello', 'Saying goodbye', 'Saying thank you'],
+          prompt: 'Jonas says “Wie geht’s?” You feel good. Which reply returns the question?',
+          options: ['Gut, danke. Und dir?', 'Gut, danke.', 'Bis später?'],
           answer: 0,
-          explanation:
-            'Grüß Gott is a polite hello in Bavaria and Austria. You can answer Grüß Gott! or Hallo!',
+          explanation: 'Und dir? means “And you?” It invites Jonas to say how he feels too.',
         },
         {
           kind: 'build',
           prompt: 'Answer Lena: “Good, thanks. And you?”',
           answer: ['Gut,', 'danke.', 'Und', 'dir?'],
           extra: ['Tschüss!'],
-          explanation: 'Und dir? passes the question back. To someone you call Sie: Und Ihnen?',
+          also: ['Danke, gut. Und dir?'],
+          explanation: 'Gut, danke. answers the question. Und dir? passes it back to Lena.',
         },
         {
           kind: 'type',
-          prompt: 'You leave the flat. Write “Bye, see you later!”',
+          prompt:
+            'You leave the flat. Write “Bye, see you later!” Put the goodbye first, without und.',
           accepted: ['Tschüss, bis später!', 'Tschüs, bis später!', 'Ciao, bis später!'],
           hint: 'Tschüss, then bis (until) and später (later).',
           explanation:
@@ -227,7 +229,141 @@ const unit1 = defineUnit(
           prompt:
             'Meet Lena in the kitchen in the morning, answer her question, then leave. Say each line, then play it to compare.',
           lines: ['Guten Morgen!', 'Gut, danke. Und dir?', 'Tschüss, bis später!'],
-          tip: 'In Tschüss, ü is “ee” said with rounded lips. In Tag and Abend, the end sounds hard: Tak, Abent.',
+          tip: 'In Tschüss, ü is short: say the vowel in English “sit” with rounded lips.',
+          mission: {
+            checks: ['Did you greet Lena?', 'Did you answer her and say goodbye?'],
+            twist:
+              'Now it is afternoon. Greet someone at a shop politely, then leave with a short everyday goodbye.',
+          },
+        },
+      ],
+    },
+    {
+      id: 'de-a1-u1-greetings',
+      session: 'More greetings',
+      title: 'Evening hellos and polite goodbyes',
+      outcome: 'Greet someone in the evening and choose a goodbye for the situation.',
+      minutes: 4,
+      steps: [
+        {
+          kind: 'scene',
+          title: 'An evening on the stairs',
+          intro: 'You meet your neighbour Frau Wagner in the evening, then return to the flat.',
+          lines: [
+            { speaker: 'Frau Wagner', text: 'Guten Abend!', meaning: 'Good evening!' },
+            {
+              speaker: 'Alex',
+              text: 'Guten Abend, Frau Wagner!',
+              meaning: 'Good evening, Ms Wagner!',
+            },
+            { speaker: 'Frau Wagner', text: 'Auf Wiedersehen!', meaning: 'Goodbye!' },
+            {
+              speaker: 'Alex',
+              text: 'Auf Wiedersehen, Frau Wagner!',
+              meaning: 'Goodbye, Ms Wagner!',
+            },
+            { speaker: 'Lena', text: 'Hallo! Wie geht’s?', meaning: 'Hi! How are you?' },
+            {
+              speaker: 'Alex',
+              text: 'Gut, danke. Und dir, Lena?',
+              meaning: 'Good, thanks. And you, Lena?',
+            },
+            { speaker: 'Lena', text: 'Gute Nacht!', meaning: 'Good night!' },
+            {
+              speaker: 'Alex',
+              text: 'Gute Nacht, Lena!',
+              real: 'Nacht, Lena!',
+              meaning: 'Good night, Lena!',
+            },
+          ],
+          note: 'Lena is going to bed. Gute Nacht! is a bedtime wish, not a greeting when you arrive in the evening. Recognition only: in a daytime departure exchange, you may hear Danke, gleichfalls! (Thanks, you too!) in reply to a nice-day wish. You do not need to use that reply yet.',
+        },
+        {
+          kind: 'teach',
+          title: 'Daytime, evening and bedtime',
+          items: [
+            {
+              target: 'Guten Abend!',
+              meaning: 'Good evening!',
+              note: 'An evening hello, often from about six.',
+            },
+            {
+              target: 'Gute Nacht!',
+              meaning: 'Good night!',
+              note: 'When someone goes to bed. Often just Nacht!',
+            },
+            {
+              target: 'Guten Tag!',
+              meaning: 'Hello! (polite, in the daytime)',
+              note: 'At offices and receptions, or with people you do not know.',
+            },
+          ],
+        },
+        {
+          kind: 'choose',
+          prompt: 'You arrive at a reception in the evening. Which phrase greets the receptionist?',
+          options: ['Guten Abend!', 'Gute Nacht!', 'Tschüss!'],
+          answer: 0,
+          explanation: 'Guten Abend! greets someone in the evening. Gute Nacht! is for bedtime.',
+        },
+        {
+          kind: 'type',
+          prompt: 'Lena is going to bed. Write the two-word wish “Good night!”',
+          accepted: ['Gute Nacht!'],
+          hint: 'Gute + Nacht.',
+          explanation: 'Gute Nacht! is the full bedtime wish. Friends may shorten it to Nacht!',
+        },
+        {
+          kind: 'teach',
+          title: 'Polite departures',
+          items: [
+            {
+              target: 'Auf Wiedersehen!',
+              meaning: 'Goodbye!',
+              note: 'A polite goodbye in person, for example at an office or reception.',
+            },
+            {
+              target: 'Schönen Tag noch!',
+              meaning: 'Have a nice day!',
+              note: 'A friendly daytime wish when leaving.',
+            },
+          ],
+        },
+        {
+          kind: 'build',
+          prompt: 'Say “Goodbye, Ms Wagner!” using Auf Wiedersehen.',
+          answer: ['Auf', 'Wiedersehen,', 'Frau', 'Wagner!'],
+          extra: ['Guten', 'Abend!'],
+          also: ['Frau Wagner, auf Wiedersehen!'],
+          explanation: 'Auf Wiedersehen! is a polite goodbye in person.',
+        },
+        {
+          kind: 'match',
+          prompt: 'Match each departure to its meaning.',
+          pairs: [
+            ['Auf Wiedersehen!', 'Goodbye! (polite)'],
+            ['Schönen Tag noch!', 'Have a nice day!'],
+            ['Bis später!', 'See you later!'],
+            ['Tschüss!', 'Bye!'],
+          ],
+        },
+        {
+          kind: 'type',
+          prompt: 'It is daytime. Write the three-word departure wish “Have a nice day!”',
+          accepted: ['Schönen Tag noch!'],
+          hint: 'Schönen + Tag + noch.',
+          explanation: 'Schönen Tag noch! wishes someone a pleasant rest of the day.',
+        },
+        {
+          kind: 'speak',
+          prompt:
+            'Greet Frau Wagner in the evening and say goodbye politely. Later, wish Lena good night.',
+          lines: ['Guten Abend!', 'Auf Wiedersehen!', 'Gute Nacht!'],
+          mission: {
+            checks: ['Did you use an evening greeting?', 'Did you save Gute Nacht! for bedtime?'],
+            twist:
+              'Now leave a shop at midday. Wish the assistant a nice day, then say you will see Lena later.',
+          },
         },
       ],
     },
@@ -262,25 +398,25 @@ const unit1 = defineUnit(
             },
             {
               speaker: 'Maria',
-              text: 'Hallo, ich bin Maria. Freut mich!',
-              real: 'Hi, Maria. Freut mich!',
-              meaning: 'Hi, I am Maria. Nice to meet you!',
+              text: 'Hallo, ich bin Maria. Freut mich! Wie geht’s?',
+              meaning: 'Hi, I am Maria. Nice to meet you! How are you?',
             },
-            { speaker: 'Alex', text: 'Freut mich auch!', meaning: 'Nice to meet you too!' },
+            {
+              speaker: 'Alex',
+              text: 'Freut mich auch! Gut, danke.',
+              meaning: 'Nice to meet you too! Good, thanks.',
+            },
           ],
-          note: 'The teacher uses Sie with a new adult student. Maria, another student, is on du with Alex straight away. That is normal in a course.',
+          note: 'The teacher uses Sie with a new adult student. Maria, another student, is on du with Alex straight away. That is normal in a course. Recognition only: Alex’s Freut mich auch! means “Nice to meet you too!”; auch means “too”. You do not need to use that reply yet.',
         },
         {
           kind: 'rule',
-          title: 'sein: to be',
-          body: 'Sein (to be) is irregular, like “to be” in English. Learn the forms as a set.',
+          title: 'Giving a name',
+          body: 'Use Ich bin … to give your name and Das ist … to introduce someone. Practise the complete phrases and change only the name. You do not need a verb table yet.',
           table: [
-            ['ich bin', 'I am'],
-            ['du bist', 'you are (du)'],
-            ['er / sie ist', 'he / she is'],
-            ['Sie sind', 'you are (Sie)'],
+            ['Ich bin Alex.', 'I am Alex.'],
+            ['Das ist Frau Schulz.', 'This is Ms Schulz.'],
           ],
-          examples: ['Ich bin Alex.', 'Bist du Maria?', 'Das ist Frau Schulz.'],
         },
         {
           kind: 'choose',
@@ -290,23 +426,21 @@ const unit1 = defineUnit(
           explanation: 'ich bin: I am.',
         },
         {
-          kind: 'choose',
-          prompt: 'Complete: Du ___ Maria, oder?',
-          options: ['bist', 'bin', 'sind'],
-          answer: 0,
-          explanation: 'du bist: you are. Oder? at the end means “right?”.',
+          kind: 'type',
+          prompt: 'Maria is introducing herself. Complete “Ich ___ Maria.” (“I am Maria.”)',
+          accepted: ['bin'],
+          hint: 'Use just the missing verb.',
+          explanation: 'Ich bin Maria. means “I am Maria.” Use the same phrase with your own name.',
         },
         {
           kind: 'rule',
-          title: 'heißen: to be called',
-          body: 'Heißen means “to be called”: Ich heiße Alex is “I am called Alex”. The du form adds only -t, because the stem already ends in ß.',
+          title: 'Asking and giving a name',
+          body: 'Ich heiße … is another way to give your name. Learn the two name questions as complete phrases: one for a friend or fellow student, one for a formal setting. Practise the phrases, not a set of verb endings.',
           table: [
-            ['ich heiße', 'my name is'],
-            ['du heißt', 'your name is (du)'],
-            ['er / sie heißt', 'his / her name is'],
-            ['Sie heißen', 'your name is (Sie)'],
+            ['Ich heiße Alex.', 'My name is Alex.'],
+            ['Wie heißt du?', 'What is your name? (familiar)'],
+            ['Wie heißen Sie?', 'What is your name? (formal)'],
           ],
-          examples: ['Wie heißt du?', 'Wie heißen Sie?', 'Er heißt Karim.'],
         },
         {
           kind: 'teach',
@@ -324,7 +458,6 @@ const unit1 = defineUnit(
             {
               target: 'Freut mich!',
               meaning: 'Nice to meet you!',
-              note: 'Answer: Freut mich auch! (Nice to meet you too!)',
             },
           ],
         },
@@ -333,7 +466,7 @@ const unit1 = defineUnit(
           prompt: 'Ask Maria: “What’s your name?”',
           answer: ['Wie', 'heißt', 'du?'],
           extra: ['heißen', 'bist'],
-          explanation: 'Question word first, verb second: Wie heißt du?',
+          explanation: 'Wie heißt du? is the complete name question to use with another student.',
         },
         {
           kind: 'choose',
@@ -344,20 +477,20 @@ const unit1 = defineUnit(
         },
         {
           kind: 'rule',
-          title: 'Questions: where the verb goes',
-          body: 'With a question word (wie, wer, was), the verb comes straight after it. A yes/no question starts with the verb.',
+          title: 'Asking about someone',
+          body: 'Practise these as complete phrases: ask who someone is, then introduce them. In Das ist …, replace only the name. You may also hear Bist du Maria? (“Are you Maria?”) or Bist du Jonas? (“Are you Jonas?”). These are recognition-only; you do not need to make this kind of question yet.',
           table: [
-            ['Wie heißt du?', 'question word, then verb'],
-            ['Wer ist das?', 'question word, then verb'],
-            ['Bist du Maria?', 'yes/no: verb first'],
+            ['Wer ist das?', 'Who is that?'],
+            ['Das ist Maria.', 'This is Maria.'],
           ],
         },
         {
           kind: 'build',
-          prompt: 'Ask: “Are you Jonas?”',
-          answer: ['Bist', 'du', 'Jonas?'],
-          extra: ['Ist'],
-          explanation: 'A yes/no question starts with the verb: Bist du Jonas?',
+          prompt: 'Ask: “Who is that?”',
+          answer: ['Wer', 'ist', 'das?'],
+          extra: ['Wie', 'heißen'],
+          explanation:
+            'Wer ist das? asks who someone is. They can reply with Das ist … and a name.',
         },
         {
           kind: 'choose',
@@ -380,7 +513,7 @@ const unit1 = defineUnit(
           prompt:
             'Introduce yourself to Maria and ask her name. Use your own name instead of Alex.',
           lines: ['Hallo, ich bin Alex.', 'Wie heißt du?', 'Freut mich!'],
-          tip: 'In heiße and heißt, ei sounds like English “eye” and ß is a sharp s: HEI-se.',
+          tip: 'In heiße and heißt, ei sounds like English “eye” and ß is a sharp s. Heiße sounds like HIGH-suh; heißt ends in st.',
           mission: {
             checks: ['Did you give your name?', 'Did you ask Maria her name?'],
             twist: 'Now meet Frau Schulz at an office. Greet her and ask her name using Sie.',
@@ -407,15 +540,16 @@ const unit1 = defineUnit(
         },
         {
           kind: 'choose',
-          prompt: 'Who would you normally call Sie?',
-          options: ['A police officer', 'Your flatmate Lena', 'A child in the park'],
+          prompt: 'Ask an unfamiliar police officer their name. Which question fits?',
+          options: ['Wie heißen Sie?', 'Wie heißt du?', 'Wer bist du?'],
           answer: 0,
           explanation:
             'Sie is the usual starting point with an unfamiliar police officer. Du fits a friend or a child. Follow the relationship and setting, not just age.',
         },
         {
           kind: 'choose',
-          prompt: 'At a party, Lena says everyone here uses du. How do you ask her friend’s name?',
+          prompt:
+            'At a party, Lena says everyone here expects the familiar form, not the formal one. How do you ask her friend’s name?',
           options: ['Hi, wie heißt du?', 'Guten Tag, wie heißen Sie?', 'Wer sind Sie?'],
           answer: 0,
           explanation: 'Lena has told you the group uses du, so Wie heißt du? fits this situation.',
@@ -455,10 +589,11 @@ const unit1 = defineUnit(
           note: 'Frau Wagner gives only her family name. That is typical for older people, and on the phone. Call her Frau Wagner, not by a first name.',
         },
         {
-          kind: 'choose',
-          prompt: 'Frau Wagner just said “Wagner.” How do you address her?',
-          options: ['Frau Wagner', 'Wagner', 'Du'],
-          answer: 0,
+          kind: 'type',
+          prompt:
+            'Your neighbour introduced herself as Wagner. Write her title (Ms) and family name.',
+          accepted: ['Frau Wagner'],
+          hint: 'Frau + her family name.',
           explanation: 'Use Frau or Herr with the family name: Frau Wagner.',
         },
         {
@@ -488,11 +623,6 @@ const unit1 = defineUnit(
           kind: 'teach',
           title: 'What friends say',
           items: [
-            {
-              target: 'Hä?',
-              meaning: 'Huh? / What?',
-              note: 'Very casual: friends say it when they did not understand. Not with strangers.',
-            },
             { target: 'Ach so!', meaning: 'Oh, I see!', note: 'When something becomes clear.' },
             {
               target: 'Genau.',
@@ -507,7 +637,7 @@ const unit1 = defineUnit(
           prompt: 'Match what you hear with what it means.',
           pairs: [
             ['Wie bitte?', 'Sorry? (polite)'],
-            ['Hä?', 'Huh? (casual)'],
+            ['Noch mal, bitte.', 'Once more, please.'],
             ['Ach so!', 'Oh, I see!'],
             ['Genau.', 'Exactly.'],
             ['Nee.', 'Nope.'],
@@ -537,7 +667,7 @@ const unit1 = defineUnit(
             },
             { speaker: 'Alex', text: 'Ach so! Ja, gern!', meaning: 'Oh, I see! Yes, I’d love to!' },
           ],
-          note: 'Asking someone to repeat is normal, even between native speakers. Most people slow down and use simpler words straight away. In fast speech, du often merges with the verb: willst du becomes willste.',
+          note: 'Asking someone to repeat is normal, even between native speakers. Most people slow down and use simpler words straight away. In fast speech, du often merges with the verb: willst du becomes willste. You may hear Hä? (Huh?) between friends: recognise it, but use Wie bitte? yourself, especially with strangers.',
         },
         {
           kind: 'choose',
@@ -611,11 +741,16 @@ const unit1 = defineUnit(
             {
               target: 'der Familienname',
               meaning: 'family name',
-              note: 'Also: der Nachname. Both are common on forms.',
             },
             {
-              target: 'Herr / Frau',
-              meaning: 'Mr / Ms',
+              target: 'der Nachname',
+              meaning: 'family name',
+              note: 'Another common word for Familienname on forms.',
+            },
+            { target: 'Herr', meaning: 'Mr' },
+            {
+              target: 'Frau',
+              meaning: 'Ms',
               note: 'Frau is used for every adult woman, married or not.',
             },
             { target: 'das Formular', meaning: 'form' },
@@ -623,16 +758,16 @@ const unit1 = defineUnit(
         },
         {
           kind: 'choose',
-          prompt: 'Look at the form. What is her first name?',
+          prompt: 'Look at the form. Which label means first name?',
           context: 'Anmeldung Deutschkurs\nFrau\nFamilienname: Schmidt\nVorname: Laura',
-          options: ['Laura', 'Schmidt', 'Frau'],
+          options: ['Vorname', 'Familienname', 'Frau'],
           answer: 0,
           explanation:
-            'Vorname is the first name: Laura. Familienname is the family name: Schmidt.',
+            'Vorname means first name. Familienname means family name, and Frau is the title Ms.',
         },
         {
           kind: 'type',
-          prompt: 'Fill in the form for Karim. Vorname: ___',
+          prompt: 'Fill in the form. Vorname: ___',
           context: 'Karim sagt: “Ich heiße Karim Haddad.”',
           accepted: ['Karim'],
           hint: 'Vorname is the first name.',
@@ -641,7 +776,7 @@ const unit1 = defineUnit(
         {
           kind: 'rule',
           title: 'The exam: Sprechen Teil 1',
-          body: 'In Sprechen Teil 1, you introduce yourself with the help of cards: Name, Alter (age), Land (country), Wohnort (where you live), Sprachen (languages), Beruf (job) and Hobby. Then the examiner may ask you to spell your name or say a number. This unit covers the name; the next units add the other cards.',
+          body: 'In Sprechen Teil 1, you introduce yourself using prompts on a task sheet: Name, Alter (age), Land (country), Wohnort (where you live), Sprachen (languages), Beruf (job) and Hobby. The examiner then asks you to spell a word, such as your name, and give a number, such as your phone number. “Buchstabieren Sie bitte Ihren Namen” means “Please spell your name”. This unit covers the name; later units add the other introduction topics. The alphabet and spelling practice come in Unit 3.',
           examples: ['Mein Name ist Alex.', 'Ich heiße Alex.'],
         },
         {
@@ -649,6 +784,7 @@ const unit1 = defineUnit(
           prompt: 'Start the exam introduction: “My name is Alex.”',
           answer: ['Mein', 'Name', 'ist', 'Alex.'],
           extra: ['heiße'],
+          also: ['Alex ist mein Name.'],
           explanation:
             'Mein Name ist … is a clear start for the exam. Ich heiße … is just as good.',
         },
@@ -675,11 +811,40 @@ const unit1 = defineUnit(
           prompt:
             'Practise a greeting and your name for the introduction. Then practise asking someone’s name politely for everyday life; this extra question is not an exam instruction.',
           lines: ['Guten Tag!', 'Mein Name ist Alex.', 'Und wie heißen Sie?'],
+          mission: {
+            checks: ['Did you greet the examiner?', 'Did you give your own or an invented name?'],
+            twist:
+              'Now you are at a course reception, not in the exam. Greet the receptionist, give your name and ask politely for repetition when they speak too fast.',
+          },
         },
       ],
     },
   ],
-);
+).map((session) => ({
+  ...session,
+  phrases: [
+    ...(unit1PublishedReview[session.id] ?? []).map(([target, meaning, use]) => ({
+      target,
+      meaning,
+      use,
+    })),
+    ...(session.id === 'de-a1-u1-greetings'
+      ? [
+          {
+            target: 'Auf Wiedersehen, Frau Wagner!',
+            meaning: 'Goodbye, Ms Wagner!',
+            use: 'The polite departure practised with the neighbour.',
+          },
+          {
+            target: 'Tschüss, bis später!',
+            meaning: 'Bye, see you later!',
+            use: 'The everyday departure when you will see someone again later.',
+          },
+        ]
+      : []),
+    ...session.phrases.filter((phrase) => !unit1PublishedTargets.has(phrase.target)),
+  ],
+}));
 
 const mariaEmail =
   'Liebe Paula,\nich bin jetzt in Leipzig! Ich wohne bei Familie Becker. Mein Deutschkurs ist super. Die Leute im Kurs kommen aus Polen, aus der Türkei und aus Ägypten. Im Kurs sprechen wir nur Deutsch. Abends lerne ich mit Karim. Er kommt aus Ägypten und spricht sehr gut Englisch.\nViele Grüße\nMaria';

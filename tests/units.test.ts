@@ -24,11 +24,13 @@ const sessions: StepLesson[] = germanA1Units;
 const words = (text: string) => normaliseFoundationAnswer(text).split(' ').sort().join(' ');
 
 describe('German A1 units: structure', () => {
-  it('has twenty units of four sessions, in order, on the path before the starter lessons', () => {
+  it('has twenty units, with five sessions in Unit 1 and four in each later unit, in path order', () => {
     const units = [...new Set(sessions.map((session) => session.unit.number))];
     expect(units).toEqual(Array.from({ length: 20 }, (_, index) => index + 1));
     for (const number of units)
-      expect(sessions.filter((session) => session.unit.number === number)).toHaveLength(4);
+      expect(sessions.filter((session) => session.unit.number === number)).toHaveLength(
+        number === 1 ? 5 : 4,
+      );
     const path = getTrackLessons('DE');
     expect(path.slice(0, sessions.length).map((lesson) => lesson.id)).toEqual(
       sessions.map((session) => session.id),

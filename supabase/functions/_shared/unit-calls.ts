@@ -36,6 +36,39 @@ const phrase = (say: string, ...match: string[]): UnitCallPhrase => ({ say, matc
 
 export const unitCalls: UnitCall[] = [
   {
+    id: 'de-a1-u1',
+    track: 'DE',
+    unitId: 'de-a1-u1',
+    unitNumber: 1,
+    level: 'A1',
+    title: 'Meet your flatmate and neighbour',
+    character: 'Lena',
+    persona:
+      'Lena, a friendly flatmate in Leipzig who uses everyday German and du with the learner.',
+    scene:
+      'Meet the learner in the shared-flat kitchen. Exchange greetings, names and a short wellbeing question, then say goodbye.',
+    learnerGoal:
+      'Greet Lena, give a real or invented name, ask her name, and ask politely for repetition or slower speech if needed.',
+    twist:
+      'Partway through, briefly voice the neighbour Frau Wagner, making the change of speaker explicit. She greets the learner with Guten Tag! and asks Wie heißen Sie? After the learner gives a name, let them ask hers using Sie. Repeat slowly when asked. Return to Lena to close. Keep to greetings, names and repetition; do not ask about spelling, work or addresses.',
+    phrases: [
+      phrase('Hallo!', 'hallo'),
+      phrase('Guten Tag!', 'guten tag'),
+      phrase('Wie geht’s?', 'wie gehts', 'wie geht es'),
+      phrase('Gut, danke. Und dir?', 'gut danke', 'und dir'),
+      phrase('Mein Name ist …', 'mein name ist'),
+      phrase('Wie heißt du?', 'wie heißt du'),
+      phrase('Wie heißen Sie?', 'wie heißen sie'),
+      phrase('Freut mich!', 'freut mich'),
+      phrase('Wie bitte?', 'wie bitte'),
+      phrase('Langsamer, bitte.', 'langsamer'),
+      phrase('Noch mal, bitte.', 'noch mal bitte', 'nochmal bitte'),
+      phrase('Tschüss!', 'tschuss', 'tschus', 'ciao'),
+      phrase('Auf Wiedersehen!', 'auf wiedersehen'),
+      phrase('Bis später!', 'bis spater'),
+    ],
+  },
+  {
     id: 'en-a1-u1',
     track: 'EN',
     unitId: 'en-a1-u1',

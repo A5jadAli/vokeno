@@ -1,8 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
 import { foundationLessons, getTrackLessons } from '@/features/foundations/catalog';
 import {
+  contentVersion,
   freshFoundationEntry,
   parseFoundationProgress,
+  phraseKey,
   type FoundationEntry,
   type FoundationProgress,
 } from '@/features/foundations/progress';
@@ -119,6 +121,144 @@ describe('spaced review', () => {
     expect(parsed.greetings.cards).toEqual([[1, today]]);
     expect(parsed.introductions.cards).toBeUndefined();
   });
+});
+
+describe('German Unit 1 repair: saved review cards', () => {
+  const oldTargets = {
+    'de-a1-u1-hallo': [
+      'Hallo!',
+      'Guten Morgen!',
+      'Guten Tag!',
+      'Guten Abend!',
+      'Tschüss!',
+      'Auf Wiedersehen!',
+      'Bis später!',
+      'Gute Nacht!',
+      'Schönen Tag noch!',
+      'Wie geht’s?',
+      'Gut, danke. Und dir?',
+      'Es geht.',
+      'Moin!',
+      'Servus!',
+      'Grüß Gott!',
+    ],
+    'de-a1-u1-ich-bin': [
+      'Wie heißt du?',
+      'Wie heißen Sie?',
+      'Mein Name ist …',
+      'Wer ist das?',
+      'Das ist Maria.',
+      'Freut mich!',
+    ],
+    'de-a1-u1-du-sie': [
+      'Wie bitte?',
+      'Noch mal, bitte.',
+      'Langsamer, bitte.',
+      'Ich verstehe das nicht.',
+      'Entschuldigung!',
+      'Hä?',
+      'Ach so!',
+      'Genau.',
+      'Nee.',
+    ],
+    'de-a1-u1-exam': ['der Vorname', 'der Familienname', 'Herr / Frau', 'das Formular'],
+  };
+  const saved = (keyed: boolean): FoundationProgress =>
+    Object.fromEntries(
+      Object.entries(oldTargets).map(([id, targets]) => [
+        id,
+        {
+          ...freshFoundationEntry(),
+          cards: targets.map((_, index) => [index % 6, today + index] as [number, number]),
+          ...(keyed ? { cardKeys: targets.map(phraseKey) } : {}),
+        },
+      ]),
+    );
+
+  it.each([false, true])('keeps each old phrase’s schedule with keyed progress = %s', (keyed) => {
+    const progress = saved(keyed);
+    const parsed = parseFoundationProgress(progress);
+    for (const [id, targets] of Object.entries(oldTargets)) {
+      const lesson = foundationLessons.find((item) => item.id === id)!;
+      expect(lesson.phrases.slice(0, targets.length).map((phrase) => phrase.target)).toEqual(
+        targets,
+      );
+      expect(parsed[id].cardKeys).toEqual(targets.map(phraseKey));
+      expect(parsed[id].cards).toEqual(progress[id].cards);
+      expect(parsed[id].attempts).toEqual([]);
+      expect(parsed[id].step).toBe(0);
+    }
+    expect(parsed['de-a1-u1-greetings']).toBeUndefined();
+    const reviewed = dueCards(parsed, 'DE', today + 100).map(
+      ({ lesson, phraseIndex }) => lesson.phrases[phraseIndex].target,
+    );
+    expect(reviewed).toHaveLength(34);
+    expect(new Set(reviewed).size).toBe(34);
+    expect(reviewed).toEqual(expect.arrayContaining(Object.values(oldTargets).flat()));
+    for (const target of ['Gut, danke.', 'Und dir?', 'der Nachname', 'Herr', 'Frau'])
+      expect(reviewed).not.toContain(target);
+    const roundTrip = parseFoundationProgress(parsed);
+    for (const id of Object.keys(parsed)) {
+      expect(roundTrip[id].cards).toEqual(parsed[id].cards);
+      expect(roundTrip[id].cardKeys).toEqual(parsed[id].cardKeys);
+    }
+  });
+
+  it('keeps a new phrase’s own schedule independent of the old greeting schedules', () => {
+    const progress = saved(true);
+    const parsed = parseFoundationProgress({
+      ...progress,
+      'de-a1-u1-greetings': {
+        ...freshFoundationEntry(),
+        cards: [[0, today]],
+        cardKeys: [phraseKey('Auf Wiedersehen, Frau Wagner!')],
+      },
+    });
+    const lesson = foundationLessons.find((item) => item.id === 'de-a1-u1-greetings')!;
+    expect(parsed[lesson.id].cards).toEqual([[0, today]]);
+    expect(parsed[lesson.id].cardKeys).toEqual([phraseKey('Auf Wiedersehen, Frau Wagner!')]);
+    const seeded = seedCards(lesson, parsed[lesson.id], today, parsed);
+    expect(seeded.cards).toEqual([
+      [0, today],
+      [0, today + 1],
+    ]);
+    expect(seeded.cardKeys).toEqual(lesson.phrases.map((phrase) => phraseKey(phrase.target)));
+    for (const id of Object.keys(oldTargets)) expect(parsed[id].cards).toEqual(progress[id].cards);
+    const reviewed = dueCards(parsed, 'DE', today + 100).map(
+      ({ lesson, phraseIndex }) => lesson.phrases[phraseIndex].target,
+    );
+    expect(reviewed).toHaveLength(35);
+    expect(new Set(reviewed).size).toBe(35);
+  });
+
+  it.each(Object.keys(oldTargets))(
+    'does not realign current unkeyed progress for %s as legacy',
+    (id) => {
+      const lesson = foundationLessons.find((item) => item.id === id)!;
+      const cards = lesson.phrases.map(
+        (_, index) => [index % 6, today + index] as [number, number],
+      );
+      const parsed = parseFoundationProgress({
+        [id]: { ...freshFoundationEntry(), v: contentVersion(lesson), cards },
+      });
+      expect(parsed[id].cards).toEqual(cards);
+      expect(parsed['de-a1-u1-greetings']).toBeUndefined();
+    },
+  );
+
+  it.each(Object.entries(oldTargets))(
+    'adds new cards only after the saved cards when %s is completed again',
+    (id, targets) => {
+      const lesson = foundationLessons.find((item) => item.id === id)!;
+      const progress = parseFoundationProgress(saved(false));
+      const seeded = seedCards(lesson, progress[id], today, progress);
+      expect(seeded.cards.slice(0, targets.length)).toEqual(progress[id].cards);
+      expect(seeded.cards.slice(targets.length)).toEqual(
+        lesson.phrases.slice(targets.length).map(() => [0, today + 1]),
+      );
+      expect(seeded.cardKeys).toEqual(lesson.phrases.map((phrase) => phraseKey(phrase.target)));
+    },
+  );
 });
 
 describe('review days', () => {
