@@ -33,6 +33,8 @@ Every line the app speaks is a pre-recorded clip in a natural AI voice. Each cha
 
 The speech model returns voices at different levels; before normalisation a receptionist could be about 9 dB louder than the learner's friend in the same scene. The app plays the `n1/` copy (`LOUDNESS_FOLDER` in `clips.ts`) and falls back to the original recording if that copy cannot be downloaded. Originals are never changed, so builds that predate normalisation keep playing them. The folder name is part of the device cache key, so devices download the new copies instead of reusing cached originals. To change the target level, use a new folder name (for example `n2`) rather than overwriting: the CLI cannot replace existing files, and a new name also refreshes device caches.
 
+The script runs the Supabase CLI 3 (`npx supabase@3`), which changes the hosted project only with `--yes`. So the script asks you once, in the terminal, before it writes anything to production, and passes `--yes` only after you type `yes`; without a terminal it writes nothing. A clip recorded again keeps its old copy until you run the script with `--redo <key> ...`, which replaces those copies.
+
 `npx --yes supabase login` signs into the CLI without a global install. To set the token securely, use `npx supabase secrets set --env-file .env.audio.local --project-ref <verified-project-ref>` after checking the project matches `.env.local`. Keep only the audio token in that file and never paste it into chat or commit it.
 
 `LESSON_AUDIO_TOKEN` is set as a Supabase function secret, and the function rejects any request without it. Never commit it. The edge function also needs the `OPENAI_API_KEY` secret.

@@ -6,12 +6,28 @@
 //
 //   npx tsx --tsconfig tsconfig.json scripts/normalize-lesson-audio.ts
 //   npx tsx --tsconfig tsconfig.json scripts/normalize-lesson-audio.ts --redo-quiet
+//   npx tsx --tsconfig tsconfig.json scripts/normalize-lesson-audio.ts --redo <key> [<key> ...]
 //
 // --redo-quiet measures every existing copy and redoes the ones more than 1 LU under the target.
+// --redo replaces the copies of clips that were recorded again, which otherwise keep the old take.
 // Needs ffmpeg and a Supabase CLI linked to the project (storage writes go through it).
 // generate-lesson-audio.ts runs this after recording, so new clips are covered too.
+//
+// It writes to the production project, and the Supabase CLI (3.x) accepts such a change only
+// with --yes. So this script asks the person at the terminal first, once, and passes --yes only
+// after they type yes. Without a terminal (an agent's run, the content harness) it writes nothing.
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  closeSync,
+  mkdirSync,
+  mkdtempSync,
+  openSync,
+  readFileSync,
+  readSync,
+  rmSync,
+  writeFileSync,
+  writeSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -34,20 +50,53 @@ const url = process.env.EXPO_PUBLIC_SUPABASE_URL ?? env.EXPO_PUBLIC_SUPABASE_URL
 if (!url) throw new Error('Set EXPO_PUBLIC_SUPABASE_URL (from .env.local).');
 const bucketUrl = `${url}/storage/v1/object/public/${AUDIO_BUCKET}`;
 
+/** The Supabase CLI's storage commands on the linked project. Major version 3: its flags. */
 const supabase = (...args: string[]) =>
-  execFileSync('npx', ['supabase', 'storage', ...args, '--experimental', '--linked'], {
+  execFileSync('npx', ['--yes', 'supabase@3', 'storage', ...args, '--experimental', '--remote'], {
     encoding: 'utf8',
     maxBuffer: 64 * 1024 * 1024,
   });
+
+/**
+ * Asks the person at the terminal. There is no answer without one, so a run without a terminal
+ * never writes to production.
+ */
+function confirm(question: string) {
+  let tty: number;
+  try {
+    tty = openSync('/dev/tty', 'r+');
+  } catch {
+    return false;
+  }
+  try {
+    writeSync(tty, `${question}\nType yes to continue: `);
+    const answer = Buffer.alloc(64);
+    const length = readSync(tty, answer, 0, answer.length, null);
+    return answer.toString('utf8', 0, length).trim().toLowerCase() === 'yes';
+  } finally {
+    closeSync(tty);
+  }
+}
+
+let allowed = false;
+/** Asks once per run, before the first production write; stops the run if the answer is no. */
+function allowWrites(summary: string) {
+  if (allowed) return;
+  if (!confirm(`This writes to the production project's ${AUDIO_BUCKET} bucket: ${summary}.`))
+    throw new Error(
+      'Nothing was written. Run this from your own terminal and type yes to make the copies.',
+    );
+  allowed = true;
+}
 
 const ffmpeg = (args: string[]) =>
   spawnSync('ffmpeg', ['-hide_banner', '-nostdin', ...args], { encoding: 'utf8' });
 
 /** Keys that already have a normalised copy. */
 function normalisedKeys() {
-  const listed = JSON.parse(supabase('ls', `ss:///${AUDIO_BUCKET}/${LOUDNESS_FOLDER}/`)) as {
-    paths: string[];
-  };
+  const listed = JSON.parse(
+    supabase('ls', `ss:///${AUDIO_BUCKET}/${LOUDNESS_FOLDER}/`, '--output-format', 'json'),
+  ) as { paths: string[] };
   return new Set(
     listed.paths.map((path) =>
       path
@@ -161,8 +210,8 @@ async function normaliseAndUpload(keys: string[], work: string) {
     // upload to a new staging folder (files land directly in it), then move them into place,
     // which puts them directly in the target folder whether or not it exists yet.
     const staging = `ss:///${AUDIO_BUCKET}/_staging/${Date.now()}-${start}`;
-    supabase('cp', '-r', outDir, staging, '--content-type', 'audio/mpeg', '-j', '6');
-    supabase('mv', '-r', staging, `ss:///${AUDIO_BUCKET}/${LOUDNESS_FOLDER}`);
+    supabase('cp', '-r', outDir, staging, '--content-type', 'audio/mpeg', '-j', '6', '--yes');
+    supabase('mv', '-r', staging, `ss:///${AUDIO_BUCKET}/${LOUDNESS_FOLDER}`, '--yes');
     process.stdout.write(`${Math.min(start + CHUNK, keys.length)}/${keys.length}\n`);
   }
 }
@@ -185,28 +234,40 @@ async function main() {
   );
   const have = normalisedKeys();
   const work = mkdtempSync(join(tmpdir(), 'voka-loudness-'));
+  const redoAt = process.argv.indexOf('--redo');
+  const redo =
+    redoAt < 0 ? [] : process.argv.slice(redoAt + 1).filter((key) => clips.includes(key));
+  if (redoAt >= 0 && redo.length < process.argv.length - redoAt - 1)
+    throw new Error('--redo takes clip keys from src/features/audio/clips.json.');
   try {
-    if (process.argv.includes('--redo-quiet')) {
-      const quiet = await quietCopies(
-        clips.filter((key) => have.has(key)),
-        work,
-      );
-      process.stdout.write(`${quiet.length} copies are more than 1 LU too quiet.\n`);
+    const replace = [
+      ...redo.filter((key) => have.has(key)),
+      ...(process.argv.includes('--redo-quiet')
+        ? await quietCopies(
+            clips.filter((key) => have.has(key)),
+            work,
+          )
+        : []),
+    ];
+    if (replace.length) {
+      process.stdout.write(`${replace.length} copies to make again.\n`);
+      allowWrites(`replace ${replace.length} loudness copies`);
       // The CLI cannot overwrite, so remove first. Until the new copy lands, the app falls back
       // to the original recording.
-      for (let start = 0; start < quiet.length; start += 50)
+      for (let start = 0; start < replace.length; start += 50)
         supabase(
           'rm',
           '--yes',
-          ...quiet
+          ...replace
             .slice(start, start + 50)
             .map((key) => `ss:///${AUDIO_BUCKET}/${LOUDNESS_FOLDER}/${key}.mp3`),
         );
-      await normaliseAndUpload(quiet, work);
+      await normaliseAndUpload(replace, work);
     }
     const present = normalisedKeys();
     const todo = clips.filter((key) => !present.has(key));
     process.stdout.write(`${clips.length - todo.length} clips normalised, ${todo.length} to do.\n`);
+    if (todo.length) allowWrites(`upload ${todo.length} new loudness copies`);
     await normaliseAndUpload(todo, work);
   } finally {
     rmSync(work, { recursive: true, force: true });
@@ -219,4 +280,7 @@ async function main() {
   } else process.stdout.write('Every clip has a normalised copy.\n');
 }
 
-void main();
+main().catch((error: Error) => {
+  console.error(error.message);
+  process.exitCode = 1;
+});
