@@ -63,12 +63,11 @@ In this order:
 
 ## Waiting on the owner
 
-- **Push:** main is far ahead of GitHub. CI will be red until item 1 above is done, so push when that is fixed, or accept a red run.
+- **Push:** main was pushed on 21 November. CI stays red until item 1 of the app work is done (the Expo patches and the audit).
 - **Release and deploy:** publish the content to the preview channel (an OTA is a release), and deploy `realtime-session` for new unit calls.
-- **Two faulty live clips:** re-record German Unit 1's "Danke, gleichfalls!" (Alex) and "Auch gut. Ich muss los. Tschüss!" (Jonas). Remove their entries from `src/features/audio/clips.json`, run `npx tsx --tsconfig tsconfig.json scripts/generate-lesson-audio.ts`, and delete their old loudness copies in the bucket's `n1/` folder so new ones are made.
-- **Loudness copies:** after new units merge, run `npx tsx --tsconfig tsconfig.json scripts/normalize-lesson-audio.ts` from your own terminal and confirm the upload. The Supabase CLI asks a person before writing to production, so the harness leaves this to you. Until you do, new clips play at their original level.
-- **Unattended sign-in:** a normal Claude Code sign-in ends after some weeks. For the harness, run `claude setup-token` and put the token in `.claude/settings.local.json` as `CLAUDE_CODE_OAUTH_TOKEN`.
-- **Fallback author:** to let Codex take a stage when the Claude plan is over its limit, set `CONTENT_AGENT_FALLBACK` to `codex` in the same file. Codex is paid per use.
+- **Loudness copies:** from your own terminal in the main folder, run `npx tsx --tsconfig tsconfig.json scripts/normalize-lesson-audio.ts --redo 06bvi6b1gsax55 09pbjjy1gcjv48` and type `yes` when it asks. It replaces the copies of German Unit 1's two re-recorded clips ("Danke, gleichfalls!", "Auch gut. Ich muss los. Tschüss!") and makes copies for every new clip. After later units, run it again without `--redo`. Until then new clips play at their original level, and the two re-recorded ones still play the old take.
+- **Unattended sign-in:** a normal Claude Code sign-in ends after some weeks. Run `claude setup-token`, sign in in the browser, paste the code it shows back into the terminal, and copy the token the terminal then prints (it starts with `sk-ant-oat01-`). Put that in `.claude/settings.local.json` as `CLAUDE_CODE_OAUTH_TOKEN`. The browser's code (with a `#` in it) is not the token: an invalid token overrides your working sign-in and stops the harness.
+- **Fallback author:** set on 20 November: `CONTENT_AGENT_FALLBACK=codex` in `.claude/settings.local.json`, so Codex takes a stage when the Claude plan is over its limit. Codex is paid per use (a few dollars a unit); delete the line to stop it.
 - **Native ear, optional:** units are no longer held for a native teacher; a native speaker reading one unit in five from `docs/content-review/` covers what the machines miss.
 - **The redesign gate:** five learners for the redesign test build.
 

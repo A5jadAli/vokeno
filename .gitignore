@@ -46,3 +46,6 @@ example
 # generated native folders
 /ios
 /android
+
+# Local Claude Code settings: may hold a sign-in token and the path to API keys. Never commit.
+.claude/settings.local.json
