@@ -88,6 +88,9 @@ const SAME: Record<string, string> = {
   veintiuna: 'veintiuno',
   eins: 'ein',
   einhundert: 'hundert',
+  // Two spellings of one German word.
+  tschau: 'ciao',
+  tschus: 'tschuss',
   doscientas: 'doscientos',
   trescientas: 'trescientos',
   cuatrocientas: 'cuatrocientos',

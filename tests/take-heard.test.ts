@@ -134,6 +134,8 @@ describe('what a listener heard of a spoken line', () => {
     expect(heard('Noch mal, bitte. Langsamer, bitte.', 'Nochmal, bitte. Langsamer, bitte.')).toBe(
       'understood',
     );
+    expect(heard('Ciao, bis später!', 'Tschau. Bis später.')).toBe('understood');
+    expect(heard('Tschüss, bis morgen!', 'Tschüs, bis morgen!')).toBe('understood');
     // Missing words are still missing, and a full form is not heard as a clipped one.
     expect(heard('Danke, gleichfalls!', 'Danke.')).not.toBe('understood');
     expect(heard('Ich gehe jetzt.', 'Ich geh jetzt.')).not.toBe('understood');
